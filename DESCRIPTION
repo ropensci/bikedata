@@ -4,7 +4,7 @@ Version: 0.0.0
 Authors@R: person("Mark", "Padgham", email = "mark.padgham@email.com", role = c("aut", "cre"))
 Description: Load data from public hire bicycle systems.
 Depends:
-    R (>= 3.3.2)
+    R (>= 3.3.0)
 License: GPL-3 + file LICENSE
 Encoding: UTF-8
 LazyData: true
