@@ -58,7 +58,32 @@ dl_bikedata ()
 ```
 And stored in a `postgres` database with
 ```{r, eval=FALSE}
-store_bikedata ()
+store_bikedata (data_dir="/data/data/junk")
+```
+Note that `store_bikedata()` will also download the data if they don't already
+exist.
+
+These data can then be accessed with the `RPostgreSQL` package:
+```{r, eval=TRUE}
+library(RPostgreSQL)
+drv <- dbDriver("PostgreSQL")
+citibike_con = dbConnect(drv, dbname = "nyc-citibike-data")
+
+query <- function(sql, con = citibike_con) 
+  fetch(dbSendQuery(con, sql), n = 1e8)
+get_ntrips <- function ()
+{
+    n <- query("SELECT * FROM station_to_station_counts")
+    stns <- sort (unique (n$start_station_id))
+    # transpose to index is [from, ti]
+    n <- t (array (n$count, dim=rep (length (stns), 2)))
+    rownames (n) <- colnames (n) <- stns
+    return (n)
+}
+nt <- get_ntrips ()
+junk <- dbDisconnect (citibike_con)
+cat (format (sum (nt), big.mark=",", scientific=FALSE), 
+     "trips between", dim (nt)[1], "stations\n")
 ```
 
 At present the `postgres` database has to be manually removed with

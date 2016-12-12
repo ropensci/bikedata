@@ -13,8 +13,6 @@ devtools::install_github("mpadge/bikedata")
 ```
 
     #> Loading bikedata
-    #> Updating bikedata documentation
-    #> Loading bikedata
 
 ### Usage
 
@@ -29,30 +27,40 @@ packageVersion("bikedata")
 
 ``` r
 dl_bikedata ()
-trying URL 'https://s3.amazonaws.com/tripdata/201506-citibike-tripdata.zip'
-Content type 'application/zip' length 22888858 bytes (21.8 MB)
-===============================================
-downloaded 21.8 MB
-
-trying URL 'https://s3.amazonaws.com/tripdata/201507-citibike-tripdata.zip'
-Content type 'application/zip' length 34518665 bytes (32.9 MB)
-===============================================
-downloaded 32.9 MB
-
-trying URL 'https://s3.amazonaws.com/tripdata/201508-citibike-tripdata.zip'
-Content type 'application/zip' length 38041594 bytes (36.3 MB)
-===============================================
-downloaded 36.3 MB
-
-[1] "Data save at: /tmp/RmpaWphyb/201506-citibike-tripdata.zip"
-[2] "Data save at: /tmp/RmpaWphyb/201507-citibike-tripdata.zip"
-[3] "Data save at: /tmp/RmpaWphyb/201508-citibike-tripdata.zip"
 ```
 
 And stored in a `postgres` database with
 
 ``` r
-store_bikedata ()
+store_bikedata (data_dir="/data/data/junk")
+```
+
+Note that `store_bikedata()` will also download the data if they don't already exist.
+
+These data can then be accessed with the `RPostgreSQL` package:
+
+``` r
+library(RPostgreSQL)
+#> Loading required package: DBI
+drv <- dbDriver("PostgreSQL")
+citibike_con = dbConnect(drv, dbname = "nyc-citibike-data")
+
+query <- function(sql, con = citibike_con) 
+  fetch(dbSendQuery(con, sql), n = 1e8)
+get_ntrips <- function ()
+{
+    n <- query("SELECT * FROM station_to_station_counts")
+    stns <- sort (unique (n$start_station_id))
+    # transpose to index is [from, ti]
+    n <- t (array (n$count, dim=rep (length (stns), 2)))
+    rownames (n) <- colnames (n) <- stns
+    return (n)
+}
+nt <- get_ntrips ()
+junk <- dbDisconnect (citibike_con)
+cat (format (sum (nt), big.mark=",", scientific=FALSE), 
+     "trips between", dim (nt)[1], "stations\n")
+#> 5,876,302 trips between 421 stations
 ```
 
 At present the `postgres` database has to be manually removed with
