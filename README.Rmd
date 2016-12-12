@@ -1,0 +1,59 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "README-"
+)
+```
+
+[![Build Status](https://travis-ci.org/mpadge/bikedata.svg)](https://travis-ci.org/mpadge/bikedata) 
+[![Project Status: Concept - Minimal or no implementation has been done yet.](http://www.repostatus.org/badges/0.1.0/concept.svg)](http://www.repostatus.org/#concept)
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/bikedata)](http://cran.r-project.org/web/packages/bikedata) 
+![downloads](http://cranlogs.r-pkg.org/badges/grand-total/bikedata)
+
+bikedata is ...
+
+The following functions are implemented:
+
+The following data sets are included:
+
+### News
+
+- Version  released
+
+### Installation
+
+```{r, eval=FALSE}
+devtools::install_github("mpadge/bikedata")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, error=FALSE}
+options(width=120)
+```
+
+### Usage
+
+```{r, eval=FALSE}
+library(bikedata)
+
+# current verison
+packageVersion("bikedata")
+
+```
+
+### Test Results
+
+```{r, eval=FALSE}
+library(bikedata)
+library(testthat)
+
+date()
+
+test_dir("tests/")
+```
