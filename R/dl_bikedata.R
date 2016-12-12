@@ -67,12 +67,12 @@ dl_bikedata <- function(city="nyc", data_dir = tempdir()){
   # TODO: 24:26 are there for testing purposes only - remove later!
   for (f in citibike_files ()[24:26]){
     destfile_zip <- file.path(data_dir, basename(f))
-    destfile_csv <- paste0 (tools::file_path_sans_ext(destfile), ".csv")
+    destfile_csv <- paste0 (tools::file_path_sans_ext(destfile_zip), ".csv")
     if (!file.exists (destfile_csv))
     {
         if (!file.exists (destfile_zip))
-          download.file (f, destfile)
-      unzip (destfile, exdir=data_dir)
+          download.file (f, destfile_zip)
+      unzip (destfile_zip, exdir=data_dir)
     }
   }
 

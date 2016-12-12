@@ -51,7 +51,7 @@ get_ntrips <- function ()
 {
     n <- query("SELECT * FROM station_to_station_counts")
     stns <- sort (unique (n$start_station_id))
-    # transpose to index is [from, ti]
+    # transpose so index is [from, ti]
     n <- t (array (n$count, dim=rep (length (stns), 2)))
     rownames (n) <- colnames (n) <- stns
     return (n)
@@ -62,6 +62,8 @@ cat (format (sum (nt), big.mark=",", scientific=FALSE),
      "trips between", dim (nt)[1], "stations\n")
 #> 5,876,302 trips between 421 stations
 ```
+
+(These numbers reflect only a select few of all possible files---there are far more data than that in total.)
 
 At present the `postgres` database has to be manually removed with
 
