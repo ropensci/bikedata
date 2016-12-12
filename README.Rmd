@@ -17,20 +17,25 @@ knitr::opts_chunk$set(
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/bikedata)](http://cran.r-project.org/web/packages/bikedata) 
 ![downloads](http://cranlogs.r-pkg.org/badges/grand-total/bikedata)
 
-bikedata is ...
+# bikedata
 
-The following functions are implemented:
+R package to load data from public bicycle hire systems. Currently a
+proof-of-concept that only loads data from the New York City [citibike
+scheme](https://www.citibikenyc.com/).
 
-The following data sets are included:
-
-### News
-
-- Version  released
 
 ### Installation
 
 ```{r, eval=FALSE}
 devtools::install_github("mpadge/bikedata")
+```
+```{r usage2, echo=FALSE}
+devtools::load_all (".")
+#devtools::document (".")
+#goodpractice::gp ("bikedata")
+#devtools::check (".")
+#testthat::test_dir ("./tests/")
+#Rcpp::compileAttributes()
 ```
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, error=FALSE}
@@ -44,7 +49,21 @@ library(bikedata)
 
 # current verison
 packageVersion("bikedata")
+```
 
+[citibike data](https://www.citibikenyc.com/system-data) first have to be
+downloaded:
+```{r, eval=FALSE}
+dl_bikedata ()
+```
+And stored in a `postgres` database with
+```{r, eval=FALSE}
+store_bikedata ()
+```
+
+At present the `postgres` database has to be manually removed with
+```{r, eval=FALSE}
+system ("dropdb nyc-citibike-data")
 ```
 
 ### Test Results

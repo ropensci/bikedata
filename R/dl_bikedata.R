@@ -64,15 +64,45 @@ citibike_files <- function(){
 #' @param data_dir Directory to which to download the files
 #' @export
 dl_bikedata <- function(city="nyc", data_dir = tempdir()){
-  for (i in citibike_files ()){
-    destfile <- file.path(data_dir, basename(i))
+  # TODO: 24:26 are there for testing purposes only - remove later!
+  flist <- NULL
+  for (f in citibike_files ()[24:26]){
+    destfile <- file.path(data_dir, basename(f))
     if (!file.exists (destfile))
     {
-      download.file (i, destfile)
-      unzip (destfile)
+      download.file (f, destfile)
+      unzip (destfile, exdir=data_dir)
     }
   }
 
   print(paste0("Data saved at: ", list.files(data_dir,
               pattern = "zip", full.names = TRUE)))
+  invisible (list.files(data_dir, pattern=".csv", full.names=TRUE))
+}
+
+#' Estalish postgres database for nyc-citibike data
+#'
+#' @param data_dir Directory to which to download the files
+#' @export
+store_bikedata <- function(data_dir=tempdir()){
+  flist <- dl_bikedata()
+  chk <- system("createdb nyc-citibike-data")
+  if (chk != 0)
+    stop ("postgres database could not be created")
+
+  system("psql nyc-citibike-data -f ./inst/sh/create_schema.sql")
+  for (f in flist)
+  {
+    message("loading data for ", f, " into postgres database ... ")
+    system ("psql nyc-citibike-data -f ./inst/sh/create_raw.sql")
+    sedcmd <- paste0 ("'s/\\\"//g; s/\\\\\\N//' \"", f, "\"")
+    #sedcmd <- paste0 ("'s/\\\\\\N//' \"", f, "\"")
+    cpycmd <- "COPY trips_raw FROM stdin CSV HEADER;"
+    system (paste0 ("sed $", sedcmd, " | psql nyc-citibike-data -c \"",
+                    cpycmd, "\""))
+    message ("processing raw data ... ")
+    system ("psql nyc-citibike-data -f ./inst/sh/populate_trips_from_raw.sql")
+  }
+  message ("constructing final data tables ... ")
+  system ("psql nyc-citibike-data -f ./inst/sh/prepare_tables.sql")
 }
