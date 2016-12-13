@@ -107,3 +107,11 @@ store_bikedata <- function(data_dir=tempdir()){
   message ("constructing final data tables ... ")
   system ("psql nyc-citibike-data -f ./inst/sh/prepare_tables.sql")
 }
+
+#' Read nyc-citibike data using C++ routines
+#'
+#' @param data_dir Directory to which to download the files
+#' @export
+read_bikedata <- function(data_dir=tempdir()){
+    rcpp_get_bikedata ();
+}

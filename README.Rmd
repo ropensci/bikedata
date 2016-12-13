@@ -1,4 +1,4 @@
----
+n--
 output: github_document
 ---
 
@@ -24,25 +24,29 @@ proof-of-concept that only loads data from the New York City [citibike
 scheme](https://www.citibikenyc.com/).
 
 
-### Installation
+## Installation
 
 ```{r, eval=FALSE}
 devtools::install_github("mpadge/bikedata")
 ```
 ```{r usage2, echo=FALSE}
 devtools::load_all (".")
-#devtools::document (".")
+devtools::load_all (".", recompile=TRUE)
+devtools::document (".")
 #goodpractice::gp ("bikedata")
 #devtools::check (".")
 #testthat::test_dir ("./tests/")
 #Rcpp::compileAttributes()
+```
+```{r}
+read_bikedata ()
 ```
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, error=FALSE}
 options(width=120)
 ```
 
-### Usage
+## Usage
 
 ```{r, eval=FALSE}
 library(bikedata)
@@ -50,6 +54,14 @@ library(bikedata)
 # current verison
 packageVersion("bikedata")
 ```
+
+### Rcpp
+
+```{r}
+read_bikedata ()
+```
+
+### postgres
 
 [citibike data](https://www.citibikenyc.com/system-data) first have to be
 downloaded:

@@ -8,4 +8,7 @@
 \description{
 bikedata.
 }
+\author{
+Mark Padgham
+}
 
