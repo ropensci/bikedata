@@ -1,5 +1,3 @@
-n-- output: github\_document ---
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 [![Build Status](https://travis-ci.org/mpadge/bikedata.svg)](https://travis-ci.org/mpadge/bikedata) [![Project Status: Concept - Minimal or no implementation has been done yet.](http://www.repostatus.org/badges/0.1.0/concept.svg)](http://www.repostatus.org/#concept) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/bikedata)](http://cran.r-project.org/web/packages/bikedata) ![downloads](http://cranlogs.r-pkg.org/badges/grand-total/bikedata)
 
@@ -40,8 +38,10 @@ read_bikedata ()
 #> [1] 0
 proc.time () - ptm
 #>    user  system elapsed 
-#>   9.428   0.524   9.953
+#>   9.316   0.556   9.872
 ```
+
+**NOTE the time taken**
 
 ### postgres
 
@@ -51,7 +51,7 @@ proc.time () - ptm
 dl_bikedata ()
 ```
 
-And stored in a `postgres` database with
+And stored in a `postgres` database with the following lines. The timing of these is directly comparable to the `Rcpp` version above.
 
 ``` r
 ptm <- proc.time ()
@@ -68,7 +68,7 @@ store_bikedata (data_dir="/data/data/junk/csv")
 #> constructing final data tables ...
 proc.time () - ptm
 #>    user  system elapsed 
-#>   3.072   0.560  62.055
+#>   2.716   0.588  62.682
 ```
 
 Note that `store_bikedata()` will also download the data if they don't already exist.

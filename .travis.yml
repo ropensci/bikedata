@@ -4,7 +4,7 @@ sudo: true
 cache: packages
 
 apt_packages:
-    - lzip
+    - zip
 
 r_github_packages:
       - jimhester/covr

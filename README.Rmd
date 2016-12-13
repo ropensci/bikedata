@@ -1,4 +1,4 @@
-n--
+---
 output: github_document
 ---
 
@@ -59,6 +59,7 @@ ptm <- proc.time ()
 read_bikedata ()
 proc.time () - ptm
 ```
+**NOTE the time taken**
 
 ### postgres
 
@@ -67,7 +68,8 @@ downloaded:
 ```{r dl_bikedata, eval=FALSE}
 dl_bikedata ()
 ```
-And stored in a `postgres` database with
+And stored in a `postgres` database with the following lines. The timing of
+these is directly comparable to the `Rcpp` version above.
 ```{r store_bikedata, eval=TRUE}
 ptm <- proc.time ()
 store_bikedata (data_dir="/data/data/junk/csv")
