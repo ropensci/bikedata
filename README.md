@@ -1,3 +1,5 @@
+n-- output: github\_document ---
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 [![Build Status](https://travis-ci.org/mpadge/bikedata.svg)](https://travis-ci.org/mpadge/bikedata) [![Project Status: Concept - Minimal or no implementation has been done yet.](http://www.repostatus.org/badges/0.1.0/concept.svg)](http://www.repostatus.org/#concept) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/bikedata)](http://cran.r-project.org/web/packages/bikedata) ![downloads](http://cranlogs.r-pkg.org/badges/grand-total/bikedata)
 
@@ -6,7 +8,8 @@ bikedata
 
 R package to load data from public bicycle hire systems. Currently a proof-of-concept that only loads data from the New York City [citibike scheme](https://www.citibikenyc.com/).
 
-### Installation
+Installation
+------------
 
 ``` r
 devtools::install_github("mpadge/bikedata")
@@ -14,7 +17,8 @@ devtools::install_github("mpadge/bikedata")
 
     #> Loading bikedata
 
-### Usage
+Usage
+-----
 
 ``` r
 library(bikedata)
@@ -22,6 +26,24 @@ library(bikedata)
 # current verison
 packageVersion("bikedata")
 ```
+
+### Rcpp
+
+``` r
+ptm <- proc.time ()
+read_bikedata ()
+#> There are 332 stations [max#=3003] and 3 trip files.
+#> Reading file [ 0/3]: 201506-citibike-tripdata.csv with 941219 records
+#> Reading file [ 1/3]: 201507-citibike-tripdata.csv with 1085676 records
+#> Reading file [ 2/3]: 201508-citibike-tripdata.csv with 1179044 records
+#> Total number of trips = 0
+#> [1] 0
+proc.time () - ptm
+#>    user  system elapsed 
+#>   9.428   0.524   9.953
+```
+
+### postgres
 
 [citibike data](https://www.citibikenyc.com/system-data) first have to be downloaded:
 
@@ -32,7 +54,21 @@ dl_bikedata ()
 And stored in a `postgres` database with
 
 ``` r
-store_bikedata (data_dir="/data/data/junk")
+ptm <- proc.time ()
+store_bikedata (data_dir="/data/data/junk/csv")
+#> [1] "Data saved at: /data/data/junk/csv/201506-citibike-tripdata.csv"
+#> [2] "Data saved at: /data/data/junk/csv/201507-citibike-tripdata.csv"
+#> [3] "Data saved at: /data/data/junk/csv/201508-citibike-tripdata.csv"
+#> loading data for /data/data/junk/csv/201506-citibike-tripdata.csv into postgres database ...
+#> processing raw data ...
+#> loading data for /data/data/junk/csv/201507-citibike-tripdata.csv into postgres database ...
+#> processing raw data ...
+#> loading data for /data/data/junk/csv/201508-citibike-tripdata.csv into postgres database ...
+#> processing raw data ...
+#> constructing final data tables ...
+proc.time () - ptm
+#>    user  system elapsed 
+#>   3.072   0.560  62.055
 ```
 
 Note that `store_bikedata()` will also download the data if they don't already exist.

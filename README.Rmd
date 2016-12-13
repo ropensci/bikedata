@@ -31,15 +31,12 @@ devtools::install_github("mpadge/bikedata")
 ```
 ```{r usage2, echo=FALSE}
 devtools::load_all (".")
-devtools::load_all (".", recompile=TRUE)
-devtools::document (".")
+#devtools::load_all (".", recompile=TRUE)
+#devtools::document (".")
 #goodpractice::gp ("bikedata")
 #devtools::check (".")
 #testthat::test_dir ("./tests/")
 #Rcpp::compileAttributes()
-```
-```{r}
-read_bikedata ()
 ```
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, error=FALSE}
@@ -57,26 +54,30 @@ packageVersion("bikedata")
 
 ### Rcpp
 
-```{r}
+```{r read_bikedata}
+ptm <- proc.time ()
 read_bikedata ()
+proc.time () - ptm
 ```
 
 ### postgres
 
 [citibike data](https://www.citibikenyc.com/system-data) first have to be
 downloaded:
-```{r, eval=FALSE}
+```{r dl_bikedata, eval=FALSE}
 dl_bikedata ()
 ```
 And stored in a `postgres` database with
-```{r, eval=FALSE}
-store_bikedata (data_dir="/data/data/junk")
+```{r store_bikedata, eval=TRUE}
+ptm <- proc.time ()
+store_bikedata (data_dir="/data/data/junk/csv")
+proc.time () - ptm
 ```
 Note that `store_bikedata()` will also download the data if they don't already
 exist.
 
 These data can then be accessed with the `RPostgreSQL` package:
-```{r, eval=TRUE}
+```{r postgresql, eval=TRUE}
 library(RPostgreSQL)
 drv <- dbDriver("PostgreSQL")
 citibike_con = dbConnect(drv, dbname = "nyc-citibike-data")
@@ -101,7 +102,7 @@ cat (format (sum (nt), big.mark=",", scientific=FALSE),
 more data than that in total.)
 
 At present the `postgres` database has to be manually removed with
-```{r, eval=FALSE}
+```{r dropdb, eval=TRUE}
 system ("dropdb nyc-citibike-data")
 ```
 

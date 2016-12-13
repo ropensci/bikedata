@@ -3,6 +3,9 @@ warnings_are_errors: true
 sudo: false
 cache: packages
 
+apt_packages:
+    - lzip
+
 r_github_packages:
       - jimhester/covr
 
