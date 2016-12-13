@@ -25,6 +25,11 @@ library(bikedata)
 packageVersion("bikedata")
 ```
 
+------------------------------------------------------------------------
+
+Rcpp versus postgres timing
+---------------------------
+
 ### Rcpp
 
 ``` r
@@ -38,7 +43,7 @@ read_bikedata ()
 #> [1] 0
 proc.time () - ptm
 #>    user  system elapsed 
-#>  15.564   0.928  16.810
+#>  15.740   1.036  17.092
 ```
 
 **NOTE the time taken**
@@ -55,20 +60,18 @@ And stored in a `postgres` database with the following lines. The timing of thes
 
 ``` r
 ptm <- proc.time ()
-store_bikedata ()
-#> loading data for 2014-07 - Citi Bike trip data.csv into postgres database ...
+store_bikedata (data_dir="/data/data/junk/csv")
+#> loading data for /data/data/junk/csv/2014-07 - Citi Bike trip data.csv into postgres database ...
 #> processing raw data ...
-#> loading data for 2014-08 - Citi Bike trip data.csv into postgres database ...
+#> loading data for /data/data/junk/csv/2014-08 - Citi Bike trip data.csv into postgres database ...
 #> processing raw data ...
-#> loading data for 201409-citibike-tripdata.csv into postgres database ...
+#> loading data for /data/data/junk/csv/201409-citibike-tripdata.csv into postgres database ...
 #> processing raw data ...
 #> constructing final data tables ...
 proc.time () - ptm
 #>    user  system elapsed 
-#>   2.640   0.468  57.263
+#>   2.676   0.504  57.724
 ```
-
-Note that `store_bikedata()` will also download the data if they don't already exist.
 
 These data can then be accessed with the `RPostgreSQL` package:
 
@@ -103,6 +106,8 @@ At present the `postgres` database has to be manually removed with
 ``` r
 system ("dropdb nyc-citibike-data")
 ```
+
+------------------------------------------------------------------------
 
 ### Test Results
 
