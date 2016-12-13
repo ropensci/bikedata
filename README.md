@@ -1,5 +1,5 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-[![Build Status](https://travis-ci.org/mpadge/bikedata.svg)](https://travis-ci.org/mpadge/bikedata) [![Project Status: Concept - Minimal or no implementation has been done yet.](http://www.repostatus.org/badges/0.1.0/concept.svg)](http://www.repostatus.org/#concept) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/bikedata)](http://cran.r-project.org/web/packages/bikedata) 
+[![Build Status](https://travis-ci.org/mpadge/bikedata.svg)](https://travis-ci.org/mpadge/bikedata) [![Project Status: Concept - Minimal or no implementation has been done yet.](http://www.repostatus.org/badges/0.1.0/concept.svg)](http://www.repostatus.org/#concept) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/bikedata)](http://cran.r-project.org/web/packages/bikedata)
 
 bikedata
 ========
@@ -31,14 +31,14 @@ packageVersion("bikedata")
 ptm <- proc.time ()
 read_bikedata ()
 #> There are 332 stations [max#=3003] and 3 trip files.
-#> Reading file [ 0/3]: 201506-citibike-tripdata.csv with 941219 records
-#> Reading file [ 1/3]: 201507-citibike-tripdata.csv with 1085676 records
-#> Reading file [ 2/3]: 201508-citibike-tripdata.csv with 1179044 records
-#> Total number of trips = 0
+#> Reading file [ 1/3]: 2014-07 - Citi Bike trip data.csv with 968842 records and 940592 valid trips.
+#> Reading file [ 2/3]: 2014-08 - Citi Bike trip data.csv with 963489 records and 933414 valid trips.
+#> Reading file [ 3/3]: 201409-citibike-tripdata.csv with 953887 records and 930314 valid trips.
+#> Total number of trips = 2804320
 #> [1] 0
 proc.time () - ptm
 #>    user  system elapsed 
-#>   9.316   0.556   9.872
+#>  15.564   0.928  16.810
 ```
 
 **NOTE the time taken**
@@ -55,20 +55,17 @@ And stored in a `postgres` database with the following lines. The timing of thes
 
 ``` r
 ptm <- proc.time ()
-store_bikedata (data_dir="/data/data/junk/csv")
-#> [1] "Data saved at: /data/data/junk/csv/201506-citibike-tripdata.csv"
-#> [2] "Data saved at: /data/data/junk/csv/201507-citibike-tripdata.csv"
-#> [3] "Data saved at: /data/data/junk/csv/201508-citibike-tripdata.csv"
-#> loading data for /data/data/junk/csv/201506-citibike-tripdata.csv into postgres database ...
+store_bikedata ()
+#> loading data for 2014-07 - Citi Bike trip data.csv into postgres database ...
 #> processing raw data ...
-#> loading data for /data/data/junk/csv/201507-citibike-tripdata.csv into postgres database ...
+#> loading data for 2014-08 - Citi Bike trip data.csv into postgres database ...
 #> processing raw data ...
-#> loading data for /data/data/junk/csv/201508-citibike-tripdata.csv into postgres database ...
+#> loading data for 201409-citibike-tripdata.csv into postgres database ...
 #> processing raw data ...
 #> constructing final data tables ...
 proc.time () - ptm
 #>    user  system elapsed 
-#>   2.716   0.588  62.682
+#>   2.640   0.468  57.263
 ```
 
 Note that `store_bikedata()` will also download the data if they don't already exist.
@@ -96,7 +93,7 @@ nt <- get_ntrips ()
 junk <- dbDisconnect (citibike_con)
 cat (format (sum (nt), big.mark=",", scientific=FALSE), 
      "trips between", dim (nt)[1], "stations\n")
-#> 5,876,302 trips between 421 stations
+#> 3,677,588 trips between 330 stations
 ```
 
 (These numbers reflect only a select few of all possible files---there are far more data than that in total.)

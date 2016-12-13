@@ -175,13 +175,6 @@ int RideData::readStationsNYC (int filei)
     getline (in_file, linetxt, '\n');
     while (getline (in_file, linetxt, '\n')) { count++;	}
 
-    Rcpp::Rcout << "Reading file [";
-    if (filei < 10)
-        Rcpp::Rcout << " ";
-    Rcpp::Rcout << filei << "/" << filelist.size() <<
-        "]: " << fileName.c_str() << " with " <<
-        count << " records" << std::endl;
-
     in_file.clear ();
     in_file.seekg (0); 
     getline (in_file, linetxt, '\n');
@@ -279,7 +272,7 @@ int RideData::readOneFileNYC (int filei)
     Rcpp::Rcout << "Reading file [";
     if (filei < 10)
         Rcpp::Rcout << " ";
-    Rcpp::Rcout << filei << "/" << filelist.size() <<
+    Rcpp::Rcout << filei + 1 << "/" << filelist.size() <<
         "]: " << fileName.c_str() << " with " <<
         count << " records";
     Rcpp::Rcout.flush ();

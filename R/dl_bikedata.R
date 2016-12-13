@@ -65,7 +65,7 @@ citibike_files <- function(){
 #' @export
 dl_bikedata <- function(city="nyc", data_dir = tempdir()){
   # TODO: 24:26 are there for testing purposes only - remove later!
-  for (f in citibike_files ()[24:26]){
+  for (f in citibike_files ()[13:15]){
     destfile_zip <- file.path(data_dir, basename(f))
     destfile_csv <- paste0 (tools::file_path_sans_ext(destfile_zip), ".csv")
     if (!file.exists (destfile_csv))
@@ -86,7 +86,12 @@ dl_bikedata <- function(city="nyc", data_dir = tempdir()){
 #' @param data_dir Directory to which to download the files
 #' @export
 store_bikedata <- function(data_dir=tempdir()){
-  flist <- dl_bikedata(data_dir=data_dir)
+  #can't check with dl_bikedata because unzipped files are often named
+  #differently to zip archives
+  #flist <- dl_bikedata(data_dir=data_dir)
+  flist <- list.files (data_dir, patter=".csv")
+  flist <- flist [grep ("citi", flist, ignore.case=TRUE)]
+  flist <- sapply (flist, function (i) paste0 (data_dir, "/", i))
   chk <- system("createdb nyc-citibike-data")
   if (chk != 0)
     stop ("postgres database could not be created")
