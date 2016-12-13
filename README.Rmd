@@ -15,7 +15,6 @@ knitr::opts_chunk$set(
 [![Build Status](https://travis-ci.org/mpadge/bikedata.svg)](https://travis-ci.org/mpadge/bikedata) 
 [![Project Status: Concept - Minimal or no implementation has been done yet.](http://www.repostatus.org/badges/0.1.0/concept.svg)](http://www.repostatus.org/#concept)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/bikedata)](http://cran.r-project.org/web/packages/bikedata) 
-![downloads](http://cranlogs.r-pkg.org/badges/grand-total/bikedata)
 
 # bikedata
 
