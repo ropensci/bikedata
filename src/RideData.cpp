@@ -13,7 +13,7 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE.  For more details, see the GNU General
  *  Public License at <https://www.gnu.org/licenses/>
  *
- *  Copyright   Mark Padgham November 2016
+ *  Copyright   Mark Padgham December 2016
  *  Author:     Mark Padgham
  *  E-Mail:     mark.padgham@email.com
  *
@@ -320,7 +320,7 @@ int RideData::readOneFileNYC (int filei)
             tempi [1] = _StationIndex [tempi[1]];
             if (tempi [0] < 0 || tempi [0] > nstations || tempi [1] < 0 ||
                     tempi [1] > nstations) { // should never happen
-                Rcpp::Rcout << "ERROR: station not in StationIndex!" << std::endl;
+                throw std::runtime_error ("station not in StationIndex");
             }
             linetxt = linetxt.substr (ipos + 3, linetxt.length () - ipos - 1);
             // Then extract usertype, birthyear, gender

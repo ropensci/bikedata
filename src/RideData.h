@@ -13,7 +13,7 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE.  For more details, see the GNU General
  *  Public License at <https://www.gnu.org/licenses/>
  *
- *  Copyright   Mark Padgham November 2016
+ *  Copyright   Mark Padgham December 2016
  *  Author:     Mark Padgham
  *  E-Mail:     mark.padgham@email.com
  *
