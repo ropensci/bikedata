@@ -4,3 +4,5 @@
 ^README\.md$
 ^makefile$
 ^data/*.*
+^.*\.Rproj$
+^\.Rproj\.user$
