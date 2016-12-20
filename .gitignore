@@ -38,3 +38,4 @@ aaa.Rmd
 src/*.o
 src/*.gcda
 src/*.gcno
+src/*.so

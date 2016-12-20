@@ -1,3 +1,5 @@
-rm src/Makevars
+#!/bin/sh
+
+rm -f src/Makevars
 
 exit 0

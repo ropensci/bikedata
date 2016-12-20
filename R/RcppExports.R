@@ -10,3 +10,12 @@ rcpp_get_bikedata <- function() {
     .Call('bikedata_rcpp_get_bikedata', PACKAGE = 'bikedata')
 }
 
+#' import data using spatialite
+#'
+#' Extracts bike data for NYC citibike
+#'
+#' @return integer result code
+importDataToSpatialite <- function(datafiles, spdb) {
+    .Call('bikedata_importDataToSpatialite', PACKAGE = 'bikedata', datafiles, spdb)
+}
+

@@ -15,3 +15,15 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// importDataToSpatialite
+int importDataToSpatialite(CharacterVector datafiles, const char* spdb);
+RcppExport SEXP bikedata_importDataToSpatialite(SEXP datafilesSEXP, SEXP spdbSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< CharacterVector >::type datafiles(datafilesSEXP);
+    Rcpp::traits::input_parameter< const char* >::type spdb(spdbSEXP);
+    rcpp_result_gen = Rcpp::wrap(importDataToSpatialite(datafiles, spdb));
+    return rcpp_result_gen;
+END_RCPP
+}

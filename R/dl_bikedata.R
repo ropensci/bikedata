@@ -12,7 +12,7 @@ citibike_files <- function(){
        "https://s3.amazonaws.com/tripdata/201310-citibike-tripdata.zip", 
        "https://s3.amazonaws.com/tripdata/201311-citibike-tripdata.zip", 
        "https://s3.amazonaws.com/tripdata/201312-citibike-tripdata.zip", 
-       "https://s3.amazonaws.com/tripdata/201401-citibike-tripdata.zip ", 
+       "https://s3.amazonaws.com/tripdata/201401-citibike-tripdata.zip", 
        "https://s3.amazonaws.com/tripdata/201402-citibike-tripdata.zip", 
        "https://s3.amazonaws.com/tripdata/201403-citibike-tripdata.zip", 
        "https://s3.amazonaws.com/tripdata/201404-citibike-tripdata.zip", 
