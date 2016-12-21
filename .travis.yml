@@ -9,7 +9,7 @@ apt_packages:
     - libsqlite3-dev
     - libsqlite3-0
     - libspatialite-dev
-    - libspatialite7
+    - libspatialite3
     - spatialite-bin
 
 r_github_packages:
