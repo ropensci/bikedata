@@ -5,6 +5,12 @@ cache: packages
 
 apt_packages:
     - libzip-dev
+    - sqlite3
+    - libsqlite3-dev
+    - libsqlite3-0
+    - libspatialite-dev
+    - libspatialite7
+    - spatialite-bin
 
 r_github_packages:
       - jimhester/covr
