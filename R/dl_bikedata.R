@@ -89,7 +89,7 @@ store_bikedata <- function(data_dir=tempdir()){
   #can't check with dl_bikedata because unzipped files are often named
   #differently to zip archives
   #flist <- dl_bikedata(data_dir=data_dir)
-  flist <- list.files (data_dir, patter=".csv")
+  flist <- list.files (data_dir, pattern=".csv")
   flist <- flist [grep ("citi", flist, ignore.case=TRUE)]
   flist <- sapply (flist, function (i) paste0 (data_dir, "/", i))
   chk <- system("createdb nyc-citibike-data")
@@ -118,5 +118,5 @@ store_bikedata <- function(data_dir=tempdir()){
 #' @param data_dir Directory to which to download the files
 #' @export
 read_bikedata <- function(data_dir=tempdir()){
-    rcpp_get_bikedata ();
+    rcpp_get_bikedata ()
 }
