@@ -6,6 +6,13 @@
 \usage{
 importDataToSpatialite(datafiles, spdb)
 }
+\arguments{
+\item{datafiles}{A character vector containin the paths to the citibike 
+.csv files to import.}
+
+\item{spdb}{A string containing the path to the spatialite database to 
+use. It will be created automatically.}
+}
 \value{
 integer result code
 }

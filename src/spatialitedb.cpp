@@ -53,6 +53,11 @@ char *strtokm(char *str, const char *delim)
 //' import data using spatialite
 //'
 //' Extracts bike data for NYC citibike
+//' 
+//' @param datafiles A character vector containin the paths to the citibike 
+//' .csv files to import.
+//' @param spdb A string containing the path to the spatialite database to 
+//' use. It will be created automatically.
 //'
 //' @return integer result code
 // [[Rcpp::export]]
