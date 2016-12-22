@@ -1,6 +1,7 @@
 ^README\.Rmd$
 ^README-.*\.png$
 ^\.travis\.yml$
+^appveyor.yml$
 ^README\.md$
 ^makefile$
 ^data/*.*
