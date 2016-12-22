@@ -10,7 +10,6 @@ apt_packages:
     - libsqlite3-0
     - libspatialite-dev
     - libspatialite3
-    - spatialite-bin
 
 r_github_packages:
       - jimhester/covr
