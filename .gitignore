@@ -32,3 +32,10 @@ vignettes/*.pdf
 *.utf8.md
 *.knit.md
 aaa.Rmd
+.Rproj.user
+
+# Build files
+src/*.o
+src/*.gcda
+src/*.gcno
+src/*.so
