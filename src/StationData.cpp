@@ -115,9 +115,10 @@ int StationData::GetStations ()
     oneStation.name = "";
 
     // _city == "nyc" hard coded here
-    fname = dir + "station_latlons_" + _city + ".txt";
+    fname = dir + "station_latlons_" + _city + ".csv";
     in_file.open (fname.c_str (), std::ifstream::in);
-    assert (!in_file.fail ());
+    if (in_file.fail ())
+        throw std::runtime_error ("station_latlons not found");
     in_file.clear ();
     in_file.seekg (0); 
     getline (in_file, linetxt, '\n'); // header

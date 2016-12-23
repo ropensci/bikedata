@@ -171,7 +171,9 @@ int RideData::readStationsNYC (int filei)
     std::string linetxt, stn_name, usertype;
 
     in_file.open (fname_csv.c_str (), std::ifstream::in);
-    assert (!in_file.fail ());
+    if (in_file.fail ())
+        throw std::runtime_error ("file not found");
+
     getline (in_file, linetxt, '\n');
     while (getline (in_file, linetxt, '\n')) { count++;	}
 
@@ -265,7 +267,8 @@ int RideData::readOneFileNYC (int filei)
     std::string linetxt, usertype;
 
     in_file.open (fname_csv.c_str (), std::ifstream::in);
-    assert (!in_file.fail ());
+    if (in_file.fail ())
+        throw std::runtime_error ("file not found");
     getline (in_file, linetxt, '\n');
     while (getline (in_file, linetxt, '\n')) { count++;	}
 

@@ -34,7 +34,6 @@
 #include <stdlib.h> // for EXIT_FAILURE
 #include <string.h>
 #include <fstream>
-#include <assert.h>
 #include <math.h>
 #include <iostream>
 #include <stdio.h>
