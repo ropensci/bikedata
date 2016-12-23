@@ -113,6 +113,18 @@ store_bikedata <- function(data_dir=tempdir()){
   system ("psql nyc-citibike-data -f ./inst/sh/prepare_tables.sql")
 }
 
+#' Store data in spatialite database
+#'
+#' 
+#' @param datafiles A character vector containin the paths to the citibike 
+#' .csv files to import.
+#' @param spdb A string containing the path to the spatialite database to 
+#' use. It will be created automatically.
+store_bikedata_spl <- function (data_dir=tempdir (), spdb)
+{
+    chk <- importDataToSpatialite(data_dir, spdb)
+}
+
 #' Read nyc-citibike data using C++ routines
 #'
 #' @param data_dir Directory to which to download the files
