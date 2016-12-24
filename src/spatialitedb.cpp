@@ -68,7 +68,9 @@ int importDataToSpatialite(CharacterVector datafiles, const char* spdb) {
   int rc;
   void* cache = spatialite_alloc_connection();
   
-  sqlite3_open_v2(spdb, &dbcon, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
+  rc = sqlite3_open_v2(spdb, &dbcon, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
+  if (rc != SQLITE_OK)
+      throw std::runtime_error ("Can't establish sqlite3 connection");
   spatialite_init_ex(dbcon, cache, 0);
   
   rc = sqlite3_exec(dbcon, "SELECT InitSpatialMetadata(1);", NULL, NULL, &zErrMsg);
@@ -196,7 +198,9 @@ int importDataToSpatialite(CharacterVector datafiles, const char* spdb) {
 
    rc = sqlite3_exec(dbcon, "UPDATE stations SET geom = MakePoint(longitude, latitude, 4326);", NULL, 0, &zErrMsg);
 
-  sqlite3_close(dbcon);
+  rc = sqlite3_close(dbcon);
+  if (rc != SQLITE_OK)
+      throw std::runtime_error ("Unable to close sqlite database");
   
   return(0);
 }
