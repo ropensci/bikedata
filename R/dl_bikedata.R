@@ -125,7 +125,10 @@ store_bikedata <- function(data_dir=tempdir()){
 #' @export
 store_bikedata_spl <- function (data_dir=tempdir (), spdb, quiet=FALSE)
 {
-    chk <- importDataToSpatialite(data_dir, spdb, quiet)
+  ntrips <- importDataToSpatialite(data_dir, spdb, quiet)
+  if (!quiet)
+    message ('total trips read = ', 
+             format (ntrips, big.mark=',', scientific=FALSE))
 }
 
 #' Read nyc-citibike data using C++ routines

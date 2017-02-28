@@ -185,30 +185,17 @@ int importDataToSpatialite(CharacterVector datafiles, const char* spdb, bool qui
     }
     
   }
-  if (!quiet)
-    Rcpp::Rcout << "Read total of " << ntrips << " trips" << std::endl;
   
   sqlite3_exec(dbcon, "END TRANSACTION", NULL, NULL, &zErrMsg);
   
   
    std::string fullstationqry = "INSERT INTO stations (id, longitude, latitude, name) VALUES ";
-    /*
-       fullstationqry = fullstationqry + stationqry.begin ()->second;
-       for (auto thisstation = std::next (stationqry.begin ());
-       thisstation != stationqry.end (); ++thisstation)
+   fullstationqry = fullstationqry + stationqry.begin ()->second;
+   for (auto thisstation = std::next (stationqry.begin ());
+           thisstation != stationqry.end (); ++thisstation)
        fullstationqry = fullstationqry + ", " + thisstation->second;
-       */
-   unsigned int j = 0;
-   for (auto const& thisstation : stationqry) {
-   if (j == 0) {
-   fullstationqry = fullstationqry + thisstation.second;
-   }
-   else {
-   fullstationqry = fullstationqry + ", " + thisstation.second;
-   }
-   j++;
-   }
    fullstationqry = fullstationqry + ";";
+
    rc = sqlite3_exec(dbcon, fullstationqry.c_str(), NULL, 0, &zErrMsg);
    rc = sqlite3_exec(dbcon, "SELECT AddGeometryColumn('stations', 'geom', 4326, 'POINT', 'XY');", NULL, 0, &zErrMsg);
 
@@ -218,5 +205,5 @@ int importDataToSpatialite(CharacterVector datafiles, const char* spdb, bool qui
   if (rc != SQLITE_OK)
       throw std::runtime_error ("Unable to close sqlite database");
   
-  return(0);
+  return(ntrips);
 }
