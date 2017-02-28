@@ -1,3 +1,28 @@
+#' Render station-to-station matrix square by inserting extra rows or cols
+#'
+#' @param mat Station-to-station matrix of trip numbers
+#'
+#' @return Re-shaped version of mat that has equal numbers of rows and columns
+reshape_tripmat <- function (mat)
+{
+    if (nrow (mat) > ncol (mat))
+    {
+        indx <- sort (which (!rownames (mat) %in% colnames (mat)))
+        for (i in indx)
+            mat <- cbind (mat [,1:(i-1)], rep (0, nrow (mat)), 
+                          mat [,i:ncol (mat)])
+        colnames (mat) <- rownames (mat)
+    } else if (ncol (mat) > nrow (mat))
+    {
+        indx <- sort (which (!colnames (mat) %in% rownames (mat)))
+        for (i in indx)
+            mat <- rbind (mat [1:(i-1),], rep (0, ncol (mat)), 
+                          mat [i:nrow (mat),])
+        rownames (mat) <- colnames (mat)
+    }
+    return (mat)
+}
+
 #' Extract station-to-station trip matrix from spatialite database
 #'
 #' @param spdb Path to the spatialite database 
@@ -21,22 +46,9 @@ tripmat <- function (spdb, quiet=FALSE)
     if (!quiet)
         message ('done')
 
-    # Insert extra rows or columns in cases where xtabs does not yield a square
-    # matrix. 
-    if (nrow (ntrips) > ncol (ntrips))
-    {
-        indx <- sort (which (!rownames (ntrips) %in% colnames (ntrips)))
-        for (i in indx)
-            ntrips <- cbind (ntrips [,1:(i-1)], rep (0, nrow (ntrips)), 
-                             ntrips [,i:ncol (ntrips)])
-        colnames (ntrips) <- rownames (ntrips)
-    } else if (ncol (ntrips) > nrow (ntrips))
-    {
-        indx <- sort (which (!colnames (ntrips) %in% rownames (ntrips)))
-        for (i in indx)
-            ntrips <- rbind (ntrips [1:(i-1),], rep (0, ncol (ntrips)), 
-                             ntrips [i:nrow (ntrips),])
-        rownames (ntrips) <- colnames (ntrips)
-    }
+    if (nrow (tripmat) != ncol (tripmat))
+        tripmat <- reshape_tripmat (tripmat)
+
     return (as (ntrips, 'matrix'))
 }
+
