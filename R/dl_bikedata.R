@@ -127,9 +127,9 @@ store_bikedata <- function(data_dir=tempdir()){
 #' @param quiet If FALSE, progress is displayed on screen
 #'
 #' @export
-store_bikedata_spl <- function (data_dir=tempdir (), spdb, quiet=FALSE)
+store_bikedata_spl <- function (datafiles, spdb, quiet=FALSE)
 {
-    ntrips <- importDataToSpatialite(data_dir, spdb, quiet)
+    ntrips <- importDataToSpatialite (datafiles, spdb, quiet)
     if (!quiet)
         message ('total trips read = ', 
                  format (ntrips, big.mark=',', scientific=FALSE))

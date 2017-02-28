@@ -6,7 +6,7 @@ cache: packages
 addons:
     apt:
         source:
-            - travic-ci/sqlite3
+            - travis-ci/sqlite3
         packages:
             - libzip-dev
             - sqlite3

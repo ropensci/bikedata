@@ -1,7 +1,9 @@
 Package: bikedata
 Title: Load data from public hire bicycle systems
 Version: 0.0.0
-Authors@R: person("Mark", "Padgham", email = "mark.padgham@email.com", role = c("aut", "cre"))
+Authors@R: c(
+    person("Mark", "Padgham", email="mark.padgham@email.com", role=c("aut", "cre")),
+    person("Richard", "Ellison", role="aut"))
 Description: Load data from public hire bicycle systems.
 Depends:
     R (>= 3.3.0)
@@ -11,7 +13,10 @@ NeedsCompilation: yes
 Encoding: UTF-8
 LazyData: true
 Imports:
+    methods,
     Rcpp
+Depends:
+    dplyr
 Suggests:
     testthat
 LinkingTo: 

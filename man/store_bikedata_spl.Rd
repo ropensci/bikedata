@@ -4,16 +4,16 @@
 \alias{store_bikedata_spl}
 \title{Store data in spatialite database}
 \usage{
-store_bikedata_spl(data_dir = tempdir(), spdb, quiet = FALSE)
+store_bikedata_spl(datafiles, spdb, quiet = FALSE)
 }
 \arguments{
+\item{datafiles}{A character vector containin the paths to the citibike 
+.csv files to import.}
+
 \item{spdb}{A string containing the path to the spatialite database to 
 use. It will be created automatically.}
 
 \item{quiet}{If FALSE, progress is displayed on screen}
-
-\item{datafiles}{A character vector containin the paths to the citibike 
-.csv files to import.}
 }
 \description{
 Store data in spatialite database
