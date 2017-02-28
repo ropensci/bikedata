@@ -28,7 +28,7 @@ scheme](https://www.citibikenyc.com/).
 ```{r, eval=FALSE}
 devtools::install_github("mpadge/bikedata")
 ```
-```{r usage2, echo=FALSE}
+```{r usage2, echo=FALSE, message=FALSE}
 devtools::load_all (".")
 #devtools::load_all (".", recompile=TRUE)
 #devtools::document (".")
