@@ -1,27 +1,13 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <string>
-#include <cstring> // strtok
-#include <iostream>
-#include <sys/sendfile.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sstream>
-#include <fstream>
 #include <vector>
 #include <map>
-#include <sys/stat.h>
 #include <sqlite3.h>
-#include <spatialite/gaiageo.h>
 #include <spatialite.h>
-#include <time.h>
 
 #define BUFFER_SIZE 512
 
 // [[Rcpp::depends(BH)]]
 #include <Rcpp.h>
-using namespace Rcpp;
 
 #include <boost/algorithm/string/replace.hpp>
 
@@ -88,7 +74,8 @@ std::string convert_datetime (std::string str)
 //'
 //' @return integer result code
 // [[Rcpp::export]]
-int importDataToSpatialite(CharacterVector datafiles, const char* spdb, bool quiet) 
+int importDataToSpatialite (Rcpp::CharacterVector datafiles, 
+        const char* spdb, bool quiet) 
 {
 
     sqlite3 *dbcon;
