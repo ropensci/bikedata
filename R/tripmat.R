@@ -8,8 +8,8 @@
 #' @export
 tripmat <- function (spdb, quiet=FALSE)
 {
-    db <- dplyr::src_sqlite ("junk", create=F)
-    trips <- dplyr::tbl (db, "trips")
+    db <- dplyr::src_sqlite ('junk', create=F)
+    trips <- dplyr::tbl (db, 'trips')
     # suppress R CMD check notes:
     start_station_id <- end_station_id <- n <- NULL
     byid <- dplyr::group_by (trips, start_station_id, end_station_id)
