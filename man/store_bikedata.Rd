@@ -12,4 +12,3 @@ store_bikedata(data_dir = tempdir())
 \description{
 Estalish postgres database for nyc-citibike data
 }
-

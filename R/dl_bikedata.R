@@ -44,7 +44,10 @@ citibike_files <- function(){
        "https://s3.amazonaws.com/tripdata/201606-citibike-tripdata.zip", 
        "https://s3.amazonaws.com/tripdata/201607-citibike-tripdata.zip", 
        "https://s3.amazonaws.com/tripdata/201608-citibike-tripdata.zip", 
-       "https://s3.amazonaws.com/tripdata/201609-citibike-tripdata.zip")
+       "https://s3.amazonaws.com/tripdata/201609-citibike-tripdata.zip",
+       "https://s3.amazonaws.com/tripdata/201610-citibike-tripdata.zip",
+       "https://s3.amazonaws.com/tripdata/201611-citibike-tripdata.zip",
+       "https://s3.amazonaws.com/tripdata/201612-citibike-tripdata.zip")
 }
 
 
@@ -64,7 +67,7 @@ citibike_files <- function(){
 #' @param data_dir Directory to which to download the files
 #' @export
 dl_bikedata <- function(city="nyc", data_dir = tempdir()){
-  # TODO: 24:26 are there for testing purposes only - remove later!
+  # TODO: 13:15 are there for testing purposes only - remove later!
   for (f in citibike_files ()[13:15]){
     destfile_zip <- file.path(data_dir, basename(f))
     destfile_csv <- paste0 (tools::file_path_sans_ext(destfile_zip), ".csv")
@@ -73,6 +76,7 @@ dl_bikedata <- function(city="nyc", data_dir = tempdir()){
         if (!file.exists (destfile_zip))
           download.file (f, destfile_zip)
       unzip (destfile_zip, exdir=data_dir)
+      file.remove (destfile_zip)
     }
   }
 
@@ -129,12 +133,4 @@ store_bikedata_spl <- function (data_dir=tempdir (), spdb, quiet=FALSE)
   if (!quiet)
     message ('total trips read = ', 
              format (ntrips, big.mark=',', scientific=FALSE))
-}
-
-#' Read nyc-citibike data using C++ routines
-#'
-#' @param data_dir Directory to which to download the files
-#' @export
-read_bikedata <- function(data_dir=tempdir()){
-    rcpp_get_bikedata ()
 }

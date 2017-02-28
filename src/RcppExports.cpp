@@ -5,16 +5,6 @@
 
 using namespace Rcpp;
 
-// rcpp_get_bikedata
-int rcpp_get_bikedata();
-RcppExport SEXP bikedata_rcpp_get_bikedata() {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(rcpp_get_bikedata());
-    return rcpp_result_gen;
-END_RCPP
-}
 // importDataToSpatialite
 int importDataToSpatialite(CharacterVector datafiles, const char* spdb, bool quiet);
 RcppExport SEXP bikedata_importDataToSpatialite(SEXP datafilesSEXP, SEXP spdbSEXP, SEXP quietSEXP) {

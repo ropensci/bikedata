@@ -4,7 +4,7 @@
 \alias{importDataToSpatialite}
 \title{import data using spatialite}
 \usage{
-importDataToSpatialite(datafiles, spdb)
+importDataToSpatialite(datafiles, spdb, quiet)
 }
 \arguments{
 \item{datafiles}{A character vector containin the paths to the citibike 
@@ -12,6 +12,8 @@ importDataToSpatialite(datafiles, spdb)
 
 \item{spdb}{A string containing the path to the spatialite database to 
 use. It will be created automatically.}
+
+\item{quiet}{If FALSE, progress is displayed on screen}
 }
 \value{
 integer result code
@@ -19,4 +21,3 @@ integer result code
 \description{
 Extracts bike data for NYC citibike
 }
-

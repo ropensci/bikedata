@@ -115,7 +115,8 @@ int importDataToSpatialite(CharacterVector datafiles, const char* spdb, bool qui
   for(unsigned int filenum = 0; filenum < datafiles.length(); filenum++) {
 
     if (!quiet)
-        Rcpp::Rcout << "reading file#" << filenum << ": " <<
+        Rcpp::Rcout << "reading file " << filenum << "/" <<
+            datafiles.size() << ": " <<
             datafiles [filenum] << std::endl;
 
     pFile = fopen(datafiles[filenum], "r");

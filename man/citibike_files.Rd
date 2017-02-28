@@ -13,4 +13,3 @@ which require an authentification key to be set up. Present work-around is to
 list them here manually, meaning they'll have to be updated on a monthly
 basis.
 }
-
