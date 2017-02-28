@@ -58,10 +58,12 @@ char *strtokm(char *str, const char *delim)
 //' .csv files to import.
 //' @param spdb A string containing the path to the spatialite database to 
 //' use. It will be created automatically.
+//' @param quiet If FALSE, progress is displayed on screen
 //'
 //' @return integer result code
 // [[Rcpp::export]]
-int importDataToSpatialite(CharacterVector datafiles, const char* spdb) {
+int importDataToSpatialite(CharacterVector datafiles, const char* spdb, bool quiet) 
+{
   
   sqlite3 *dbcon;
   char *zErrMsg = 0;
@@ -109,25 +111,27 @@ int importDataToSpatialite(CharacterVector datafiles, const char* spdb) {
   
   sqlite3_exec(dbcon, "BEGIN TRANSACTION", NULL, NULL, &zErrMsg);
   
+  int ntrips = 0;
   for(unsigned int filenum = 0; filenum < datafiles.length(); filenum++) {
-    
+
+    if (!quiet)
+        Rcpp::Rcout << "reading file#" << filenum << ": " <<
+            datafiles [filenum] << std::endl;
+
     pFile = fopen(datafiles[filenum], "r");
-    fgets(in_line, BUFFER_SIZE, pFile);
+    char * junk = fgets(in_line, BUFFER_SIZE, pFile);
     
-    int i = 0;
-    int k = 0;
     std::string tripqrystart = "INSERT INTO trips (trip_duration, start_time, stop_time, start_station_id, end_station_id, bike_id, user_type, birth_year, gender) VALUES ";
     std::string tripqry = tripqrystart;
     
-    std::string birthyear = "";
-    std::string gender = "";
-    std::string startstationid = "";
-    std::string endstationid = "";
-    
+    std::string birthyear = "", gender = "", 
+        startstationid = "", endstationid = "";
+
     std::vector< std::string > vec;
     
     while (fgets (in_line, BUFFER_SIZE, pFile) != NULL) {
       
+      ntrips++;
       std::string in_line2 = in_line;
       boost::replace_all(in_line2, "\\N","\"\"");
       strtokm(&in_line2[0u], "\""); //First double speech marks
@@ -136,7 +140,9 @@ int importDataToSpatialite(CharacterVector datafiles, const char* spdb) {
       sqlite3_bind_text(stmt, 3, strtokm(NULL, "\",\""), -1, SQLITE_TRANSIENT); // Stop time
       startstationid = strtokm(NULL, "\",\"");
       if (stationqry.count(startstationid) == 0) {
-        stationqry[startstationid] = "(" + startstationid + "," + strtokm(NULL, "\",\"") + "," + strtokm(NULL, "\",\"") + ",'" + strtokm(NULL, "\",\"") + "')";
+        stationqry[startstationid] = "(" + startstationid + "," + 
+            strtokm(NULL, "\",\"") + "," + strtokm(NULL, "\",\"") + ",'" + 
+            strtokm(NULL, "\",\"") + "')";
       }
       else {
         strtokm(NULL, "\",\"");
@@ -148,7 +154,9 @@ int importDataToSpatialite(CharacterVector datafiles, const char* spdb) {
       
       endstationid = strtokm(NULL, "\",\"");
       if (stationqry.count(endstationid) == 0) {
-        stationqry[endstationid] = "(" + endstationid + "," + strtokm(NULL, "\",\"") + "," + strtokm(NULL, "\",\"") + ",'" + strtokm(NULL, "\",\"") + "')";
+        stationqry[endstationid] = "(" + endstationid + "," + 
+            strtokm(NULL, "\",\"") + "," + strtokm(NULL, "\",\"") + ",'" + 
+            strtokm(NULL, "\",\"") + "')";
       }
       else {
         strtokm(NULL, "\",\"");
@@ -177,11 +185,19 @@ int importDataToSpatialite(CharacterVector datafiles, const char* spdb) {
     }
     
   }
+  if (!quiet)
+    Rcpp::Rcout << "Read total of " << ntrips << " trips" << std::endl;
   
   sqlite3_exec(dbcon, "END TRANSACTION", NULL, NULL, &zErrMsg);
   
   
    std::string fullstationqry = "INSERT INTO stations (id, longitude, latitude, name) VALUES ";
+    /*
+       fullstationqry = fullstationqry + stationqry.begin ()->second;
+       for (auto thisstation = std::next (stationqry.begin ());
+       thisstation != stationqry.end (); ++thisstation)
+       fullstationqry = fullstationqry + ", " + thisstation->second;
+       */
    unsigned int j = 0;
    for (auto const& thisstation : stationqry) {
    if (j == 0) {
@@ -198,7 +214,7 @@ int importDataToSpatialite(CharacterVector datafiles, const char* spdb) {
 
    rc = sqlite3_exec(dbcon, "UPDATE stations SET geom = MakePoint(longitude, latitude, 4326);", NULL, 0, &zErrMsg);
 
-  rc = sqlite3_close(dbcon);
+  rc = sqlite3_close_v2(dbcon);
   if (rc != SQLITE_OK)
       throw std::runtime_error ("Unable to close sqlite database");
   

@@ -3,6 +3,7 @@
 export(dl_bikedata)
 export(read_bikedata)
 export(store_bikedata)
+export(store_bikedata_spl)
 importFrom(Rcpp,evalCpp)
 importFrom(utils,download.file)
 importFrom(utils,unzip)

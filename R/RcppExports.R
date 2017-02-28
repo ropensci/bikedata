@@ -18,9 +18,10 @@ rcpp_get_bikedata <- function() {
 #' .csv files to import.
 #' @param spdb A string containing the path to the spatialite database to 
 #' use. It will be created automatically.
+#' @param quiet If FALSE, progress is displayed on screen
 #'
 #' @return integer result code
-importDataToSpatialite <- function(datafiles, spdb) {
-    .Call('bikedata_importDataToSpatialite', PACKAGE = 'bikedata', datafiles, spdb)
+importDataToSpatialite <- function(datafiles, spdb, quiet) {
+    .Call('bikedata_importDataToSpatialite', PACKAGE = 'bikedata', datafiles, spdb, quiet)
 }
 

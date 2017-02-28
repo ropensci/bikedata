@@ -120,9 +120,12 @@ store_bikedata <- function(data_dir=tempdir()){
 #' .csv files to import.
 #' @param spdb A string containing the path to the spatialite database to 
 #' use. It will be created automatically.
-store_bikedata_spl <- function (data_dir=tempdir (), spdb)
+#' @param quiet If FALSE, progress is displayed on screen
+#'
+#' @export
+store_bikedata_spl <- function (data_dir=tempdir (), spdb, quiet=FALSE)
 {
-    chk <- importDataToSpatialite(data_dir, spdb)
+    chk <- importDataToSpatialite(data_dir, spdb, quiet)
 }
 
 #' Read nyc-citibike data using C++ routines
