@@ -3,13 +3,17 @@ warnings_are_errors: true
 sudo: true
 cache: packages
 
-apt_packages:
-    - libzip-dev
-    - sqlite3
-    - libsqlite3-dev
-    - libsqlite3-0
-    - libspatialite-dev
-    - libspatialite3
+addons:
+    apt:
+        source:
+            - travic-ci/sqlite3
+        packages:
+            - libzip-dev
+            - sqlite3
+            - libsqlite3-dev
+            - libsqlite3-0
+            - libspatialite-dev
+            - libspatialite3
 
 r_github_packages:
       - jimhester/covr
