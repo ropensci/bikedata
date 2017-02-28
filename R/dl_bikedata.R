@@ -67,22 +67,22 @@ citibike_files <- function(){
 #' @param data_dir Directory to which to download the files
 #' @export
 dl_bikedata <- function(city="nyc", data_dir = tempdir()){
-  # TODO: 13:15 are there for testing purposes only - remove later!
-  for (f in citibike_files ()[13:15]){
-    destfile_zip <- file.path(data_dir, basename(f))
-    destfile_csv <- paste0 (tools::file_path_sans_ext(destfile_zip), ".csv")
-    if (!file.exists (destfile_csv))
-    {
-        if (!file.exists (destfile_zip))
-          download.file (f, destfile_zip)
-      unzip (destfile_zip, exdir=data_dir)
-      file.remove (destfile_zip)
+    # TODO: 13:15 are there for testing purposes only - remove later!
+    for (f in citibike_files ()[13:15]){
+        destfile_zip <- file.path(data_dir, basename(f))
+        destfile_csv <- paste0 (tools::file_path_sans_ext(destfile_zip), ".csv")
+        if (!file.exists (destfile_csv))
+        {
+            if (!file.exists (destfile_zip))
+                download.file (f, destfile_zip)
+            unzip (destfile_zip, exdir=data_dir)
+            file.remove (destfile_zip)
+        }
     }
-  }
 
-  print(paste0("Data saved at: ", list.files(data_dir,
-              pattern = "csv", full.names = TRUE)))
-  invisible (list.files(data_dir, pattern=".csv", full.names=TRUE))
+    print(paste0("Data saved at: ", list.files(data_dir, pattern = "csv",
+                                               full.names = TRUE)))
+    invisible (list.files(data_dir, pattern=".csv", full.names=TRUE))
 }
 
 #' Estalish postgres database for nyc-citibike data
@@ -90,31 +90,31 @@ dl_bikedata <- function(city="nyc", data_dir = tempdir()){
 #' @param data_dir Directory to which to download the files
 #' @export
 store_bikedata <- function(data_dir=tempdir()){
-  #can't check with dl_bikedata because unzipped files are often named
-  #differently to zip archives
-  #flist <- dl_bikedata(data_dir=data_dir)
-  flist <- list.files (data_dir, pattern=".csv")
-  flist <- flist [grep ("citi", flist, ignore.case=TRUE)]
-  flist <- sapply (flist, function (i) paste0 (data_dir, "/", i))
-  chk <- system("createdb nyc-citibike-data")
-  if (chk != 0)
-    stop ("postgres database could not be created")
+    #can't check with dl_bikedata because unzipped files are often named
+    #differently to zip archives
+    #flist <- dl_bikedata(data_dir=data_dir)
+    flist <- list.files (data_dir, pattern=".csv")
+    flist <- flist [grep ("citi", flist, ignore.case=TRUE)]
+    flist <- sapply (flist, function (i) paste0 (data_dir, "/", i))
+    chk <- system("createdb nyc-citibike-data")
+    if (chk != 0)
+        stop ("postgres database could not be created")
 
-  system("psql nyc-citibike-data -f ./inst/sh/create_schema.sql")
-  for (f in flist)
-  {
-    message("loading data for ", f, " into postgres database ... ")
-    system ("psql nyc-citibike-data -f ./inst/sh/create_raw.sql")
-    sedcmd <- paste0 ("'s/\\\"//g; s/\\\\\\N//' \"", f, "\"")
-    #sedcmd <- paste0 ("'s/\\\\\\N//' \"", f, "\"")
-    cpycmd <- "COPY trips_raw FROM stdin CSV HEADER;"
-    system (paste0 ("sed $", sedcmd, " | psql nyc-citibike-data -c \"",
-                    cpycmd, "\""))
-    message ("processing raw data ... ")
-    system ("psql nyc-citibike-data -f ./inst/sh/populate_trips_from_raw.sql")
-  }
-  message ("constructing final data tables ... ")
-  system ("psql nyc-citibike-data -f ./inst/sh/prepare_tables.sql")
+    system("psql nyc-citibike-data -f ./inst/sh/create_schema.sql")
+    for (f in flist)
+    {
+        message("loading data for ", f, " into postgres database ... ")
+        system ("psql nyc-citibike-data -f ./inst/sh/create_raw.sql")
+        sedcmd <- paste0 ("'s/\\\"//g; s/\\\\\\N//' \"", f, "\"")
+                          #sedcmd <- paste0 ("'s/\\\\\\N//' \"", f, "\"")
+                          cpycmd <- "COPY trips_raw FROM stdin CSV HEADER;"
+                          system (paste0 ("sed $", sedcmd, " | psql nyc-citibike-data -c \"",
+                                          cpycmd, "\""))
+                          message ("processing raw data ... ")
+                          system ("psql nyc-citibike-data -f ./inst/sh/populate_trips_from_raw.sql")
+    }
+    message ("constructing final data tables ... ")
+    system ("psql nyc-citibike-data -f ./inst/sh/prepare_tables.sql")
 }
 
 #' Store data in spatialite database
@@ -129,8 +129,8 @@ store_bikedata <- function(data_dir=tempdir()){
 #' @export
 store_bikedata_spl <- function (data_dir=tempdir (), spdb, quiet=FALSE)
 {
-  ntrips <- importDataToSpatialite(data_dir, spdb, quiet)
-  if (!quiet)
-    message ('total trips read = ', 
-             format (ntrips, big.mark=',', scientific=FALSE))
+    ntrips <- importDataToSpatialite(data_dir, spdb, quiet)
+    if (!quiet)
+        message ('total trips read = ', 
+                 format (ntrips, big.mark=',', scientific=FALSE))
 }
