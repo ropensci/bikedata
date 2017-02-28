@@ -44,80 +44,30 @@ options(width=120)
 
 ## Usage
 
-```{r, eval=FALSE}
+```{r, eval=FALSE, echo=FALSE}
 library(bikedata)
 
 # current verison
 packageVersion("bikedata")
 ```
 
-------
-
-## Rcpp versus postgres timing
-
-### Rcpp
-
-```{r read_bikedata}
-ptm <- proc.time ()
-read_bikedata ()
-proc.time () - ptm
-```
-**NOTE the time taken**
-
-### postgres
-
-[citibike data](https://www.citibikenyc.com/system-data) first have to be
-downloaded:
-```{r dl_bikedata, eval=FALSE}
-dl_bikedata ()
-```
-And stored in a `postgres` database with the following lines. The timing of
-these is directly comparable to the `Rcpp` version above.
-```{r store_bikedata, eval=TRUE}
-ptm <- proc.time ()
-store_bikedata (data_dir="/data/data/junk/csv")
-proc.time () - ptm
-```
-
-These data can then be accessed with the `RPostgreSQL` package:
-```{r postgresql, eval=TRUE}
-library(RPostgreSQL)
-drv <- dbDriver("PostgreSQL")
-citibike_con = dbConnect(drv, dbname = "nyc-citibike-data")
-
-query <- function(sql, con = citibike_con) 
-  fetch(dbSendQuery(con, sql), n = 1e8)
-get_ntrips <- function ()
-{
-    n <- query("SELECT * FROM station_to_station_counts")
-    stns <- sort (unique (n$start_station_id))
-    # transpose so index is [from, ti]
-    n <- t (array (n$count, dim=rep (length (stns), 2)))
-    rownames (n) <- colnames (n) <- stns
-    return (n)
-}
-nt <- get_ntrips ()
-junk <- dbDisconnect (citibike_con)
-cat (format (sum (nt), big.mark=",", scientific=FALSE), 
-     "trips between", dim (nt)[1], "stations\n")
-```
-(These numbers reflect only a select few of all possible files---there are far
-more data than that in total.)
-
-At present the `postgres` database has to be manually removed with
-```{r dropdb, eval=TRUE}
-system ("dropdb nyc-citibike-data")
-```
-
------
-
-### Test Results
-
+Data from the NYC citibike system can can be downloaded with
 ```{r, eval=FALSE}
-library(bikedata)
-library(testthat)
+dl_bikedata (data_dir='tmp/')
+```
+The resultant files can then be read into an `spatialite` database with
+```{r, eval=FALSE}
+files <- paste0 ('tmp/', list.files ('tmp/'))
+store_bikedata_spl (files, "junk")
+```
+```{r, eval=FALSE, echo=FALSE}
+files <- paste0 ('/data/data/bikes/nyc-temp/', 
+                 list.files ('/data/data/bikes/nyc-temp/'))
+store_bikedata_spl (files, "junk")
+```
 
-date()
-
-test_dir("tests/")
+Numbers of trips between each pair of stations can then be obtained in square
+matrix form from
+```{r, eval=FALSE}
+tmat <- tripmat ("junk")
 ```

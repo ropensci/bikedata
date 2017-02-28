@@ -46,8 +46,8 @@ tripmat <- function (spdb, quiet=FALSE)
     if (!quiet)
         message ('done')
 
-    if (nrow (tripmat) != ncol (tripmat))
-        tripmat <- reshape_tripmat (tripmat)
+    if (nrow (ntrips) != ncol (ntrips))
+        ntrips <- reshape_tripmat (ntrips)
 
     return (as (ntrips, 'matrix'))
 }
