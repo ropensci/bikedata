@@ -42,14 +42,17 @@ char *strtokm(char *str, const char *delim)
 // different formats, so this converts the latter to former formats.
 std::string convert_datetime (std::string str)
 {
-    if (size_t ipos = str.find ("/") != std::string::npos)
+    // NOTE that the following does not work for some reason?
+    //if (size_t ipos = str.find ("/") != std::string::npos)
+    if (str.find ("/") != std::string::npos)
     {
+        size_t ipos = str.find ("/");
         std::string mm = str.substr (0, ipos);
         if (ipos == 1)
             mm = std::string ("0") + mm;
         str = str.substr (ipos + 1, str.length () - ipos - 1);
         ipos = str.find ("/");
-        std::string dd = str.substr (0, ipos).c_str ();
+        std::string dd = str.substr (0, ipos);
         if (ipos == 1)
             dd = std::string ("0") + dd;
         str = str.substr (ipos + 1, str.length () - ipos - 1);
@@ -156,9 +159,11 @@ int importDataToSpatialite (Rcpp::CharacterVector datafiles,
 
             std::string tempstr = convert_datetime (strtokm(NULL, "\",\""));
             sqlite3_bind_text(stmt, 3, tempstr.c_str(), -1, SQLITE_TRANSIENT); // Start time
-            //sqlite3_bind_text(stmt, 3, strtokm(NULL, "\",\""), -1, SQLITE_TRANSIENT); // Start time
-            //
-            sqlite3_bind_text(stmt, 4, strtokm(NULL, "\",\""), -1, SQLITE_TRANSIENT); // Stop time
+            //sqlite3_bind_text(stmt, 2, strtokm(NULL, "\",\""), -1, SQLITE_TRANSIENT); // Start time
+            
+            tempstr = convert_datetime (strtokm(NULL, "\",\""));
+            sqlite3_bind_text(stmt, 4, tempstr.c_str(), -1, SQLITE_TRANSIENT); // Stop time
+            //sqlite3_bind_text(stmt, 4, strtokm(NULL, "\",\""), -1, SQLITE_TRANSIENT); // Stop time
             startstationid = strtokm(NULL, "\",\"");
             if (stationqry.count(startstationid) == 0) {
                 stationqry[startstationid] = "(" + startstationid + "," + 

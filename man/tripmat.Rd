@@ -4,10 +4,22 @@
 \alias{tripmat}
 \title{Extract station-to-station trip matrix from spatialite database}
 \usage{
-tripmat(spdb, quiet = FALSE)
+tripmat(spdb, start_date, end_date, start_time, end_time, quiet = FALSE)
 }
 \arguments{
 \item{spdb}{Path to the spatialite database}
+
+\item{start_date}{If given (as year, month, day) , extract only those records
+from and including this date}
+
+\item{end_date}{If given (as year, month, day), extract only those records to
+and including this date}
+
+\item{start_time}{If given, extract only those records starting from and
+including this time of each day}
+
+\item{end_time}{If given, extract only those records ending at and including
+this time of each day}
 
 \item{quiet}{If FALSE, progress is displayed on screen}
 }
@@ -16,4 +28,9 @@ Square matrix of numbers of trips between each station
 }
 \description{
 Extract station-to-station trip matrix from spatialite database
+}
+\note{
+Both dates and times may be given either in numeric or character
+format, with arbitrary (or no) delimiters between fields. Single numeric
+times are interpreted as hours, with 23 interpreted as day's end at 23:59:59.
 }
