@@ -19,14 +19,13 @@ Usage
 Data from the NYC citibike system can can be downloaded with
 
 ``` r
-dl_bikedata (data_dir='tmp/')
+dl_bikedata (data_dir='/tmp')
 ```
 
 The resultant files can then be read into an `spatialite` database with
 
 ``` r
-files <- paste0 ('tmp/', list.files ('tmp/'))
-store_bikedata_spl (files, "junk")
+store_bikedata_spl (data_dir='/tmp', "junk")
 ```
 
 Numbers of trips between each pair of stations can then be obtained in square matrix form from

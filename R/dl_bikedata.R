@@ -120,17 +120,33 @@ store_bikedata <- function(data_dir=tempdir()){
 #' Store data in spatialite database
 #'
 #' 
-#' @param datafiles A character vector containin the paths to the citibike 
-#' .csv files to import.
+#' @param data_dir A character vector giving the directory containing the
+#' \code{.zip} files of citibike data.
 #' @param spdb A string containing the path to the spatialite database to 
 #' use. It will be created automatically.
 #' @param quiet If FALSE, progress is displayed on screen
 #'
 #' @export
-store_bikedata_spl <- function (datafiles, spdb, quiet=FALSE)
+store_bikedata_spl <- function (data_dir, spdb, quiet=FALSE)
 {
-    ntrips <- importDataToSpatialite (datafiles, spdb, quiet)
+    # platform-independent unzipping is much easier in R
+    flist <- file.path (data_dir, list.files (data_dir, pattern=".zip"))
+    if (!quiet)
+        message ('Extracting files ', appendLF=FALSE)
+    for (f in flist)
+    {
+        fcsv <- unzip (f, list=TRUE)$Name
+        if (!exists (fcsv))
+            unzip (f, exdir=data_dir)
+        if (!quiet)
+            message ('.', appendLF=FALSE)
+    }
+    if (!quiet)
+        message (' done')
+    flist_csv <- file.path (data_dir, list.files (data_dir, pattern=".csv"))
+    ntrips <- importDataToSpatialite (flist_csv, spdb, quiet)
     if (!quiet)
         message ('total trips read = ', 
                  format (ntrips, big.mark=',', scientific=FALSE))
+    invisible (file.remove (flist_csv))
 }

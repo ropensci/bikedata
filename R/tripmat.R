@@ -33,7 +33,7 @@ reshape_tripmat <- function (mat)
 #' @export
 tripmat <- function (spdb, quiet=FALSE)
 {
-    db <- dplyr::src_sqlite ('junk', create=F)
+    db <- dplyr::src_sqlite (spdb, create=F)
     trips <- dplyr::tbl (db, 'trips')
     # suppress R CMD check notes:
     start_station_id <- end_station_id <- n <- NULL
