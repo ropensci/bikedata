@@ -16,7 +16,8 @@ Imports:
     methods,
     Rcpp
 Depends:
-    dplyr
+    dplyr,
+    lubridate
 Suggests:
     testthat
 LinkingTo: 

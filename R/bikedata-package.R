@@ -4,7 +4,8 @@
 #' @docType package
 #' @author Mark Padgham
 #' @importFrom Rcpp evalCpp
-#' @importFrom dplyr group_by src_sqlite summarise
+#' @importFrom dplyr %>% collect filter group_by src_sqlite summarise sql tbl
+#' @importFrom lubridate ymd
 #' @importFrom methods as
 #' @importFrom stats xtabs
 #' @importFrom utils download.file unzip

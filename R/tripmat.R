@@ -23,7 +23,11 @@ reshape_tripmat <- function (mat)
     return (mat)
 }
 
-#' convert hms to "HH:MM:SS"
+#' convert hms to 'HH:MM:SS'
+#'
+#' @param x A numeric or character object to to be converted
+#'
+#' @return A string formatted to 'HH:MM:SS'
 convert_hms <- function (x)
 {
     if (is.numeric (x)) # presume it's HH
@@ -72,6 +76,8 @@ convert_hms <- function (x)
 #' @export
 get_datelimits <- function (spdb)
 {
+    # suppress R CMD check notes:
+    start_time <- stop_time <- NULL
     db <- dplyr::src_sqlite (spdb, create=F)
     trips <- dplyr::tbl (db, 'trips')
     first_trip <- dplyr::summarise (trips, first_trip=min (start_time)) %>%
@@ -106,6 +112,8 @@ get_datelimits <- function (spdb)
 tripmat <- function (spdb, start_date, end_date, start_time, end_time,
                      quiet=FALSE)
 {
+    # suppress R CMD check notes:
+    stop_time <- sttrip_id <- st <- et <- NULL
     db <- dplyr::src_sqlite (spdb, create=F)
     trips <- dplyr::tbl (db, 'trips')
 
