@@ -57,14 +57,32 @@ dl_bikedata (data_dir='/tmp')
 ```
 The resultant files can then be read into an `spatialite` database with
 ```{r, eval=FALSE}
-store_bikedata_spl (data_dir='/tmp', "junk")
+store_bikedata_spl (data_dir='/tmp', 'spdb')
 ```
 ```{r, eval=FALSE, echo=FALSE}
-store_bikedata_spl (data_dir='/data/data/bikes/nyc-temp', 'junk')
+store_bikedata_spl (data_dir='/data/data/bikes/nyc-temp', 'spdb')
 ```
 
-Numbers of trips between each pair of stations can then be obtained in square
-matrix form from
+Numbers of trips between each pair of stations ('trip matrices') can then be
+obtained in square matrix form from
 ```{r, eval=FALSE}
-tmat <- tripmat ("junk")
+tmat <- tripmat ('spdb')
+```
+
+### Filtering trips
+
+Trip matrices can be constructed for trips filtered by dates and/or times. The
+temporal extent of the database can be readily viewed with
+```{r, eval=FALSE}
+get_datelimits ('spdb')
+```
+```{r, echo=FALSE}
+res <- c ("2014-08-01 00:00:04", "2014-11-16 08:50:59")
+names (res) <- c ("first", "last")
+res
+```
+And then, for example, a trip matrix constructed from trips beginning after a
+given date.
+```{r, eval=FALSE}
+tmat <- tripmat ('spdb', start_date="20140901")
 ```

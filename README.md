@@ -25,11 +25,28 @@ dl_bikedata (data_dir='/tmp')
 The resultant files can then be read into an `spatialite` database with
 
 ``` r
-store_bikedata_spl (data_dir='/tmp', "junk")
+store_bikedata_spl (data_dir='/tmp', 'spdb')
 ```
 
-Numbers of trips between each pair of stations can then be obtained in square matrix form from
+Numbers of trips between each pair of stations ('trip matrices') can then be obtained in square matrix form from
 
 ``` r
-tmat <- tripmat ("junk")
+tmat <- tripmat ('spdb')
+```
+
+### Filtering trips
+
+Trip matrices can be constructed for trips filtered by dates and/or times. The temporal extent of the database can be readily viewed with
+
+``` r
+get_datelimits ('spdb')
+```
+
+    #>                 first                  last 
+    #> "2014-08-01 00:00:04" "2014-11-16 08:50:59"
+
+And then, for example, a trip matrix constructed from trips beginning after a given date.
+
+``` r
+tmat <- tripmat ('spdb', start_date="20140901")
 ```
