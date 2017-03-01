@@ -39,3 +39,7 @@ src/*.o
 src/*.gcda
 src/*.gcno
 src/*.so
+
+# vim files
+.*.un~
+.*.swp
