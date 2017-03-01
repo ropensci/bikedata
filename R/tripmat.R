@@ -5,21 +5,24 @@
 #' @return Re-shaped version of mat that has equal numbers of rows and columns
 reshape_tripmat <- function (mat)
 {
-    if (nrow (mat) > ncol (mat))
+    rnames <- as.numeric (rownames (mat))
+    cnames <- as.numeric (colnames (mat))
+    if (!identical (sort (cnames), cnames))
+        mat <- mat [,order (cnames)]
+    if (!identical (sort (rnames), rnames))
+        mat <- mat [order (rnames),]
+
+    allnames <- sort (unique (c (cnames, rnames)))
+    if (length (allnames) > max (c (nrow (mat), ncol (mat))))
     {
-        indx <- sort (which (!rownames (mat) %in% colnames (mat)))
-        for (i in indx)
-            mat <- cbind (mat [,1:(i-1)], rep (0, nrow (mat)), 
-                          mat [,i:ncol (mat)])
-        colnames (mat) <- rownames (mat)
-    } else if (ncol (mat) > nrow (mat))
-    {
-        indx <- sort (which (!colnames (mat) %in% rownames (mat)))
-        for (i in indx)
-            mat <- rbind (mat [1:(i-1),], rep (0, ncol (mat)), 
-                          mat [i:nrow (mat),])
-        rownames (mat) <- colnames (mat)
+        cindx <- which (allnames %in% cnames)
+        rindx <- which (allnames %in% rnames)
+        mat_ex <- array (0, dim=rep (length (allnames), 2))
+        mat_ex [rindx, cindx] <- mat
+        colnames (mat_ex) <- rownames (mat_ex) <- paste (allnames)
+        mat <- mat_ex
     }
+
     return (mat)
 }
 
@@ -89,6 +92,61 @@ get_datelimits <- function (spdb)
     return (res)
 }
 
+#' Filter a trip matrix by time
+#'
+#' @param db The spatiallite database containing the trips (and established by a
+#' \code{dplyr::src_sqlite} call)
+#' @param start_time Extract only those records starting from and including this
+#' time of each day
+#' @param end_time Extract only those records ending at and including this time
+#' of each day
+#'
+#' @return A modified version of the \code{trips} table from \code{db}, filtered
+#' by the specified times
+filter_tripmat_by_time <- function (db, start_time=NULL, end_time=NULL)
+{
+    trips <- dplyr::tbl (db, 'trips') # avoid CMD check message
+    if (!is.null (start_time) & !is.null (end_time))
+    {
+        # TODO: This qry yields a tbl with variables named "sttrip_id" and "et"
+        # instead of the desired "st" and "et" - fix!
+        qry <- paste0 ("WITH t AS (SELECT trip_id, start_station_id, ",
+                       "end_station_id, start_time, stop_time FROM trips)",
+                       "SELECT trip_id, start_station_id, end_station_id, ",
+                       "start_time, stop_time, time(start_time) AS st",
+                       "trip_id, time(stop_time) AS et FROM t")
+        trips <- dplyr::tbl (db, dplyr::sql (qry))
+        trips <- dplyr::filter (trips, sttrip_id >= start_time & et <= end_time)
+        # Alternative is left_join like this:
+        #qry <- paste0 ("WITH t AS (SELECT trip_id, start_time FROM trips)",
+        #               "SELECT trip_id, time(start_time) AS st FROM t")
+        #starts <- dplyr::tbl (db, dplyr::sql (qry))
+        #starts <- dplyr::filter (trips, starts >= start_time)
+        #qry <- paste0 ("WITH t AS (SELECT trip_id, stop_time FROM trips)",
+        #               "SELECT trip_id, time(stop_time) AS et FROM t")
+        #ends <- dplyr::tbl (db, dplyr::sql (qry))
+        #ends <- dplyr::filter (trips, ends <= end_time)
+        #trips <- dplyr::left_join (starts, ends)
+    } else if (!is.null (start_time))
+    {
+        qry <- paste0 ("WITH t AS (SELECT trip_id, start_station_id, ",
+                       "end_station_id, start_time, stop_time FROM trips)",
+                       "SELECT trip_id, start_station_id, end_station_id, ",
+                       "start_time, stop_time, time(start_time) AS st FROM t")
+        trips <- dplyr::tbl (db, dplyr::sql (qry))
+        trips <- dplyr::filter (trips, st >= start_time)
+    } else if (!is.null (end_time))
+    {
+        qry <- paste0 ("WITH t AS (SELECT trip_id, start_station_id, ",
+                       "end_station_id, start_time, stop_time FROM trips)",
+                       "SELECT trip_id, start_station_id, end_station_id, ",
+                       "start_time, stop_time, time(stop_time) AS et FROM t")
+        trips <- dplyr::tbl (db, dplyr::sql (qry))
+        trips <- dplyr::filter (trips, et <= end_time)
+    }
+    return (trips)
+}
+
 #' Extract station-to-station trip matrix from spatialite database
 #'
 #' @param spdb Path to the spatialite database 
@@ -115,66 +173,37 @@ tripmat <- function (spdb, start_date, end_date, start_time, end_time,
     # suppress R CMD check notes:
     stop_time <- sttrip_id <- st <- et <- NULL
     db <- dplyr::src_sqlite (spdb, create=F)
-    trips <- dplyr::tbl (db, 'trips')
 
     if (!missing (start_date))
         start_date <- paste (lubridate::ymd (start_date), '00:00:00')
+    else
+        start_date <- NULL
     if (!missing (end_date))
         end_date <- paste (lubridate::ymd (end_date), '23:59:59')
+    else
+        end_date <- NULL
     if (!missing (start_time))
         start_time <- convert_hms (start_time)
+    else
+        start_time <- NULL
     if (!missing (end_time))
         end_time <- convert_hms (end_time)
+    else
+        end_time <- NULL
 
+    # create generic table, while is replaced if filtered by time
+    trips <- dplyr::tbl (db, 'trips') 
+    # Filter by time - this requires making a new table with time colunms
+    if (!is.null (start_time) | !is.null (end_time))
+        trips <- filter_tripmat_by_time (db, start_time, end_time)
     # Filter by date
-    if (!missing (start_date) & !missing (end_date))
+    if (!is.null (start_date) & !is.null (end_date))
         trips <- dplyr::filter (trips, start_time >= start_date &
                                 stop_time <= end_date)
-    else if (!missing (start_date))
+    else if (!is.null (start_date))
         trips <- dplyr::filter (trips, start_time >= start_date)
-    else if (!missing (end_date))
+    else if (!is.null (end_date))
         trips <- dplyr::filter (trips, stop_time <= end_date)
-    # Filter by time - this requires making a new table with time colunms
-    if (!missing (start_time) & !missing (end_time))
-    {
-        # TODO: This qry yields a tbl with variables named "sttrip_id" and "et"
-        # instead of the desired "st" and "et" - fix!
-        qry <- paste0 ("WITH t AS (SELECT trip_id, start_station_id, ",
-                       "end_station_id, start_time, stop_time FROM trips)",
-                       "SELECT trip_id, start_station_id, end_station_id, ",
-                       "time(start_time) AS st",
-                       "trip_id, time(stop_time) AS et FROM t")
-        trips <- dplyr::tbl (db, dplyr::sql (qry))
-        trips <- dplyr::filter (trips, sttrip_id >= start_time & et < end_time)
-        # Alternative is left_join like this:
-        #qry <- paste0 ("WITH t AS (SELECT trip_id, start_time FROM trips)",
-        #               "SELECT trip_id, time(start_time) AS st FROM t")
-        #starts <- dplyr::tbl (db, dplyr::sql (qry))
-        #starts <- dplyr::filter (trips, starts >= start_time)
-        #qry <- paste0 ("WITH t AS (SELECT trip_id, stop_time FROM trips)",
-        #               "SELECT trip_id, time(stop_time) AS et FROM t")
-        #ends <- dplyr::tbl (db, dplyr::sql (qry))
-        #ends <- dplyr::filter (trips, ends <= end_time)
-        #trips <- dplyr::left_join (starts, ends)
-    } else if (!missing (start_time))
-    {
-        qry <- paste0 ("WITH t AS (SELECT trip_id, start_station_id, ",
-                       "end_station_id, start_time FROM trips)",
-                       "SELECT trip_id, start_station_id, end_station_id, ",
-                       "time(start_time) AS st FROM t")
-        trips <- dplyr::tbl (db, dplyr::sql (qry))
-        trips <- dplyr::filter (trips, st >= start_time)
-    } else if (!missing (end_time))
-    {
-        trips <- dplyr::tbl (db, 'trips')
-        dplyr::summarise(trips, count=n())
-        qry <- paste0 ("WITH t AS (SELECT trip_id, start_station_id, ",
-                       "end_station_id, stop_time FROM trips)",
-                       "SELECT trip_id, start_station_id, end_station_id, ",
-                       "time(stop_time) AS et FROM t")
-        trips <- dplyr::tbl (db, dplyr::sql (qry))
-        trips <- dplyr::filter (trips, et <= end_time)
-    }
 
     # suppress R CMD check notes:
     start_station_id <- end_station_id <- n <- NULL
@@ -187,8 +216,7 @@ tripmat <- function (spdb, start_date, end_date, start_time, end_time,
     if (!quiet)
         message ('done')
 
-    if (nrow (ntrips) != ncol (ntrips))
-        ntrips <- reshape_tripmat (ntrips)
+    ntrips <- reshape_tripmat (ntrips)
 
     return (as (ntrips, 'matrix'))
 }
