@@ -124,7 +124,7 @@ get_datelimits <- function (spdb)
 #' @param db The spatiallite database containing the trips (and established by a
 #' \code{dplyr::src_sqlite} call)
 #' @param ... Additional arguments including start_time, end_time, start_date,
-#' and end_date
+#' end_date, and weekday
 #'
 #' @return A modified version of the \code{trips} table from \code{db}, filtered
 #' by the specified times

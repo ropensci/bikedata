@@ -4,7 +4,8 @@
 \alias{tripmat}
 \title{Extract station-to-station trip matrix from spatialite database}
 \usage{
-tripmat(spdb, start_date, end_date, start_time, end_time, quiet = FALSE)
+tripmat(spdb, start_date, end_date, start_time, end_time, weekday,
+  quiet = FALSE)
 }
 \arguments{
 \item{spdb}{Path to the spatialite database}
@@ -20,6 +21,10 @@ including this time of each day}
 
 \item{end_time}{If given, extract only those records ending at and including
 this time of each day}
+
+\item{weekday}{If given, extract only those records including the nominated
+weekdays. This can be a vector of numeric, starting with Sunday=1, or
+unambiguous characters, so "sa" and "tu" for Saturday and Tuesday.}
 
 \item{quiet}{If FALSE, progress is displayed on screen}
 }

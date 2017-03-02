@@ -4,9 +4,9 @@ output:
   md_document:
     variant: markdown_github
     toc: true
-  #html_document:
-  #  variant: markdown_github
-  #  toc: true
+  html_document:
+    toc: true
+    theme: flatly
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
