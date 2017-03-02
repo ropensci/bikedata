@@ -69,6 +69,33 @@ convert_hms <- function (x)
     return (res)
 }
 
+#' convert weekday vector to numbered weekdays
+#'
+#' @param wd Vector of numeric or character denoting weekdays
+#'
+#' @return Equivalent character vector of numbered weekdays
+convert_weekday <- function (wd)
+{
+    if (!is.numeric (wd))
+    {
+        if (!is.character (wd))
+            stop ("don't know how to convert weekdays of class ", class (wd))
+        wdlist <- c ("sunday", "monday", "tuesday", "wednesday", 
+                     "thursday", "friday", "saturday")
+        wd <- sapply (tolower (wd), function (i)
+                      {
+                          res <- grep (paste0 ("\\<", i), wdlist)
+                          if (length (res) == 0)
+                              res <- NA
+                          return (res)
+                      })
+        if (any (is.na (wd)))
+            stop ('weekday specificaiton is ambiguous')
+    } else if (any (!wd %in% 1:7))
+        stop ('weekdays must be between 1 and 7')
+    return (paste (sort (wd) - 1)) # sql is 0-indexed
+}
+
 #' Extract date-time limits from trip database
 #'
 #' @param spdb Path to the spatialite database 
@@ -103,6 +130,13 @@ get_datelimits <- function (spdb)
 #' by the specified times
 filter_tripmat_by_datetime <- function (db, ...)
 {
+    # NOTE that this approach is much more efficient than the `dplyr::filter`
+    # command, because that can only be applied to the entire datetime field:
+    # dplyr::filter (trips, start_time > "2014-07-07 00:00:00", 
+    #                       start_time < "2014-07-10 23:59:59")
+    # ... and there is no direct way to filter based on distinct dates AND
+    # times, nor can the SQL `date` and `time` functions be applied through
+    # dplyr.
     x <- as.list (...)
     qry <- paste0 ("SELECT trip_id, start_time, stop_time, ",
                    "start_station_id, end_station_id ",
@@ -116,6 +150,17 @@ filter_tripmat_by_datetime <- function (db, ...)
         qry_dt <- c (qry_dt, paste0 ("date (start_time) >= '", x$start_date, "' "))
     if ('end_date' %in% names (x))
         qry_dt <- c (qry_dt, paste0 ("date (stop_time) <= '", x$end_date, "' "))
+
+    qry_wd <- NULL
+    if ('weekday' %in% names (x))
+    {
+        qry_wd <- sapply (x$weekday, function (i)
+                          paste0 ("strftime('%w', start_time) = '", i, "' "))
+        if (length (x$weekday) > 1)
+            qry_wd <- paste0 ("(", paste (qry_wd, collapse="OR "), ")")
+        qry_dt <- c (qry_dt, qry_wd)
+    }
+
     qry <- paste0 (qry, paste (qry_dt, collapse="AND "))
 
     dplyr::tbl (db, dplyr::sql (qry))
@@ -132,6 +177,9 @@ filter_tripmat_by_datetime <- function (db, ...)
 #' including this time of each day
 #' @param end_time If given, extract only those records ending at and including
 #' this time of each day
+#' @param weekday If given, extract only those records including the nominated
+#' weekdays. This can be a vector of numeric, starting with Sunday=1, or
+#' unambiguous characters, so "sa" and "tu" for Saturday and Tuesday.
 #' @param quiet If FALSE, progress is displayed on screen
 #'
 #' @return Square matrix of numbers of trips between each station
@@ -142,7 +190,7 @@ filter_tripmat_by_datetime <- function (db, ...)
 #'
 #' @export
 tripmat <- function (spdb, start_date, end_date, start_time, end_time,
-                     quiet=FALSE)
+                     weekday, quiet=FALSE)
 {
     # suppress R CMD check notes:
     stop_time <- sttrip_id <- st <- et <- NULL
@@ -157,6 +205,8 @@ tripmat <- function (spdb, start_date, end_date, start_time, end_time,
         x <- c (x, 'start_time' = convert_hms (start_time))
     if (!missing (end_time))
         x <- c (x, 'end_time' = convert_hms (end_time))
+    if (!missing (weekday))
+        x <- c (x, 'weekday' = list (convert_weekday (weekday)))
 
     # create generic table, while is replaced if filtered by time
     trips <- dplyr::tbl (db, 'trips') 

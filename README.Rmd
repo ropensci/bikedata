@@ -145,3 +145,34 @@ format (sum (tmat), big.mark=',')
 ```{r, echo=FALSE}
 "10,715"
 ```
+
+## 2.3. Filtering trips by day of week
+
+Trips can also extracted for particular days of the week by specifying the
+`weekday` argument of `tripmat`. Weekdays can be numeric, start from `1=Sunday`,
+or any unambiguous character string.
+```{r, eval=FALSE}
+tmat <- tripmat ('spdb', weekday=7)
+format (sum (tmat), big.mark=',')
+```
+```{r, echo=FALSE}
+"350,986"
+```
+
+Several weekdays can also be selected
+```{r, eval=FALSE}
+tmat <- tripmat ('spdb', weekday=c('m', 'Th'))
+format (sum (tmat), big.mark=',')
+```
+```{r, echo=FALSE}
+"862,119"
+```
+
+Weekdays can also be specified along with other dates and times
+```{r, eval=FALSE}
+tmat <- tripmat ('spdb', weekday=2:6, start_time=6, end_time=9)
+format (sum (tmat), big.mark=',')
+```
+```{r, echo=FALSE}
+"329,919"
+```
