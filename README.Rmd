@@ -23,6 +23,8 @@ knitr::opts_chunk$set(
 [![Project Status: Concept - Minimal or no implementation has been done yet.](http://www.repostatus.org/badges/0.1.0/concept.svg)](http://www.repostatus.org/#concept)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/bikedata)](http://cran.r-project.org/web/packages/bikedata) 
 
+# bikedata
+
 
 R package to load data from public bicycle hire systems. Currently a
 proof-of-concept that only loads data from the New York City [citibike
