@@ -237,14 +237,6 @@ int importDataToSpatialite (Rcpp::CharacterVector datafiles,
         else
             delim = ",";
 
-        std::string tripqrystart = "INSERT INTO trips (trip_id, trip_duration, start_time, stop_time, start_station_id, end_station_id, bike_id, user_type, birth_year, gender) VALUES ";
-        std::string tripqry = tripqrystart;
-
-        std::string birthyear = "", gender = "", 
-            startstationid = "", endstationid = "";
-
-        std::vector< std::string > vec;
-
         while (fgets (in_line, BUFFER_SIZE, pFile) != NULL) 
         {
             rm_dos_end (in_line);
@@ -259,8 +251,8 @@ int importDataToSpatialite (Rcpp::CharacterVector datafiles,
 
     sqlite3_exec(dbcon, "END TRANSACTION", NULL, NULL, &zErrMsg);
 
-
-    std::string fullstationqry = "INSERT INTO stations (id, longitude, latitude, name) VALUES ";
+    std::string fullstationqry = "INSERT INTO stations "
+                                 "(id, longitude, latitude, name) VALUES ";
     fullstationqry = fullstationqry + stationqry.begin ()->second;
     for (auto thisstation = std::next (stationqry.begin ());
             thisstation != stationqry.end (); ++thisstation)
@@ -268,9 +260,12 @@ int importDataToSpatialite (Rcpp::CharacterVector datafiles,
     fullstationqry = fullstationqry + ";";
 
     rc = sqlite3_exec(dbcon, fullstationqry.c_str(), NULL, 0, &zErrMsg);
-    rc = sqlite3_exec(dbcon, "SELECT AddGeometryColumn('stations', 'geom', 4326, 'POINT', 'XY');", NULL, 0, &zErrMsg);
+    std::string qry = "SELECT AddGeometryColumn"
+                      "('stations', 'geom', 4326, 'POINT', 'XY');";
+    rc = sqlite3_exec(dbcon, qry.c_str (), NULL, 0, &zErrMsg);
 
-    rc = sqlite3_exec(dbcon, "UPDATE stations SET geom = MakePoint(longitude, latitude, 4326);", NULL, 0, &zErrMsg);
+    qry = "UPDATE stations SET geom = MakePoint(longitude, latitude, 4326);";
+    rc = sqlite3_exec(dbcon, qry.c_str (), NULL, 0, &zErrMsg);
 
     rc = sqlite3_close_v2(dbcon);
     if (rc != SQLITE_OK)
