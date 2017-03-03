@@ -1,10 +1,8 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-[![Build Status](https://travis-ci.org/mpadge/bikedata.svg)](https://travis-ci.org/mpadge/bikedata) [![Project Status: Concept - Minimal or no implementation has been done yet.](http://www.repostatus.org/badges/0.1.0/concept.svg)](http://www.repostatus.org/#concept) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/bikedata)](http://cran.r-project.org/web/packages/bikedata)
+[![Build Status](https://travis-ci.org/mpadge/bikedata.svg)](https://travis-ci.org/mpadge/bikedata) [![codecov](https://codecov.io/gh/mpadge/bikedata/branch/master/graph/badge.svg)](https://codecov.io/gh/mpadge/bikedata) [![Project Status: Concept - Minimal or no implementation has been done yet.](http://www.repostatus.org/badges/0.1.0/concept.svg)](http://www.repostatus.org/#concept) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/bikedata)](http://cran.r-project.org/web/packages/bikedata)
 
 bikedata
 ========
-
-R package to load data from public bicycle hire systems. Currently a proof-of-concept that only loads data from the New York City [citibike scheme](https://www.citibikenyc.com/).
 
 -   [bikedata](#bikedata)
 -   [1. Installation](#installation)
@@ -13,6 +11,7 @@ R package to load data from public bicycle hire systems. Currently a proof-of-co
     -   [2.2. Filtering trips by time of day](#filtering-trips-by-time-of-day)
     -   [2.3. Filtering trips by day of week](#filtering-trips-by-day-of-week)
 
+R package to load data from public bicycle hire systems. Currently a proof-of-concept that only loads data from the New York City [citibike scheme](https://www.citibikenyc.com/).
 
 1. Installation
 ===============
@@ -33,7 +32,7 @@ dl_bikedata (data_dir='/tmp')
 The resultant files can then be read into an `spatialite` database with
 
 ``` r
-store_bikedata_spl (data_dir='/tmp', 'spdb')
+store_bikedata (data_dir='/tmp', 'spdb')
 ```
 
 Numbers of trips between each pair of stations ('trip matrices') can then be obtained in square matrix form from

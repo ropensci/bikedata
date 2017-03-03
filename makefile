@@ -1,6 +1,6 @@
 LFILE = README
 
-all: knit open 
+all: knith open 
 
 knith: $(LFILE).Rmd
 	echo "rmarkdown::render('$(LFILE).Rmd',output_file='$(LFILE).html')" | R --no-save -q
