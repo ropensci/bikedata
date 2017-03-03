@@ -17,7 +17,8 @@ Imports:
     Rcpp
 Depends:
     dplyr,
-    lubridate
+    lubridate,
+    RSQLite
 Suggests:
     testthat
 LinkingTo: 

@@ -3,6 +3,7 @@
 #' @name bikedata
 #' @docType package
 #' @author Mark Padgham
+#' @import RSQLite
 #' @importFrom Rcpp evalCpp
 #' @importFrom dplyr %>% collect filter group_by src_sqlite summarise sql tbl
 #' @importFrom lubridate ymd
