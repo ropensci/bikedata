@@ -37,6 +37,32 @@ char *strtokm(char *str, const char *delim)
     return tok;
 }
 
+void rm_dos_end (char *str)
+{
+    char *p = strrchr (str, '\r');
+    if (p && p[1]=='\n' && p[2]=='\0') 
+        p[0] = '\0';
+}
+
+bool line_has_quotes (char * line)
+{
+    bool has_quotes = false;
+    unsigned slen = strlen (line);
+    char * b;
+    b = (char*) line;
+    char ch;
+    for (unsigned i = 0; i<slen; ++i)
+    {
+        strncpy (&ch, b+i, 1);
+        if (ch == '\"')
+        {
+            has_quotes = true;
+            break;
+        }
+    }
+    return has_quotes;
+}
+
 // Datetime strings for NYC change between 08/2014 and 09/2014 from
 // yyyy-mm-dd HH:MM:SS to m/d/yyyy HH:MM:SS. sqlite3 can't combine dates in
 // different formats, so this converts the latter to former formats.
@@ -63,6 +89,71 @@ std::string convert_datetime (std::string str)
     }
 
     return str;
+}
+
+void read_one_line (sqlite3_stmt * stmt, char * line,
+        std::map <std::string, std::string> * stationqry, const char * delim)
+{
+    std::string in_line2 = line;
+    char * token;
+    if (strncmp (delim, "\",\"", 3) == 0)
+    {
+        // Example of the following on L#19 of 2014-07
+        boost::replace_all(in_line2, "\\N","\"\"");
+        token = strtokm(&in_line2[0u], "\""); //First double speech marks
+        token = strtokm(NULL, delim); 
+    } else
+        token = strtokm(&in_line2[0u], delim);
+
+    sqlite3_bind_text(stmt, 2, token, -1, SQLITE_TRANSIENT); // Trip duration
+
+    std::string tempstr = convert_datetime (strtokm(NULL, delim)); // Start time
+    sqlite3_bind_text(stmt, 3, tempstr.c_str(), -1, SQLITE_TRANSIENT); 
+
+    tempstr = convert_datetime (strtokm(NULL, delim)); // Stop time
+    sqlite3_bind_text(stmt, 4, tempstr.c_str(), -1, SQLITE_TRANSIENT); 
+    std::string startstationid = strtokm(NULL, delim);
+    if (stationqry->count(startstationid) == 0) {
+        (*stationqry)[startstationid] = "(" + startstationid + "," + 
+            strtokm(NULL, delim) + "," + strtokm(NULL, delim) + ",'" + 
+            strtokm(NULL, delim) + "')";
+    }
+    else {
+        strtokm(NULL, delim);
+        strtokm(NULL, delim);
+        strtokm(NULL, delim);
+    }
+
+    sqlite3_bind_text(stmt, 5, startstationid.c_str(), -1, SQLITE_TRANSIENT); 
+
+    std::string endstationid = strtokm(NULL, delim);
+    if (stationqry->count(endstationid) == 0) {
+        (*stationqry)[endstationid] = "(" + endstationid + "," + 
+            strtokm(NULL, delim) + "," + strtokm(NULL, delim) + ",'" + 
+            strtokm(NULL, delim) + "')";
+    }
+    else {
+        strtokm(NULL, delim);
+        strtokm(NULL, delim);
+        strtokm(NULL, delim);
+    }
+
+    sqlite3_bind_text(stmt, 6, endstationid.c_str(), -1, SQLITE_TRANSIENT); 
+    // next two are bike id and user type
+    sqlite3_bind_text(stmt, 7, strtokm(NULL, delim), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 8, strtokm(NULL, delim), -1, SQLITE_TRANSIENT); 
+    std::string birthyear = strtokm(NULL, delim);
+    std::string gender = strtokm(NULL, delim);
+    if (gender.length () == 2) // gender still has a terminal quote
+        gender = gender [0];
+    if (birthyear.empty()) {
+        birthyear = "NULL";
+    }
+    if (gender.empty()) {
+        gender = "NULL";
+    }
+    sqlite3_bind_text(stmt, 9, birthyear.c_str(), -1, SQLITE_TRANSIENT); // Birth Year
+    sqlite3_bind_text(stmt, 10, gender.c_str(), -1, SQLITE_TRANSIENT); // Gender
 }
 
 //' import data using spatialite
@@ -129,8 +220,8 @@ int importDataToSpatialite (Rcpp::CharacterVector datafiles,
     sqlite3_exec(dbcon, "BEGIN TRANSACTION", NULL, NULL, &zErrMsg);
 
     int trip_id = 0;
-    for(unsigned int filenum = 0; filenum < datafiles.length(); filenum++) {
-
+    for(unsigned int filenum = 0; filenum < datafiles.length(); filenum++) 
+    {
         if (!quiet)
             Rcpp::Rcout << "reading file " << filenum + 1 << "/" <<
                 datafiles.size() << ": " <<
@@ -138,6 +229,13 @@ int importDataToSpatialite (Rcpp::CharacterVector datafiles,
 
         pFile = fopen(datafiles[filenum], "r");
         char * junk = fgets(in_line, BUFFER_SIZE, pFile);
+        rm_dos_end (in_line);
+
+        const char * delim;
+        if (line_has_quotes (in_line))
+            delim = "\",\"";
+        else
+            delim = ",";
 
         std::string tripqrystart = "INSERT INTO trips (trip_id, trip_duration, start_time, stop_time, start_station_id, end_station_id, bike_id, user_type, birth_year, gender) VALUES ";
         std::string tripqry = tripqrystart;
@@ -147,69 +245,16 @@ int importDataToSpatialite (Rcpp::CharacterVector datafiles,
 
         std::vector< std::string > vec;
 
-        while (fgets (in_line, BUFFER_SIZE, pFile) != NULL) {
-
+        while (fgets (in_line, BUFFER_SIZE, pFile) != NULL) 
+        {
+            rm_dos_end (in_line);
             sqlite3_bind_text(stmt, 1, std::to_string (trip_id).c_str(), -1, SQLITE_TRANSIENT); // Trip ID
+            read_one_line (stmt, in_line, &stationqry, delim);
             trip_id++;
 
-            std::string in_line2 = in_line;
-            boost::replace_all(in_line2, "\\N","\"\"");
-            strtokm(&in_line2[0u], "\""); //First double speech marks
-            sqlite3_bind_text(stmt, 2, strtokm(NULL, "\",\""), -1, SQLITE_TRANSIENT); // Trip duration
-
-            std::string tempstr = convert_datetime (strtokm(NULL, "\",\""));
-            sqlite3_bind_text(stmt, 3, tempstr.c_str(), -1, SQLITE_TRANSIENT); // Start time
-            //sqlite3_bind_text(stmt, 2, strtokm(NULL, "\",\""), -1, SQLITE_TRANSIENT); // Start time
-            
-            tempstr = convert_datetime (strtokm(NULL, "\",\""));
-            sqlite3_bind_text(stmt, 4, tempstr.c_str(), -1, SQLITE_TRANSIENT); // Stop time
-            //sqlite3_bind_text(stmt, 4, strtokm(NULL, "\",\""), -1, SQLITE_TRANSIENT); // Stop time
-            startstationid = strtokm(NULL, "\",\"");
-            if (stationqry.count(startstationid) == 0) {
-                stationqry[startstationid] = "(" + startstationid + "," + 
-                    strtokm(NULL, "\",\"") + "," + strtokm(NULL, "\",\"") + ",'" + 
-                    strtokm(NULL, "\",\"") + "')";
-            }
-            else {
-                strtokm(NULL, "\",\"");
-                strtokm(NULL, "\",\"");
-                strtokm(NULL, "\",\"");
-            }
-
-            sqlite3_bind_text(stmt, 5, startstationid.c_str(), -1, SQLITE_TRANSIENT); // Start station ID
-
-            endstationid = strtokm(NULL, "\",\"");
-            if (stationqry.count(endstationid) == 0) {
-                stationqry[endstationid] = "(" + endstationid + "," + 
-                    strtokm(NULL, "\",\"") + "," + strtokm(NULL, "\",\"") + ",'" + 
-                    strtokm(NULL, "\",\"") + "')";
-            }
-            else {
-                strtokm(NULL, "\",\"");
-                strtokm(NULL, "\",\"");
-                strtokm(NULL, "\",\"");
-            }
-
-            sqlite3_bind_text(stmt, 6, endstationid.c_str(), -1, SQLITE_TRANSIENT); // End station ID
-            sqlite3_bind_text(stmt, 7, strtokm(NULL, "\",\""), -1, SQLITE_TRANSIENT); // Bicycle ID
-            sqlite3_bind_text(stmt, 8, strtokm(NULL, "\",\""), -1, SQLITE_TRANSIENT); // User type
-            birthyear = strtokm(NULL, "\",\"");
-            gender = strtokm(NULL, "\",\"");
-            if (birthyear.empty()) {
-                birthyear = "NULL";
-            }
-            if (gender.empty()) {
-                gender = "NULL";
-            }
-            sqlite3_bind_text(stmt, 9, birthyear.c_str(), -1, SQLITE_TRANSIENT); // Birth Year
-            sqlite3_bind_text(stmt, 10, gender.c_str(), -1, SQLITE_TRANSIENT); // Gender
-
             sqlite3_step(stmt);
-
             sqlite3_reset(stmt);
-
         }
-
     }
 
     sqlite3_exec(dbcon, "END TRANSACTION", NULL, NULL, &zErrMsg);
