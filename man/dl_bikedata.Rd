@@ -14,6 +14,11 @@ dl_bikedata(city = "nyc", data_dir = tempdir())
 \description{
 Download hire bicycle data
 }
+\note{
+Only files that don't already exist in \code{data_dir} will be
+downloaded, and this function may thus be used to update a directory of files
+by downloading more recent files.
+}
 \section{Details}{
 
 This convenience function downloads hire bicycle data from the nominated

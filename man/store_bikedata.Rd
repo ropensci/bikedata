@@ -2,13 +2,23 @@
 % Please edit documentation in R/dl_bikedata.R
 \name{store_bikedata}
 \alias{store_bikedata}
-\title{Estalish postgres database for nyc-citibike data}
+\title{Store nyc-citibike data in spatialite database}
 \usage{
-store_bikedata(data_dir = tempdir())
+store_bikedata(data_dir, spdb, quiet = FALSE)
 }
 \arguments{
-\item{data_dir}{Directory to which to download the files}
+\item{data_dir}{A character vector giving the directory containing the
+\code{.zip} files of citibike data.}
+
+\item{spdb}{A string containing the path to the spatialite database to 
+use. It will be created automatically.}
+
+\item{quiet}{If FALSE, progress is displayed on screen}
 }
 \description{
-Estalish postgres database for nyc-citibike data
+Store nyc-citibike data in spatialite database
+}
+\note{
+This function can take quite a long time to execute (typically > 10
+minutes), and generates a spatialite database file several gigabytes in size.
 }

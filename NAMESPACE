@@ -3,7 +3,6 @@
 export(dl_bikedata)
 export(get_datelimits)
 export(store_bikedata)
-export(store_bikedata_spl)
 export(tripmat)
 importFrom(Rcpp,evalCpp)
 importFrom(dplyr,"%>%")
