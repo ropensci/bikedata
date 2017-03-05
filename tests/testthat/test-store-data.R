@@ -14,3 +14,11 @@ test_that ('read data', {
                expect_equal (nrow (stns), 9)
                invisible (file.remove ("testdb"))
 })
+
+test_that ('date limits', {
+               expect_silent (store_bikedata ("..", "testdb", quiet=TRUE))
+               x <- get_datelimits ('testdb')
+               expect_is (x, 'character')
+               expect_length (x, 2)
+               invisible (file.remove ("testdb"))
+})
