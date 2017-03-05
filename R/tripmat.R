@@ -13,7 +13,7 @@ reshape_tripmat <- function (mat)
         mat <- mat [order (rnames),]
 
     allnames <- sort (unique (c (cnames, rnames)))
-    if (length (allnames) > max (c (nrow (mat), ncol (mat))))
+    if (length (allnames) > nrow (mat) | length (allnames) > ncol (mat))
     {
         cindx <- which (allnames %in% cnames)
         rindx <- which (allnames %in% rnames)
