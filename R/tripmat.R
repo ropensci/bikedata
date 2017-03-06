@@ -20,6 +20,9 @@ reshape_tripmat <- function (mat)
         mat_ex <- array (0, dim=rep (length (allnames), 2))
         mat_ex [rindx, cindx] <- mat
         colnames (mat_ex) <- rownames (mat_ex) <- paste (allnames)
+        names (attributes (mat_ex)$dimnames) <- c ('start_station_id',
+                                                   'end_station_id')
+
         mat <- mat_ex
     }
 
@@ -85,12 +88,12 @@ convert_weekday <- function (wd)
         wd <- sapply (tolower (wd), function (i)
                       {
                           res <- grep (paste0 ("\\<", i), wdlist)
-                          if (length (res) == 0)
+                          if (length (res) != 1)
                               res <- NA
                           return (res)
                       })
         if (any (is.na (wd)))
-            stop ('weekday specificaiton is ambiguous')
+            stop ('weekday specification is ambiguous')
     } else if (any (!wd %in% 1:7))
         stop ('weekdays must be between 1 and 7')
     return (paste (sort (wd) - 1)) # sql is 0-indexed
@@ -225,6 +228,8 @@ tripmat <- function (spdb, start_date, end_date, start_time, end_time,
         message ('done')
 
     ntrips <- reshape_tripmat (ntrips)
+    attributes (ntrips)$call <- NULL
+    class (ntrips) <- 'matrix'
 
     return (as (ntrips, 'matrix'))
 }
