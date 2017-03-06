@@ -79,14 +79,15 @@ tmat <- tripmat ('spdb')
 format (sum (tmat), big.mark=',')
 ```
 ```{r, echo=FALSE}
-"2,886,218"
+"36,902,025"
 ```
-(This is only a small selection of all data.)
+The `spatialite` database of all trips is very large, and the `tripmat` function
+can take quite some time to execute (like several minutes).
 ```{r, eval=FALSE}
 dim (tmat)
 ```
 ```{r, echo=FALSE}
-c (330, 330)
+c (689, 689)
 ```
 
 ## 2.1. Filtering trips by date
@@ -97,7 +98,7 @@ temporal extent of the database can be readily viewed with
 get_datelimits ('spdb')
 ```
 ```{r, echo=FALSE}
-res <- c ("2014-07-01 00:00:04", "2014-11-16 08:50:59")
+res <- c ("2013-07-01 00:00:00", "2017-01-19 08:08:17")
 names (res) <- c ("first", "last")
 res
 ```
@@ -107,11 +108,11 @@ The `tripmat` function accepts four optional arguments specifying `start_date`,
 A trip matrix constructed from trips beginning after a given date with the
 `start_date` argument.
 ```{r, eval=FALSE}
-tmat <- tripmat ('spdb', start_date="20140901")
+tmat <- tripmat ('spdb', start_date="20160101")
 format (sum (tmat), big.mark=',')
 ```
 ```{r, echo=FALSE}
-"953,887"
+"13,845,655"
 ```
 As expected, that reduces numbers of trips. End dates can also be specified
 ```{r, eval=FALSE}
@@ -141,12 +142,12 @@ end of a day (`23:59:59`).
 
 Dates and times can of course be combined
 ```{r, eval=FALSE}
-tmat <- tripmat ('spdb', start_date=20140901, end_date="14,09,03",
-                 start_time=6, end_time=9)
+tmat <- tripmat ('spdb', start_date=20150101, end_date="15,12,31",
+                 start_time=6, end_time=10)
 format (sum (tmat), big.mark=',')
 ```
 ```{r, echo=FALSE}
-"10,715"
+"1,635,974"
 ```
 
 ## 2.3. Filtering trips by day of week
@@ -159,7 +160,7 @@ tmat <- tripmat ('spdb', weekday=7)
 format (sum (tmat), big.mark=',')
 ```
 ```{r, echo=FALSE}
-"350,986"
+"4,469,250"
 ```
 
 Several weekdays can also be selected
@@ -168,14 +169,14 @@ tmat <- tripmat ('spdb', weekday=c('m', 'Th'))
 format (sum (tmat), big.mark=',')
 ```
 ```{r, echo=FALSE}
-"862,119"
+"10,923,683"
 ```
 
 Weekdays can also be specified along with other dates and times
 ```{r, eval=FALSE}
-tmat <- tripmat ('spdb', weekday=2:6, start_time=6, end_time=9)
+tmat <- tripmat ('spdb', weekday=2:6, start_time=6, end_time=10)
 format (sum (tmat), big.mark=',')
 ```
 ```{r, echo=FALSE}
-"329,919"
+"6,333,545"
 ```

@@ -4,7 +4,6 @@
 bikedata
 ========
 
--   [bikedata](#bikedata)
 -   [1. Installation](#installation)
 -   [2. Usage](#usage)
     -   [2.1. Filtering trips by date](#filtering-trips-by-date)
@@ -13,14 +12,14 @@ bikedata
 
 R package to load data from public bicycle hire systems. Currently a proof-of-concept that only loads data from the New York City [citibike scheme](https://www.citibikenyc.com/).
 
-1. Installation
+<a name="installation"></a>1. Installation
 ===============
 
 ``` r
 devtools::install_github("mpadge/bikedata")
 ```
 
-2. Usage
+<a name="usage"></a>2. Usage
 ========
 
 Data from the NYC citibike system can can be downloaded with
@@ -42,17 +41,17 @@ tmat <- tripmat ('spdb')
 format (sum (tmat), big.mark=',')
 ```
 
-    #> [1] "2,886,218"
+    #> [1] "36,902,025"
 
-(This is only a small selection of all data.)
+The `spatialite` database of all trips is very large, and the `tripmat` function can take quite some time to execute (like several minutes).
 
 ``` r
 dim (tmat)
 ```
 
-    #> [1] 330 330
+    #> [1] 689 689
 
-2.1. Filtering trips by date
+<a name="filtering-trips-by-date"></a>2.1. Filtering trips by date
 ----------------------------
 
 Trip matrices can be constructed for trips filtered by dates and/or times. The temporal extent of the database can be readily viewed with
@@ -62,18 +61,18 @@ get_datelimits ('spdb')
 ```
 
     #>                 first                  last 
-    #> "2014-07-01 00:00:04" "2014-11-16 08:50:59"
+    #> "2013-07-01 00:00:00" "2017-01-19 08:08:17"
 
 The `tripmat` function accepts four optional arguments specifying `start_date`, `end_date`, `start_time`, and `end_time`.
 
 A trip matrix constructed from trips beginning after a given date with the `start_date` argument.
 
 ``` r
-tmat <- tripmat ('spdb', start_date="20140901")
+tmat <- tripmat ('spdb', start_date="20160101")
 format (sum (tmat), big.mark=',')
 ```
 
-    #> [1] "953,887"
+    #> [1] "13,845,655"
 
 As expected, that reduces numbers of trips. End dates can also be specified
 
@@ -86,7 +85,7 @@ format (sum (tmat), big.mark=',')
 
 Note that dates can be specified in almost any format, as long as the order is `year-month-day`.
 
-2.2. Filtering trips by time of day
+<a name="filtering-trips-by-time-of-day"></a>2.2. Filtering trips by time of day
 -----------------------------------
 
 Trips can also be selected starting and/or ending at specific times of day.
@@ -103,14 +102,14 @@ Single values are interpeted to specify hours, so the above request returns only
 Dates and times can of course be combined
 
 ``` r
-tmat <- tripmat ('spdb', start_date=20140901, end_date="14,09,03",
-                 start_time=6, end_time=9)
+tmat <- tripmat ('spdb', start_date=20150101, end_date="15,12,31",
+                 start_time=6, end_time=10)
 format (sum (tmat), big.mark=',')
 ```
 
-    #> [1] "10,715"
+    #> [1] "1,635,974"
 
-2.3. Filtering trips by day of week
+<a name="filtering-trips-by-day-of-week"></a>2.3. Filtering trips by day of week
 -----------------------------------
 
 Trips can also extracted for particular days of the week by specifying the `weekday` argument of `tripmat`. Weekdays can be numeric, start from `1=Sunday`, or any unambiguous character string.
@@ -120,7 +119,7 @@ tmat <- tripmat ('spdb', weekday=7)
 format (sum (tmat), big.mark=',')
 ```
 
-    #> [1] "350,986"
+    #> [1] "4,469,250"
 
 Several weekdays can also be selected
 
@@ -129,13 +128,13 @@ tmat <- tripmat ('spdb', weekday=c('m', 'Th'))
 format (sum (tmat), big.mark=',')
 ```
 
-    #> [1] "862,119"
+    #> [1] "10,923,683"
 
 Weekdays can also be specified along with other dates and times
 
 ``` r
-tmat <- tripmat ('spdb', weekday=2:6, start_time=6, end_time=9)
+tmat <- tripmat ('spdb', weekday=2:6, start_time=6, end_time=10)
 format (sum (tmat), big.mark=',')
 ```
 
-    #> [1] "329,919"
+    #> [1] "6,333,545"
