@@ -77,7 +77,7 @@ dl_bikedata <- function(city='nyc', data_dir = tempdir())
     indx <- which (!file.exists (files))
     if (length (indx) > 0)
     {
-        for (f in files [indx])
+        for (f in citibike_files () [indx])
         {
             destfile <- file.path (data_dir, basename(f))
             download.file (f, destfile)
