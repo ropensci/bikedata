@@ -8,6 +8,6 @@
 bike_stations <- function (spdb)
 {
     db <- dplyr::src_sqlite (spdb, create=F)
-    dplyr::tbl (db, 'stations') 
+    dplyr::collect (dplyr::tbl (db, 'stations'))
 }
 
