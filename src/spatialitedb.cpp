@@ -310,7 +310,12 @@ int createDBIndexes (const char* spdb,
 
     for (unsigned int i = 0; i < cols.length(); ++i) {
     
-      asprintf(&idxsql, "CREATE INDEX %s ON %s(%s)", ("idx_" + tables[i] + "_" + cols[i]).c_str(), (char *)(tables[i]), (char *)(cols[i]));
+      std::string idxname = "idx_" + tables[i] + "_" + (std::string)cols[i];
+      boost::replace_all(idxname, "(", "_");
+      boost::replace_all(idxname, ")", "_");
+      boost::replace_all(idxname, " ", "_");
+      
+      int sprrc = asprintf(&idxsql, "CREATE INDEX %s ON %s(%s)", idxname.c_str(), (char *)(tables[i]), (char *)(cols[i]));
       
       rc = sqlite3_exec(dbcon, idxsql, NULL, NULL, &zErrMsg);
       if (rc != SQLITE_OK) {

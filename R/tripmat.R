@@ -146,13 +146,13 @@ filter_tripmat_by_datetime <- function (db, ...)
                    "FROM trips WHERE ")
     qry_dt <- NULL
     if ('start_time' %in% names (x))
-        qry_dt <- c (qry_dt, paste0 ("time (start_time) >= '", x$start_time, "' "))
+        qry_dt <- c (qry_dt, paste0 ("cast(start_time as time) >= '", x$start_time, "' "))
     if ('end_time' %in% names (x))
-        qry_dt <- c (qry_dt, paste0 ("time (stop_time) <= '", x$end_time, "' "))
+        qry_dt <- c (qry_dt, paste0 ("cast(stop_time as time) <= '", x$end_time, "' "))
     if ('start_date' %in% names (x))
-        qry_dt <- c (qry_dt, paste0 ("date (start_time) >= '", x$start_date, "' "))
+        qry_dt <- c (qry_dt, paste0 ("cast(start_time as date) >= '", x$start_date, "' "))
     if ('end_date' %in% names (x))
-        qry_dt <- c (qry_dt, paste0 ("date (stop_time) <= '", x$end_date, "' "))
+        qry_dt <- c (qry_dt, paste0 ("cast(stop_time as date) <= '", x$end_date, "' "))
 
     qry_wd <- NULL
     if ('weekday' %in% names (x))
