@@ -273,3 +273,59 @@ int importDataToSpatialite (Rcpp::CharacterVector datafiles,
 
     return(trip_id);
 }
+
+
+//' Create indexes in database
+//'
+//' Creates the specified indexes in the database to speed up queries. Note
+//' that for the full dataset this may take some time.
+//' 
+//' @param spdb A string containing the path to the spatialite database to 
+//' use.
+//' @param tables A vector with the tables for which to create indexes. This
+//' vector should be the same length as the cols vector.
+//' @param cols A vector with the fields for which to create indexes.
+//'
+//' @return integer result code
+// [[Rcpp::export]]
+int createDBIndexes (const char* spdb,
+                            Rcpp::CharacterVector tables,
+                            Rcpp::CharacterVector cols) 
+{
+  
+  sqlite3 *dbcon;
+  char *zErrMsg = 0;
+  const char *zStmtMsg;
+  int rc;
+  void* cache = spatialite_alloc_connection();
+  
+  rc = sqlite3_open_v2(spdb, &dbcon, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
+  if (rc != SQLITE_OK)
+    throw std::runtime_error ("Can't establish sqlite3 connection");
+  spatialite_init_ex(dbcon, cache, 0);
+  
+  char *idxsql = NULL;
+  
+  if (rc == SQLITE_OK) {
+
+    for (unsigned int i = 0; i < cols.length(); ++i) {
+    
+      asprintf(&idxsql, "CREATE INDEX %s ON %s(%s)", ("idx_" + tables[i] + "_" + cols[i]).c_str(), (char *)(tables[i]), (char *)(cols[i]));
+      
+      rc = sqlite3_exec(dbcon, idxsql, NULL, NULL, &zErrMsg);
+      if (rc != SQLITE_OK) {
+        throw std::runtime_error ("Unable to execute index query: " + (std::string)idxsql);
+      }
+    
+    } 
+  
+  }
+  
+  rc = sqlite3_close_v2(dbcon);
+  if (rc != SQLITE_OK) {
+    throw std::runtime_error ("Unable to close sqlite database");
+  }
+  
+  return(rc);
+
+}

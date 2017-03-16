@@ -16,3 +16,19 @@ importDataToSpatialite <- function(datafiles, spdb, quiet) {
     .Call('bikedata_importDataToSpatialite', PACKAGE = 'bikedata', datafiles, spdb, quiet)
 }
 
+#' Create indexes in database
+#'
+#' Creates the specified indexes in the database to speed up queries. Note
+#' that for the full dataset this may take some time.
+#' 
+#' @param spdb A string containing the path to the spatialite database to 
+#' use.
+#' @param tables A vector with the tables for which to create indexes. This
+#' vector should be the same length as the cols vector.
+#' @param cols A vector with the fields for which to create indexes.
+#'
+#' @return integer result code
+createDBIndexes <- function(spdb, tables, cols) {
+    .Call('bikedata_createDBIndexes', PACKAGE = 'bikedata', spdb, tables, cols)
+}
+

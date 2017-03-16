@@ -6,7 +6,9 @@ Authors@R: c(
     person("Richard", "Ellison", role="aut"))
 Description: Load data from public hire bicycle systems.
 Depends:
-    R (>= 3.3.0)
+    dplyr,
+    lubridate,
+    RSQLite
 License: GPL-3 + file LICENSE
 SystemRequirements: C++11
 NeedsCompilation: yes
@@ -15,13 +17,8 @@ LazyData: true
 Imports:
     methods,
     Rcpp
-Depends:
-    dplyr,
-    lubridate,
-    RSQLite
 Suggests:
     testthat
-LinkingTo: 
-    BH,
+LinkingTo: BH,
     Rcpp
-RoxygenNote: 6.0.1
+RoxygenNote: 5.0.1

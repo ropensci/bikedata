@@ -4,7 +4,7 @@
 \alias{store_bikedata}
 \title{Store nyc-citibike data in spatialite database}
 \usage{
-store_bikedata(data_dir, spdb, quiet = FALSE)
+store_bikedata(data_dir, spdb, quiet = FALSE, create_index = TRUE)
 }
 \arguments{
 \item{data_dir}{A character vector giving the directory containing the
@@ -14,6 +14,9 @@ store_bikedata(data_dir, spdb, quiet = FALSE)
 use. It will be created automatically.}
 
 \item{quiet}{If FALSE, progress is displayed on screen}
+
+\item{create_index}{If TRUE, creates an index on the start and end station
+IDs and start and stop times.}
 }
 \description{
 Store nyc-citibike data in spatialite database
@@ -22,3 +25,4 @@ Store nyc-citibike data in spatialite database
 This function can take quite a long time to execute (typically > 10
 minutes), and generates a spatialite database file several gigabytes in size.
 }
+
