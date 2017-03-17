@@ -183,6 +183,9 @@ filter_tripmat_by_datetime <- function (db, ...)
 #' @param weekday If given, extract only those records including the nominated
 #' weekdays. This can be a vector of numeric, starting with Sunday=1, or
 #' unambiguous characters, so "sa" and "tu" for Saturday and Tuesday.
+#' @param long If FALSE, a square tripmat of (num-stations, num_stations) is
+#' returns; if TRUE, a long-format matrix of (stn-from, stn-to, ntrips) is
+#' returned.
 #' @param quiet If FALSE, progress is displayed on screen
 #'
 #' @return Square matrix of numbers of trips between each station
@@ -193,7 +196,7 @@ filter_tripmat_by_datetime <- function (db, ...)
 #'
 #' @export
 tripmat <- function (spdb, start_date, end_date, start_time, end_time,
-                     weekday, quiet=FALSE)
+                     weekday, long=FALSE, quiet=FALSE)
 {
     # suppress R CMD check notes:
     stop_time <- sttrip_id <- st <- et <- NULL
@@ -231,6 +234,13 @@ tripmat <- function (spdb, start_date, end_date, start_time, end_time,
     attributes (ntrips)$call <- NULL
     class (ntrips) <- 'matrix'
 
-    return (as (ntrips, 'matrix'))
+    res <- as (ntrips, 'matrix')
+    if (long)
+    {
+        res <- reshape2::melt (res)
+        names (res) [3] <- "num_trips"
+    }
+
+    return (res)
 }
 
