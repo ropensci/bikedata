@@ -65,16 +65,22 @@ citibike_files <- function(){
 #'
 #' @param city City for which to download bike data
 #' @param data_dir Directory to which to download the files
+#' @param dates Character vector of dates to download data with dates formated
+#' as YYYYMM.
 #'
 #' @note Only files that don't already exist in \code{data_dir} will be
 #' downloaded, and this function may thus be used to update a directory of files
 #' by downloading more recent files.
 #'
 #' @export
-dl_bikedata <- function(city='nyc', data_dir = tempdir())
+dl_bikedata <- function(city='nyc', data_dir = tempdir(), dates = NULL)
 {
     files <- file.path (data_dir, basename (citibike_files ()))
-    indx <- which (!file.exists (files))
+    if (is.null(dates) == TRUE) {
+      indx <- which (!file.exists (files))
+    } else {
+      indx <- which (!file.exists (files) & grepl(paste(dates,collapse="|"), files))
+    }
     if (length (indx) > 0)
     {
         for (f in citibike_files () [indx])
@@ -95,12 +101,14 @@ dl_bikedata <- function(city='nyc', data_dir = tempdir())
 #' @param spdb A string containing the path to the spatialite database to 
 #' use. It will be created automatically.
 #' @param quiet If FALSE, progress is displayed on screen
+#' @param create_index If TRUE, creates an index on the start and end station
+#' IDs and start and stop times.
 #'
 #' @note This function can take quite a long time to execute (typically > 10
 #' minutes), and generates a spatialite database file several gigabytes in size.
 #' 
 #' @export
-store_bikedata <- function (data_dir, spdb, quiet=FALSE)
+store_bikedata <- function (data_dir, spdb, quiet=FALSE, create_index = TRUE)
 {
     if (file.exists (spdb))
         stop ('File named ', spdb, ' already exists')
@@ -124,5 +132,15 @@ store_bikedata <- function (data_dir, spdb, quiet=FALSE)
     if (!quiet)
         message ('total trips read = ', 
                  format (ntrips, big.mark=',', scientific=FALSE))
+    if (create_index == TRUE) {
+      if (!quiet) {
+        message ('Creating indexes')
+      }
+      createDBIndexes(spdb, 
+                      tables = rep("trips", times=8),
+                      cols = c("start_station_id", "end_station_id", "start_time", "stop_time",
+                               "cast(start_time as date)", "cast(start_time as time)",
+                               "cast(stop_time as date)", "cast(stop_time as time)"))
+    }
     invisible (file.remove (flist_csv))
 }

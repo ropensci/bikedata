@@ -37,6 +37,71 @@ char *strtokm(char *str, const char *delim)
     return tok;
 }
 
+// Function to compare version numbers
+// First argument is compared to the second argument
+// Return value:
+// -1 = Argument one version lower than Argument two version
+// 0 = Argument one version equal to Argument two version
+// 1 = Argument one version higher than Argument two version
+int compare_version_numbers (std::string vstro, std::string compvstro) {
+  
+  int versiondiff = 0;
+  
+  char *vstr = (char *)vstro.c_str();
+  char *compvstr = (char *)compvstro.c_str();
+  
+  char *vstrtok, *compvstrtok;
+  char *vstrtokptr, *compvstrtokptr;
+  
+  vstrtok = strtok_r(vstr, ".", &vstrtokptr);
+  compvstrtok = strtok_r (compvstr, ".", &compvstrtokptr);
+
+  if (atoi(vstrtok) < atoi(compvstrtok)) {
+    versiondiff = -1;
+  }
+  else if (atoi(vstrtok) > atoi(compvstrtok)) {
+    versiondiff = 1;
+  }
+  else {
+    while (vstrtok != NULL && compvstrtok != NULL && versiondiff == 0) {
+
+      vstrtok = strtok_r (NULL, ".", &vstrtokptr);
+      compvstrtok = strtok_r (NULL, ".", &compvstrtokptr);
+
+      if (vstrtok == NULL && compvstrtok == NULL) {
+        versiondiff = 0;
+      }
+      else if (vstrtok == NULL && compvstrtok != NULL) {
+        if (atoi(compvstrtok) == 0) {
+          versiondiff = 0;
+        }
+        else {
+          versiondiff = -1;
+        }
+      }
+      else if (vstrtok != NULL && compvstrtok == NULL) {
+        if (atoi(vstrtok) == 0) {
+          versiondiff = 0;
+        }
+        else {
+          versiondiff = 1;
+        }
+      }
+      else if (atoi(vstrtok) < atoi(compvstrtok)) {
+        versiondiff = -1;
+      }
+      else if (atoi(vstrtok) > atoi(compvstrtok)) {
+        versiondiff = 1;
+      }
+
+    }
+
+  }
+  
+  return versiondiff;
+
+}
+
 void rm_dos_end (char *str)
 {
     char *p = strrchr (str, '\r');
@@ -272,4 +337,88 @@ int importDataToSpatialite (Rcpp::CharacterVector datafiles,
         throw std::runtime_error ("Unable to close sqlite database");
 
     return(trip_id);
+}
+
+
+//' Create indexes in database
+//'
+//' Creates the specified indexes in the database to speed up queries. Note
+//' that for the full dataset this may take some time.
+//' 
+//' @param spdb A string containing the path to the spatialite database to 
+//' use.
+//' @param tables A vector with the tables for which to create indexes. This
+//' vector should be the same length as the cols vector.
+//' @param cols A vector with the fields for which to create indexes.
+//'
+//' @return integer result code
+// [[Rcpp::export]]
+int createDBIndexes (const char* spdb,
+                            Rcpp::CharacterVector tables,
+                            Rcpp::CharacterVector cols) 
+{
+  
+  sqlite3 *dbcon;
+  char *zErrMsg = 0;
+  const char *zStmtMsg;
+  int rc;
+  void* cache = spatialite_alloc_connection();
+  
+  rc = sqlite3_open_v2(spdb, &dbcon, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
+  if (rc != SQLITE_OK)
+    throw std::runtime_error ("Can't establish sqlite3 connection");
+  spatialite_init_ex(dbcon, cache, 0);
+  
+  char *idxsql = NULL;
+  sqlite3_stmt *versionstmt;
+  char *sqliteversion = (char *)"0.1";
+  
+  
+  
+  if (rc == SQLITE_OK) {
+    
+    rc = sqlite3_prepare_v2(dbcon, "SELECT sqlite_version()", -1, &versionstmt, 0);
+    if (rc != SQLITE_OK) {
+      throw std::runtime_error ("Unable to retrieve sqlite version");
+    }
+    rc = sqlite3_step(versionstmt);
+    
+    if (rc == SQLITE_ROW) {
+      sqliteversion = (char *)sqlite3_column_text(versionstmt, 0);
+    }
+    rc = sqlite3_reset(versionstmt);
+
+    for (unsigned int i = 0; i < cols.length(); ++i) {
+    
+      if (((std::string)cols[i]).find("(") == std::string::npos || 
+          compare_version_numbers(sqliteversion, "3.9.0") >= 0) {
+        
+        std::string idxname = "idx_" + tables[i] + "_" + (std::string)cols[i];
+        boost::replace_all(idxname, "(", "_");
+        boost::replace_all(idxname, ")", "_");
+        boost::replace_all(idxname, " ", "_");
+        
+        int sprrc = asprintf(&idxsql, "CREATE INDEX %s ON %s(%s)", idxname.c_str(), (char *)(tables[i]), (char *)(cols[i]));
+        
+        rc = sqlite3_exec(dbcon, idxsql, NULL, NULL, &zErrMsg);
+        if (rc != SQLITE_OK) {
+          throw std::runtime_error ("Unable to execute index query: " + (std::string)idxsql);
+        }
+        
+      }
+      else {
+        Rcpp::warning("Unable to create index on " + cols[i] + ", expression not supported in SQLite version < 3.9.0");
+      }
+    
+    } 
+  
+  }
+  
+  rc = sqlite3_close_v2(dbcon);
+  if (rc != SQLITE_OK) {
+    throw std::runtime_error ("Unable to close sqlite database");
+  }
+  
+  return(rc);
+
 }

@@ -4,12 +4,15 @@
 \alias{dl_bikedata}
 \title{Download hire bicycle data}
 \usage{
-dl_bikedata(city = "nyc", data_dir = tempdir())
+dl_bikedata(city = "nyc", data_dir = tempdir(), dates = NULL)
 }
 \arguments{
 \item{city}{City for which to download bike data}
 
 \item{data_dir}{Directory to which to download the files}
+
+\item{dates}{Character vector of dates to download data with dates formated
+as YYYYMM.}
 }
 \description{
 Download hire bicycle data
