@@ -28,7 +28,7 @@ importDataToSpatialite <- function(datafiles, spdb, quiet) {
 #' @param cols A vector with the fields for which to create indexes.
 #'
 #' @return integer result code
-createDBIndexes <- function(spdb, tables, cols) {
-    .Call('bikedata_createDBIndexes', PACKAGE = 'bikedata', spdb, tables, cols)
+create_db_indexes <- function(spdb, tables, cols) {
+    .Call('bikedata_create_db_indexes', PACKAGE = 'bikedata', spdb, tables, cols)
 }
 

@@ -5,7 +5,7 @@
 \title{Extract station-to-station trip matrix from spatialite database}
 \usage{
 tripmat(spdb, start_date, end_date, start_time, end_time, weekday,
-  quiet = FALSE)
+  long = FALSE, quiet = FALSE)
 }
 \arguments{
 \item{spdb}{Path to the spatialite database}
@@ -25,6 +25,10 @@ this time of each day}
 \item{weekday}{If given, extract only those records including the nominated
 weekdays. This can be a vector of numeric, starting with Sunday=1, or
 unambiguous characters, so "sa" and "tu" for Saturday and Tuesday.}
+
+\item{long}{If FALSE, a square tripmat of (num-stations, num_stations) is
+returns; if TRUE, a long-format matrix of (stn-from, stn-to, ntrips) is
+returned.}
 
 \item{quiet}{If FALSE, progress is displayed on screen}
 }
