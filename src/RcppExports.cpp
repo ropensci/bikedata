@@ -18,16 +18,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// createDBIndexes
-int createDBIndexes(const char* spdb, Rcpp::CharacterVector tables, Rcpp::CharacterVector cols);
-RcppExport SEXP bikedata_createDBIndexes(SEXP spdbSEXP, SEXP tablesSEXP, SEXP colsSEXP) {
+// create_db_indexes
+int create_db_indexes(const char* spdb, Rcpp::CharacterVector tables, Rcpp::CharacterVector cols);
+RcppExport SEXP bikedata_create_db_indexes(SEXP spdbSEXP, SEXP tablesSEXP, SEXP colsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const char* >::type spdb(spdbSEXP);
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type tables(tablesSEXP);
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type cols(colsSEXP);
-    rcpp_result_gen = Rcpp::wrap(createDBIndexes(spdb, tables, cols));
+    rcpp_result_gen = Rcpp::wrap(create_db_indexes(spdb, tables, cols));
     return rcpp_result_gen;
 END_RCPP
 }

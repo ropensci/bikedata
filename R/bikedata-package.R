@@ -10,5 +10,6 @@
 #' @importFrom methods as
 #' @importFrom stats xtabs
 #' @importFrom utils download.file unzip
+#' @importFrom reshape2 dcast
 #' @useDynLib bikedata
 NULL

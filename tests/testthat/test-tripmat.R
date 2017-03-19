@@ -32,7 +32,7 @@ test_that ('tripmat-start-and-endday', {
 test_that ('tripmat-starttime', {
                expect_silent (tm <- tripmat ("testdb", start_time=1,
                                              quiet=TRUE))
-               expect_equal (sum (tm), 138)
+               expect_equal (sum (tm), 140)
                expect_silent (tm2 <- tripmat ("testdb", start_time="1",
                                              quiet=TRUE))
                expect_silent (tm3 <- tripmat ("testdb", start_time="01:00",
@@ -44,7 +44,7 @@ test_that ('tripmat-starttime', {
 test_that ('tripmat-endtime', {
                expect_silent (tm <- tripmat ("testdb", end_time=4,
                                              quiet=TRUE))
-               expect_equal (sum (tm), 86)
+               expect_equal (sum (tm), 88)
                expect_silent (tm2 <- tripmat ("testdb", end_time="4",
                                              quiet=TRUE))
                expect_silent (tm3 <- tripmat ("testdb", end_time="4:00",
@@ -56,26 +56,26 @@ test_that ('tripmat-endtime', {
 test_that ('tripmat-start-and-endtime', {
                expect_silent (tm <- tripmat ("testdb", start_time="02:00",
                                              end_time="04:00", quiet=TRUE))
-               expect_equal (sum (tm), 38)
+               expect_equal (sum (tm), 42)
 })
 
 test_that ('tripmat-starttime-startdate', {
                expect_silent (tm <- tripmat ("testdb", start_date=20150102,
                                              start_time=1, quiet=TRUE))
-               expect_equal (sum (tm), 99)
+               expect_equal (sum (tm), 100)
 })
 
 test_that ('tripmat-endtime-enddate', {
                expect_silent (tm <- tripmat ("testdb", end_date=20150103,
                                              end_time=6, quiet=TRUE))
-               expect_equal (sum (tm), 87)
+               expect_equal (sum (tm), 90)
 })
 
 test_that ('tripmat-startendtime-startenddate', {
                expect_silent (tm <- tripmat ("testdb", start_date=20150102,
                                              end_date=20150103, start_time=1,
                                              end_time=7, quiet=TRUE))
-               expect_equal (sum (tm), 57)
+               expect_equal (sum (tm), 59)
 })
 
 test_that ('weekday', {

@@ -353,7 +353,7 @@ int importDataToSpatialite (Rcpp::CharacterVector datafiles,
 //'
 //' @return integer result code
 // [[Rcpp::export]]
-int createDBIndexes (const char* spdb,
+int create_db_indexes (const char* spdb,
                             Rcpp::CharacterVector tables,
                             Rcpp::CharacterVector cols) 
 {
