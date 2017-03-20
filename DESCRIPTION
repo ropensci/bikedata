@@ -5,24 +5,22 @@ Authors@R: c(
     person("Mark", "Padgham", email="mark.padgham@email.com", role=c("aut", "cre")),
     person("Richard", "Ellison", role="aut"))
 Description: Load data from public hire bicycle systems.
-Depends: 
-    R (>= 3.3.0)
-License: GPL-3 + file LICENSE
-SystemRequirements: C++11
-NeedsCompilation: yes
-Encoding: UTF-8
-LazyData: true
-Imports:
-    methods,
-    Rcpp
 Depends:
     dplyr,
     lubridate,
     reshape2,
     RSQLite
+Imports:
+    methods,
+    Rcpp
 Suggests:
     testthat
 LinkingTo: 
     BH,
     Rcpp
-RoxygenNote: 5.0.1
+License: GPL-3 + file LICENSE
+SystemRequirements: C++11
+NeedsCompilation: yes
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.0.1

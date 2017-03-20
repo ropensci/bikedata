@@ -11,9 +11,13 @@
 
 #include <boost/algorithm/string/replace.hpp>
 
-// A string delimiter function based on strtok
-// Accessed from StackOverflow (using M Oehm):
-// http://stackoverflow.com/questions/29847915/implementing-strtok-whose-delimiter-has-more-than-one-character
+//' strtokm
+//'
+//' A string delimiter function based on strtok
+//' Accessed from StackOverflow (using M Oehm):
+//' http://stackoverflow.com/questions/29847915/implementing-strtok-whose-delimiter-has-more-than-one-character
+//'
+//' @noRd
 char *strtokm(char *str, const char *delim)
 {
     static char *tok;
@@ -37,12 +41,16 @@ char *strtokm(char *str, const char *delim)
     return tok;
 }
 
-// Function to compare version numbers
-// First argument is compared to the second argument
-// Return value:
-// -1 = Argument one version lower than Argument two version
-// 0 = Argument one version equal to Argument two version
-// 1 = Argument one version higher than Argument two version
+//' compare_version_numbers
+//'
+//' Function to compare version numbers
+//' First argument is compared to the second argument
+//' Return value:
+//' -1 = Argument one version lower than Argument two version
+//' 0 = Argument one version equal to Argument two version
+//' 1 = Argument one version higher than Argument two version
+//'
+//' @noRd
 int compare_version_numbers (std::string vstro, std::string compvstro) {
   
   int versiondiff = 0;
@@ -102,6 +110,11 @@ int compare_version_numbers (std::string vstro, std::string compvstro) {
 
 }
 
+//' rm_dos_end
+//'
+//' Remove dos line ending from a character string
+//'
+//' @noRd
 void rm_dos_end (char *str)
 {
     char *p = strrchr (str, '\r');
@@ -109,6 +122,17 @@ void rm_dos_end (char *str)
         p[0] = '\0';
 }
 
+//' line_has_quotes
+//'
+//' Determine whether or not fields within a line are separated by double quotes
+//' and a comma, or just comma separated.
+//'
+//' @param line Character string with or without double-quote-comma separation
+//'
+//' @return true if line is delimited by double quotes and commas, false if
+//' commas only.
+//'
+//' @noRd
 bool line_has_quotes (char * line)
 {
     bool has_quotes = false;
@@ -128,9 +152,13 @@ bool line_has_quotes (char * line)
     return has_quotes;
 }
 
-// Datetime strings for NYC change between 08/2014 and 09/2014 from
-// yyyy-mm-dd HH:MM:SS to m/d/yyyy HH:MM:SS. sqlite3 can't combine dates in
-// different formats, so this converts the latter to former formats.
+//' convert_datetime
+//'
+//' Datetime strings for NYC change between 08/2014 and 09/2014 from
+//' yyyy-mm-dd HH:MM:SS to m/d/yyyy HH:MM:SS. sqlite3 can't combine dates in
+//' different formats, so this converts the latter to former formats.
+//'
+//' @noRd
 std::string convert_datetime (std::string str)
 {
     // NOTE that the following does not work for some reason?
@@ -156,6 +184,9 @@ std::string convert_datetime (std::string str)
     return str;
 }
 
+//' read_one_line
+//'
+//' @noRd
 void read_one_line (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry, const char * delim)
 {
@@ -221,7 +252,7 @@ void read_one_line (sqlite3_stmt * stmt, char * line,
     sqlite3_bind_text(stmt, 10, gender.c_str(), -1, SQLITE_TRANSIENT); // Gender
 }
 
-//' import data using spatialite
+//' importDataToSpatialite
 //'
 //' Extracts bike data for NYC citibike
 //' 
@@ -232,6 +263,8 @@ void read_one_line (sqlite3_stmt * stmt, char * line,
 //' @param quiet If FALSE, progress is displayed on screen
 //'
 //' @return integer result code
+//'
+//' @noRd
 // [[Rcpp::export]]
 int importDataToSpatialite (Rcpp::CharacterVector datafiles, 
         const char* spdb, bool quiet) 
@@ -340,7 +373,7 @@ int importDataToSpatialite (Rcpp::CharacterVector datafiles,
 }
 
 
-//' Create indexes in database
+//' create_db_indexes
 //'
 //' Creates the specified indexes in the database to speed up queries. Note
 //' that for the full dataset this may take some time.
@@ -352,6 +385,8 @@ int importDataToSpatialite (Rcpp::CharacterVector datafiles,
 //' @param cols A vector with the fields for which to create indexes.
 //'
 //' @return integer result code
+//'
+//' @noRd
 // [[Rcpp::export]]
 int create_db_indexes (const char* spdb,
                             Rcpp::CharacterVector tables,

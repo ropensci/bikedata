@@ -3,6 +3,8 @@
 #' @param x A numeric or character object to to be converted
 #'
 #' @return A string formatted to 'HH:MM:SS'
+#'
+#' @noRd
 convert_hms <- function (x)
 {
     if (is.numeric (x)) # presume it's HH
@@ -46,6 +48,8 @@ convert_hms <- function (x)
 #' @param wd Vector of numeric or character denoting weekdays
 #'
 #' @return Equivalent character vector of numbered weekdays
+#'
+#' @noRd
 convert_weekday <- function (wd)
 {
     if (!is.numeric (wd))
@@ -100,6 +104,8 @@ get_datelimits <- function (spdb)
 #'
 #' @return A modified version of the \code{trips} table from \code{db}, filtered
 #' by the specified times
+#'
+#' @noRd
 filter_tripmat_by_datetime <- function (db, ...)
 {
     # NOTE that this approach is much more efficient than the `dplyr::filter`

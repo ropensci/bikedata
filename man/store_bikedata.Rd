@@ -25,4 +25,3 @@ Store nyc-citibike data in spatialite database
 This function can take quite a long time to execute (typically > 10
 minutes), and generates a spatialite database file several gigabytes in size.
 }
-

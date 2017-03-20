@@ -15,4 +15,3 @@ Matrix containing data for each station
 \description{
 Extract station matrix from spatialite database
 }
-

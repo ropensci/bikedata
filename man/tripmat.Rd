@@ -43,4 +43,3 @@ Both dates and times may be given either in numeric or character
 format, with arbitrary (or no) delimiters between fields. Single numeric
 times are interpreted as hours, with 24 interpreted as day's end at 23:59:59.
 }
-
