@@ -136,11 +136,9 @@ store_bikedata <- function (data_dir, spdb, quiet=FALSE, create_index = TRUE)
       if (!quiet) {
         message ('Creating indexes')
       }
-      createDBIndexes(spdb, 
-                      tables = rep("trips", times=8),
-                      cols = c("start_station_id", "end_station_id", "start_time", "stop_time",
-                               "cast(start_time as date)", "cast(start_time as time)",
-                               "cast(stop_time as date)", "cast(stop_time as time)"))
+      create_db_indexes(spdb, 
+                      tables = rep("trips", times=4),
+                      cols = c("start_station_id", "end_station_id", "start_time", "stop_time"))
     }
     invisible (file.remove (flist_csv))
 }

@@ -1,34 +1,3 @@
-#' Render station-to-station matrix square by inserting extra rows or cols
-#'
-#' @param mat Station-to-station matrix of trip numbers
-#'
-#' @return Re-shaped version of mat that has equal numbers of rows and columns
-reshape_tripmat <- function (mat)
-{
-    rnames <- as.numeric (rownames (mat))
-    cnames <- as.numeric (colnames (mat))
-    if (!identical (sort (cnames), cnames))
-        mat <- mat [,order (cnames)]
-    if (!identical (sort (rnames), rnames))
-        mat <- mat [order (rnames),]
-
-    allnames <- sort (unique (c (cnames, rnames)))
-    if (length (allnames) > nrow (mat) | length (allnames) > ncol (mat))
-    {
-        cindx <- which (allnames %in% cnames)
-        rindx <- which (allnames %in% rnames)
-        mat_ex <- array (0, dim=rep (length (allnames), 2))
-        mat_ex [rindx, cindx] <- mat
-        colnames (mat_ex) <- rownames (mat_ex) <- paste (allnames)
-        names (attributes (mat_ex)$dimnames) <- c ('start_station_id',
-                                                   'end_station_id')
-
-        mat <- mat_ex
-    }
-
-    return (mat)
-}
-
 #' convert hms to 'HH:MM:SS'
 #'
 #' @param x A numeric or character object to to be converted
@@ -38,12 +7,12 @@ convert_hms <- function (x)
 {
     if (is.numeric (x)) # presume it's HH
     {
-        if (x < 0 | x > 23)
-            stop ('hms values must be between 0 and 23')
-        if (x < 23)
+        if (x < 0 | x > 24)
+            stop ('hms values must be between 0 and 24')
+        if (x < 24)
             res <- paste0 (sprintf ('%02d', x), ':00:00')
         else
-            res <- paste0 (sprintf ('%02d', x), ':59:59')
+            res <- paste0 (23, ':59:59')
     } else if (is.character (x))
     {
         # split at all non-numeric characters
@@ -52,10 +21,10 @@ convert_hms <- function (x)
             stop ('Can not convert to hms without numeric values')
         if (length (x) == 1)
         {
-            if (x < 23)
+            if (x < 24)
                 res <- paste0 (sprintf ('%02d', x [1]), ':00:00')
             else
-                res <- paste0 (sprintf ('%02d', x [1]), ':59:59')
+                res <- paste0 (23, ':59:59')
         }
         else if (length (x) == 2)
             res <- paste0 (sprintf ('%02d', x [1]), ':',
@@ -141,32 +110,50 @@ filter_tripmat_by_datetime <- function (db, ...)
     # times, nor can the SQL `date` and `time` functions be applied through
     # dplyr.
     x <- as.list (...)
-    qry <- paste0 ("SELECT trip_id, start_time, stop_time, ",
-                   "start_station_id, end_station_id ",
-                   "FROM trips WHERE ")
+    qryargs <- c()
+    qry <- paste( "SELECT s1.id AS start_station_id, s2.id AS end_station_id, iq.numtrips",
+                   "FROM stations s1, stations s2 LEFT OUTER JOIN",
+                   "(SELECT start_station_id, end_station_id, COUNT(*) as numtrips FROM trips")
+    
     qry_dt <- NULL
-    if ('start_time' %in% names (x))
-        qry_dt <- c (qry_dt, paste0 ("cast(start_time as time) >= '", x$start_time, "' "))
-    if ('end_time' %in% names (x))
-        qry_dt <- c (qry_dt, paste0 ("cast(stop_time as time) <= '", x$end_time, "' "))
-    if ('start_date' %in% names (x))
-        qry_dt <- c (qry_dt, paste0 ("cast(start_time as date) >= '", x$start_date, "' "))
-    if ('end_date' %in% names (x))
-        qry_dt <- c (qry_dt, paste0 ("cast(stop_time as date) <= '", x$end_date, "' "))
+    if ('start_date' %in% names (x)) {
+      qry_dt <- c (qry_dt, "stop_time >= ?")
+      qryargs <- c (qryargs, paste(x$start_date, '00:00:00'))
+    }
+    if ('end_date' %in% names (x)) {
+      qry_dt <- c (qry_dt, "start_time <= ?")
+      qryargs <- c (qryargs, paste(x$end_date, '23:59:59'))
+    }
+    if ('start_time' %in% names (x)) {
+      qry_dt <- c (qry_dt, "time(stop_time) >= ?")
+      qryargs <- c (qryargs, x$start_time)
+    }
+    if ('end_time' %in% names (x)) {
+      qry_dt <- c (qry_dt, "time(start_time) <= ?")
+      qryargs <- c (qryargs, x$end_time)
+    }
 
     qry_wd <- NULL
     if ('weekday' %in% names (x))
     {
-        qry_wd <- sapply (x$weekday, function (i)
-                          paste0 ("strftime('%w', start_time) = '", i, "' "))
-        if (length (x$weekday) > 1)
-            qry_wd <- paste0 ("(", paste (qry_wd, collapse="OR "), ")")
+        qry_wd <- "strftime('%w', start_time) IN "
+        qry_wd <- paste0(qry_wd, " (", paste(rep("?", times = length(x$weekday)), collapse=", "), ")")
         qry_dt <- c (qry_dt, qry_wd)
+        qryargs <- c (qryargs, x$weekday)
     }
 
-    qry <- paste0 (qry, paste (qry_dt, collapse="AND "))
+    qry <- paste (qry, "WHERE", paste (qry_dt, collapse=" AND "))
+    qry <- paste (qry, "GROUP BY start_station_id, end_station_id) iq",
+                  "ON s1.id = iq.start_station_id AND s2.id = iq.end_station_id",
+                  "ORDER BY s1.id, s2.id")
 
-    dplyr::tbl (db, dplyr::sql (qry))
+    qryres <- RSQLite::dbSendQuery(db, qry)
+    RSQLite::dbBind(qryres, as.list(qryargs))
+    trips <- RSQLite::dbFetch(qryres)
+    RSQLite::dbClearResult(qryres)
+    
+    return(trips)
+    
 }
 
 #' Extract station-to-station trip matrix from spatialite database
@@ -192,7 +179,7 @@ filter_tripmat_by_datetime <- function (db, ...)
 #'
 #' @note Both dates and times may be given either in numeric or character
 #' format, with arbitrary (or no) delimiters between fields. Single numeric
-#' times are interpreted as hours, with 23 interpreted as day's end at 23:59:59.
+#' times are interpreted as hours, with 24 interpreted as day's end at 23:59:59.
 #'
 #' @export
 tripmat <- function (spdb, start_date, end_date, start_time, end_time,
@@ -200,7 +187,8 @@ tripmat <- function (spdb, start_date, end_date, start_time, end_time,
 {
     # suppress R CMD check notes:
     stop_time <- sttrip_id <- st <- et <- NULL
-    db <- dplyr::src_sqlite (spdb, create=F)
+    # db <- dplyr::src_sqlite (spdb, create=F)
+    db <- RSQLite::dbConnect(SQLite(), spdb, create = FALSE)
 
     x <- NULL
     if (!missing (start_date))
@@ -215,32 +203,35 @@ tripmat <- function (spdb, start_date, end_date, start_time, end_time,
         x <- c (x, 'weekday' = list (convert_weekday (weekday)))
 
     # create generic table, while is replaced if filtered by time
-    trips <- dplyr::tbl (db, 'trips') 
-    if (length (x) > 0)
+    if (length (x) > 0) {
         trips <- filter_tripmat_by_datetime (db, x)
+    }
+    else {
+      trips <- dbGetQuery(db, 
+                paste("SELECT s1.id AS start_station_id, s2.id AS end_station_id, iq.numtrips",
+                "FROM stations s1, stations s2 LEFT OUTER JOIN",
+                "(SELECT start_station_id, end_station_id, COUNT(*) as numtrips FROM trips",
+                "GROUP BY start_station_id, end_station_id) iq",
+                "ON s1.id = iq.start_station_id AND s2.id = iq.end_station_id ORDER BY s1.id, s2.id"))
+    }
+    
+    RSQLite::dbDisconnect(db)
 
     # suppress R CMD check notes:
     start_station_id <- end_station_id <- n <- NULL
-    byid <- dplyr::group_by (trips, start_station_id, end_station_id)
-    tripdb <- dplyr::summarise (byid, count=n())
-    if (!quiet)
-        message ('Counting numbers of trips from spatialite database ... ',
-                 appendLF=FALSE)
-    ntrips <- xtabs (count ~ start_station_id + end_station_id, data=tripdb)
-    if (!quiet)
-        message ('done')
-
-    ntrips <- reshape_tripmat (ntrips)
-    attributes (ntrips)$call <- NULL
-    class (ntrips) <- 'matrix'
-
-    res <- as (ntrips, 'matrix')
-    if (long)
-    {
-        res <- reshape2::melt (res)
-        names (res) [3] <- "num_trips"
+    if (long == FALSE) {
+      ntrips <- reshape2::dcast(trips, start_station_id ~ end_station_id, 
+                                value.var = "numtrips", fill = 0)
+      row.names(ntrips) <- ntrips$start_station_id
+      ntrips$start_station_id <- NULL
+      ntrips <- as.matrix(ntrips)
+    }
+    else {
+      trips$numtrips <- ifelse(is.na(trips$numtrips) == TRUE, 0, trips$numtrips)
+      ntrips <- as.matrix(trips)
     }
 
-    return (res)
+    return (ntrips)
+
 }
 

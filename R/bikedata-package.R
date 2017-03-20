@@ -8,8 +8,9 @@
 #' @importFrom dplyr %>% collect filter group_by src_sqlite summarise sql tbl
 #' @importFrom lubridate ymd
 #' @importFrom methods as
-#' @importFrom reshape2 melt
+#' @importFrom reshape2 dcast
 #' @importFrom stats xtabs
 #' @importFrom utils download.file unzip
+#' @importFrom reshape2 dcast
 #' @useDynLib bikedata
 NULL
