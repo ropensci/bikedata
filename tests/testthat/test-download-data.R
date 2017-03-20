@@ -3,51 +3,61 @@ context ("download data")
 # download can't really be tested, so this just tests that it does **NOT**
 # download if all files already exist
 
-write ('a', file='201307-citibike-tripdata.zip')
-write ('a', file='201308-citibike-tripdata.zip')
-write ('a', file='201309-citibike-tripdata.zip')
-write ('a', file='201310-citibike-tripdata.zip')
-write ('a', file='201311-citibike-tripdata.zip')
-write ('a', file='201312-citibike-tripdata.zip')
-write ('a', file='201401-citibike-tripdata.zip')
-write ('a', file='201402-citibike-tripdata.zip')
-write ('a', file='201403-citibike-tripdata.zip')
-write ('a', file='201404-citibike-tripdata.zip')
-write ('a', file='201405-citibike-tripdata.zip')
-write ('a', file='201406-citibike-tripdata.zip')
-write ('a', file='201407-citibike-tripdata.zip')
-write ('a', file='201408-citibike-tripdata.zip')
-write ('a', file='201409-citibike-tripdata.zip')
-write ('a', file='201410-citibike-tripdata.zip')
-write ('a', file='201411-citibike-tripdata.zip')
-write ('a', file='201412-citibike-tripdata.zip')
-write ('a', file='201501-citibike-tripdata.zip')
-write ('a', file='201502-citibike-tripdata.zip')
-write ('a', file='201503-citibike-tripdata.zip')
-write ('a', file='201504-citibike-tripdata.zip')
-write ('a', file='201505-citibike-tripdata.zip')
-write ('a', file='201506-citibike-tripdata.zip')
-write ('a', file='201507-citibike-tripdata.zip')
-write ('a', file='201508-citibike-tripdata.zip')
-write ('a', file='201509-citibike-tripdata.zip')
-write ('a', file='201510-citibike-tripdata.zip')
-write ('a', file='201511-citibike-tripdata.zip')
-write ('a', file='201512-citibike-tripdata.zip')
-write ('a', file='201601-citibike-tripdata.zip')
-write ('a', file='201602-citibike-tripdata.zip')
-write ('a', file='201603-citibike-tripdata.zip')
-write ('a', file='201604-citibike-tripdata.zip')
-write ('a', file='201605-citibike-tripdata.zip')
-write ('a', file='201606-citibike-tripdata.zip')
-write ('a', file='201607-citibike-tripdata.zip')
-write ('a', file='201608-citibike-tripdata.zip')
-write ('a', file='201609-citibike-tripdata.zip')
-write ('a', file='201610-citibike-tripdata.zip')
-write ('a', file='201611-citibike-tripdata.zip')
-write ('a', file='201612-citibike-tripdata.zip')
+# code copied from get_aws_bike_files 
+get_fake_trip_files <- function (bucket)
+{
+    host <- "https://s3.amazonaws.com"
+    aws_url <- sprintf ("https://%s.s3.amazonaws.com", bucket)
 
-test_that ('dl_bikedata', {
-               expect_message (dl_bikedata (data_dir='.'),
+    doc <- httr::content (httr::GET (aws_url), encoding='UTF-8')
+    nodes <- xml2::xml_children (doc)
+    # NOTE: xml2::xml_find_all (doc, ".//Key") should work here but doesn't, so
+    # this manually does what that would do
+    files <- lapply (nodes, function (i)
+                     if (grepl ('zip', i))
+                         strsplit (strsplit (as.character (i), "<Key>") [[1]] [2], 
+                                   "</Key>") [[1]] [1] )
+    files <- unlist (files)
+    if (bucket == 'tripdata')
+        files <- files [2:length (files)]
+    for (f in files)
+        write ('a', file=f)
+}
+
+test_that ('dl_bikedata nyc', {
+               get_fake_trip_files (bucket='tripdata')
+               expect_message (dl_bikedata (city='nyc', data_dir='.'),
+                               'All data files already exist')
+})
+
+test_that ('dl_bikedata dc', {
+               get_fake_trip_files (bucket="capitalbikeshare-data")
+               expect_message (dl_bikedata (city='dc', data_dir='.'),
+                               'All data files already exist')
+})
+
+test_that ('dl_bikedata boston', {
+               get_fake_trip_files (bucket="hubway-data")
+               expect_message (dl_bikedata (city='boston', data_dir='.'),
+                               'All data files already exist')
+})
+
+test_that ('dl_bikedata la', {
+               files <- c ("MetroBikeShare_2016_Q3_trips.zip", 
+                           "Metro_trips_Q4_2016.zip")
+               for (f in files) write ('a', file=f)
+               expect_message (dl_bikedata (city='la', data_dir='.'),
+                               'All data files already exist')
+})
+
+test_that ('dl_bikedata chicago', {
+               host <- "https://www.divvybikes.com/system-data"
+               nodes <- httr::content (httr::GET (host), encoding='UTF-8') %>%
+                   xml2::xml_find_all (., ".//aside") %>%
+                   xml2::xml_find_all (., ".//a")
+               files <- basename (xml2::xml_attr (nodes, "href"))
+               for (f in files) write ('a', file=f)
+               expect_message (dl_bikedata (city='chicago', data_dir='.'),
                                'All data files already exist')
 })
 

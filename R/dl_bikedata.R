@@ -1,72 +1,135 @@
-#' List of NYC citibike data files
+#' get_awsbike_files
 #'
-#' Ideally the list of file would be automatically extracted, but the files are
-#' stored in an Amazon S3 bucket while requires special tools to read, all of
-#' which require an authentification key to be set up. Present work-around is to
-#' list them here manually, meaning they'll have to be updated on a monthly
-#' basis.
-citibike_files <- function(){
-    c ('https://s3.amazonaws.com/tripdata/201307-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201308-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201309-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201310-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201311-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201312-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201401-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201402-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201403-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201404-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201405-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201406-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201407-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201408-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201409-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201410-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201411-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201412-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201501-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201502-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201503-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201504-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201505-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201506-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201507-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201508-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201509-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201510-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201511-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201512-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201601-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201602-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201603-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201604-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201605-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201606-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201607-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201608-citibike-tripdata.zip', 
-       'https://s3.amazonaws.com/tripdata/201609-citibike-tripdata.zip',
-       'https://s3.amazonaws.com/tripdata/201610-citibike-tripdata.zip',
-       'https://s3.amazonaws.com/tripdata/201611-citibike-tripdata.zip',
-       'https://s3.amazonaws.com/tripdata/201612-citibike-tripdata.zip')
+#' Returns list of URLs for each trip data file from nominated system
+#'
+#' @param name Name of the AWS bucket in which data are stored
+#'
+#' @return List of URLs used to download data
+#'
+#' @noRd
+get_aws_bike_files <- function (bucket)
+{
+    host <- "https://s3.amazonaws.com"
+    aws_url <- sprintf ("https://%s.s3.amazonaws.com", bucket)
+
+    doc <- httr::content (httr::GET (aws_url), encoding='UTF-8')
+    nodes <- xml2::xml_children (doc)
+    # NOTE: xml2::xml_find_all (doc, ".//Key") should work here but doesn't, so
+    # this manually does what that would do
+    files <- lapply (nodes, function (i)
+                     if (grepl ('zip', i))
+                         strsplit (strsplit (as.character (i), "<Key>") [[1]] [2], 
+                                   "</Key>") [[1]] [1] )
+    # nyc citibike data has a redundamt file as first item
+    files <- unlist (files)
+    if (bucket == 'tripdata')
+        files <- files [2:length (files)]
+    paste0 (host, "/", bucket, "/", files)
+}
+
+#' get_la_bike_files
+#'
+#' Returns list of URLs for each trip data file from LA's Metro system
+#'
+#' @return List of URLs used to download data
+#'
+#' @note This system is brand new, and the data URLs will likely resolve to some
+#' more systematic form very soon. This is just a temporary function providing
+#' explicit URLs until that time.
+#'
+#' @noRd
+get_la_bike_files <- function ()
+{
+    host <- paste0 ("https://11ka1d3b35pv1aah0c3m9ced-wpengine.netdna-ssl.com/",
+                    "wp-content/uploads/")
+    files <- c ("2016/10/MetroBikeShare_2016_Q3_trips.zip", 
+                "2017/01/Metro_trips_Q4_2016.zip")
+    paste0 (host, files)
+}
+
+#' get_boston_bike_files
+#'
+#' Returns list of URLs for each trip data file from Boston's Hubway system
+#'
+#' @return List of URLs used to download data
+#'
+#' @note This is also an AWS, but it requires an OAuth key for direct access.
+#' The AWS URLs are nevertheless listed in the main \code{html} file. 
+#'
+#' @noRd
+get_chicago_bike_files <- function ()
+{
+    host <- "https://www.divvybikes.com/system-data"
+    . <- NULL # suppress R CMD check note
+    nodes <- httr::content (httr::GET (host), encoding='UTF-8') %>%
+        xml2::xml_find_all (., ".//aside") %>%
+        xml2::xml_find_all (., ".//a")
+    xml2::xml_attr (nodes, "href")
+}
+
+
+
+#' get_bike_files
+#'
+#' Returns list of URLs for each trip data file from nominated system
+#'
+#' @param city The city for which data are to be obtained
+#'
+#' @return List of URLs used to download data
+#'
+#' @noRd
+get_bike_files <- function (city="nyc")
+{
+    city <- tolower (gsub ("[[:punct:]]", "", city))
+    aws <- TRUE
+
+    if (grepl ('ny', city) | grepl ('citi', city))
+        name <- "tripdata"
+    else if (grepl ('dc', city) | grepl ('wash', city) | grepl ('cap', city))
+        name <- "capitalbikeshare-data"
+    else if (grepl ('bos', city) | grepl ('hub', city))
+        name <- "hubway-data"
+    else
+        aws <- FALSE
+
+    files <- NULL
+    if (aws)
+        files <- get_aws_bike_files (name)
+    else
+    {
+        if (grepl ('la', city) | grepl ('los', city))
+            files <- get_la_bike_files ()
+        if (grepl ('ch', city) | grepl ('di', city))
+            files <- get_chicago_bike_files ()
+    }
+
+    return (files)
 }
 
 
 #' Download hire bicycle data
 #'
-#' @section Details:
-#' This convenience function downloads hire bicycle data from the nominated
-#' city.  It produces zip-compressed data in R's temporary directory.
-#' Possible cities at present are:
-#' \itemize{
-#'  nyc = New York
-#' }
-#'
-#' Ensure you have a fast internet connection and at least 100 Mb space
-#'
-#' @param city City for which to download bike data
+#' @param city City for which to download bike data, or name of corresponding
+#' bike system (see Details below).
 #' @param data_dir Directory to which to download the files
 #' @param dates Character vector of dates to download data with dates formated
 #' as YYYYMM.
+#'
+#' @section Details:
+#' This function produces zip-compressed data in R's temporary directory. City
+#' names are not case sensitive, and must only be long enough to unambiguously
+#' designate the desired city. Names of corresponding bike systems can also be
+#' given.  Currently possible cities (with minimal designations in parentheses)
+#' and names of bike hire systems are:
+#' \tabular{lr}{
+#'  New York City (ny)\tab Citibike\cr
+#'  Washington, D.C. (dc)\tab Capital Bike Share\cr
+#'  Chicago (ch)\tab Divvy Bikes\cr
+#'  Los Angeles (la)\tab Metro Bike Share\cr
+#'  Boston (bo)\tab Hubway\cr
+#' }
+#'
+#' Ensure you have a fast internet connection and at least 100 Mb space
 #'
 #' @note Only files that don't already exist in \code{data_dir} will be
 #' downloaded, and this function may thus be used to update a directory of files
@@ -75,15 +138,18 @@ citibike_files <- function(){
 #' @export
 dl_bikedata <- function(city='nyc', data_dir = tempdir(), dates = NULL)
 {
-    files <- file.path (data_dir, basename (citibike_files ()))
-    if (is.null(dates) == TRUE) {
+    dl_files <- get_bike_files (city)
+    files <- file.path (data_dir, basename (dl_files))
+
+    if (is.null (dates)) 
       indx <- which (!file.exists (files))
-    } else {
-      indx <- which (!file.exists (files) & grepl(paste(dates,collapse="|"), files))
-    }
+    else 
+      indx <- which (!file.exists (files) & 
+                     grepl (paste (dates, collapse="|"), files))
+
     if (length (indx) > 0)
     {
-        for (f in citibike_files () [indx])
+        for (f in dl_files [indx])
         {
             destfile <- file.path (data_dir, basename(f))
             download.file (f, destfile)

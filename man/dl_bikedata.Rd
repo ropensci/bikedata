@@ -7,7 +7,8 @@
 dl_bikedata(city = "nyc", data_dir = tempdir(), dates = NULL)
 }
 \arguments{
-\item{city}{City for which to download bike data}
+\item{city}{City for which to download bike data, or name of corresponding
+bike system (see Details below).}
 
 \item{data_dir}{Directory to which to download the files}
 
@@ -24,11 +25,17 @@ by downloading more recent files.
 }
 \section{Details}{
 
-This convenience function downloads hire bicycle data from the nominated
-city.  It produces zip-compressed data in R's temporary directory.
-Possible cities at present are:
-\itemize{
- nyc = New York
+This function produces zip-compressed data in R's temporary directory. City
+names are not case sensitive, and must only be long enough to unambiguously
+designate the desired city. Names of corresponding bike systems can also be
+given.  Currently possible cities (with minimal designations in parentheses)
+and names of bike hire systems are:
+\tabular{lr}{
+ New York City (ny)\tab Citibike\cr
+ Washington, D.C. (dc)\tab Capital Bike Share\cr
+ Chicago (ch)\tab Divvy Bikes\cr
+ Los Angeles (la)\tab Metro Bike Share\cr
+ Boston (bo)\tab Hubway\cr
 }
 
 Ensure you have a fast internet connection and at least 100 Mb space

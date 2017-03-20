@@ -6,13 +6,15 @@ Authors@R: c(
     person("Richard", "Ellison", role="aut"))
 Description: Load data from public hire bicycle systems.
 Depends:
-    dplyr,
-    lubridate,
-    reshape2,
     RSQLite
 Imports:
+    dplyr,
+    httr,
+    lubridate,
     methods,
-    Rcpp
+    Rcpp,
+    reshape2,
+    xml2
 Suggests:
     testthat
 LinkingTo: 
