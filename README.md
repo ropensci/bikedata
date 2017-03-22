@@ -15,7 +15,7 @@ R package to load data from public bicycle hire systems. Currently a proof-of-co
 
 ------------------------------------------------------------------------
 
-1 Installation
+## <a name="installation"></a>1. Installation
 --------------
 
 ``` r
@@ -24,7 +24,7 @@ devtools::install_github("mpadge/bikedata")
 
 ------------------------------------------------------------------------
 
-2 Usage
+## <a name="usage"></a>2. Usage
 -------
 
 Data from the NYC citibike system can can be downloaded with
@@ -56,7 +56,7 @@ dim (tmat)
 
     #> [1] 689 689
 
-### 2.1 Filtering trips by date
+### <a name="filtering-trips-by-date"></a>2.1. Filtering trips by date
 
 Trip matrices can be constructed for trips filtered by dates and/or times. The temporal extent of the database can be readily viewed with
 
@@ -89,7 +89,7 @@ format (sum (tmat), big.mark=',')
 
 Note that dates can be specified in almost any format, as long as the order is `year-month-day`.
 
-### 2.2 Filtering trips by time of day
+### <a name="filtering-trips-by-time-of-day"></a>2.2. Filtering trips by time of day
 
 Trips can also be selected starting and/or ending at specific times of day.
 
@@ -112,7 +112,7 @@ format (sum (tmat), big.mark=',')
 
     #> [1] "1,635,974"
 
-### 2.3 Filtering trips by day of week
+### <a name="filtering-trips-by-day-of-week"></a>2.3. Filtering trips by day of week
 
 Trips can also extracted for particular days of the week by specifying the `weekday` argument of `tripmat`. Weekdays can be numeric, start from `1=Sunday`, or any unambiguous character string.
 
