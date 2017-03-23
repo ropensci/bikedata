@@ -1,5 +1,7 @@
 context ("download data")
 
+require (testthat)
+
 # download can't really be tested, so this just tests that it does **NOT**
 # download if all files already exist
 

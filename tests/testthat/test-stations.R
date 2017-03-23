@@ -1,5 +1,7 @@
 context ("stations")
 
+require (testthat)
+
 store_bikedata ("..", "testdb")
 
 test_that ('station data', {
