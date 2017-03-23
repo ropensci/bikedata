@@ -2,7 +2,6 @@
 #include <vector>
 #include <map>
 #include <sqlite3.h>
-#include <spatialite.h>
 #include <boost/algorithm/string/replace.hpp>
 
 #define BUFFER_SIZE 512
@@ -80,13 +79,13 @@ void read_one_line (sqlite3_stmt * stmt, char * line,
     sqlite3_bind_text(stmt, 10, gender.c_str(), -1, SQLITE_TRANSIENT); // Gender
 }
 
-//' importDataToSpatialite
+//' importDataToSqlite3
 //'
 //' Extracts bike data for NYC citibike
 //' 
 //' @param datafiles A character vector containin the paths to the citibike 
 //' .csv files to import.
-//' @param spdb A string containing the path to the spatialite database to 
+//' @param spdb A string containing the path to the Sqlite3 database to 
 //' use. It will be created automatically.
 //' @param quiet If FALSE, progress is displayed on screen
 //'
@@ -94,19 +93,17 @@ void read_one_line (sqlite3_stmt * stmt, char * line,
 //'
 //' @noRd
 // [[Rcpp::export]]
-int importDataToSpatialite (Rcpp::CharacterVector datafiles, 
+int importDataToSqlite3 (Rcpp::CharacterVector datafiles, 
         const char* spdb, bool quiet) 
 {
 
     sqlite3 *dbcon;
     char *zErrMsg = 0;
     int rc;
-    void* cache = spatialite_alloc_connection();
 
     rc = sqlite3_open_v2(spdb, &dbcon, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
     if (rc != SQLITE_OK)
         throw std::runtime_error ("Can't establish sqlite3 connection");
-    spatialite_init_ex(dbcon, cache, 0);
 
     rc = sqlite3_exec(dbcon, "SELECT InitSpatialMetadata(1);", NULL, NULL, &zErrMsg);
 
@@ -206,8 +203,7 @@ int importDataToSpatialite (Rcpp::CharacterVector datafiles,
 //' Creates the specified indexes in the database to speed up queries. Note
 //' that for the full dataset this may take some time.
 //' 
-//' @param spdb A string containing the path to the spatialite database to 
-//' use.
+//' @param spdb A string containing the path to the sqlite3 database to use.
 //' @param tables A vector with the tables for which to create indexes. This
 //' vector should be the same length as the cols vector.
 //' @param cols A vector with the fields for which to create indexes.
@@ -225,12 +221,10 @@ int create_db_indexes (const char* spdb,
   char *zErrMsg = 0;
   const char *zStmtMsg;
   int rc;
-  void* cache = spatialite_alloc_connection();
   
   rc = sqlite3_open_v2(spdb, &dbcon, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
   if (rc != SQLITE_OK)
     throw std::runtime_error ("Can't establish sqlite3 connection");
-  spatialite_init_ex(dbcon, cache, 0);
   
   char *idxsql = NULL;
   sqlite3_stmt *versionstmt;

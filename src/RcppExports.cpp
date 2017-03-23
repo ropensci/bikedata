@@ -5,16 +5,16 @@
 
 using namespace Rcpp;
 
-// importDataToSpatialite
-int importDataToSpatialite(Rcpp::CharacterVector datafiles, const char* spdb, bool quiet);
-RcppExport SEXP bikedata_importDataToSpatialite(SEXP datafilesSEXP, SEXP spdbSEXP, SEXP quietSEXP) {
+// importDataToSqlite3
+int importDataToSqlite3(Rcpp::CharacterVector datafiles, const char* spdb, bool quiet);
+RcppExport SEXP bikedata_importDataToSqlite3(SEXP datafilesSEXP, SEXP spdbSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type datafiles(datafilesSEXP);
     Rcpp::traits::input_parameter< const char* >::type spdb(spdbSEXP);
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
-    rcpp_result_gen = Rcpp::wrap(importDataToSpatialite(datafiles, spdb, quiet));
+    rcpp_result_gen = Rcpp::wrap(importDataToSqlite3(datafiles, spdb, quiet));
     return rcpp_result_gen;
 END_RCPP
 }

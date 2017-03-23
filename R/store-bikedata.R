@@ -33,7 +33,7 @@ store_bikedata <- function (data_dir, spdb, quiet=FALSE, create_index = TRUE)
     if (!quiet)
         message (' done')
     flist_csv <- file.path (data_dir, list.files (data_dir, pattern=".csv"))
-    ntrips <- importDataToSpatialite (flist_csv, spdb, quiet)
+    ntrips <- importDataToSqlite3 (flist_csv, spdb, quiet)
     if (!quiet)
         message ('total trips read = ', 
                  format (ntrips, big.mark=',', scientific=FALSE))
