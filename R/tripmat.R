@@ -193,7 +193,6 @@ tripmat <- function (spdb, start_date, end_date, start_time, end_time,
 {
     # suppress R CMD check notes:
     stop_time <- sttrip_id <- st <- et <- NULL
-    # db <- dplyr::src_sqlite (spdb, create=F)
     db <- RSQLite::dbConnect(SQLite(), spdb, create = FALSE)
 
     x <- NULL

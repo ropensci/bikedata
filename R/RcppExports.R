@@ -6,6 +6,20 @@
 #' @noRd
 NULL
 
+#' create_sqlite3_db
+#'
+#' Initial creation of SQLite3 database
+#' 
+#' @param spdb A string containing the path to the Sqlite3 database to 
+#' be created.
+#'
+#' @return integer result code
+#'
+#' @noRd
+create_sqlite3_db <- function(spdb) {
+    .Call('bikedata_create_sqlite3_db', PACKAGE = 'bikedata', spdb)
+}
+
 #' importDataToSqlite3
 #'
 #' Extracts bike data for NYC citibike
@@ -32,12 +46,14 @@ importDataToSqlite3 <- function(datafiles, spdb, quiet) {
 #' @param tables A vector with the tables for which to create indexes. This
 #' vector should be the same length as the cols vector.
 #' @param cols A vector with the fields for which to create indexes.
+#' @param reindex If false, indexes are created, otherwise they are simply
+#' reindexed.
 #'
 #' @return integer result code
 #'
 #' @noRd
-create_db_indexes <- function(spdb, tables, cols) {
-    .Call('bikedata_create_db_indexes', PACKAGE = 'bikedata', spdb, tables, cols)
+create_db_indexes <- function(spdb, tables, cols, reindex) {
+    .Call('bikedata_create_db_indexes', PACKAGE = 'bikedata', spdb, tables, cols, reindex)
 }
 
 #' strtokm

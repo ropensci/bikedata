@@ -11,7 +11,7 @@ store_bikedata(data_dir, spdb, quiet = FALSE, create_index = TRUE)
 \code{.zip} files of citibike data.}
 
 \item{spdb}{A string containing the path to the spatialite database to 
-use. It will be created automatically.}
+use. It will be created automatically if it doesn't already exist.}
 
 \item{quiet}{If FALSE, progress is displayed on screen}
 

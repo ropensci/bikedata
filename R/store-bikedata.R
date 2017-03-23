@@ -4,7 +4,7 @@
 #' @param data_dir A character vector giving the directory containing the
 #' \code{.zip} files of citibike data.
 #' @param spdb A string containing the path to the spatialite database to 
-#' use. It will be created automatically.
+#' use. It will be created automatically if it doesn't already exist.
 #' @param quiet If FALSE, progress is displayed on screen
 #' @param create_index If TRUE, creates an index on the start and end station
 #' IDs and start and stop times.
@@ -15,8 +15,11 @@
 #' @export
 store_bikedata <- function (data_dir, spdb, quiet=FALSE, create_index = TRUE)
 {
-    if (file.exists (spdb))
-        stop ('File named ', spdb, ' already exists')
+    if (!quiet)
+        message (c ('Creating', 'Adding data to') [file.exists (spdb) + 1],
+                 ' sqlite3 database')
+    if (!file.exists (spdb))
+        chk <- create_sqlite3_db (spdb)
 
     # platform-independent unzipping is much easier in R
     flist <- file.path (data_dir, list.files (data_dir, pattern=".zip"))
@@ -35,15 +38,30 @@ store_bikedata <- function (data_dir, spdb, quiet=FALSE, create_index = TRUE)
     flist_csv <- file.path (data_dir, list.files (data_dir, pattern=".csv"))
     ntrips <- importDataToSqlite3 (flist_csv, spdb, quiet)
     if (!quiet)
-        message ('total trips read = ', 
+        message ('Total trips read = ', 
                  format (ntrips, big.mark=',', scientific=FALSE))
     if (create_index == TRUE) {
       if (!quiet) {
-        message ('Creating indexes')
+        message (c ('Creating', 'Re-creating') [indexes_exist (spdb) + 1], ' indexes')
       }
       create_db_indexes(spdb, 
                       tables = rep("trips", times=4),
-                      cols = c("start_station_id", "end_station_id", "start_time", "stop_time"))
+                      cols = c("start_station_id", "end_station_id", "start_time", "stop_time"),
+                      indexes_exist (spdb))
     }
     invisible (file.remove (flist_csv))
+}
+
+#' Check whether indexes have been created for database
+#'
+#' @param spdb A string containing the path to the spatialite database to 
+#' use. 
+#'
+#' @noRd
+indexes_exist <- function (spdb)
+{
+    db <- RSQLite::dbConnect(SQLite(), spdb, create = FALSE)
+    idx_list <- dbGetQuery(db, "PRAGMA index_list (trips)")
+    RSQLite::dbDisconnect(db)
+    nrow (idx_list) > 1
 }
