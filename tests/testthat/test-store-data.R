@@ -14,9 +14,16 @@ test_that ('read data', {
                db <- dplyr::src_sqlite ('testdb', create=F)
 
                trips <- dplyr::collect (dplyr::tbl (db, 'trips'))
-               expect_equal (dim (trips), c (162, 11))
+               expect_equal (dim (trips), c (162, 12))
+               nms <- c ("id", "trip_id", "city", "trip_duration", "start_time",
+                         "stop_time", "start_station_id", "end_station_id",
+                         "bike_id", "user_type", "birth_year", "gender")
+               expect_equal (names (trips), nms)
+
                stns <- dplyr::collect (dplyr::tbl (db, 'stations'))
-               expect_equal (nrow (stns), 9)
+               expect_equal (dim (stns), c (9, 5))
+               expect_equal (names (stns), c ('id', 'city', 'name',
+                                              'longitude', 'latitude'))
 })
 
 test_that ('date limits', {
