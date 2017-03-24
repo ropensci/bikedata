@@ -14,7 +14,7 @@
 #' @noRd
 NULL
 
-#' read_one_line
+#' read_one_line_nyc
 #'
 #' @noRd
 NULL

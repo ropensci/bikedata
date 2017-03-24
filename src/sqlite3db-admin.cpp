@@ -52,6 +52,7 @@ int create_sqlite3_db (const char * spdb)
     std::string createqry = "CREATE TABLE trips ("
         "id serial primary key,"
         "trip_id integer,"
+        "city text,"
         "trip_duration numeric,"
         "start_time timestamp without time zone,"
         "stop_time timestamp without time zone,"

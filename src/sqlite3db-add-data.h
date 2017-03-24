@@ -29,7 +29,7 @@
 // first, followed by individual functions for each city 
 int create_station_table (sqlite3 * dbcon,
     std::map <std::string, std::string> stationqry);
-void read_one_line (sqlite3_stmt * stmt, char * line,
+void read_one_line_nyc (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry, const char * delim);
 
 //' importDataToSqlite3
@@ -75,7 +75,7 @@ int importDataToSqlite3 (Rcpp::CharacterVector datafiles,
     sqlite3_reset(stmt);
     trip_id++;
 
-    sprintf(sqlqry, "INSERT INTO trips VALUES (NULL, @TI, @TD, @ST, @ET, @SSID, @ESID, @BID, @UT, @BY, @GE)");
+    sprintf(sqlqry, "INSERT INTO trips VALUES (NULL, @II, @CI, @TD, @ST, @ET, @SSID, @ESID, @BID, @UT, @BY, @GE)");
 
     sqlite3_prepare_v2(dbcon, sqlqry, BUFFER_SIZE, &stmt, NULL);
 
@@ -102,7 +102,8 @@ int importDataToSqlite3 (Rcpp::CharacterVector datafiles,
         {
             rm_dos_end (in_line);
             sqlite3_bind_text(stmt, 1, std::to_string (trip_id).c_str(), -1, SQLITE_TRANSIENT); // Trip ID
-            read_one_line (stmt, in_line, &stationqry, delim);
+            sqlite3_bind_text(stmt, 2, "ny", -1, SQLITE_TRANSIENT); // city
+            read_one_line_nyc (stmt, in_line, &stationqry, delim);
             trip_id++;
             ntrips++;
 
@@ -158,10 +159,10 @@ int create_station_table (sqlite3 * dbcon,
     return rc;
 }
 
-//' read_one_line
+//' read_one_line_nyc
 //'
 //' @noRd
-void read_one_line (sqlite3_stmt * stmt, char * line,
+void read_one_line_nyc (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry, const char * delim)
 {
     std::string in_line2 = line;
@@ -175,13 +176,13 @@ void read_one_line (sqlite3_stmt * stmt, char * line,
     } else
         token = strtokm(&in_line2[0u], delim);
 
-    sqlite3_bind_text(stmt, 2, token, -1, SQLITE_TRANSIENT); // Trip duration
+    sqlite3_bind_text(stmt, 3, token, -1, SQLITE_TRANSIENT); // Trip duration
 
     std::string tempstr = convert_datetime (strtokm(NULL, delim)); // Start time
-    sqlite3_bind_text(stmt, 3, tempstr.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 4, tempstr.c_str(), -1, SQLITE_TRANSIENT); 
 
     tempstr = convert_datetime (strtokm(NULL, delim)); // Stop time
-    sqlite3_bind_text(stmt, 4, tempstr.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 5, tempstr.c_str(), -1, SQLITE_TRANSIENT); 
     std::string startstationid = strtokm(NULL, delim);
     if (stationqry->count(startstationid) == 0) {
         (*stationqry)[startstationid] = "(" + startstationid + "," + 
@@ -194,7 +195,7 @@ void read_one_line (sqlite3_stmt * stmt, char * line,
         strtokm(NULL, delim);
     }
 
-    sqlite3_bind_text(stmt, 5, startstationid.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 6, startstationid.c_str(), -1, SQLITE_TRANSIENT); 
 
     std::string endstationid = strtokm(NULL, delim);
     if (stationqry->count(endstationid) == 0) {
@@ -208,10 +209,10 @@ void read_one_line (sqlite3_stmt * stmt, char * line,
         strtokm(NULL, delim);
     }
 
-    sqlite3_bind_text(stmt, 6, endstationid.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 7, endstationid.c_str(), -1, SQLITE_TRANSIENT); 
     // next two are bike id and user type
-    sqlite3_bind_text(stmt, 7, strtokm(NULL, delim), -1, SQLITE_TRANSIENT); 
     sqlite3_bind_text(stmt, 8, strtokm(NULL, delim), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 9, strtokm(NULL, delim), -1, SQLITE_TRANSIENT); 
     std::string birthyear = strtokm(NULL, delim);
     std::string gender = strtokm(NULL, delim);
     if (gender.length () == 2) // gender still has a terminal quote
@@ -222,7 +223,7 @@ void read_one_line (sqlite3_stmt * stmt, char * line,
     if (gender.empty()) {
         gender = "NULL";
     }
-    sqlite3_bind_text(stmt, 9, birthyear.c_str(), -1, SQLITE_TRANSIENT); // Birth Year
-    sqlite3_bind_text(stmt, 10, gender.c_str(), -1, SQLITE_TRANSIENT); // Gender
+    sqlite3_bind_text(stmt, 10, birthyear.c_str(), -1, SQLITE_TRANSIENT); // Birth Year
+    sqlite3_bind_text(stmt, 11, gender.c_str(), -1, SQLITE_TRANSIENT); // Gender
 }
 
