@@ -2,12 +2,12 @@
 #'
 #' 
 #' @param data_dir A character vector giving the directory containing the
-#' \code{.zip} files of citibike data.
+#'          \code{.zip} files of citibike data.
 #' @param spdb A string containing the path to the spatialite database to 
-#' use. It will be created automatically if it doesn't already exist.
+#'          use. It will be created automatically if it doesn't already exist.
 #' @param quiet If FALSE, progress is displayed on screen
 #' @param create_index If TRUE, creates an index on the start and end station
-#' IDs and start and stop times.
+#'          IDs and start and stop times.
 #'
 #' @note This function can take quite a long time to execute (typically > 10
 #' minutes), and generates a spatialite database file several gigabytes in size.
@@ -36,7 +36,15 @@ store_bikedata <- function (data_dir, spdb, quiet=FALSE, create_index = TRUE)
     if (!quiet)
         message (' done')
     flist_csv <- file.path (data_dir, list.files (data_dir, pattern=".csv"))
-    ntrips <- importDataToSqlite3 (flist_csv, spdb, quiet)
+
+    cities <- get_bike_cities (data_dir)
+
+    ntrips <- 0
+    for (city in cities)
+    {
+        flist_city <- get_flist_city (flist_csv, city)
+        ntrips <- ntrips + importDataToSqlite3 (flist_city, spdb, quiet)
+    }
     if (!quiet)
     {
         message ('Total trips ', c ('read', 'added') [er_idx], ' = ',
@@ -49,7 +57,7 @@ store_bikedata <- function (data_dir, spdb, quiet=FALSE, create_index = TRUE)
 
     create_city_index (spdb, er_idx - 1)
 
-    if (create_index == TRUE) # addition indexes for stations and times
+    if (create_index == TRUE) # additional indexes for stations and times
     {
         if (!quiet) 
             message (c ('Creating', 'Re-creating') [er_idx], ' indexes')
@@ -61,6 +69,64 @@ store_bikedata <- function (data_dir, spdb, quiet=FALSE, create_index = TRUE)
     }
 
     invisible (file.remove (flist_csv))
+}
+
+#' Get list of cities from files in specified data directory
+#'
+#' @param data_dir A character vector giving the directory containing the
+#'          \code{.zip} files of citibike data.
+#'
+#' @noRd
+get_bike_cities <- function (data_dir)
+{
+    flist <- list.files (data_dir, pattern=".zip")
+    cities <- list ('nyc' = FALSE, 
+                    'boston' = FALSE, 
+                    'chicago' = FALSE, 
+                    'dc' = FALSE, 
+                    'la' = FALSE)
+
+    if (any (grepl ('citibike', flist, ignore.case=TRUE)))
+        cities$nyc <- TRUE
+    if (any (grepl ('divvy', flist, ignore.case=TRUE)))
+        cities$chicago <- TRUE
+    if (any (grepl ('hubway', flist, ignore.case=TRUE)))
+        cities$boston <- TRUE
+    if (any (grepl ('trips-history', flist, ignore.case=TRUE)) |
+        any (grepl ('quarter', flist, ignore.case=TRUE)))
+        cities$dc <- TRUE
+    if (any (grepl ('metro', flist, ignore.case=TRUE)))
+        cities$la <- TRUE
+
+    cities <- which (unlist (cities))
+    names (cities)
+}
+
+#' Get list of unzipped .csv files for a particular city
+#'
+#' @param flist List of all unzipped (\code{.csv}) data files for one or more
+#'              cities.
+#' @param city One of (nyc, boston, chicago, dc, la)
+#'
+#' @return Only those members of flist corresponding to nominated city
+#'
+#' @noRd
+get_flist_city <- function (flist, city)
+{
+    index <- NULL
+    if (city == 'nyc')
+        index <- which (grepl ('citibike', flist, ignore.case=TRUE))
+    else if (city == 'chicago')
+        index <- which (grepl ('divvy', flist, ignore.case=TRUE))
+    else if (city == 'boston')
+        index <- which (grepl ('hubway', flist, ignore.case=TRUE))
+    else if (city == 'dc')
+        index <- which (grepl ('trips-history', flist, ignore.case=TRUE) |
+                        grepl ('quarter', flist, ignore.case=TRUE))
+    else if (city == 'la')
+        index <- which (grepl ('metro', flist, ignore.case=TRUE))
+
+    flist [index]
 }
 
 #' Check whether indexes have been created for database

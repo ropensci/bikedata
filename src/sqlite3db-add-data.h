@@ -37,9 +37,9 @@ void read_one_line_nyc (sqlite3_stmt * stmt, char * line,
 //' Extracts bike data for NYC citibike
 //' 
 //' @param datafiles A character vector containin the paths to the citibike 
-//' .csv files to import.
+//'        .csv files to import.
 //' @param spdb A string containing the path to the Sqlite3 database to 
-//' use. It will be created automatically.
+//'        use. It will be created automatically.
 //' @param quiet If FALSE, progress is displayed on screen
 //'
 //' @return integer result code
@@ -129,7 +129,7 @@ int importDataToSqlite3 (Rcpp::CharacterVector datafiles,
 //' 
 //' @param dbcon Active connection to sqlite3 database
 //' @param stationqry Station query constructed during reading of data with
-//' importDataToSqlite3 ()
+//'        importDataToSqlite3 ()
 //'
 //' @return integer result code
 //'
@@ -160,6 +160,13 @@ int create_station_table (sqlite3 * dbcon,
 }
 
 //' read_one_line_nyc
+//'
+//' @param stmt An sqlit3 statement to be assembled by reading the line of data
+//' @param line Line of data read from citibike file
+//' @param stationqry Sqlite3 query for station data table to be subsequently
+//'        passed to 'create_station_table()'
+//' @param delim Delimeter for data files (changes from 2015-> from
+//'        double-quoted fields to plain comma-separators.
 //'
 //' @noRd
 void read_one_line_nyc (sqlite3_stmt * stmt, char * line,
@@ -227,3 +234,46 @@ void read_one_line_nyc (sqlite3_stmt * stmt, char * line,
     sqlite3_bind_text(stmt, 11, gender.c_str(), -1, SQLITE_TRANSIENT); // Gender
 }
 
+//' read_one_line_boston
+//'
+//' @param stmt An sqlit3 statement to be assembled by reading the line of data
+//' @param line Line of data read from citibike file
+//' @param stationqry Sqlite3 query for station data table to be subsequently
+//'        passed to 'create_station_table()'
+//'
+//' @noRd
+void read_one_line_boston (sqlite3_stmt * stmt, char * line,
+        std::map <std::string, std::string> * stationqry)
+{
+    // TDOD: Replace strokm with strok here!
+    const char * delim = ",";
+
+    std::string in_line2 = line;
+    char * token = strtokm(&in_line2[0u], delim);
+    strtokm(NULL, delim);
+    strtokm(NULL, delim);
+    std::string duration = strtokm(NULL, delim);
+    std::string start_time = convert_datetime (strtokm(NULL, delim)); 
+    std::string start_station_id = strtokm(NULL, delim);
+    std::string end_time = convert_datetime (strtokm(NULL, delim)); 
+    std::string end_station_id = strtokm(NULL, delim);
+    std::string bike_number = strtokm(NULL, delim);
+    std::string zip_code = NULL, birth_year = NULL, gender = NULL;
+    std::string user_type = strtokm(NULL, delim);
+    if (user_type == "Registered")
+    {
+        zip_code = strtokm(NULL, delim);
+        birth_year = strtokm(NULL, delim);
+        gender = strtokm(NULL, delim);
+    }
+
+    sqlite3_bind_text(stmt, 2, duration.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 3, start_time.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 4, end_time.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 5, start_station_id.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 6, end_station_id.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 7, bike_number.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 8, user_type.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 9, birth_year.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 10, gender.c_str(), -1, SQLITE_TRANSIENT); 
+}

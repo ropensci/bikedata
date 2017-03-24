@@ -7,7 +7,7 @@
 #' 
 #' @param dbcon Active connection to sqlite3 database
 #' @param stationqry Station query constructed during reading of data with
-#' importDataToSqlite3 ()
+#'        importDataToSqlite3 ()
 #'
 #' @return integer result code
 #'
@@ -15,6 +15,23 @@
 NULL
 
 #' read_one_line_nyc
+#'
+#' @param stmt An sqlit3 statement to be assembled by reading the line of data
+#' @param line Line of data read from citibike file
+#' @param stationqry Sqlite3 query for station data table to be subsequently
+#'        passed to 'create_station_table()'
+#' @param delim Delimeter for data files (changes from 2015-> from
+#'        double-quoted fields to plain comma-separators.
+#'
+#' @noRd
+NULL
+
+#' read_one_line_boston
+#'
+#' @param stmt An sqlit3 statement to be assembled by reading the line of data
+#' @param line Line of data read from citibike file
+#' @param stationqry Sqlite3 query for station data table to be subsequently
+#'        passed to 'create_station_table()'
 #'
 #' @noRd
 NULL
@@ -24,9 +41,9 @@ NULL
 #' Extracts bike data for NYC citibike
 #' 
 #' @param datafiles A character vector containin the paths to the citibike 
-#' .csv files to import.
+#'        .csv files to import.
 #' @param spdb A string containing the path to the Sqlite3 database to 
-#' use. It will be created automatically.
+#'        use. It will be created automatically.
 #' @param quiet If FALSE, progress is displayed on screen
 #'
 #' @return integer result code
@@ -41,7 +58,7 @@ importDataToSqlite3 <- function(datafiles, spdb, quiet) {
 #' Initial creation of SQLite3 database
 #' 
 #' @param spdb A string containing the path to the Sqlite3 database to 
-#' be created.
+#'        be created.
 #'
 #' @return integer result code
 #'
@@ -57,10 +74,10 @@ create_sqlite3_db <- function(spdb) {
 #' 
 #' @param spdb A string containing the path to the sqlite3 database to use.
 #' @param tables A vector with the tables for which to create indexes. This
-#' vector should be the same length as the cols vector.
+#'        vector should be the same length as the cols vector.
 #' @param cols A vector with the fields for which to create indexes.
 #' @param reindex If false, indexes are created, otherwise they are simply
-#' reindexed.
+#'        reindexed.
 #'
 #' @return integer result code
 #'
@@ -76,7 +93,7 @@ create_db_indexes <- function(spdb, tables, cols, reindex) {
 #' 
 #' @param spdb A string containing the path to the sqlite3 database to use.
 #' @param reindex If false, indexes are created, otherwise they are simply
-#' reindexed.
+#'        reindexed.
 #'
 #' @return integer result code
 #'

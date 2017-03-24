@@ -31,7 +31,7 @@
 //' Initial creation of SQLite3 database
 //' 
 //' @param spdb A string containing the path to the Sqlite3 database to 
-//' be created.
+//'        be created.
 //'
 //' @return integer result code
 //'
@@ -48,6 +48,11 @@ int create_sqlite3_db (const char * spdb)
         throw std::runtime_error ("Can't establish sqlite3 connection");
 
     rc = sqlite3_exec(dbcon, "SELECT InitSpatialMetadata(1);", NULL, NULL, &zErrMsg);
+
+    // NOTE: Database structure is ordered according to the order of the NYC
+    // citibike system, so each line of data from that city can be injected
+    // straight into the db. All other cities require re-ordering of data to
+    // this citibike sequence prior to injection into db.
 
     std::string createqry = "CREATE TABLE trips ("
         "id serial primary key,"
@@ -88,10 +93,10 @@ int create_sqlite3_db (const char * spdb)
 //' 
 //' @param spdb A string containing the path to the sqlite3 database to use.
 //' @param tables A vector with the tables for which to create indexes. This
-//' vector should be the same length as the cols vector.
+//'        vector should be the same length as the cols vector.
 //' @param cols A vector with the fields for which to create indexes.
 //' @param reindex If false, indexes are created, otherwise they are simply
-//' reindexed.
+//'        reindexed.
 //'
 //' @return integer result code
 //'
@@ -166,7 +171,7 @@ int create_db_indexes (const char* spdb, Rcpp::CharacterVector tables,
 //' 
 //' @param spdb A string containing the path to the sqlite3 database to use.
 //' @param reindex If false, indexes are created, otherwise they are simply
-//' reindexed.
+//'        reindexed.
 //'
 //' @return integer result code
 //'
