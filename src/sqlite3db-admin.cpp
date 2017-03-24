@@ -65,9 +65,10 @@ int create_sqlite3_db (const char * spdb)
         ");"
         "CREATE TABLE stations ("
         "    id integer primary key,"
+        "    city text,"
         "    name varchar,"
-        "    latitude numeric,"
-        "    longitude numeric"
+        "    longitude numeric,"
+        "    latitude numeric"
         ");";
 
     rc = sqlite3_exec(dbcon, createqry.c_str(), NULL, NULL, &zErrMsg);

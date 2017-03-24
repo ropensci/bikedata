@@ -141,7 +141,7 @@ int create_station_table (sqlite3 * dbcon,
     int rc;
 
     std::string fullstationqry = "INSERT INTO stations "
-                                 "(id, longitude, latitude, name) VALUES ";
+                                 "(id, city, longitude, latitude, name) VALUES ";
     fullstationqry = fullstationqry + stationqry.begin ()->second;
     for (auto thisstation = std::next (stationqry.begin ());
             thisstation != stationqry.end (); ++thisstation)
@@ -185,7 +185,7 @@ void read_one_line_nyc (sqlite3_stmt * stmt, char * line,
     sqlite3_bind_text(stmt, 5, tempstr.c_str(), -1, SQLITE_TRANSIENT); 
     std::string startstationid = strtokm(NULL, delim);
     if (stationqry->count(startstationid) == 0) {
-        (*stationqry)[startstationid] = "(" + startstationid + "," + 
+        (*stationqry)[startstationid] = "(" + startstationid + ",\"ny\"," + 
             strtokm(NULL, delim) + "," + strtokm(NULL, delim) + ",'" + 
             strtokm(NULL, delim) + "')";
     }
@@ -199,7 +199,7 @@ void read_one_line_nyc (sqlite3_stmt * stmt, char * line,
 
     std::string endstationid = strtokm(NULL, delim);
     if (stationqry->count(endstationid) == 0) {
-        (*stationqry)[endstationid] = "(" + endstationid + "," + 
+        (*stationqry)[endstationid] = "(" + endstationid + ",\"ny\"," + 
             strtokm(NULL, delim) + "," + strtokm(NULL, delim) + ",'" + 
             strtokm(NULL, delim) + "')";
     }
