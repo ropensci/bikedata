@@ -27,6 +27,8 @@
 
 // Function defs here just so main 'importDataToSqlite3' function can be given
 // first, followed by individual functions for each city 
+int create_station_table (sqlite3 * dbcon,
+    std::map <std::string, std::string> stationqry);
 void read_one_line (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry, const char * delim);
 
@@ -111,6 +113,32 @@ int importDataToSqlite3 (Rcpp::CharacterVector datafiles,
 
     sqlite3_exec(dbcon, "END TRANSACTION", NULL, NULL, &zErrMsg);
 
+    create_station_table (dbcon, stationqry);
+
+    rc = sqlite3_close_v2(dbcon);
+    if (rc != SQLITE_OK)
+        throw std::runtime_error ("Unable to close sqlite database");
+
+    return (ntrips);
+}
+
+//' create_station_table
+//'
+//' Creates and/or updates the table of stations in the database
+//' 
+//' @param dbcon Active connection to sqlite3 database
+//' @param stationqry Station query constructed during reading of data with
+//' importDataToSqlite3 ()
+//'
+//' @return integer result code
+//'
+//' @noRd
+int create_station_table (sqlite3 * dbcon,
+    std::map <std::string, std::string> stationqry)
+{
+    char *zErrMsg = 0;
+    int rc;
+
     std::string fullstationqry = "INSERT INTO stations "
                                  "(id, longitude, latitude, name) VALUES ";
     fullstationqry = fullstationqry + stationqry.begin ()->second;
@@ -127,11 +155,7 @@ int importDataToSqlite3 (Rcpp::CharacterVector datafiles,
     qry = "UPDATE stations SET geom = MakePoint(longitude, latitude, 4326);";
     rc = sqlite3_exec(dbcon, qry.c_str (), NULL, 0, &zErrMsg);
 
-    rc = sqlite3_close_v2(dbcon);
-    if (rc != SQLITE_OK)
-        throw std::runtime_error ("Unable to close sqlite database");
-
-    return (ntrips);
+    return rc;
 }
 
 //' read_one_line
