@@ -34,12 +34,6 @@ vignettes/*.pdf
 aaa.Rmd
 .Rproj.user
 
-# Build files
-src/*.o
-src/*.gcda
-src/*.gcno
-src/*.so
-
 # vim files
 .*.un~
 .*.swp

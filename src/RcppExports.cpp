@@ -5,17 +5,6 @@
 
 using namespace Rcpp;
 
-// create_sqlite3_db
-int create_sqlite3_db(const char * spdb);
-RcppExport SEXP bikedata_create_sqlite3_db(SEXP spdbSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const char * >::type spdb(spdbSEXP);
-    rcpp_result_gen = Rcpp::wrap(create_sqlite3_db(spdb));
-    return rcpp_result_gen;
-END_RCPP
-}
 // importDataToSqlite3
 int importDataToSqlite3(Rcpp::CharacterVector datafiles, const char* spdb, bool quiet);
 RcppExport SEXP bikedata_importDataToSqlite3(SEXP datafilesSEXP, SEXP spdbSEXP, SEXP quietSEXP) {
@@ -26,6 +15,17 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const char* >::type spdb(spdbSEXP);
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
     rcpp_result_gen = Rcpp::wrap(importDataToSqlite3(datafiles, spdb, quiet));
+    return rcpp_result_gen;
+END_RCPP
+}
+// create_sqlite3_db
+int create_sqlite3_db(const char * spdb);
+RcppExport SEXP bikedata_create_sqlite3_db(SEXP spdbSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const char * >::type spdb(spdbSEXP);
+    rcpp_result_gen = Rcpp::wrap(create_sqlite3_db(spdb));
     return rcpp_result_gen;
 END_RCPP
 }

@@ -6,20 +6,6 @@
 #' @noRd
 NULL
 
-#' create_sqlite3_db
-#'
-#' Initial creation of SQLite3 database
-#' 
-#' @param spdb A string containing the path to the Sqlite3 database to 
-#' be created.
-#'
-#' @return integer result code
-#'
-#' @noRd
-create_sqlite3_db <- function(spdb) {
-    .Call('bikedata_create_sqlite3_db', PACKAGE = 'bikedata', spdb)
-}
-
 #' importDataToSqlite3
 #'
 #' Extracts bike data for NYC citibike
@@ -35,6 +21,20 @@ create_sqlite3_db <- function(spdb) {
 #' @noRd
 importDataToSqlite3 <- function(datafiles, spdb, quiet) {
     .Call('bikedata_importDataToSqlite3', PACKAGE = 'bikedata', datafiles, spdb, quiet)
+}
+
+#' create_sqlite3_db
+#'
+#' Initial creation of SQLite3 database
+#' 
+#' @param spdb A string containing the path to the Sqlite3 database to 
+#' be created.
+#'
+#' @return integer result code
+#'
+#' @noRd
+create_sqlite3_db <- function(spdb) {
+    .Call('bikedata_create_sqlite3_db', PACKAGE = 'bikedata', spdb)
 }
 
 #' create_db_indexes
