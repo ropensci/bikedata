@@ -43,3 +43,15 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// create_city_index
+int create_city_index(const char* spdb, bool reindex);
+RcppExport SEXP bikedata_create_city_index(SEXP spdbSEXP, SEXP reindexSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const char* >::type spdb(spdbSEXP);
+    Rcpp::traits::input_parameter< bool >::type reindex(reindexSEXP);
+    rcpp_result_gen = Rcpp::wrap(create_city_index(spdb, reindex));
+    return rcpp_result_gen;
+END_RCPP
+}

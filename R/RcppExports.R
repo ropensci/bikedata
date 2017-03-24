@@ -69,6 +69,22 @@ create_db_indexes <- function(spdb, tables, cols, reindex) {
     .Call('bikedata_create_db_indexes', PACKAGE = 'bikedata', spdb, tables, cols, reindex)
 }
 
+#' create_city_index
+#'
+#' Creates city index in the database. This function is *always* run, while the
+#' 'create_db_indexes' function is optionally run.
+#' 
+#' @param spdb A string containing the path to the sqlite3 database to use.
+#' @param reindex If false, indexes are created, otherwise they are simply
+#' reindexed.
+#'
+#' @return integer result code
+#'
+#' @noRd
+create_city_index <- function(spdb, reindex) {
+    .Call('bikedata_create_city_index', PACKAGE = 'bikedata', spdb, reindex)
+}
+
 #' strtokm
 #'
 #' A string delimiter function based on strtok

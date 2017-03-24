@@ -46,16 +46,20 @@ store_bikedata <- function (data_dir, spdb, quiet=FALSE, create_index = TRUE)
                      format (num_trips_in_db (spdb), big.mark=',',
                              scientific=FALSE), ' trips')
     }
-    if (create_index == TRUE) 
+
+    create_city_index (spdb, er_idx - 1)
+
+    if (create_index == TRUE) # addition indexes for stations and times
     {
         if (!quiet) 
             message (c ('Creating', 'Re-creating') [er_idx], ' indexes')
-        create_db_indexes(spdb, 
-                          tables = rep("trips", times=4),
-                          cols = c("start_station_id", "end_station_id", 
-                                   "start_time", "stop_time"),
-                          indexes_exist (spdb))
+        create_db_indexes (spdb, 
+                           tables = rep("trips", times=4),
+                           cols = c("start_station_id", "end_station_id", 
+                                    "start_time", "stop_time"),
+                           indexes_exist (spdb))
     }
+
     invisible (file.remove (flist_csv))
 }
 
@@ -70,7 +74,7 @@ indexes_exist <- function (spdb)
     db <- RSQLite::dbConnect(SQLite(), spdb, create = FALSE)
     idx_list <- dbGetQuery(db, "PRAGMA index_list (trips)")
     RSQLite::dbDisconnect(db)
-    nrow (idx_list) > 1
+    nrow (idx_list) > 2 # 2 because city index is automatically created
 }
 
 #' Count number of trips in sqlite3 database

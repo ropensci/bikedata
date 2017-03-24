@@ -97,72 +97,110 @@ int create_sqlite3_db (const char * spdb)
 //'
 //' @noRd
 // [[Rcpp::export]]
-int create_db_indexes (const char* spdb,
-                            Rcpp::CharacterVector tables,
-                            Rcpp::CharacterVector cols,
-                            bool reindex) 
+int create_db_indexes (const char* spdb, Rcpp::CharacterVector tables,
+        Rcpp::CharacterVector cols, bool reindex) 
 {
-  
-  sqlite3 *dbcon;
-  char *zErrMsg = 0;
-  const char *zStmtMsg;
-  int rc;
-  
-  rc = sqlite3_open_v2(spdb, &dbcon, SQLITE_OPEN_READWRITE, NULL);
-  if (rc != SQLITE_OK)
-    throw std::runtime_error ("Can't establish sqlite3 connection");
-  
-  char *idxsql = NULL;
-  sqlite3_stmt *versionstmt;
-  char *sqliteversion = (char *)"0.1";
-  
-  if (rc == SQLITE_OK) {
-    
-    rc = sqlite3_prepare_v2(dbcon, "SELECT sqlite_version()", -1, &versionstmt, 0);
-    if (rc != SQLITE_OK) {
-      throw std::runtime_error ("Unable to retrieve sqlite version");
-    }
+    sqlite3 *dbcon;
+    char *zErrMsg = 0;
+    const char *zStmtMsg;
+    int rc;
+
+    rc = sqlite3_open_v2(spdb, &dbcon, SQLITE_OPEN_READWRITE, NULL);
+    if (rc != SQLITE_OK)
+        throw std::runtime_error ("Can't establish sqlite3 connection");
+
+    char *idxsql = NULL;
+    sqlite3_stmt *versionstmt;
+    char *sqliteversion = (char *)"0.1";
+
+    rc = sqlite3_prepare_v2(dbcon, "SELECT sqlite_version()", -1, 
+            &versionstmt, 0);
+    if (rc != SQLITE_OK) 
+        throw std::runtime_error ("Unable to retrieve sqlite version");
     rc = sqlite3_step(versionstmt);
-    
-    if (rc == SQLITE_ROW) {
-      sqliteversion = (char *)sqlite3_column_text(versionstmt, 0);
-    }
+
+    if (rc == SQLITE_ROW) 
+        sqliteversion = (char *)sqlite3_column_text(versionstmt, 0);
     rc = sqlite3_reset(versionstmt);
 
-    for (unsigned int i = 0; i < cols.length(); ++i) {
-    
-      if (((std::string)cols[i]).find("(") == std::string::npos || 
-          compare_version_numbers(sqliteversion, "3.9.0") >= 0) {
-        
-        std::string idxname = "idx_" + tables[i] + "_" + (std::string)cols[i];
-        boost::replace_all(idxname, "(", "_");
-        boost::replace_all(idxname, ")", "_");
-        boost::replace_all(idxname, " ", "_");
-        
-        if (reindex)
-            int sprrc = asprintf(&idxsql, "REINDEX %s ", idxname.c_str());
-        else
-            int sprrc = asprintf(&idxsql, "CREATE INDEX %s ON %s(%s)", idxname.c_str(), (char *)(tables[i]), (char *)(cols[i]));
+    for (unsigned int i = 0; i < cols.length(); ++i) 
+    {
+        if (((std::string) cols[i]).find("(") == std::string::npos || 
+                compare_version_numbers (sqliteversion, "3.9.0") >= 0) 
+        {
+            std::string idxname = "idx_" + tables[i] + "_" + 
+                (std::string)cols[i];
+            boost::replace_all(idxname, "(", "_");
+            boost::replace_all(idxname, ")", "_");
+            boost::replace_all(idxname, " ", "_");
 
-        rc = sqlite3_exec(dbcon, idxsql, NULL, NULL, &zErrMsg);
-        if (rc != SQLITE_OK) {
-          throw std::runtime_error ("Unable to execute index query: " + (std::string)idxsql);
+            if (reindex)
+                int sprrc = asprintf(&idxsql, "REINDEX %s ", 
+                        idxname.c_str());
+            else
+                int sprrc = asprintf(&idxsql, "CREATE INDEX %s ON %s(%s)", 
+                        idxname.c_str(), (char *)(tables[i]), 
+                        (char *)(cols[i]));
+
+            rc = sqlite3_exec(dbcon, idxsql, NULL, NULL, &zErrMsg);
+            if (rc != SQLITE_OK) 
+                throw std::runtime_error ("Unable to execute index query: " + 
+                        (std::string)idxsql);
         }
-        
-      }
-      else {
-        Rcpp::warning("Unable to create index on " + cols[i] + ", expression not supported in SQLite version < 3.9.0");
-      }
-    
+        else 
+            Rcpp::warning ("Unable to create index on " + cols[i] + 
+                    ", expression not supported in SQLite version < 3.9.0");
     } 
-  
-  }
-  
-  rc = sqlite3_close_v2(dbcon);
-  if (rc != SQLITE_OK) {
-    throw std::runtime_error ("Unable to close sqlite database");
-  }
-  
-  return(rc);
 
+    rc = sqlite3_close_v2(dbcon);
+    if (rc != SQLITE_OK) 
+        throw std::runtime_error ("Unable to close sqlite database");
+  
+    return(rc);
+}
+
+//' create_city_index
+//'
+//' Creates city index in the database. This function is *always* run, while the
+//' 'create_db_indexes' function is optionally run.
+//' 
+//' @param spdb A string containing the path to the sqlite3 database to use.
+//' @param reindex If false, indexes are created, otherwise they are simply
+//' reindexed.
+//'
+//' @return integer result code
+//'
+//' @noRd
+// [[Rcpp::export]]
+int create_city_index (const char* spdb, bool reindex) 
+{
+    sqlite3 *dbcon;
+    char *zErrMsg = 0;
+    const char *zStmtMsg;
+    int rc;
+
+    rc = sqlite3_open_v2(spdb, &dbcon, SQLITE_OPEN_READWRITE, NULL);
+    if (rc != SQLITE_OK)
+        throw std::runtime_error ("Can't establish sqlite3 connection");
+
+    char *idxsql = NULL;
+
+    std::string idxname = "idx_trips_city";
+
+    if (reindex)
+        int sprrc = asprintf (&idxsql, "REINDEX %s ", idxname.c_str());
+    else
+        int sprrc = asprintf (&idxsql, "CREATE INDEX %s ON trips(city)",
+                idxname.c_str());
+
+    rc = sqlite3_exec(dbcon, idxsql, NULL, NULL, &zErrMsg);
+    if (rc != SQLITE_OK) 
+        throw std::runtime_error ("Unable to execute index query: " + 
+                (std::string)idxsql);
+
+    rc = sqlite3_close_v2(dbcon);
+    if (rc != SQLITE_OK) 
+        throw std::runtime_error ("Unable to close sqlite database");
+  
+    return(rc);
 }
