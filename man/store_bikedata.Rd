@@ -2,16 +2,18 @@
 % Please edit documentation in R/store-bikedata.R
 \name{store_bikedata}
 \alias{store_bikedata}
-\title{Store nyc-citibike data in spatialite database}
+\title{Store hire bicycle data in spatialite database}
 \usage{
 store_bikedata(data_dir, spdb, quiet = FALSE, create_index = TRUE)
 }
 \arguments{
 \item{data_dir}{A character vector giving the directory containing the
-\code{.zip} files of citibike data.}
+data files downloaded with \code{dl_bikedata} for one or more
+cities.}
 
 \item{spdb}{A string containing the path to the spatialite database to 
-use. It will be created automatically if it doesn't already exist.}
+use. If it doesn't already exist, it will be created, otherwise data
+will be appended to existing database.}
 
 \item{quiet}{If FALSE, progress is displayed on screen}
 
@@ -19,9 +21,11 @@ use. It will be created automatically if it doesn't already exist.}
 IDs and start and stop times.}
 }
 \description{
-Store nyc-citibike data in spatialite database
+Store hire bicycle data in spatialite database
 }
 \note{
-This function can take quite a long time to execute (typically > 10
+Data for different cities are all stored in the same database, with
+city identifiers automatically established from the names of downloaded data
+files. This function can take quite a long time to execute (typically > 10
 minutes), and generates a spatialite database file several gigabytes in size.
 }

@@ -40,6 +40,8 @@ void read_one_line_nyc (sqlite3_stmt * stmt, char * line,
 //'        .csv files to import.
 //' @param spdb A string containing the path to the Sqlite3 database to 
 //'        use. It will be created automatically.
+//' @param city First two letters of city for which data are to be added (thus
+//'        far, "ny", "bo", "ch", "dc", and "la")
 //' @param quiet If FALSE, progress is displayed on screen
 //'
 //' @return integer result code
@@ -47,7 +49,7 @@ void read_one_line_nyc (sqlite3_stmt * stmt, char * line,
 //' @noRd
 // [[Rcpp::export]]
 int importDataToSqlite3 (Rcpp::CharacterVector datafiles, 
-        const char* spdb, bool quiet) 
+        const char* spdb, std::string city, bool quiet) 
 {
     sqlite3 *dbcon;
     char *zErrMsg = 0;
@@ -101,8 +103,9 @@ int importDataToSqlite3 (Rcpp::CharacterVector datafiles,
         while (fgets (in_line, BUFFER_SIZE, pFile) != NULL) 
         {
             rm_dos_end (in_line);
-            sqlite3_bind_text(stmt, 1, std::to_string (trip_id).c_str(), -1, SQLITE_TRANSIENT); // Trip ID
-            sqlite3_bind_text(stmt, 2, "ny", -1, SQLITE_TRANSIENT); // city
+            sqlite3_bind_text(stmt, 1, std::to_string (trip_id).c_str(), -1, 
+                    SQLITE_TRANSIENT); // Trip ID
+            sqlite3_bind_text(stmt, 2, city.c_str (), -1, SQLITE_TRANSIENT); 
             read_one_line_nyc (stmt, in_line, &stationqry, delim);
             trip_id++;
             ntrips++;

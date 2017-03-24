@@ -44,13 +44,15 @@ NULL
 #'        .csv files to import.
 #' @param spdb A string containing the path to the Sqlite3 database to 
 #'        use. It will be created automatically.
+#' @param city First two letters of city for which data are to be added (thus
+#'        far, "ny", "bo", "ch", "dc", and "la")
 #' @param quiet If FALSE, progress is displayed on screen
 #'
 #' @return integer result code
 #'
 #' @noRd
-importDataToSqlite3 <- function(datafiles, spdb, quiet) {
-    .Call('bikedata_importDataToSqlite3', PACKAGE = 'bikedata', datafiles, spdb, quiet)
+importDataToSqlite3 <- function(datafiles, spdb, city, quiet) {
+    .Call('bikedata_importDataToSqlite3', PACKAGE = 'bikedata', datafiles, spdb, city, quiet)
 }
 
 #' create_sqlite3_db

@@ -1,15 +1,18 @@
-#' Store nyc-citibike data in spatialite database
+#' Store hire bicycle data in spatialite database
 #'
-#' 
 #' @param data_dir A character vector giving the directory containing the
-#'          \code{.zip} files of citibike data.
+#'          data files downloaded with \code{dl_bikedata} for one or more
+#'          cities.
 #' @param spdb A string containing the path to the spatialite database to 
-#'          use. It will be created automatically if it doesn't already exist.
+#'          use. If it doesn't already exist, it will be created, otherwise data
+#'          will be appended to existing database.
 #' @param quiet If FALSE, progress is displayed on screen
 #' @param create_index If TRUE, creates an index on the start and end station
 #'          IDs and start and stop times.
 #'
-#' @note This function can take quite a long time to execute (typically > 10
+#' @note Data for different cities are all stored in the same database, with
+#' city identifiers automatically established from the names of downloaded data
+#' files. This function can take quite a long time to execute (typically > 10
 #' minutes), and generates a spatialite database file several gigabytes in size.
 #' 
 #' @export
@@ -43,7 +46,8 @@ store_bikedata <- function (data_dir, spdb, quiet=FALSE, create_index = TRUE)
     for (city in cities)
     {
         flist_city <- get_flist_city (flist_csv, city)
-        ntrips <- ntrips + importDataToSqlite3 (flist_city, spdb, quiet)
+        ntrips <- ntrips + importDataToSqlite3 (flist_city, spdb, 
+                                                substring (city, 1, 2), quiet)
     }
     if (!quiet)
     {
