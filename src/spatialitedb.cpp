@@ -148,8 +148,6 @@ int create_sqlite3_db (const char * spdb)
 int importDataToSqlite3 (Rcpp::CharacterVector datafiles, 
         const char* spdb, bool quiet) 
 {
-    create_sqlite3_db (spdb);
-
     sqlite3 *dbcon;
     char *zErrMsg = 0;
     int rc;
@@ -166,8 +164,8 @@ int importDataToSqlite3 (Rcpp::CharacterVector datafiles,
     char * tail = 0;
     std::map <std::string, std::string> stationqry;
 
-    // Get max trip_id 
-    int trip_id;
+    // Get max trip_id = # trips already in db
+    int trip_id, ntrips = 0; // ntrips is # added in this call
     char qry_id [BUFFER_SIZE];
     sprintf(qry_id, "SELECT MAX(trip_id) FROM trips");
     rc = sqlite3_prepare_v2(dbcon, qry_id, BUFFER_SIZE, &stmt, NULL);
@@ -205,6 +203,7 @@ int importDataToSqlite3 (Rcpp::CharacterVector datafiles,
             sqlite3_bind_text(stmt, 1, std::to_string (trip_id).c_str(), -1, SQLITE_TRANSIENT); // Trip ID
             read_one_line (stmt, in_line, &stationqry, delim);
             trip_id++;
+            ntrips++;
 
             sqlite3_step(stmt);
             sqlite3_reset(stmt);
@@ -233,7 +232,7 @@ int importDataToSqlite3 (Rcpp::CharacterVector datafiles,
     if (rc != SQLITE_OK)
         throw std::runtime_error ("Unable to close sqlite database");
 
-    return(trip_id);
+    return (ntrips);
 }
 
 

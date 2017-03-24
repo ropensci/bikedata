@@ -15,9 +15,9 @@
 #' @export
 store_bikedata <- function (data_dir, spdb, quiet=FALSE, create_index = TRUE)
 {
+    er_idx <- file.exists (spdb) + 1 # = (1, 2) if (!exists, exists)
     if (!quiet)
-        message (c ('Creating', 'Adding data to') [file.exists (spdb) + 1],
-                 ' sqlite3 database')
+        message (c ('Creating', 'Adding data to') [er_idx], ' sqlite3 database')
     if (!file.exists (spdb))
         chk <- create_sqlite3_db (spdb)
 
@@ -38,16 +38,23 @@ store_bikedata <- function (data_dir, spdb, quiet=FALSE, create_index = TRUE)
     flist_csv <- file.path (data_dir, list.files (data_dir, pattern=".csv"))
     ntrips <- importDataToSqlite3 (flist_csv, spdb, quiet)
     if (!quiet)
-        message ('Total trips read = ', 
+    {
+        message ('Total trips ', c ('read', 'added') [er_idx], ' = ',
                  format (ntrips, big.mark=',', scientific=FALSE))
-    if (create_index == TRUE) {
-      if (!quiet) {
-        message (c ('Creating', 'Re-creating') [indexes_exist (spdb) + 1], ' indexes')
-      }
-      create_db_indexes(spdb, 
-                      tables = rep("trips", times=4),
-                      cols = c("start_station_id", "end_station_id", "start_time", "stop_time"),
-                      indexes_exist (spdb))
+        if (er_idx == 2)
+            message ("database '", basename (spdb), "' now has ", 
+                     format (num_trips_in_db (spdb), big.mark=',',
+                             scientific=FALSE), ' trips')
+    }
+    if (create_index == TRUE) 
+    {
+        if (!quiet) 
+            message (c ('Creating', 'Re-creating') [er_idx], ' indexes')
+        create_db_indexes(spdb, 
+                          tables = rep("trips", times=4),
+                          cols = c("start_station_id", "end_station_id", 
+                                   "start_time", "stop_time"),
+                          indexes_exist (spdb))
     }
     invisible (file.remove (flist_csv))
 }
@@ -64,4 +71,18 @@ indexes_exist <- function (spdb)
     idx_list <- dbGetQuery(db, "PRAGMA index_list (trips)")
     RSQLite::dbDisconnect(db)
     nrow (idx_list) > 1
+}
+
+#' Count number of trips in sqlite3 database
+#'
+#' @param spdb A string containing the path to the spatialite database to 
+#' use. 
+#'
+#' @export
+num_trips_in_db <- function (spdb)
+{
+    db <- RSQLite::dbConnect(SQLite(), spdb, create = FALSE)
+    ntrips <- dbGetQuery(db, "SELECT Count(*) FROM trips")
+    RSQLite::dbDisconnect(db)
+    return (as.numeric (ntrips))
 }

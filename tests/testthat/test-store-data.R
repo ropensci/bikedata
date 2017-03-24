@@ -25,4 +25,8 @@ test_that ('date limits', {
                expect_length (x, 2)
 })
 
+test_that ('db size', {
+               expect_equal (num_trips_in_db ('testdb'), 162)
+})
+
 invisible (file.remove ("testdb"))

@@ -3,6 +3,7 @@
 export(bike_stations)
 export(dl_bikedata)
 export(get_datelimits)
+export(num_trips_in_db)
 export(store_bikedata)
 export(tripmat)
 import(RSQLite)
