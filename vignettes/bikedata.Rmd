@@ -1,0 +1,173 @@
+---
+title: "1. bikedata"
+author: 
+  - "Mark Padgham"
+date: "`r Sys.Date()`"
+output: 
+    html_document:
+        toc: true
+        toc_float: true
+        theme: flatly
+vignette: >
+  %\VignetteIndexEntry{1. osmdata}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## 1. Introduction
+
+`bikedata` is an R package for downloading and aggregating data from public
+bicycle hire systems. Cities and the names of associated public bicycle Systems
+currently included are:
+
+1. New York citibike
+2. Boston Hubway
+3. Chicago Divvy
+4. Washingon D.C. Capital BikeShare
+5. Los Angeles Metro
+
+`bikedata` also facilitates access to data from the Barclay's Bicycle Hire
+system of London, U.K., for which users must first register to obtain an
+`OAuth` key to access the data.
+
+Cities with bike systems which do not currently provide data, but for which
+`bikedata` will be adapted as soon as data become available include:
+
+1. Miami, Florida
+2. Portland, Oregon
+
+The development version of the `bikedata` R package can be installed with the
+`devtools` package using the following command:
+
+```{r install, eval=FALSE}
+devtools::install_github('mpadge/bikedata')
+```
+
+```{r, echo=FALSE, message=FALSE, results='hide'}
+devtools::load_all('..', export_all = FALSE)
+```
+
+Once installed, it can be loaded in the usual way:
+
+```{r, eval=FALSE}
+library(bikedata)
+```
+
+## 2. Main Functions
+
+All of the above listed public bicycle hire systems record and disseminate
+individual trip data, minimally including the times and places at which every
+trip starts and ends. Some systems provide additional anonymised individual
+data, typically including whether or not a user is registered with the system
+and if so, the age, gender, and residential postal code.
+
+Data are downloaded with the single function, `dl_bikedata()`,
+```{r, eval=FALSE}
+dl_bikedata (city="chicago")
+```
+This function downloads the requested data (in this case, all data from
+Chicago's Divvy Bike system) and stores them in the temporary directory of the
+current `R` session (although this location may be overridden). The
+`dl_bikedata()` function will only download those data files that do not
+already exist, and thus function may thus be used to periodically refresh the
+contents of a nominated directory.
+
+Having downloaded data, they can then be collected stored in a single `SQLite3`
+database with the single call 
+```{r, eval=FALSE}
+ntrips <- store_bikedata (data_dir=tempdir(), bikedb = "bikedb")
+```
+This will load the trip data stored in individual files in the location
+`data_dir` into the nominated database. A database will be created if none
+exists, otherwise data will be appended to existing data. Cities associated
+with data files held in the nominated location are identified automatically,
+because each system has its own unique way of naming files. The function
+returns the total number of trips added to the database.
+
+Finally, an ''origin-destination'' matrix of numbers of trips between all pairs
+of stations can be aggregated with the call, 
+```{r, eval=FALSE}
+tm <- tripmat (bikedb = "bikedb")
+```
+while details of the stations can be obtained with
+```{r, eval=FALSE}
+bike_stations (bikedb = "bikedb")
+```
+
+The remainder of this vignette details these three distinct functional aspects
+- downloading, storage, and extraction of data.
+
+## 3. Downloading Data
+
+The function `dl_bikedata()` requires only the single argument of the city or
+bicycle hire system for which data are desired, and accepts the two additional
+optional arguments of `data_dir` and `dates`. The latter of these can be used
+to download only those files within a nominated range of calendrical dates, and
+must be passed as a vector listing all desired data. For example,
+```{r, eval=FALSE}
+dl_bikedata (city='dc', dates=c('2015.11', '2015.12', 'Jan 2016'))
+```
+It is not necessary to explicitly download data with the `dl_bikedata()`
+function - the function `store_bikedata()` described in the following section
+will automatically download requested data absent specification of a local
+storage location. The `dl_bikedata()` function is primarily intended to allow
+direct user-control over the storage of raw trip data files.
+
+As mentioned, data from the Barclay's Bicycle Hire Scheme of London, U.K.
+require registration with [Transport for London](tfl.gov.uk). Registration
+enables access to an `OAuth` key which must additionally be passed to the
+`dl_bikedata()` function to access these data.
+
+## 4. Storing Data
+
+As mentioned above, individual trip data are stored in a single `SQLite3`
+database. Specifying any path other than the default `data_dir = tempdir()` in
+the `store_bikedata()` function call will create a database that will remain in
+that location until explicitly deleted. 
+
+A database may be initiated with an initial call to `store_bikedata()`:
+```{r, eval=FALSE}
+ntrips <- store_bikedata (bikedb = "bikedb", city="chi")
+```
+Although the `bikedata` package aims to circumvent any need to access the
+database directly, through providing ready extraction of trip data for most
+analytical needs, direct access may be achieved either using the convenient
+`dplyr` functions, or the more powerful functionality provided by the `RSQLite`
+package.
+
+```{r, eval=FALSE}
+# demo list of tables and contents of both trips and stations tables
+```
+
+This reveals that data are stored in two primary tables, one for all individual
+trips and one detailing the locations and other properties of the bicycle
+docking stations.
+
+The parameter `data_dir` of the `store_bikedata()` function specifies the
+location where previously downloaded trip data are stored. If not given,
+requested data are downloaded into `tempdir()` and deleted after they have been
+loaded into the database.
+
+In addition to naming the database for storing trip data, `store_bikedata()`
+minimally requires naming the city for which to download data.
+```{r, eval=FALSE}
+store_bikedata (bikedb = 'bikedb', city = 'dc', dates = 2016)
+```
+Loading data from other cities requires repeated calls to `store_bikedata()`.
+The entirety of currently available data can thus be loaded into a single
+database with the following lines:
+```{r, eval=FALSE}
+cities <- bike_cities ()
+for (c in cities)
+    store_bikedata (bikedb = 'bikedb', city = c)
+```
+`bikedata` is explicitly designed *not* to permit automatic downloading of all
+data in a single call, lest an innocent exploratory usage inadvertently
+generate a database 5GB in size.
+
+The `store_bikedata()` function also enables the nominated database to be
+updated to reflect more recently published data.
+
+This database may be updated as new data become available (generally on a
+monthly basis).
+
