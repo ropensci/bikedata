@@ -6,27 +6,41 @@
 using namespace Rcpp;
 
 // rcpp_import_to_trip_table
-int rcpp_import_to_trip_table(Rcpp::CharacterVector datafiles, const char* bikedb, std::string city, bool quiet);
-RcppExport SEXP bikedata_rcpp_import_to_trip_table(SEXP datafilesSEXP, SEXP bikedbSEXP, SEXP citySEXP, SEXP quietSEXP) {
+int rcpp_import_to_trip_table(const char* bikedb, Rcpp::CharacterVector datafiles, std::string city, bool quiet);
+RcppExport SEXP bikedata_rcpp_import_to_trip_table(SEXP bikedbSEXP, SEXP datafilesSEXP, SEXP citySEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type datafiles(datafilesSEXP);
     Rcpp::traits::input_parameter< const char* >::type bikedb(bikedbSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type datafiles(datafilesSEXP);
     Rcpp::traits::input_parameter< std::string >::type city(citySEXP);
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_import_to_trip_table(datafiles, bikedb, city, quiet));
+    rcpp_result_gen = Rcpp::wrap(rcpp_import_to_trip_table(bikedb, datafiles, city, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
-// create_sqlite3_db
-int create_sqlite3_db(const char * bikedb);
-RcppExport SEXP bikedata_create_sqlite3_db(SEXP bikedbSEXP) {
+// rcpp_import_to_datafile_table
+int rcpp_import_to_datafile_table(const char * bikedb, Rcpp::CharacterVector datafiles, std::string city, int nfiles);
+RcppExport SEXP bikedata_rcpp_import_to_datafile_table(SEXP bikedbSEXP, SEXP datafilesSEXP, SEXP citySEXP, SEXP nfilesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const char * >::type bikedb(bikedbSEXP);
-    rcpp_result_gen = Rcpp::wrap(create_sqlite3_db(bikedb));
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type datafiles(datafilesSEXP);
+    Rcpp::traits::input_parameter< std::string >::type city(citySEXP);
+    Rcpp::traits::input_parameter< int >::type nfiles(nfilesSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_import_to_datafile_table(bikedb, datafiles, city, nfiles));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_create_sqlite3_db
+int rcpp_create_sqlite3_db(const char * bikedb);
+RcppExport SEXP bikedata_rcpp_create_sqlite3_db(SEXP bikedbSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const char * >::type bikedb(bikedbSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_create_sqlite3_db(bikedb));
     return rcpp_result_gen;
 END_RCPP
 }

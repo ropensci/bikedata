@@ -40,10 +40,10 @@ NULL
 #'
 #' Extracts bike data for NYC citibike
 #' 
-#' @param datafiles A character vector containin the paths to the citibike 
-#'        .csv files to import.
 #' @param bikedb A string containing the path to the Sqlite3 database to 
 #'        use. It will be created automatically.
+#' @param datafiles A character vector containin the paths to the citibike 
+#'        .csv files to import.
 #' @param city First two letters of city for which data are to be added (thus
 #'        far, "ny", "bo", "ch", "dc", and "la")
 #' @param quiet If FALSE, progress is displayed on screen
@@ -51,11 +51,28 @@ NULL
 #' @return integer result code
 #'
 #' @noRd
-rcpp_import_to_trip_table <- function(datafiles, bikedb, city, quiet) {
-    .Call('bikedata_rcpp_import_to_trip_table', PACKAGE = 'bikedata', datafiles, bikedb, city, quiet)
+rcpp_import_to_trip_table <- function(bikedb, datafiles, city, quiet) {
+    .Call('bikedata_rcpp_import_to_trip_table', PACKAGE = 'bikedata', bikedb, datafiles, city, quiet)
 }
 
-#' create_sqlite3_db
+#' rcpp_import_to_datafile_table
+#'
+#' Creates and/or updates the table of datafile names in the database
+#' 
+#' @param bikedb A string containing the path to the Sqlite3 database to 
+#'        use. 
+#' @param datafiles List of names of files to be added - must be names of
+#'        compressed \code{.zip} archives, not expanded \code{.csv} files
+#' @param city Name of city associated with datafile
+#'
+#' @return Number of datafile names added to database table
+#'
+#' @noRd
+rcpp_import_to_datafile_table <- function(bikedb, datafiles, city, nfiles) {
+    .Call('bikedata_rcpp_import_to_datafile_table', PACKAGE = 'bikedata', bikedb, datafiles, city, nfiles)
+}
+
+#' rcpp_create_sqlite3_db
 #'
 #' Initial creation of SQLite3 database
 #' 
@@ -65,8 +82,8 @@ rcpp_import_to_trip_table <- function(datafiles, bikedb, city, quiet) {
 #' @return integer result code
 #'
 #' @noRd
-create_sqlite3_db <- function(bikedb) {
-    .Call('bikedata_create_sqlite3_db', PACKAGE = 'bikedata', bikedb)
+rcpp_create_sqlite3_db <- function(bikedb) {
+    .Call('bikedata_rcpp_create_sqlite3_db', PACKAGE = 'bikedata', bikedb)
 }
 
 #' create_db_indexes

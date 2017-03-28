@@ -20,6 +20,9 @@ will be appended to existing database.}
 \item{create_index}{If TRUE, creates an index on the start and end station
 IDs and start and stop times.}
 }
+\value{
+Number of trips added to database
+}
 \description{
 Store hire bicycle data in SQLite3 database
 }

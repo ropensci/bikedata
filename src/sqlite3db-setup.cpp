@@ -26,7 +26,7 @@
 #include "sqlite3db-add-data.h"
 
 
-//' create_sqlite3_db
+//' rcpp_create_sqlite3_db
 //'
 //' Initial creation of SQLite3 database
 //' 
@@ -37,7 +37,7 @@
 //'
 //' @noRd
 // [[Rcpp::export]]
-int create_sqlite3_db (const char * bikedb)
+int rcpp_create_sqlite3_db (const char * bikedb)
 {
     sqlite3 *dbcon;
     char *zErrMsg = 0;
@@ -78,7 +78,7 @@ int create_sqlite3_db (const char * bikedb)
         "CREATE TABLE datafiles ("
         "    id integer primary key,"
         "    city text,"
-        "    name varchar"
+        "    name text"
         ");";
 
     rc = sqlite3_exec(dbcon, createqry.c_str(), NULL, NULL, &zErrMsg);

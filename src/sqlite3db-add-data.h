@@ -29,6 +29,10 @@
 // given first, followed by individual functions for each city 
 int rcpp_import_to_station_table (sqlite3 * dbcon,
     std::map <std::string, std::string> stationqry);
+int rcpp_import_to_trip_table (const char* bikedb, 
+        Rcpp::CharacterVector datafiles, std::string city, bool quiet);
+int rcpp_import_to_datafile_table (const char * bikedb,
+        Rcpp::CharacterVector datafiles, std::string city);
 void read_one_line_nyc (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry, const char * delim);
 
@@ -36,10 +40,10 @@ void read_one_line_nyc (sqlite3_stmt * stmt, char * line,
 //'
 //' Extracts bike data for NYC citibike
 //' 
-//' @param datafiles A character vector containin the paths to the citibike 
-//'        .csv files to import.
 //' @param bikedb A string containing the path to the Sqlite3 database to 
 //'        use. It will be created automatically.
+//' @param datafiles A character vector containin the paths to the citibike 
+//'        .csv files to import.
 //' @param city First two letters of city for which data are to be added (thus
 //'        far, "ny", "bo", "ch", "dc", and "la")
 //' @param quiet If FALSE, progress is displayed on screen
@@ -48,8 +52,8 @@ void read_one_line_nyc (sqlite3_stmt * stmt, char * line,
 //'
 //' @noRd
 // [[Rcpp::export]]
-int rcpp_import_to_trip_table (Rcpp::CharacterVector datafiles, 
-        const char* bikedb, std::string city, bool quiet) 
+int rcpp_import_to_trip_table (const char* bikedb, 
+        Rcpp::CharacterVector datafiles, std::string city, bool quiet)
 {
     sqlite3 *dbcon;
     char *zErrMsg = 0;
@@ -158,6 +162,50 @@ int rcpp_import_to_station_table (sqlite3 * dbcon,
 
     qry = "UPDATE stations SET geom = MakePoint(longitude, latitude, 4326);";
     rc = sqlite3_exec(dbcon, qry.c_str (), NULL, 0, &zErrMsg);
+
+    return rc;
+}
+
+//' rcpp_import_to_datafile_table
+//'
+//' Creates and/or updates the table of datafile names in the database
+//' 
+//' @param bikedb A string containing the path to the Sqlite3 database to 
+//'        use. 
+//' @param datafiles List of names of files to be added - must be names of
+//'        compressed \code{.zip} archives, not expanded \code{.csv} files
+//' @param city Name of city associated with datafile
+//'
+//' @return Number of datafile names added to database table
+//'
+//' @noRd
+// [[Rcpp::export]]
+int rcpp_import_to_datafile_table (const char * bikedb,
+        Rcpp::CharacterVector datafiles, std::string city, int nfiles)
+{
+    sqlite3 *dbcon;
+    char *zErrMsg = 0;
+    int rc;
+
+    nfiles++;
+
+    rc = sqlite3_open_v2(bikedb, &dbcon, SQLITE_OPEN_READWRITE, NULL);
+    if (rc != SQLITE_OK)
+        throw std::runtime_error ("Can't establish sqlite3 connection");
+
+    for (auto i : datafiles)
+    {
+        std::string datafile_qry = "INSERT INTO datafiles "
+                                   "(id, city, name) VALUES (";
+        datafile_qry += std::to_string (nfiles++) + ",\"" + city + "\",\"" + 
+            i + "\");";
+
+        rc = sqlite3_exec(dbcon, datafile_qry.c_str(), NULL, 0, &zErrMsg);
+    }
+
+    rc = sqlite3_close_v2(dbcon);
+    if (rc != SQLITE_OK)
+        throw std::runtime_error ("Unable to close sqlite database");
 
     return rc;
 }
