@@ -30,20 +30,20 @@
 //'
 //' Initial creation of SQLite3 database
 //' 
-//' @param spdb A string containing the path to the Sqlite3 database to 
+//' @param bikedb A string containing the path to the Sqlite3 database to 
 //'        be created.
 //'
 //' @return integer result code
 //'
 //' @noRd
 // [[Rcpp::export]]
-int create_sqlite3_db (const char * spdb)
+int create_sqlite3_db (const char * bikedb)
 {
     sqlite3 *dbcon;
     char *zErrMsg = 0;
     int rc;
 
-    rc = sqlite3_open_v2(spdb, &dbcon, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
+    rc = sqlite3_open_v2(bikedb, &dbcon, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
     if (rc != SQLITE_OK)
         throw std::runtime_error ("Can't establish sqlite3 connection");
 
@@ -74,6 +74,11 @@ int create_sqlite3_db (const char * spdb)
         "    name varchar,"
         "    longitude numeric,"
         "    latitude numeric"
+        ");"
+        "CREATE TABLE datafiles ("
+        "    id integer primary key,"
+        "    city text,"
+        "    name varchar"
         ");";
 
     rc = sqlite3_exec(dbcon, createqry.c_str(), NULL, NULL, &zErrMsg);
@@ -91,7 +96,7 @@ int create_sqlite3_db (const char * spdb)
 //' Creates the specified indexes in the database to speed up queries. Note
 //' that for the full dataset this may take some time.
 //' 
-//' @param spdb A string containing the path to the sqlite3 database to use.
+//' @param bikedb A string containing the path to the sqlite3 database to use.
 //' @param tables A vector with the tables for which to create indexes. This
 //'        vector should be the same length as the cols vector.
 //' @param cols A vector with the fields for which to create indexes.
@@ -102,7 +107,7 @@ int create_sqlite3_db (const char * spdb)
 //'
 //' @noRd
 // [[Rcpp::export]]
-int create_db_indexes (const char* spdb, Rcpp::CharacterVector tables,
+int create_db_indexes (const char* bikedb, Rcpp::CharacterVector tables,
         Rcpp::CharacterVector cols, bool reindex) 
 {
     sqlite3 *dbcon;
@@ -110,7 +115,7 @@ int create_db_indexes (const char* spdb, Rcpp::CharacterVector tables,
     const char *zStmtMsg;
     int rc;
 
-    rc = sqlite3_open_v2(spdb, &dbcon, SQLITE_OPEN_READWRITE, NULL);
+    rc = sqlite3_open_v2(bikedb, &dbcon, SQLITE_OPEN_READWRITE, NULL);
     if (rc != SQLITE_OK)
         throw std::runtime_error ("Can't establish sqlite3 connection");
 
@@ -169,7 +174,7 @@ int create_db_indexes (const char* spdb, Rcpp::CharacterVector tables,
 //' Creates city index in the database. This function is *always* run, while the
 //' 'create_db_indexes' function is optionally run.
 //' 
-//' @param spdb A string containing the path to the sqlite3 database to use.
+//' @param bikedb A string containing the path to the sqlite3 database to use.
 //' @param reindex If false, indexes are created, otherwise they are simply
 //'        reindexed.
 //'
@@ -177,14 +182,14 @@ int create_db_indexes (const char* spdb, Rcpp::CharacterVector tables,
 //'
 //' @noRd
 // [[Rcpp::export]]
-int create_city_index (const char* spdb, bool reindex) 
+int create_city_index (const char* bikedb, bool reindex) 
 {
     sqlite3 *dbcon;
     char *zErrMsg = 0;
     const char *zStmtMsg;
     int rc;
 
-    rc = sqlite3_open_v2(spdb, &dbcon, SQLITE_OPEN_READWRITE, NULL);
+    rc = sqlite3_open_v2(bikedb, &dbcon, SQLITE_OPEN_READWRITE, NULL);
     if (rc != SQLITE_OK)
         throw std::runtime_error ("Can't establish sqlite3 connection");
 

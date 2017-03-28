@@ -4,7 +4,6 @@
 #include <vector>
 #include <map>
 #include <sqlite3.h>
-#include <spatialite.h>
 
 // [[Rcpp::depends(BH)]]
 #include <Rcpp.h>
