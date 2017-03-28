@@ -4,10 +4,10 @@
 \alias{num_trips_in_db}
 \title{Count number of trips in sqlite3 database}
 \usage{
-num_trips_in_db(spdb)
+num_trips_in_db(bikedb)
 }
 \arguments{
-\item{spdb}{A string containing the path to the spatialite database to 
+\item{bikedb}{A string containing the path to the SQLite3 database to 
 use.}
 }
 \description{

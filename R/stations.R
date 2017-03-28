@@ -1,13 +1,13 @@
-#' Extract station matrix from spatialite database
+#' Extract station matrix from SQLite3 database
 #'
-#' @param spdb Path to the spatialite database 
+#' @param bikedb Path to the SQLite3 database 
 #'
 #' @return Matrix containing data for each station
 #'
 #' @export
-bike_stations <- function (spdb)
+bike_stations <- function (bikedb)
 {
-    db <- dplyr::src_sqlite (spdb, create=F)
+    db <- dplyr::src_sqlite (bikedb, create=F)
     dplyr::collect (dplyr::tbl (db, 'stations'))
 }
 

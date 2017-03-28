@@ -74,17 +74,17 @@ convert_weekday <- function (wd)
 
 #' Extract date-time limits from trip database
 #'
-#' @param spdb Path to the spatialite database 
+#' @param bikedb Path to the SQLite3 database 
 #'
 #' @return A vector of 2 elements giving the date-time of the first and last
 #' trips
 #'
 #' @export
-get_datelimits <- function (spdb)
+get_datelimits <- function (bikedb)
 {
     # suppress R CMD check notes:
     start_time <- stop_time <- NULL
-    db <- dplyr::src_sqlite (spdb, create=F)
+    db <- dplyr::src_sqlite (bikedb, create=F)
     trips <- dplyr::tbl (db, 'trips')
     first_trip <- dplyr::summarise (trips, first_trip=min (start_time)) %>%
         dplyr::collect () %>% as.character ()
@@ -162,9 +162,9 @@ filter_tripmat_by_datetime <- function (db, ...)
     
 }
 
-#' Extract station-to-station trip matrix from spatialite database
+#' Extract station-to-station trip matrix from SQLite3 database
 #'
-#' @param spdb Path to the spatialite database 
+#' @param bikedb Path to the SQLite3 database 
 #' @param start_date If given (as year, month, day) , extract only those records
 #' from and including this date
 #' @param end_date If given (as year, month, day), extract only those records to
@@ -188,12 +188,12 @@ filter_tripmat_by_datetime <- function (db, ...)
 #' times are interpreted as hours, with 24 interpreted as day's end at 23:59:59.
 #'
 #' @export
-tripmat <- function (spdb, start_date, end_date, start_time, end_time,
+tripmat <- function (bikedb, start_date, end_date, start_time, end_time,
                      weekday, long=FALSE, quiet=FALSE)
 {
     # suppress R CMD check notes:
     stop_time <- sttrip_id <- st <- et <- NULL
-    db <- RSQLite::dbConnect(SQLite(), spdb, create = FALSE)
+    db <- RSQLite::dbConnect(SQLite(), bikedb, create = FALSE)
 
     x <- NULL
     if (!missing (start_date))

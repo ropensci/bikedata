@@ -2,16 +2,16 @@
 % Please edit documentation in R/stations.R
 \name{bike_stations}
 \alias{bike_stations}
-\title{Extract station matrix from spatialite database}
+\title{Extract station matrix from SQLite3 database}
 \usage{
-bike_stations(spdb)
+bike_stations(bikedb)
 }
 \arguments{
-\item{spdb}{Path to the spatialite database}
+\item{bikedb}{Path to the SQLite3 database}
 }
 \value{
 Matrix containing data for each station
 }
 \description{
-Extract station matrix from spatialite database
+Extract station matrix from SQLite3 database
 }

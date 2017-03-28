@@ -4,10 +4,10 @@
 \alias{get_datelimits}
 \title{Extract date-time limits from trip database}
 \usage{
-get_datelimits(spdb)
+get_datelimits(bikedb)
 }
 \arguments{
-\item{spdb}{Path to the spatialite database}
+\item{bikedb}{Path to the SQLite3 database}
 }
 \value{
 A vector of 2 elements giving the date-time of the first and last

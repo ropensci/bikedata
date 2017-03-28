@@ -25,20 +25,20 @@
 #include <Rcpp.h>
 #include "utils.h"
 
-// Function defs here just so main 'importDataToSqlite3' function can be given
-// first, followed by individual functions for each city 
-int create_station_table (sqlite3 * dbcon,
+// Function defs here just so main 'rcpp_import_to_trip_table' function can be
+// given first, followed by individual functions for each city 
+int rcpp_import_to_station_table (sqlite3 * dbcon,
     std::map <std::string, std::string> stationqry);
 void read_one_line_nyc (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry, const char * delim);
 
-//' importDataToSqlite3
+//' rcpp_import_to_trip_table
 //'
 //' Extracts bike data for NYC citibike
 //' 
 //' @param datafiles A character vector containin the paths to the citibike 
 //'        .csv files to import.
-//' @param spdb A string containing the path to the Sqlite3 database to 
+//' @param bikedb A string containing the path to the Sqlite3 database to 
 //'        use. It will be created automatically.
 //' @param city First two letters of city for which data are to be added (thus
 //'        far, "ny", "bo", "ch", "dc", and "la")
@@ -48,14 +48,14 @@ void read_one_line_nyc (sqlite3_stmt * stmt, char * line,
 //'
 //' @noRd
 // [[Rcpp::export]]
-int importDataToSqlite3 (Rcpp::CharacterVector datafiles, 
-        const char* spdb, std::string city, bool quiet) 
+int rcpp_import_to_trip_table (Rcpp::CharacterVector datafiles, 
+        const char* bikedb, std::string city, bool quiet) 
 {
     sqlite3 *dbcon;
     char *zErrMsg = 0;
     int rc;
 
-    rc = sqlite3_open_v2(spdb, &dbcon, SQLITE_OPEN_READWRITE, NULL);
+    rc = sqlite3_open_v2(bikedb, &dbcon, SQLITE_OPEN_READWRITE, NULL);
     if (rc != SQLITE_OK)
         throw std::runtime_error ("Can't establish sqlite3 connection");
 
@@ -117,7 +117,7 @@ int importDataToSqlite3 (Rcpp::CharacterVector datafiles,
 
     sqlite3_exec(dbcon, "END TRANSACTION", NULL, NULL, &zErrMsg);
 
-    create_station_table (dbcon, stationqry);
+    rcpp_import_to_station_table (dbcon, stationqry);
 
     rc = sqlite3_close_v2(dbcon);
     if (rc != SQLITE_OK)
@@ -126,18 +126,18 @@ int importDataToSqlite3 (Rcpp::CharacterVector datafiles,
     return (ntrips);
 }
 
-//' create_station_table
+//' rcpp_import_to_station_table
 //'
 //' Creates and/or updates the table of stations in the database
 //' 
 //' @param dbcon Active connection to sqlite3 database
 //' @param stationqry Station query constructed during reading of data with
-//'        importDataToSqlite3 ()
+//'        rcpp_import_to_trip_table ()
 //'
 //' @return integer result code
 //'
 //' @noRd
-int create_station_table (sqlite3 * dbcon,
+int rcpp_import_to_station_table (sqlite3 * dbcon,
     std::map <std::string, std::string> stationqry)
 {
     char *zErrMsg = 0;
@@ -167,7 +167,7 @@ int create_station_table (sqlite3 * dbcon,
 //' @param stmt An sqlit3 statement to be assembled by reading the line of data
 //' @param line Line of data read from citibike file
 //' @param stationqry Sqlite3 query for station data table to be subsequently
-//'        passed to 'create_station_table()'
+//'        passed to 'rcpp_import_to_station_table()'
 //' @param delim Delimeter for data files (changes from 2015-> from
 //'        double-quoted fields to plain comma-separators.
 //'
@@ -242,7 +242,7 @@ void read_one_line_nyc (sqlite3_stmt * stmt, char * line,
 //' @param stmt An sqlit3 statement to be assembled by reading the line of data
 //' @param line Line of data read from citibike file
 //' @param stationqry Sqlite3 query for station data table to be subsequently
-//'        passed to 'create_station_table()'
+//'        passed to 'rcpp_import_to_station_table()'
 //'
 //' @noRd
 void read_one_line_boston (sqlite3_stmt * stmt, char * line,

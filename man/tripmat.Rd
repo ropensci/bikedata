@@ -2,13 +2,13 @@
 % Please edit documentation in R/tripmat.R
 \name{tripmat}
 \alias{tripmat}
-\title{Extract station-to-station trip matrix from spatialite database}
+\title{Extract station-to-station trip matrix from SQLite3 database}
 \usage{
-tripmat(spdb, start_date, end_date, start_time, end_time, weekday,
+tripmat(bikedb, start_date, end_date, start_time, end_time, weekday,
   long = FALSE, quiet = FALSE)
 }
 \arguments{
-\item{spdb}{Path to the spatialite database}
+\item{bikedb}{Path to the SQLite3 database}
 
 \item{start_date}{If given (as year, month, day) , extract only those records
 from and including this date}
@@ -36,7 +36,7 @@ returned.}
 Square matrix of numbers of trips between each station
 }
 \description{
-Extract station-to-station trip matrix from spatialite database
+Extract station-to-station trip matrix from SQLite3 database
 }
 \note{
 Both dates and times may be given either in numeric or character
