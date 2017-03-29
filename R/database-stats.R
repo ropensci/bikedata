@@ -20,7 +20,7 @@ indexes_exist <- function (bikedb)
 #' use. 
 #'
 #' @export
-num_trips_in_db <- function (bikedb)
+bike_total_trips <- function (bikedb)
 {
     db <- RSQLite::dbConnect(SQLite(), bikedb, create = FALSE)
     ntrips <- dbGetQuery(db, "SELECT Count(*) FROM trips")
@@ -72,7 +72,7 @@ get_new_datafiles <- function (bikedb, data_dir)
 #' trips
 #'
 #' @export
-get_datelimits <- function (bikedb, city)
+bike_datelimits <- function (bikedb, city)
 {
     qry_min <- "SELECT MIN(start_time) FROM trips"
     qry_max <- "SELECT MAX(start_time) FROM trips"
