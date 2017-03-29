@@ -75,21 +75,30 @@ convert_weekday <- function (wd)
 #' Extract date-time limits from trip database
 #'
 #' @param bikedb Path to the SQLite3 database 
+#' @param city If given, date limits are calculated only for trips in 
+#'          that city.
 #'
 #' @return A vector of 2 elements giving the date-time of the first and last
 #' trips
 #'
 #' @export
-get_datelimits <- function (bikedb)
+get_datelimits <- function (bikedb, city)
 {
-    # suppress R CMD check notes:
-    start_time <- stop_time <- NULL
-    db <- dplyr::src_sqlite (bikedb, create=F)
-    trips <- dplyr::tbl (db, 'trips')
-    first_trip <- dplyr::summarise (trips, first_trip=min (start_time)) %>%
-        dplyr::collect () %>% as.character ()
-    last_trip <- dplyr::summarise (trips, last_trip=max (stop_time)) %>%
-        dplyr::collect () %>% as.character ()
+    qry_min <- "SELECT MIN(start_time) FROM trips"
+    qry_max <- "SELECT MAX(start_time) FROM trips"
+    if (!missing (city))
+    {
+        qry_min <- paste0 (qry_min, " WHERE city = '", 
+                          substring (tolower (city), 1, 2), "'")
+        qry_max <- paste0 (qry_max, " WHERE city = '", 
+                          substring (tolower (city), 1, 2), "'")
+    }
+
+    db <- RSQLite::dbConnect(SQLite(), bikedb, create = FALSE)
+    first_trip <- RSQLite::dbGetQuery (db, qry_min) [1, 1]
+    last_trip <- RSQLite::dbGetQuery (db, qry_max) [1, 1]
+    RSQLite::dbDisconnect(db)
+
     res <- c (first_trip, last_trip)
     names (res) <- c ('first', 'last')
     return (res)
@@ -117,9 +126,11 @@ filter_tripmat_by_datetime <- function (db, ...)
     # dplyr.
     x <- as.list (...)
     qryargs <- c()
-    qry <- paste( "SELECT s1.id AS start_station_id, s2.id AS end_station_id, iq.numtrips",
-                   "FROM stations s1, stations s2 LEFT OUTER JOIN",
-                   "(SELECT start_station_id, end_station_id, COUNT(*) as numtrips FROM trips")
+    qry <- paste("SELECT s1.stn_id AS start_station_id,",
+                 "s2.stn_id AS end_station_id, iq.numtrips",
+                 "FROM stations s1, stations s2 LEFT OUTER JOIN",
+                 "(SELECT start_station_id, end_station_id,",
+                 "COUNT(*) as numtrips FROM trips")
     
     qry_dt <- NULL
     if ('start_date' %in% names (x)) {
@@ -143,15 +154,16 @@ filter_tripmat_by_datetime <- function (db, ...)
     if ('weekday' %in% names (x))
     {
         qry_wd <- "strftime('%w', start_time) IN "
-        qry_wd <- paste0(qry_wd, " (", paste(rep("?", times = length(x$weekday)), collapse=", "), ")")
+        qry_wd <- paste0(qry_wd, " (", paste(rep("?", times = 
+                                length(x$weekday)), collapse=", "), ")")
         qry_dt <- c (qry_dt, qry_wd)
         qryargs <- c (qryargs, x$weekday)
     }
 
     qry <- paste (qry, "WHERE", paste (qry_dt, collapse=" AND "))
     qry <- paste (qry, "GROUP BY start_station_id, end_station_id) iq",
-                  "ON s1.id = iq.start_station_id AND s2.id = iq.end_station_id",
-                  "ORDER BY s1.id, s2.id")
+                  "ON s1.stn_id = iq.start_station_id AND",
+                  "s2.stn_id = iq.end_station_id ORDER BY s1.stn_id, s2.stn_id")
 
     qryres <- RSQLite::dbSendQuery(db, qry)
     RSQLite::dbBind(qryres, as.list(qryargs))

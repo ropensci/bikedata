@@ -2,7 +2,7 @@
 % Please edit documentation in R/tripmat.R
 \name{tripmat}
 \alias{tripmat}
-\title{Extract station-to-station trip matrix from SQLite3 database}
+\title{Extract station-to-station trip matrix or data.frame from SQLite3 database}
 \usage{
 tripmat(bikedb, start_date, end_date, start_time, end_time, weekday,
   long = FALSE, quiet = FALSE)
@@ -33,10 +33,12 @@ returned.}
 \item{quiet}{If FALSE, progress is displayed on screen}
 }
 \value{
-Square matrix of numbers of trips between each station
+If \code{long=FALSE}, a square matrix of numbers of trips between
+each station, otherwise a long-form data.frame with three columns of of
+(start_station, end_station, num_trips)
 }
 \description{
-Extract station-to-station trip matrix from SQLite3 database
+Extract station-to-station trip matrix or data.frame from SQLite3 database
 }
 \note{
 Both dates and times may be given either in numeric or character

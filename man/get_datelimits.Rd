@@ -4,10 +4,13 @@
 \alias{get_datelimits}
 \title{Extract date-time limits from trip database}
 \usage{
-get_datelimits(bikedb)
+get_datelimits(bikedb, city)
 }
 \arguments{
 \item{bikedb}{Path to the SQLite3 database}
+
+\item{city}{If given, date limits are calculated only for trips in 
+that city.}
 }
 \value{
 A vector of 2 elements giving the date-time of the first and last
