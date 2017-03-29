@@ -40,6 +40,23 @@ char *strtokm(char *str, const char *delim)
     return tok;
 }
 
+//' str_token
+//'
+//' A delimiter function for comma-separated std::string
+//'
+//' @param line The line of text to be tokenised
+//'
+//' @return Next token
+//'
+//' @noRd
+std::string str_token (std::string * line)
+{
+    unsigned ipos = line->find (",", 0);
+    std::string res = line->substr (0, ipos);
+    (*line) = line->substr (ipos + 1, line->length () - ipos - 1);
+    return res;
+}
+
 //' compare_version_numbers
 //'
 //' Function to compare version numbers
@@ -181,5 +198,26 @@ std::string convert_datetime (std::string str)
     }
 
     return str;
+}
+
+// write result of curl call to std::string
+// http://stackoverflow.com/questions/2329571/c-libcurl-get-output-into-a-string
+size_t CurlWrite_CallbackFunc_StdString(void *contents, size_t size, 
+        size_t nmemb, std::string *s)
+{
+    size_t newLength = size*nmemb;
+    size_t oldLength = s->size();
+    try
+    {
+        s->resize(oldLength + newLength);
+    }
+    catch(std::bad_alloc &e)
+    {
+        //handle memory problem
+        return 0;
+    }
+
+    std::copy((char*)contents,(char*)contents+newLength,s->begin()+oldLength);
+    return size*nmemb;
 }
 

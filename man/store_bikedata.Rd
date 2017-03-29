@@ -4,7 +4,8 @@
 \alias{store_bikedata}
 \title{Store hire bicycle data in SQLite3 database}
 \usage{
-store_bikedata(data_dir, bikedb, quiet = FALSE, create_index = TRUE)
+store_bikedata(data_dir, bikedb, station_files, quiet = FALSE,
+  create_index = TRUE)
 }
 \arguments{
 \item{data_dir}{A character vector giving the directory containing the
@@ -14,6 +15,8 @@ cities.}
 \item{bikedb}{A string containing the path to the SQLite3 database to 
 use. If it doesn't already exist, it will be created, otherwise data
 will be appended to existing database.}
+
+\item{station_files}{Character vector giving location}
 
 \item{quiet}{If FALSE, progress is displayed on screen}
 

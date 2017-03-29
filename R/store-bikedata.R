@@ -6,6 +6,7 @@
 #' @param bikedb A string containing the path to the SQLite3 database to 
 #'          use. If it doesn't already exist, it will be created, otherwise data
 #'          will be appended to existing database.
+#' @param station_files Character vector giving location 
 #' @param quiet If FALSE, progress is displayed on screen
 #' @param create_index If TRUE, creates an index on the start and end station
 #'          IDs and start and stop times.
@@ -18,7 +19,8 @@
 #' minutes), and generates a SQLite3 database file several gigabytes in size.
 #' 
 #' @export
-store_bikedata <- function (data_dir, bikedb, quiet=FALSE, create_index = TRUE)
+store_bikedata <- function (data_dir, bikedb, station_files,
+                            quiet=FALSE, create_index = TRUE)
 {
     er_idx <- file.exists (bikedb) + 1 # = (1, 2) if (!exists, exists)
     if (!quiet)
@@ -31,6 +33,8 @@ store_bikedata <- function (data_dir, bikedb, quiet=FALSE, create_index = TRUE)
     ntrips <- 0
     for (city in cities)
     {
+        if (city == "boston")
+            boston_stns <- download_boston_stations ()
         flist_zip <- get_flist_city (data_dir, city)
         flist_zip <- get_new_datafiles (bikedb, data_dir)
         csv_files <- list.files (data_dir, pattern = '.csv')
@@ -53,7 +57,9 @@ store_bikedata <- function (data_dir, bikedb, quiet=FALSE, create_index = TRUE)
                                                  substring (city, 1, 2), nf)
             ntrips <- ntrips + rcpp_import_to_trip_table (bikedb, flist_csv,
                                                     substring (city, 1, 2), quiet)
-            file.remove (flist_csv)
+            invisible (file.remove (flist_csv))
+            if (city == "boston")
+                remove (boston_stns)
         }
     }
     if (!quiet)
@@ -203,4 +209,17 @@ get_new_datafiles <- function (bikedb, data_dir)
     old_files <- dplyr::collect (dplyr::tbl (db, 'datafiles'))$name
     files <- list.files (data_dir, pattern = '.zip')
     files [which (!files %in% old_files)]
+}
+
+#' Download that separate file of station data for the Boston Hubway system
+#'
+#' @return Name of locally-stored file
+#'
+#' @noRd
+download_boston_stations <- function ()
+{
+    src <- "https://s3.amazonaws.com/hubway-data/Hubway_Stations_2011_2016.csv"
+    dest <- paste0 (tempdir (), "/boston-stations.csv")
+    download.file (src, dest)
+    return (dest)
 }

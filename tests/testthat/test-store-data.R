@@ -21,8 +21,8 @@ test_that ('read data', {
                expect_equal (names (trips), nms)
 
                stns <- dplyr::collect (dplyr::tbl (db, 'stations'))
-               expect_equal (dim (stns), c (9, 5))
-               expect_equal (names (stns), c ('id', 'city', 'name',
+               expect_equal (dim (stns), c (9, 6))
+               expect_equal (names (stns), c ('id', 'city', 'stn_id', 'name',
                                               'longitude', 'latitude'))
 })
 
