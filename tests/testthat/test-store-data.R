@@ -28,13 +28,13 @@ test_that ('read data', {
 })
 
 test_that ('date limits', {
-               x <- get_datelimits ('testdb')
+               x <- bike_datelimits ('testdb')
                expect_is (x, 'character')
                expect_length (x, 2)
 })
 
 test_that ('db size', {
-               expect_equal (num_trips_in_db ('testdb'), 162)
+               expect_equal (bike_total_trips ('testdb'), 162)
 })
 
 invisible (file.remove ("testdb"))

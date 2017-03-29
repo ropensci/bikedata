@@ -93,7 +93,7 @@ store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
                      format (ntrips, big.mark=',', scientific=FALSE))
             if (er_idx == 2)
                 message ("database '", basename (bikedb), "' now has ", 
-                         format (num_trips_in_db (bikedb), big.mark=',',
+                         format (bike_total_trips (bikedb), big.mark=',',
                                  scientific=FALSE), ' trips')
         } else
             message ('All data already in database; no new data added')
