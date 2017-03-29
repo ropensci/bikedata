@@ -100,7 +100,7 @@ rcpp_create_sqlite3_db <- function(bikedb) {
     .Call('bikedata_rcpp_create_sqlite3_db', PACKAGE = 'bikedata', bikedb)
 }
 
-#' create_db_indexes
+#' rcpp_create_db_indexes
 #'
 #' Creates the specified indexes in the database to speed up queries. Note
 #' that for the full dataset this may take some time.
@@ -115,11 +115,11 @@ rcpp_create_sqlite3_db <- function(bikedb) {
 #' @return integer result code
 #'
 #' @noRd
-create_db_indexes <- function(bikedb, tables, cols, reindex) {
-    .Call('bikedata_create_db_indexes', PACKAGE = 'bikedata', bikedb, tables, cols, reindex)
+rcpp_create_db_indexes <- function(bikedb, tables, cols, reindex) {
+    .Call('bikedata_rcpp_create_db_indexes', PACKAGE = 'bikedata', bikedb, tables, cols, reindex)
 }
 
-#' create_city_index
+#' rcpp_create_city_index
 #'
 #' Creates city index in the database. This function is *always* run, while the
 #' 'create_db_indexes' function is optionally run.
@@ -131,8 +131,8 @@ create_db_indexes <- function(bikedb, tables, cols, reindex) {
 #' @return integer result code
 #'
 #' @noRd
-create_city_index <- function(bikedb, reindex) {
-    .Call('bikedata_create_city_index', PACKAGE = 'bikedata', bikedb, reindex)
+rcpp_create_city_index <- function(bikedb, reindex) {
+    .Call('bikedata_rcpp_create_city_index', PACKAGE = 'bikedata', bikedb, reindex)
 }
 
 #' strtokm

@@ -33,8 +33,6 @@ store_bikedata <- function (data_dir, bikedb, station_files,
     ntrips <- 0
     for (city in cities)
     {
-        if (city == "boston")
-            boston_stns <- download_boston_stations ()
         flist_zip <- get_flist_city (data_dir, city)
         flist_zip <- get_new_datafiles (bikedb, data_dir)
         csv_files <- list.files (data_dir, pattern = '.csv')
@@ -58,8 +56,6 @@ store_bikedata <- function (data_dir, bikedb, station_files,
             ntrips <- ntrips + rcpp_import_to_trip_table (bikedb, flist_csv,
                                                     substring (city, 1, 2), quiet)
             invisible (file.remove (flist_csv))
-            if (city == "boston")
-                remove (boston_stns)
         }
     }
     if (!quiet)
@@ -74,13 +70,13 @@ store_bikedata <- function (data_dir, bikedb, station_files,
         } else
             message ('All data already in database; no new data added')
 
-    create_city_index (bikedb, er_idx - 1)
+    rcpp_create_city_index (bikedb, er_idx - 1)
 
     if (ntrips > 0 & create_index) # additional indexes for stations and times
     {
         if (!quiet) 
             message (c ('Creating', 'Re-creating') [er_idx], ' indexes')
-        create_db_indexes (bikedb, 
+        rcpp_create_db_indexes (bikedb, 
                            tables = rep("trips", times=4),
                            cols = c("start_station_id", "end_station_id", 
                                     "start_time", "stop_time"),
@@ -209,17 +205,4 @@ get_new_datafiles <- function (bikedb, data_dir)
     old_files <- dplyr::collect (dplyr::tbl (db, 'datafiles'))$name
     files <- list.files (data_dir, pattern = '.zip')
     files [which (!files %in% old_files)]
-}
-
-#' Download that separate file of station data for the Boston Hubway system
-#'
-#' @return Name of locally-stored file
-#'
-#' @noRd
-download_boston_stations <- function ()
-{
-    src <- "https://s3.amazonaws.com/hubway-data/Hubway_Stations_2011_2016.csv"
-    dest <- paste0 (tempdir (), "/boston-stations.csv")
-    download.file (src, dest)
-    return (dest)
 }

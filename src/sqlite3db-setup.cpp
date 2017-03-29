@@ -93,7 +93,7 @@ int rcpp_create_sqlite3_db (const char * bikedb)
 }
 
 
-//' create_db_indexes
+//' rcpp_create_db_indexes
 //'
 //' Creates the specified indexes in the database to speed up queries. Note
 //' that for the full dataset this may take some time.
@@ -109,7 +109,7 @@ int rcpp_create_sqlite3_db (const char * bikedb)
 //'
 //' @noRd
 // [[Rcpp::export]]
-int create_db_indexes (const char* bikedb, Rcpp::CharacterVector tables,
+int rcpp_create_db_indexes (const char* bikedb, Rcpp::CharacterVector tables,
         Rcpp::CharacterVector cols, bool reindex) 
 {
     sqlite3 *dbcon;
@@ -171,7 +171,7 @@ int create_db_indexes (const char* bikedb, Rcpp::CharacterVector tables,
     return(rc);
 }
 
-//' create_city_index
+//' rcpp_create_city_index
 //'
 //' Creates city index in the database. This function is *always* run, while the
 //' 'create_db_indexes' function is optionally run.
@@ -184,7 +184,7 @@ int create_db_indexes (const char* bikedb, Rcpp::CharacterVector tables,
 //'
 //' @noRd
 // [[Rcpp::export]]
-int create_city_index (const char* bikedb, bool reindex) 
+int rcpp_create_city_index (const char* bikedb, bool reindex) 
 {
     sqlite3 *dbcon;
     char *zErrMsg = 0;

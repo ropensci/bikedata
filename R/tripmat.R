@@ -162,7 +162,7 @@ filter_tripmat_by_datetime <- function (db, ...)
     
 }
 
-#' Extract station-to-station trip matrix from SQLite3 database
+#' Extract station-to-station trip matrix or data.frame from SQLite3 database
 #'
 #' @param bikedb Path to the SQLite3 database 
 #' @param start_date If given (as year, month, day) , extract only those records
@@ -181,7 +181,9 @@ filter_tripmat_by_datetime <- function (db, ...)
 #' returned.
 #' @param quiet If FALSE, progress is displayed on screen
 #'
-#' @return Square matrix of numbers of trips between each station
+#' @return If \code{long=FALSE}, a square matrix of numbers of trips between
+#' each station, otherwise a long-form data.frame with three columns of of
+#' (start_station, end_station, num_trips)
 #'
 #' @note Both dates and times may be given either in numeric or character
 #' format, with arbitrary (or no) delimiters between fields. Single numeric
@@ -212,31 +214,33 @@ tripmat <- function (bikedb, start_date, end_date, start_time, end_time,
         trips <- filter_tripmat_by_datetime (db, x)
     }
     else {
-      trips <- dbGetQuery(db, 
-                paste("SELECT s1.id AS start_station_id, s2.id AS end_station_id, iq.numtrips",
-                "FROM stations s1, stations s2 LEFT OUTER JOIN",
-                "(SELECT start_station_id, end_station_id, COUNT(*) as numtrips FROM trips",
-                "GROUP BY start_station_id, end_station_id) iq",
-                "ON s1.id = iq.start_station_id AND s2.id = iq.end_station_id ORDER BY s1.id, s2.id"))
+        qry <- paste("SELECT s1.stn_id AS start_station_id,",
+                     "s2.stn_id AS end_station_id, iq.numtrips",
+                     "FROM stations s1, stations s2 LEFT OUTER JOIN",
+                     "(SELECT start_station_id, end_station_id,",
+                     "COUNT(*) as numtrips FROM trips",
+                     "GROUP BY start_station_id, end_station_id) iq",
+                     "ON s1.stn_id = iq.start_station_id AND",
+                     "s2.stn_id = iq.end_station_id ORDER BY s1.stn_id, s2.stn_id")
+      trips <- dbGetQuery(db, qry)
     }
     
     RSQLite::dbDisconnect(db)
 
     # suppress R CMD check notes:
     start_station_id <- end_station_id <- n <- NULL
-    if (long == FALSE) {
-      ntrips <- reshape2::dcast(trips, start_station_id ~ end_station_id, 
-                                value.var = "numtrips", fill = 0)
-      row.names(ntrips) <- ntrips$start_station_id
-      ntrips$start_station_id <- NULL
-      ntrips <- as.matrix(ntrips)
-    }
-    else {
-      trips$numtrips <- ifelse(is.na(trips$numtrips) == TRUE, 0, trips$numtrips)
-      ntrips <- as.matrix(trips)
+    if (!long) 
+    {
+        trips <- reshape2::dcast (trips, start_station_id ~ end_station_id, 
+                                  value.var = "numtrips", fill = 0)
+        row.names (trips) <- trips$start_station_id
+        trips$start_station_id <- NULL
+        trips <- as.matrix (trips)
+    } else 
+    {
+        trips$numtrips <- ifelse (is.na (trips$numtrips) == TRUE, 0, 
+                                  trips$numtrips)
     }
 
-    return (ntrips)
-
+    return (trips)
 }
-
