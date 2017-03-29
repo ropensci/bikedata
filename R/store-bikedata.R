@@ -1,27 +1,55 @@
 #' Store hire bicycle data in SQLite3 database
 #'
+#' @param city One or more cities for which to download and store bike data, or
+#'          names of corresponding bike systems (see Details below).
 #' @param data_dir A character vector giving the directory containing the
 #'          data files downloaded with \code{dl_bikedata} for one or more
-#'          cities.
+#'          cities. Only if this parameter is missing will data be downloaded.
 #' @param bikedb A string containing the path to the SQLite3 database to 
 #'          use. If it doesn't already exist, it will be created, otherwise data
 #'          will be appended to existing database.
-#' @param station_files Character vector giving location 
 #' @param quiet If FALSE, progress is displayed on screen
 #' @param create_index If TRUE, creates an index on the start and end station
 #'          IDs and start and stop times.
 #'
 #' @return Number of trips added to database
 #'
+#' @section Details:
+#' City names are not case sensitive, and must only be long enough to
+#' unambiguously designate the desired city. Names of corresponding bike systems
+#' can also be given.  Currently possible cities (with minimal designations in
+#' parentheses) and names of bike hire systems are:
+#' \tabular{lr}{
+#'  New York City (ny)\tab Citibike\cr
+#'  Washington, D.C. (dc)\tab Capital Bike Share\cr
+#'  Chicago (ch)\tab Divvy Bikes\cr
+#'  Los Angeles (la)\tab Metro Bike Share\cr
+#'  Boston (bo)\tab Hubway\cr
+#' }
+#'
 #' @note Data for different cities are all stored in the same database, with
 #' city identifiers automatically established from the names of downloaded data
 #' files. This function can take quite a long time to execute (typically > 10
 #' minutes), and generates a SQLite3 database file several gigabytes in size.
+#' Downloaded data files are removed after loading into the database; files may
+#' be downloaded and stored permanently with \code{dl_bikedata}, and the
+#' corresponding \code{data_dir} passed to this function.
 #' 
 #' @export
-store_bikedata <- function (data_dir, bikedb, station_files,
-                            quiet=FALSE, create_index = TRUE)
+store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
+                            quiet = FALSE)
 {
+    if (missing (city) & missing (data_dir))
+        stop ('One of city or data_dir must be specified to store bikedata')
+    if (missing (data_dir))
+    {
+        if (!quiet)
+            message ('Downloading data for ', city)
+        for (ci in city)
+            dl_bikedata (city = ci)
+        data_dir <- tempdir ()
+    }
+
     er_idx <- file.exists (bikedb) + 1 # = (1, 2) if (!exists, exists)
     if (!quiet)
         message (c ('Creating', 'Adding data to') [er_idx], ' sqlite3 database')
@@ -145,64 +173,3 @@ get_flist_city <- function (data_dir, city)
     paste0 (data_dir, '/', flist [index])
 }
 
-#' Check whether indexes have been created for database
-#'
-#' @param bikedb A string containing the path to the SQLite3 database to 
-#' use. 
-#'
-#' @noRd
-indexes_exist <- function (bikedb)
-{
-    db <- RSQLite::dbConnect(SQLite(), bikedb, create = FALSE)
-    idx_list <- dbGetQuery(db, "PRAGMA index_list (trips)")
-    RSQLite::dbDisconnect(db)
-    nrow (idx_list) > 2 # 2 because city index is automatically created
-}
-
-#' Count number of trips in sqlite3 database
-#'
-#' @param bikedb A string containing the path to the SQLite3 database to 
-#' use. 
-#'
-#' @export
-num_trips_in_db <- function (bikedb)
-{
-    db <- RSQLite::dbConnect(SQLite(), bikedb, create = FALSE)
-    ntrips <- dbGetQuery(db, "SELECT Count(*) FROM trips")
-    RSQLite::dbDisconnect(db)
-    return (as.numeric (ntrips))
-}
-
-#' Count number of datafiles in sqlite3 database
-#'
-#' @param bikedb A string containing the path to the SQLite3 database to 
-#' use. 
-#'
-#' @noRd
-num_datafiles_in_db <- function (bikedb)
-{
-    db <- RSQLite::dbConnect(SQLite(), bikedb, create = FALSE)
-    ntrips <- dbGetQuery(db, "SELECT Count(*) FROM datafiles")
-    RSQLite::dbDisconnect(db)
-    return (as.numeric (ntrips))
-}
-
-#' Return names of files in nominated directory that are **not** already in
-#' database
-#'
-#' @param bikedb A string containing the path to the SQLite3 database to 
-#'          use. 
-#' @param data_dir A character vector giving the directory containing the
-#'          data files downloaded with \code{dl_bikedata} for one or more
-#'          cities.
-#'
-#' @return Vector with names of datafiles to be added to database
-#'
-#' @noRd
-get_new_datafiles <- function (bikedb, data_dir)
-{
-    db <- dplyr::src_sqlite (bikedb, create=F)
-    old_files <- dplyr::collect (dplyr::tbl (db, 'datafiles'))$name
-    files <- list.files (data_dir, pattern = '.zip')
-    files [which (!files %in% old_files)]
-}

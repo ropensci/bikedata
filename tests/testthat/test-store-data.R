@@ -3,15 +3,16 @@ context ("store data in db")
 require (testthat)
 
 test_that ('read and append data', {
-               expect_silent (store_bikedata ("..", "testdb", quiet=TRUE))
-               expect_silent (store_bikedata ("..", "testdb", quiet=TRUE))
+               expect_silent (store_bikedata (data_dir = "..", 
+                                              bikedb = "testdb", 
+                                              quiet=TRUE))
                invisible (file.remove ("testdb"))
 })
 
-store_bikedata ("..", "testdb")
+store_bikedata (data_dir = "..", bikedb = "testdb")
 
 test_that ('read data', {
-               db <- dplyr::src_sqlite ('testdb', create=F)
+               db <- dplyr::src_sqlite ('testdb', create = F)
 
                trips <- dplyr::collect (dplyr::tbl (db, 'trips'))
                expect_equal (dim (trips), c (162, 12))

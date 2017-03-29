@@ -4,24 +4,24 @@
 \alias{store_bikedata}
 \title{Store hire bicycle data in SQLite3 database}
 \usage{
-store_bikedata(data_dir, bikedb, station_files, quiet = FALSE,
-  create_index = TRUE)
+store_bikedata(city, data_dir, bikedb, create_index = TRUE, quiet = FALSE)
 }
 \arguments{
+\item{city}{One or more cities for which to download and store bike data, or
+names of corresponding bike systems (see Details below).}
+
 \item{data_dir}{A character vector giving the directory containing the
 data files downloaded with \code{dl_bikedata} for one or more
-cities.}
+cities. Only if this parameter is missing will data be downloaded.}
 
 \item{bikedb}{A string containing the path to the SQLite3 database to 
 use. If it doesn't already exist, it will be created, otherwise data
 will be appended to existing database.}
 
-\item{station_files}{Character vector giving location}
-
-\item{quiet}{If FALSE, progress is displayed on screen}
-
 \item{create_index}{If TRUE, creates an index on the start and end station
 IDs and start and stop times.}
+
+\item{quiet}{If FALSE, progress is displayed on screen}
 }
 \value{
 Number of trips added to database
@@ -34,4 +34,22 @@ Data for different cities are all stored in the same database, with
 city identifiers automatically established from the names of downloaded data
 files. This function can take quite a long time to execute (typically > 10
 minutes), and generates a SQLite3 database file several gigabytes in size.
+Downloaded data files are removed after loading into the database; files may
+be downloaded and stored permanently with \code{dl_bikedata}, and the
+corresponding \code{data_dir} passed to this function.
 }
+\section{Details}{
+
+City names are not case sensitive, and must only be long enough to
+unambiguously designate the desired city. Names of corresponding bike systems
+can also be given.  Currently possible cities (with minimal designations in
+parentheses) and names of bike hire systems are:
+\tabular{lr}{
+ New York City (ny)\tab Citibike\cr
+ Washington, D.C. (dc)\tab Capital Bike Share\cr
+ Chicago (ch)\tab Divvy Bikes\cr
+ Los Angeles (la)\tab Metro Bike Share\cr
+ Boston (bo)\tab Hubway\cr
+}
+}
+

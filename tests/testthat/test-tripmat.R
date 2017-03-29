@@ -2,7 +2,7 @@ context ("tripmat")
 
 require (testthat)
 
-store_bikedata ("..", "testdb")
+store_bikedata (data_dir = "..", bikedb = "testdb")
 
 test_that ('tripmat-full', {
                expect_silent (tm <- tripmat ("testdb", quiet=TRUE))

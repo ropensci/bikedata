@@ -2,7 +2,7 @@ context ("stations")
 
 require (testthat)
 
-store_bikedata ("..", "testdb")
+store_bikedata (data_dir = "..", bikedb = "testdb")
 
 test_that ('station data', {
                st <- bike_stations ('testdb')
