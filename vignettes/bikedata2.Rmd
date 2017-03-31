@@ -17,79 +17,77 @@ vignette: >
 ## 1. Introduction
 
 `bikedata` is an R package for downloading and aggregating data from public
-bicycle hire systems. Although there are very many public bicycle hire systems
-in the world 
-[see this wikipedia list](https://en.wikipedia.org/wiki/List_of_bicycle-sharing_systems),
-very few openly publish data on system usage. The `bikedata` package aims to
-enable ready importing of data from all systems that provide it.  Cities and
-names of associated public bicycle Systems currently included, along with
-numbers of bikes and of docking stations, are:
+bicycle hire systems. Cities and names of associated public bicycle Systems
+currently included, along with numbers of bikes and of docking stations, are:
 
-City | Hire Bicycle System | Number of Bicycles | Number of Docking Stations
---- | --- | --- | ---
-London, U.K. | [Santander Cycles](https://tfl.gov.uk/modes/cycling/santander-cycles) | 13,600 | 839
-New York City NY, U.S.A. | [citibike](https://www.citibikenyc.com/) | 7,000 | 458
-Chicago IL, U.S.A. | [Divvy](https://www.divvybikes.com/) | 5,837 | 576
-Washingon DC, U.S.A. | [Capital BikeShare](https://www.capitalbikeshare.com/) | 4,457 | 406
-Boston MA, U.S.A. | [Hubway](https://www.thehubway.com/) | 1,461 | 158
-Los Angeles CA, U.S.A. | [Metro](https://bikeshare.metro.net/) | 1,000 | 65
+1. London, U.K. Barclay's Bicycle Hire
+2. New York City NY, U.S.A.citibike
+3. Boston CT U.S.A. Hubway
+4. Chicago MW U.S.A. Divvy
+5. Washingon DC  U.S.A.Capital BikeShare
+6. Los Angeles CA U.S.A.Metro
 
-Note that access to data from the Santander Cycles system of London,
-U.K. requires an initial registration in order to obtain an `OAuth` key to
+Note that access to data from the Barclay's Bicycle Hire system of London,
+U.K. requires an initial registraion in order to obtain an `OAuth` key to
 access the data.
 
-Cities with extensively developed systems and cultures of public hire bicycles,
-yet which do not provide (publicly available) data include:
+Cities with bike systems which do not currently provide data, but are likely to
+in the future and for which `bikedata` will be adapted as soon as data become
+available include:
 
-City | Number of Bicycles | Number of Docking Stations
---- | --- | ---
-Hangzhou, China | 78,000 | 2,965
-Paris, France | 14,500 | 1,229
-Barcelona, Spain | 6,000 | 424
+1. Miami, Florida
+2. Portland, Oregon
+
+Cities with extensively developed systems and cultures of public hire bicycles,
+yet which do not provide (publically available) data include:
+
+1. Shenzhen, China
+2. Barcelona, Spain
+3. Paris, France
 
 The development version of the `bikedata` R package can be installed with the
 `devtools` package using the following command:
-```{r install, eval = FALSE}
+```{r install, eval=FALSE}
 devtools::install_github('mpadge/bikedata')
 ```
 
-```{r, echo = FALSE, message = FALSE, results = 'hide'}
+```{r, echo=FALSE, message=FALSE, results='hide'}
 devtools::load_all('..', export_all = FALSE)
 ```
 
 Once installed, it can be loaded in the usual way:
 
-```{r, eval = FALSE}
+```{r}
 library(bikedata)
 ```
 
 ## 2. Main Functions
 
 All of the public bicycle hire systems in the first of the above lists record
-and disseminate individual trip data, minimally including the times and places at
+and disseminate invidual trip data, minimally including the times and places at
 which every trip starts and ends. Some systems provide additional anonymised
 individual data, typically including whether or not a user is registered with
-the system and if so, additional data including age, gender, and residential
+the system and if so, addtional data including age, gender, and residential
 postal code.
 
-These data on individual trips can be imported into `R` with the primary
-function `store_bikedata()`, which minimally requires specifying a city from the
-above list and the name of a database in which the data will be stored.
-```{r, eval = FALSE}
+These data on individual trips can be imported into `R` with the primary function
+ `store_bikedata()`, whcih minimally requires specifying a city from the above
+ list and the name of a database in which the data will be stored.
+```{r, eval=FALSE}`
 store_bikedata (bikedb = 'bikedb', city = 'la')
 ```
-This function call will download all available data from the Metro system of Los
-Angeles, CA and store it in an `SQLite3` database. The function returns the
-number of trips added to the database. By default, both the downloaded data and
-the `SQLite3` database are stored in the temporary directory of the current `R`
-session. The downloaded data are deleted after having been loaded into the
-`SQLite3` database, and the database itself is deleted on termination of the `R`
-session.  (All of these options may be overridden as described below.)
+This function call will download all available data from the nominated hire
+bicycle system (in this case, the Metro system of Los Angeles, CA) and store it
+in an `SQLite3` database. The function returns the number of trips added to the
+database. By default, both the downloaded data and the `SQLite3` database are
+stored in the temporary directory of the current `R` session. The downloaded
+data are deleted after having been loaded into the `SQLite3` database.  (All of
+these options may be overrudden as described below.)
 
 Successive calls to `store_bikedata()` will append additional data to the same
 database. For example,
-```{r, eval = FALSE}
-store_bikedata (bikedb = 'bikedb', city = 'divvy', dates = 2017)
+```{r}, eval=FALSE`
+store_bikedata (bikedb = "bikedb", city = 'divvy', dates = 2017)
 ```
 will append all data from Chicago's Divvy bike system from the year 2017 to the
 database created with the first call above. The function again returns the
@@ -101,17 +99,32 @@ bike_total_trips (bikedb = 'bikedb')
 For consistency and to avoid potential confusion of function names, most
 functions in the `bikedata` package begin with `bike_`.
 
-Finally, a trip matrix of aggregate numbers of trips between all pairs of
-stations for a given city can be extracted with the call, 
-```{r, eval = FALSE}
-tm <- bike_tripmat (bikedb = 'bikedb', city = 'la')
-dim (dm); sum (tm)
+Finally, an ''origin-desination'' matrix of numbers of trips between all pairs
+of stations can be aggregated with the call, 
+```{r, eval=FALSE}
+tm <- bike_tripmat (bikedb = "bikedb")
 ```
+Which produces a message suggesting nominating a city for which to extract a
+`bike_tripmat`. Without nominating a city,
+```{r, eval=FALSE}
+dim (tm)
+length (which (is.na (tm))) / length (tm)
+```
+over half of the returned matrix is empty, because of course there can be no
+trips between different cities or bike systems. Nominating a particular city
+gives equivalent values of,
+```{r, eval=FALSE}
+tm <- bike_tripmat (bikedb = 'bikedb', city = 'la')
+dim (tm); length (which (is.na (tm))) / length (tm)
+tm <- bike_tripmat (bikedb = 'bikedb', city = 'ch')
+dim (tm); length (which (is.na (tm))) / length (tm)
+```
+
 Details of the docking stations associated with these trip matrices can be
 obtained with
 ```{r, eval=FALSE}
-bike_stations (bikedb = 'bikedb')
-bike_stations (bikedb = 'bikedb', city = 'la')
+bike_stations (bikedb = "bikedb")
+bike_stations (bikedb = "bikedb", city = 'la')
 ```
 
 The remainder of this vignette details these three distinct functional aspects
@@ -124,31 +137,31 @@ described above - it merely downloads the nominated data to the (optionally)
 nominated location. The function accepts only one additional argument (`dates`)
 specifying ranges of dates for which data should be downloaded. The format of
 the `dates` argument is quite flexible so that,
-```{r, eval = FALSE}
-dl_bikedata (city = 'dc', dates = 16)
+```{r, eval=FALSE}
+dl_bikedata (city = 'dc', dates = c('2015.11', '2015.12', 'Jan 2016'))
 ```
 will download data for all 12 months of the year 2016, while,
-```{r, eval = FALSE}
-dl_bikedata (city = 'ny', dates = 201604:201608)
+```{r, eval=FALSE}
+dl_bikedata (city = 'ny', dates=201604:201608))
 ```
 will download data from April to August (inclusively) for that year. Dates can
 also be entered as character strings, with the following calls producing
 results equivalent to the preceding call, 
-```{r, eval = FALSE}
-dl_bikedata (city = 'ny', dates = '2016/04:2016/08')
-dl_bikedata (city = 'new york', dates = '201604:201608')
-dl_bikedata (city = 'n.y.c.', dates = '2016-04:2016-08')
-dl_bikedata (city = 'new', dates = c (201604, 201605, 201606, 201607, 201608))
-dl_bikedata (city = 'ci', dates = 201600 + 4:8)
+```{r, eval=FALSE}
+dl_bikedata (city = 'ny', dates="2016/04:2016/08"))
+dl_bikedata (city = 'new york', dates="201604:201608"))
+dl_bikedata (city = 'n.y.c.', dates="2016-04:2016-08"))
+dl_bikedata (city = 'new', dates=c (201604, 201605, 201606, 201607, 201608))
+dl_bikedata (city = 'ci', dates=201600 + 4:8)
 ```
 The arguments `city = 'new'` and `city = 'ci'` in the final call are sufficient
 to uniquely identify New York City's citibike system.
 
-As mentioned, data from the Santander Cycles Scheme of London, U.K.  require
-registration with [Transport for London](tfl.gov.uk). Registration enables
-access to an `OAuth` key which must additionally be passed to both the
+As mentioned, data from the Barclay's Bicycle Hire Scheme of London, U.K.
+require registration with [Transport for London](tfl.gov.uk). Registration
+enables access to an `OAuth` key which must additionally be passed to both the
 `dl_bikedata()` and `store_bikedta()` functions to access these data.
-```{r, eval=FALSE}
+```{r}
 store_bikedata (city = 'lo', bikedb = 'bikedb')
 ```
 If files have been previously downloaded to a nominated directory, then calling
@@ -169,12 +182,12 @@ additional data are appended to the existing database. As for the
 `dl_bikedata()` function demonstrated above, a `dates` argument can also be
 passed to `store_bikedata()` to download data within a defined range of dates.
 
-`bikedata` is explicitly designed *not* to permit automatic downloading of all
-data in a single call, lest an innocent exploratory usage inadvertently
+`bikedata` is explicity designed *not* to permit automatic downloading of all
+data in a single call, lest an innocent exploratory usage inadvertendly
 generate a database 5GB in size.  Loading data from other cities accordingly
 requires repeated calls to `store_bikedata()`. The entirety of currently
-available data can be loaded with the following lines:
-```{r, eval = FALSE}
+avaialable data can be loaded with the following lines:
+```{r}
 for (ci in bike_available_cities ())
     ntrips <- store_bikedata (city = ci, bikedb = 'bikedb')
 ```
@@ -186,12 +199,12 @@ package.
 
 ### 4.1 Database Indexes
 
-The `store_bikedata()` function also has a default option to create indexes for
+The `store_bikedata()` function also has a defult option to create indexes for
 more efficient data extraction. Indexes are always created for cities, with the
 `create_index = TRUE` option creating additional indexes for dates and times.
 Setting this parameter to `FALSE` will enable faster initial storage of data,
 yet is likely to slow down data extraction based on dates and times (see
-below). It is thus recommended to set this option to `FALSE` only when
+below). It is thus recommnended to set this option to `FALSE` only when
 subsequent data aggregation will **not** be based on dates or times.
 
 ## 5. Accessing Data
@@ -199,24 +212,24 @@ subsequent data aggregation will **not** be based on dates or times.
 ### 5.1 Origin-Destination Matrices
 
 The primary function for extracting aggregate data from the `SQLite3` database
-established with `store_bikedata()` is `bike_tripmat()`. The term 'trip
+estabslihed with `store_bikedata()` is `bike_tripmat()`. The term 'trip
 matrix' is used here and throughout the `bikedata` package to refer to an
 origin-destination matrix. With the single mandatory argument naming the
 database, this function returns a matrix of numbers of trips between all pairs
 of stations.
-```{r, eval=FALSE}
+```{r}
 tm <- bike_tripmat (bikedb = 'bikedb')
 head (tm)
 ```
 Calling this function within specifying a city yet with a database containing
 data from multiple cities will generate a message explaining that it is better
-to extract trip matrices for particular cities. Absent city specification, the
+to extract trip matrices for particular cities. Absent city specificaiton, the
 resultant trip matrix will include trips between bike stations in different
 cities, for which there will obviously never be any recorded trips such that
 for two cities, for example, maximally one half of the resultant matrix can
 contain non-zero entries; for three cities, one ninth, and so on..
 
-```{r, eval=FALSE}
+```{r}
 tm <- bike_tripmat (bikedb = 'bikedb', city = 'ny')
 head (tm)
 ```
@@ -243,26 +256,26 @@ as they are unambiguous, and as long as 'larger' units precede 'smaller' units
 (so, for example, months before days, hours before minutes). Acceptable formats
 may be illustrated through specifying a list of arguments to be passed to
 `bike_tripmat()`:
-```{r, eval=FALSE}
+```{r}
 args <- list (start_date = 16, end_time = 12, weekday = 1)
 tm <- bike_tripmat (bikedb = 'bikedb', city = 'ny', args)
 ```
 where a two-digit `start_date` (or `end_date`) is interpreted to represent a
 year, while a one- or two-digit `_time` is interpreted to represent an hour,
-with `end_time = 24` interpreted as `end_time = '23:59:59'`, while a 
-`_time = 0` value is interpreted as `00:00:00`.  The following further illustrate
-the variety of acceptable formats,
-```{r, eval=FALSE}
-args <- list (start_date = '2016 May', end_time = '12:39', weekday = 2:6)
-args <- list (end_date = 20160720, end_time = 123915, weekday = c ('mo', 'we'))
-args <- list (end_date = '2016-07-20', end_time = '12:39:15', weekday = 2:6)
+with `end_time = 24` interpreted as `end_time = '23:59:59'`, while a `_time =
+0` value is interpreted as `00:00:00'.  The following futher illustrate the
+variety of acceptable formats,
+```{r}
+args <- list (start_date = "2016 May", end_time = "12:39", weekday = 2:6))
+args <- list (end_date = 20160720, end_time = 123915, weekday = c ("mo", "we"))
+args <- list (end_date = "2016-07-20"", end_time = "12:39:15", weekday = 2:6))
 ```
 Arbitrary separators may be used in both `_date` and `_time` arguments where
 these are specified as character strings. Numeric values must simply be in the
 general largest-to-smallest-unit sequences explained above.
 
 Weekdays may specified as characters, which must simply be unambiguous and (in
-admission of currently inadequate internationalisation) correspond to standard
+admission of currently inadequate internationalisation) corresspond to standard
 English words. Minimal character specifications are thus `'so', 'm', 'tu', 'w',
 'th', 'f', 'sa'`. The value of `weekday = 1` denotes Sunday, so `weekdays =
 2:6` denote the traditional working days, Monday to Friday, while weekends may
@@ -275,11 +288,11 @@ As described at the outset, the bicycle hire systems of several cities provide
 additional demographic information including whether or not a cyclist is
 registered with the system, and if so, their birth year, gender, and postal
 (zip) code. Note that the provision of such information is voluntary, and that
-no providers can or do guarantee the accuracy of their data.
+no proviers can or do guarantee the accuracy of their data.
 
 Those systems which provide demographic information are listed with the
 function `bike_demographic_data()`, which also lists the nominal kinds of
-demographic data provided by the different systems. Data can then be filtered
+demographhic data provided by the different systems. Data can then be filtered
 by demographic parameters with additional optional arguments to
 `bike_tripmat()` of,
 
@@ -306,7 +319,7 @@ tm <- bike_tripmat (bikedb = 'bikedb', city = 'ny', start_date = 2016,
 ```
 The value of `gender = 'xx'` will be interpreted to request data from all
 members with nominal alternative genders.  As demographic data are only given
-for registered users, the `registered` parameter is redundant in this query.
+for registered users, the `registered` parameter is redudant in this query.
 Note further than many systems offer a range of potential birth years starting
 with 1900, and there are consequently a significant number of cyclists who
 declare this as their birth year.
@@ -319,7 +332,7 @@ declare this as their birth year.
 statistics from the `SQLite3` database. The function `bike_summary_stats
 (bikedb)` generates a table providing a quick overview.
 
-```{r, eval=FALSE}
+```{r}
 bike_summary_stats ('bikedb')
 # Total of --- trips from 5 cities
 # 
@@ -330,7 +343,7 @@ bike_summary_stats ('bikedb')
 ```
 Additional helper functions which provide individual components from this
 summary data include:
-```{r, eval=FALSE}
+```{r}
 bike_num_trips (bikedb = 'bikedb', city = 'ny')
 bike_date_range (bikedb = 'bikedb', city = 'ny')
 ```
@@ -351,7 +364,7 @@ analytical needs, direct access may be achieved either using the convenient
 `dplyr` functions, or the more powerful functionality provided by the `RSQLite`
 package.
 
-```{r, eval=FALSE}
+```{r}
 # demo list of tables and contents of both trips and stations tables
 ```
 
@@ -370,7 +383,7 @@ by some characteristics of the lines connecting pairs of stations, such as
 thickness or colours.  This can be achieved with the following code, which also
 illustrates that it is generally more useful for visualisation purposes to
 extract trip matrices in long rather than square form.
-```{r, eval=FALSE}
+```{r}
 stns <- bike_stations (bikedb = 'bikedb', city = 'nyc')
 ntrips <- bike_tripmat (bikedb = 'bikedb', city = 'nyc', long = TRUE)
 x1 <- stns$longitude [match (stns$longitude, ntrips$start_station)]
