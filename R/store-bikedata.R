@@ -82,7 +82,7 @@ store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
             nf <- rcpp_import_to_datafile_table (bikedb, basename (flist_zip),
                                                  substring (city, 1, 2), nf)
             ntrips <- ntrips + rcpp_import_to_trip_table (bikedb, flist_csv,
-                                                    substring (city, 1, 2), quiet)
+                                                substring (city, 1, 2), quiet)
             invisible (file.remove (flist_csv))
         }
     }
@@ -90,11 +90,11 @@ store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
         if (ntrips > 0)
         {
             message ('Total trips ', c ('read', 'added') [er_idx], ' = ',
-                     format (ntrips, big.mark=',', scientific=FALSE))
+                     format (ntrips, big.mark = ',', scientific = FALSE))
             if (er_idx == 2)
-                message ("database '", basename (bikedb), "' now has ", 
-                         format (bike_total_trips (bikedb), big.mark=',',
-                                 scientific=FALSE), ' trips')
+                message ("database '", basename (bikedb), "' now has ",
+                         format (bike_total_trips (bikedb), big.mark = ',',
+                                 scientific = FALSE), ' trips')
         } else
             message ('All data already in database; no new data added')
 
@@ -102,15 +102,15 @@ store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
 
     if (ntrips > 0 & create_index) # additional indexes for stations and times
     {
-        if (!quiet) 
+        if (!quiet)
             message (c ('Creating', 'Re-creating') [er_idx], ' indexes')
-        rcpp_create_db_indexes (bikedb, 
-                           tables = rep("trips", times=4),
-                           cols = c("start_station_id", "end_station_id", 
+        rcpp_create_db_indexes (bikedb,
+                           tables = rep("trips", times = 4),
+                           cols = c("start_station_id", "end_station_id",
                                     "start_time", "stop_time"),
                            indexes_exist (bikedb))
     }
-    
+
     return (ntrips)
 }
 
@@ -122,22 +122,22 @@ store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
 #' @noRd
 get_bike_cities <- function (data_dir)
 {
-    flist <- list.files (data_dir, pattern=".zip")
-    cities <- list ('nyc' = FALSE, 
-                    'boston' = FALSE, 
-                    'chicago' = FALSE, 
-                    'dc' = FALSE, 
+    flist <- list.files (data_dir, pattern = ".zip")
+    cities <- list ('nyc' = FALSE,
+                    'boston' = FALSE,
+                    'chicago' = FALSE,
+                    'dc' = FALSE,
                     'la' = FALSE)
 
-    if (any (grepl ('citibike', flist, ignore.case=TRUE)))
+    if (any (grepl ('citibike', flist, ignore.case = TRUE)))
         cities$nyc <- TRUE
-    if (any (grepl ('divvy', flist, ignore.case=TRUE)))
+    if (any (grepl ('divvy', flist, ignore.case = TRUE)))
         cities$chicago <- TRUE
-    if (any (grepl ('hubway', flist, ignore.case=TRUE)))
+    if (any (grepl ('hubway', flist, ignore.case = TRUE)))
         cities$boston <- TRUE
-    if (any (grepl ('cabi', flist, ignore.case=TRUE)))
+    if (any (grepl ('cabi', flist, ignore.case = TRUE)))
         cities$dc <- TRUE
-    if (any (grepl ('metro', flist, ignore.case=TRUE)))
+    if (any (grepl ('metro', flist, ignore.case = TRUE)))
         cities$la <- TRUE
 
     cities <- which (unlist (cities))
@@ -154,22 +154,21 @@ get_bike_cities <- function (data_dir)
 #' @noRd
 get_flist_city <- function (data_dir, city)
 {
-    city <- substring (tolower (city), 1, 2)
+    city <- convert_city_names (city)
 
-    flist <- list.files (data_dir, pattern='.zip')
+    flist <- list.files (data_dir, pattern = '.zip')
 
     index <- NULL
     if (city %in% c ('ny', 'ne'))
-        index <- which (grepl ('citibike', flist, ignore.case=TRUE))
+        index <- which (grepl ('citibike', flist, ignore.case = TRUE))
     else if (city == 'ch')
-        index <- which (grepl ('divvy', flist, ignore.case=TRUE))
+        index <- which (grepl ('divvy', flist, ignore.case = TRUE))
     else if (city == 'bo')
-        index <- which (grepl ('hubway', flist, ignore.case=TRUE))
+        index <- which (grepl ('hubway', flist, ignore.case = TRUE))
     else if (city %in% c ('dc', 'wa'))
-        index <- which (grepl ('cabi', flist, ignore.case=TRUE))
+        index <- which (grepl ('cabi', flist, ignore.case = TRUE))
     else if (city %in% c ('la', 'lo'))
-        index <- which (grepl ('metro', flist, ignore.case=TRUE))
+        index <- which (grepl ('metro', flist, ignore.case = TRUE))
 
     paste0 (data_dir, '/', flist [index])
 }
-

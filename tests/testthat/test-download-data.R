@@ -11,7 +11,7 @@ get_fake_trip_files <- function (bucket)
     host <- "https://s3.amazonaws.com"
     aws_url <- sprintf ("https://%s.s3.amazonaws.com", bucket)
 
-    doc <- httr::content (httr::GET (aws_url), encoding='UTF-8')
+    doc <- httr::content (httr::GET (aws_url), encoding = 'UTF-8')
     nodes <- xml2::xml_children (doc)
     # NOTE: xml2::xml_find_all (doc, ".//Key") should work here but doesn't, so
     # this manually does what that would do
@@ -23,44 +23,49 @@ get_fake_trip_files <- function (bucket)
     if (bucket == 'tripdata')
         files <- files [2:length (files)]
     for (f in files)
-        write ('a', file=f)
+        write ('a', file = f)
+
+    return (files)
 }
 
 test_that ('dl_bikedata nyc', {
-               get_fake_trip_files (bucket='tripdata')
-               expect_message (dl_bikedata (city='nyc', data_dir='.'),
+               files <- get_fake_trip_files (bucket = 'tripdata')
+               expect_message (dl_bikedata (city = 'nyc', data_dir = '.'),
                                'All data files already exist')
+               invisible (file.remove (files))
 })
 
 test_that ('dl_bikedata dc', {
-               get_fake_trip_files (bucket="capitalbikeshare-data")
-               expect_message (dl_bikedata (city='dc', data_dir='.'),
+               files <- get_fake_trip_files (bucket = "capitalbikeshare-data")
+               expect_message (dl_bikedata (city = 'dc', data_dir = '.'),
                                'All data files already exist')
+               invisible (file.remove (files))
 })
 
 test_that ('dl_bikedata boston', {
-               get_fake_trip_files (bucket="hubway-data")
-               expect_message (dl_bikedata (city='boston', data_dir='.'),
+               files <- get_fake_trip_files (bucket = "hubway-data")
+               expect_message (dl_bikedata (city = 'boston', data_dir = '.'),
                                'All data files already exist')
+               invisible (file.remove (files))
 })
 
 test_that ('dl_bikedata la', {
                files <- c ("MetroBikeShare_2016_Q3_trips.zip", 
                            "Metro_trips_Q4_2016.zip")
-               for (f in files) write ('a', file=f)
-               expect_message (dl_bikedata (city='la', data_dir='.'),
+               for (f in files) write ('a', file = f)
+               expect_message (dl_bikedata (city = 'la', data_dir = '.'),
                                'All data files already exist')
+               invisible (file.remove (files))
 })
 
 test_that ('dl_bikedata chicago', {
                host <- "https://www.divvybikes.com/system-data"
-               nodes <- httr::content (httr::GET (host), encoding='UTF-8') %>%
+               nodes <- httr::content (httr::GET (host), encoding = 'UTF-8') %>%
                    xml2::xml_find_all (., ".//aside") %>%
                    xml2::xml_find_all (., ".//a")
-               files <- basename (xml2::xml_attr (nodes, "href"))
-               for (f in files) write ('a', file=f)
-               expect_message (dl_bikedata (city='chicago', data_dir='.'),
+               files <- unique (basename (xml2::xml_attr (nodes, "href")))
+               for (f in files) write ('a', file = f)
+               expect_message (dl_bikedata (city = 'chicago', data_dir = '.'),
                                'All data files already exist')
+               invisible (file.remove (files))
 })
-
-invisible (file.remove (list.files (pattern='.zip')))

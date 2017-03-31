@@ -27,12 +27,12 @@
 #' by downloading more recent files.
 #'
 #' @export
-dl_bikedata <- function(city = 'nyc', data_dir = tempdir(), dates = NULL)
+dl_bikedata <- function(city = 'nyc', data_dir = tempdir(), dates)
 {
     dl_files <- get_bike_files (city)
     files <- file.path (data_dir, basename (dl_files))
 
-    if (is.null (dates)) 
+    if (missing (dates)) 
       indx <- which (!file.exists (files))
     else 
       indx <- which (!file.exists (files) & 

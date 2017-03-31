@@ -71,3 +71,39 @@ convert_weekday <- function (wd)
         stop ('weekdays must be between 1 and 7')
     return (paste (sort (wd) - 1)) # sql is 0-indexed
 }
+
+#' convert date ranges to explicit vector
+#'
+#' @param dates
+#'
+#' @return Vector of converted data
+#'
+#' @note Trip data files are always named with year and month, yet different
+#' systems do this differently. This function returns an appropriate vector of
+#' dates for the nominated city.
+#'
+#' @noRd
+convert_range_of_dates <- function (dates, city)
+{
+    dates <- as.character (dates)
+    lens <- vapply (dates, nchar, FUN.VALUE = numeric (1))
+    if (any (!lens %in% c (2, 4, 6, 7)))
+        stop ('Cannot convert those kind of dates')
+    if (length (unique (lens)) > 1)
+        stop ('Dates should all be in the same format')
+
+    # first get all lens in 7-character format "yyyy.mm"
+    len <- unique (lens)
+    if (len == 2) # years given as 2 digits only
+        dates <- paste0 ('20', dates)
+    if (len == 2 | len == 4)
+    {
+        dates <- unlist (lapply (dates, function (i)
+                                 paste0 (i, ".", sprintf ("%02d", 1:12))))
+    } else if (len == 6)
+    {
+        dates <- vapply (dates, function (i)
+                         paste0 (substr (i, 1, 4), ".", substr (i, 5, 6)),
+                         FUN.VALUE = character (1))
+    }
+}

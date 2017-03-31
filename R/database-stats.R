@@ -78,10 +78,9 @@ bike_datelimits <- function (bikedb, city)
     qry_max <- "SELECT MAX(start_time) FROM trips"
     if (!missing (city))
     {
-        qry_min <- paste0 (qry_min, " WHERE city = '", 
-                          substring (tolower (city), 1, 2), "'")
-        qry_max <- paste0 (qry_max, " WHERE city = '", 
-                          substring (tolower (city), 1, 2), "'")
+        city <- convert_city_names (city)
+        qry_min <- paste0 (qry_min, " WHERE city = '", city, "'")
+        qry_max <- paste0 (qry_max, " WHERE city = '", city, "'")
     }
 
     db <- RSQLite::dbConnect(SQLite(), bikedb, create = FALSE)
