@@ -48,7 +48,16 @@ store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
         for (ci in city)
             dl_bikedata (city = ci)
         data_dir <- tempdir ()
-    }
+    } else if (missing (city))
+    {
+        if (length (list.files (data_dir)) == 0)
+            stop ('data_dir contains no files')
+        city <- get_bike_cities (data_dir)
+    } else if (length (city) > 1)
+        message ('data can only be stored for one city at a time;',
+                 ' choosing the first: ', city [1])
+
+    city <- convert_city_names (city)
 
     er_idx <- file.exists (bikedb) + 1 # = (1, 2) if (!exists, exists)
     if (!quiet)
@@ -56,36 +65,32 @@ store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
     if (!file.exists (bikedb))
         chk <- rcpp_create_sqlite3_db (bikedb)
 
-    cities <- get_bike_cities (data_dir)
-
     ntrips <- 0
-    for (city in cities)
+    flist_zip <- get_flist_city (data_dir, city)
+    flist_zip <- get_new_datafiles (bikedb, data_dir)
+    csv_files <- list.files (data_dir, pattern = '.csv')
+    if (length (flist_zip) > 0)
     {
-        flist_zip <- get_flist_city (data_dir, city)
-        flist_zip <- get_new_datafiles (bikedb, data_dir)
-        csv_files <- list.files (data_dir, pattern = '.csv')
-        if (length (flist_zip) > 0)
+        flist_zip <- paste0 (data_dir, '/', flist_zip)
+        flist_csv <- NULL
+        for (f in flist_zip)
         {
-            flist_zip <- paste0 (data_dir, '/', flist_zip)
-            flist_csv <- NULL
-            for (f in flist_zip)
+            fi <- unzip (f, list = TRUE)$Name
+            if (!fi %in% csv_files)
             {
-                fi <- unzip (f, list = TRUE)$Name
-                if (!fi %in% csv_files)
-                {
-                    flist_csv <- c (flist_csv, fi)
-                    unzip (f, exdir = data_dir)
-                }
+                flist_csv <- c (flist_csv, fi)
+                unzip (f, exdir = data_dir)
             }
-            flist_csv <- paste0 (data_dir, '/', flist_csv)
-            nf <- num_datafiles_in_db (bikedb)
-            nf <- rcpp_import_to_datafile_table (bikedb, basename (flist_zip),
-                                                 substring (city, 1, 2), nf)
-            ntrips <- ntrips + rcpp_import_to_trip_table (bikedb, flist_csv,
-                                                substring (city, 1, 2), quiet)
-            invisible (file.remove (flist_csv))
         }
+        flist_csv <- paste0 (data_dir, '/', flist_csv)
+        nf <- num_datafiles_in_db (bikedb)
+        nf <- rcpp_import_to_datafile_table (bikedb, basename (flist_zip),
+                                             substring (city, 1, 2), nf)
+        ntrips <- ntrips + rcpp_import_to_trip_table (bikedb, flist_csv,
+                                                      substring (city, 1, 2), quiet)
+        invisible (file.remove (flist_csv))
     }
+
     if (!quiet)
         if (ntrips > 0)
         {
