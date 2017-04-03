@@ -4,11 +4,13 @@
 \alias{tripmat}
 \title{Extract station-to-station trip matrix or data.frame from SQLite3 database}
 \usage{
-tripmat(bikedb, start_date, end_date, start_time, end_time, weekday,
+tripmat(bikedb, city, start_date, end_date, start_time, end_time, weekday,
   long = FALSE, quiet = FALSE)
 }
 \arguments{
 \item{bikedb}{Path to the SQLite3 database}
+
+\item{city}{City for which tripmat is to be aggregated}
 
 \item{start_date}{If given (as year, month, day) , extract only those records
 from and including this date}
@@ -41,7 +43,10 @@ each station, otherwise a long-form data.frame with three columns of of
 Extract station-to-station trip matrix or data.frame from SQLite3 database
 }
 \note{
-Both dates and times may be given either in numeric or character
-format, with arbitrary (or no) delimiters between fields. Single numeric
-times are interpreted as hours, with 24 interpreted as day's end at 23:59:59.
+The \code{city} parameter should be given for databases containing data
+from multiple cities, otherwise most of the resultant trip matrix is likely
+to be empty.  Both dates and times may be given either in numeric or
+character format, with arbitrary (or no) delimiters between fields. Single
+numeric times are interpreted as hours, with 24 interpreted as day's end at
+23:59:59.
 }

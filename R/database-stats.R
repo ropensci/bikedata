@@ -42,6 +42,21 @@ num_datafiles_in_db <- function (bikedb)
     return (as.numeric (ntrips))
 }
 
+#' List the cities with data containined in SQLite3 database
+#'
+#' @param bikedb A string containing the path to the SQLite3 database to 
+#' use. 
+#'
+#' @noRd
+bike_cities_in_db <- function (bikedb)
+{
+    db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
+    cities <- dbGetQuery(db, "SELECT city FROM stations")
+    RSQLite::dbDisconnect(db)
+    cities <- unique (cities)
+    rownames (table (cities)) # TODO: Find a better way to do that
+}
+
 #' Return names of files in nominated directory that are **not** already in
 #' database
 #'
