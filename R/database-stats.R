@@ -47,19 +47,18 @@ num_datafiles_in_db <- function (bikedb)
 #'
 #' @param bikedb A string containing the path to the SQLite3 database to 
 #'          use. 
-#' @param data_dir A character vector giving the directory containing the
-#'          data files downloaded with \code{dl_bikedata} for one or more
-#'          cities.
+#' @param flist_zip A character vector listing the names of \code{.zip} files
+#'          for a particular city as returned from \code{get_flist_city}
 #'
-#' @return Vector with names of datafiles to be added to database
+#' @return Vector with members of \code{flist_zip} that have not already been
+#'          read into the database
 #'
 #' @noRd
-get_new_datafiles <- function (bikedb, data_dir)
+get_new_datafiles <- function (bikedb, flist_zip)
 {
     db <- dplyr::src_sqlite (bikedb, create=F)
     old_files <- dplyr::collect (dplyr::tbl (db, 'datafiles'))$name
-    files <- list.files (data_dir, pattern = '.zip')
-    files [which (!files %in% old_files)]
+    flist_zip [which (!basename (flist_zip) %in% old_files)]
 }
 
 #' Extract date-time limits from trip database
