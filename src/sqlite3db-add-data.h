@@ -39,7 +39,8 @@ int rcpp_import_to_datafile_table (const char * bikedb,
 void read_one_line_nyc (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry, int &max_stn_id,
         const char * delim);
-void read_one_line_boston (sqlite3_stmt * stmt, char * line);
+void read_one_line_boston (sqlite3_stmt * stmt, char * line,
+        std::map <std::string, std::string> * stationqry, int &max_stn_id);
 int import_boston_stations (sqlite3 * dbcon);
 
 //' rcpp_import_to_trip_table
@@ -115,7 +116,7 @@ int rcpp_import_to_trip_table (const char* bikedb,
             if (city == "ny")
                 read_one_line_nyc (stmt, in_line, &stationqry, max_stn_id, delim);
             else if (city == "bo")
-                read_one_line_boston (stmt, in_line);
+                read_one_line_boston (stmt, in_line, &stationqry, max_stn_id);
             trip_id++;
             ntrips++;
 
@@ -126,8 +127,9 @@ int rcpp_import_to_trip_table (const char* bikedb,
 
     sqlite3_exec(dbcon, "END TRANSACTION", NULL, NULL, &zErrMsg);
 
+        //int num_stns = import_boston_stations (dbcon);
     if (city == "bo")
-        int num_stns = import_boston_stations (dbcon);
+        import_to_station_table (dbcon, stationqry);
     else if (city == "ny")
         import_to_station_table (dbcon, stationqry);
 
@@ -159,7 +161,7 @@ int import_to_station_table (sqlite3 * dbcon,
 
     // http://stackoverflow.com/questions/19337029/insert-if-not-exists-statement-in-sqlite
     std::string fullstationqry = "INSERT OR IGNORE INTO stations "
-        "(id, city, stn_id, longitude, latitude, name) VALUES ";
+        "(id, city, stn_id, name, latitude, longitude) VALUES ";
     fullstationqry += stationqry.begin ()->second;
     for (auto thisstation = std::next (stationqry.begin ());
             thisstation != stationqry.end (); ++thisstation)
@@ -170,7 +172,7 @@ int import_to_station_table (sqlite3 * dbcon,
 
     rc = sqlite3_exec(dbcon, fullstationqry.c_str(), NULL, 0, &zErrMsg);
     if (rc != SQLITE_OK)
-        throw std::runtime_error ("Unable to insert NYC stations");
+        throw std::runtime_error ("Unable to insert stations into station table");
 
     std::string qry = "SELECT AddGeometryColumn"
                       "('stations', 'geom', 4326, 'POINT', 'XY');";
@@ -192,6 +194,14 @@ int import_to_station_table (sqlite3 * dbcon,
 //' @param stationqry Station query constructed during reading of data 
 //'
 //' @return Number of stations in the Hubway system
+//'
+//' @note This station table is actually useless, because the station ID values
+//' given do not match those used in the raw data files! The latter are simple
+//' integer codes, while IDs in the "official" \code{.csv} file are like
+//' "A32000" - all beginning with an alpha and then five digits. These codes
+//' do not appear anywhere in the trip data files, and so this whole function is
+//' not used. It is nevertheless kept for the plausible day when the Hubway folk
+//' fix up this inconsistency.
 //'
 //' @noRd
 int import_boston_stations (sqlite3 * dbcon)
@@ -334,35 +344,43 @@ void read_one_line_nyc (sqlite3_stmt * stmt, char * line,
 
     tempstr = convert_datetime (strtokm(NULL, delim)); // Stop time
     sqlite3_bind_text(stmt, 5, tempstr.c_str(), -1, SQLITE_TRANSIENT); 
-    std::string startstationid = strtokm(NULL, delim);
-    if (stationqry->count(startstationid) == 0) {
-        (*stationqry)[startstationid] = "(" + std::to_string(max_stn_id) + 
-            ",\'ny\',\'" + startstationid + "\'," + strtokm(NULL, delim) + "," + 
-            strtokm(NULL, delim) + ",'" + strtokm(NULL, delim) + "')";
+    std::string start_station_id = strtokm(NULL, delim);
+    start_station_id = "ny" + start_station_id;
+    if (stationqry->count(start_station_id) == 0) {
+        std::string start_station_name = strtokm(NULL, delim);
+        std::string start_station_lat = strtokm(NULL, delim);
+        std::string start_station_lon = strtokm(NULL, delim);
+        (*stationqry)[start_station_id] = "(" + std::to_string(max_stn_id) + 
+            ",\'ny\',\'" + start_station_id + "\',\'" + start_station_name +
+            "\'," + start_station_lat + "," + start_station_lon + ")";
         max_stn_id++;
     }
     else {
-        strtokm(NULL, delim);
-        strtokm(NULL, delim);
-        strtokm(NULL, delim);
+        strtokm(NULL, delim); // station name
+        strtokm(NULL, delim); // lat
+        strtokm(NULL, delim); // lon
     }
 
-    sqlite3_bind_text(stmt, 6, startstationid.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 6, start_station_id.c_str(), -1, SQLITE_TRANSIENT); 
 
-    std::string endstationid = strtokm(NULL, delim);
-    if (stationqry->count(endstationid) == 0) {
-        (*stationqry)[endstationid] = "(" + std::to_string(max_stn_id) + 
-            ",\'ny\',\'" + endstationid + "\'," + strtokm(NULL, delim) + "," + 
-            strtokm(NULL, delim) + ",\'" + strtokm(NULL, delim) + "\')";
+    std::string end_station_id = strtokm(NULL, delim);
+    end_station_id = "ny" + end_station_id;
+    if (stationqry->count(end_station_id) == 0) {
+        std::string end_station_name = strtokm(NULL, delim);
+        std::string end_station_lat = strtokm(NULL, delim);
+        std::string end_station_lon = strtokm(NULL, delim);
+        (*stationqry)[end_station_id] = "(" + std::to_string(max_stn_id) + 
+            ",\'ny\',\'" + end_station_id + "\',\'" + end_station_name +
+            "\'," + end_station_lat + "," + end_station_lon + ")";
         max_stn_id++;
     }
     else {
-        strtokm(NULL, delim);
-        strtokm(NULL, delim);
-        strtokm(NULL, delim);
+        strtokm(NULL, delim); // station name
+        strtokm(NULL, delim); // lat
+        strtokm(NULL, delim); // lon
     }
 
-    sqlite3_bind_text(stmt, 7, endstationid.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 7, end_station_id.c_str(), -1, SQLITE_TRANSIENT); 
     // next two are bike id and user type
     sqlite3_bind_text(stmt, 8, strtokm(NULL, delim), -1, SQLITE_TRANSIENT); 
     sqlite3_bind_text(stmt, 9, strtokm(NULL, delim), -1, SQLITE_TRANSIENT); 
@@ -388,7 +406,8 @@ void read_one_line_nyc (sqlite3_stmt * stmt, char * line,
 //'        passed to 'import_to_station_table()'
 //'
 //' @noRd
-void read_one_line_boston (sqlite3_stmt * stmt, char * line)
+void read_one_line_boston (sqlite3_stmt * stmt, char * line,
+        std::map <std::string, std::string> * stationqry, int &max_stn_id)
 {
     // TDOD: Replace strokm with strok here!
     std::string junkstr;
@@ -402,14 +421,41 @@ void read_one_line_boston (sqlite3_stmt * stmt, char * line)
     std::string end_time = convert_datetime (strtokm(NULL, delim)); 
 
     std::string start_station_id = strtokm(NULL, delim);
-    std::string start_station_name = strtokm(NULL, delim);
-    junkstr = strtokm (NULL, delim); // lat
-    junkstr = strtokm (NULL, delim); // lon
+    start_station_id = "bo" + start_station_id;
+    if (stationqry->count (start_station_id) == 0) {
+        std::string start_station_name = strtokm(NULL, delim);
+        boost::replace_all (start_station_name, "\'", ""); // rm apostrophes
+        std::string start_station_lat = strtokm(NULL, delim);
+        std::string start_station_lon = strtokm(NULL, delim);
+        (*stationqry)[start_station_id] = "(" + std::to_string(max_stn_id) + 
+            ",\'bo\',\'" + start_station_id + "\',\'" + start_station_name +
+            "\'," + start_station_lat + "," + start_station_lon + ")";
+        max_stn_id++;
+    } else
+    {
+        strtokm(NULL, delim);
+        strtokm(NULL, delim);
+        strtokm(NULL, delim);
+    }
+
 
     std::string end_station_id = strtokm(NULL, delim);
-    std::string end_station_name = strtokm(NULL, delim);
-    junkstr = strtokm (NULL, delim); // lat
-    junkstr = strtokm (NULL, delim); // lon
+    end_station_id = "bo" + end_station_id;
+    if (stationqry->count (end_station_id) == 0) {
+        std::string end_station_name = strtokm(NULL, delim);
+        boost::replace_all (end_station_name, "\'", ""); // rm apostrophes
+        std::string end_station_lat = strtokm(NULL, delim);
+        std::string end_station_lon = strtokm(NULL, delim);
+        (*stationqry)[end_station_id] = "(" + std::to_string(max_stn_id) + 
+            ",\'bo\',\'" + end_station_id + "\',\'" + end_station_name +
+            "\'," + end_station_lat + "," + end_station_lon + ")";
+        max_stn_id++;
+    } else
+    {
+        strtokm(NULL, delim);
+        strtokm(NULL, delim);
+        strtokm(NULL, delim);
+    }
 
     std::string bike_number = strtokm(NULL, delim);
     std::string user_type = strtokm(NULL, delim);

@@ -8,7 +8,7 @@
 #' @noRd
 indexes_exist <- function (bikedb)
 {
-    db <- RSQLite::dbConnect(SQLite(), bikedb, create = FALSE)
+    db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
     idx_list <- dbGetQuery(db, "PRAGMA index_list (trips)")
     RSQLite::dbDisconnect(db)
     nrow (idx_list) > 2 # 2 because city index is automatically created
@@ -22,7 +22,7 @@ indexes_exist <- function (bikedb)
 #' @export
 bike_total_trips <- function (bikedb)
 {
-    db <- RSQLite::dbConnect(SQLite(), bikedb, create = FALSE)
+    db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
     ntrips <- dbGetQuery(db, "SELECT Count(*) FROM trips")
     RSQLite::dbDisconnect(db)
     return (as.numeric (ntrips))
@@ -36,7 +36,7 @@ bike_total_trips <- function (bikedb)
 #' @noRd
 num_datafiles_in_db <- function (bikedb)
 {
-    db <- RSQLite::dbConnect(SQLite(), bikedb, create = FALSE)
+    db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
     ntrips <- dbGetQuery(db, "SELECT Count(*) FROM datafiles")
     RSQLite::dbDisconnect(db)
     return (as.numeric (ntrips))
@@ -83,7 +83,7 @@ bike_datelimits <- function (bikedb, city)
         qry_max <- paste0 (qry_max, " WHERE city = '", city, "'")
     }
 
-    db <- RSQLite::dbConnect(SQLite(), bikedb, create = FALSE)
+    db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
     first_trip <- RSQLite::dbGetQuery (db, qry_min) [1, 1]
     last_trip <- RSQLite::dbGetQuery (db, qry_max) [1, 1]
     RSQLite::dbDisconnect(db)

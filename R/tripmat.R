@@ -101,7 +101,7 @@ tripmat <- function (bikedb, start_date, end_date, start_time, end_time,
 {
     # suppress R CMD check notes:
     stop_time <- sttrip_id <- st <- et <- NULL
-    db <- RSQLite::dbConnect(SQLite(), bikedb, create = FALSE)
+    db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
 
     x <- NULL
     if (!missing (start_date))

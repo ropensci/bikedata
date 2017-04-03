@@ -25,6 +25,14 @@ NULL
 #'
 #' @return Number of stations in the Hubway system
 #'
+#' @note This station table is actually useless, because the station ID values
+#' given do not match those used in the raw data files! The latter are simple
+#' integer codes, while IDs in the "official" \code{.csv} file are like
+#' "A32000" - all beginning with an alpha and then five digits. These codes
+#' do not appear anywhere in the trip data files, and so this whole function is
+#' not used. It is nevertheless kept for the plausible day when the Hubway folk
+#' fix up this inconsistency.
+#'
 #' @noRd
 NULL
 
