@@ -9,22 +9,31 @@
 indexes_exist <- function (bikedb)
 {
     db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
-    idx_list <- dbGetQuery(db, "PRAGMA index_list (trips)")
-    RSQLite::dbDisconnect(db)
+    idx_list <- dbGetQuery (db, "PRAGMA index_list (trips)")
+    RSQLite::dbDisconnect (db)
     nrow (idx_list) > 2 # 2 because city index is automatically created
 }
 
-#' Count number of trips in sqlite3 database
+#' Count number of entries in sqlite3 database tables
 #'
 #' @param bikedb A string containing the path to the SQLite3 database to 
 #' use. 
+#' @param trips If true, numbers of trips are counted; otherwise numbers of
+#' stations
+#' @param city Optional city for which numbers of trips are to be counted
 #'
-#' @export
-bike_total_trips <- function (bikedb)
+#' @noRd
+bike_db_totals <- function (bikedb, trips = TRUE, city)
 {
     db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
-    ntrips <- dbGetQuery(db, "SELECT Count(*) FROM trips")
-    RSQLite::dbDisconnect(db)
+    if (trips)
+        qry <- "SELECT Count(*) FROM trips"
+    else
+        qry <- "SELECT Count(*) FROM stations"
+    if (!missing (city))
+        qry <- paste0 (qry, " WHERE city = '", city, "'")
+    ntrips <- dbGetQuery (db, qry)
+    RSQLite::dbDisconnect (db)
     return (as.numeric (ntrips))
 }
 
@@ -37,8 +46,8 @@ bike_total_trips <- function (bikedb)
 num_datafiles_in_db <- function (bikedb)
 {
     db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
-    ntrips <- dbGetQuery(db, "SELECT Count(*) FROM datafiles")
-    RSQLite::dbDisconnect(db)
+    ntrips <- dbGetQuery (db, "SELECT Count(*) FROM datafiles")
+    RSQLite::dbDisconnect (db)
     return (as.numeric (ntrips))
 }
 
@@ -51,8 +60,8 @@ num_datafiles_in_db <- function (bikedb)
 bike_cities_in_db <- function (bikedb)
 {
     db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
-    cities <- dbGetQuery(db, "SELECT city FROM stations")
-    RSQLite::dbDisconnect(db)
+    cities <- dbGetQuery (db, "SELECT city FROM stations")
+    RSQLite::dbDisconnect (db)
     cities <- unique (cities)
     rownames (table (cities)) # TODO: Find a better way to do that
 }
@@ -71,7 +80,7 @@ bike_cities_in_db <- function (bikedb)
 #' @noRd
 get_new_datafiles <- function (bikedb, flist_zip)
 {
-    db <- dplyr::src_sqlite (bikedb, create=F)
+    db <- dplyr::src_sqlite (bikedb, create = F)
     old_files <- dplyr::collect (dplyr::tbl (db, 'datafiles'))$name
     flist_zip [which (!basename (flist_zip) %in% old_files)]
 }
@@ -104,5 +113,34 @@ bike_datelimits <- function (bikedb, city)
 
     res <- c (first_trip, last_trip)
     names (res) <- c ('first', 'last')
+    return (res)
+}
+
+#' Extract summary statistics of database
+#'
+#' @param bikedb Path to the SQLite3 database 
+#'
+#' @return A \code{data.frame} containing numbers of trips and stations along
+#' with times and dates of first and last trips for each city in database
+#'
+#' @export
+bike_summary_stats <- function (bikedb)
+{
+    cities <- bike_cities_in_db (bikedb)
+
+    num_trips <- bike_db_totals (bikedb, TRUE)
+    num_stations <- bike_db_totals (bikedb, FALSE)
+    dates <- bike_datelimits (bikedb)
+
+    for (ci in cities)
+    {
+        num_trips <- c (num_trips, bike_db_totals (bikedb, TRUE, city = ci))
+        num_stations <- c (num_stations, bike_db_totals (bikedb, FALSE, 
+                                                         city = ci))
+        dates <- rbind (dates, bike_datelimits (bikedb, city = ci))
+    }
+    res <- data.frame (num_trips = num_trips, num_stations = num_stations,
+                       first_trip = dates [,1], last_trip = dates [,2])
+    rownames (res) <- c ('all', cities)
     return (res)
 }

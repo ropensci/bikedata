@@ -8,7 +8,6 @@ require (testthat)
 # code copied from get_aws_bike_files 
 get_fake_trip_files <- function (bucket)
 {
-    host <- "https://s3.amazonaws.com"
     aws_url <- sprintf ("https://%s.s3.amazonaws.com", bucket)
 
     doc <- httr::content (httr::GET (aws_url), encoding = 'UTF-8')
@@ -16,9 +15,9 @@ get_fake_trip_files <- function (bucket)
     # NOTE: xml2::xml_find_all (doc, ".//Key") should work here but doesn't, so
     # this manually does what that would do
     files <- lapply (nodes, function (i)
-                     if (grepl ('zip', i))
-                         strsplit (strsplit (as.character (i), "<Key>") [[1]] [2], 
-                                   "</Key>") [[1]] [1] )
+                 if (grepl ('zip', i))
+                     strsplit (strsplit (as.character (i), "<Key>") [[1]] [2],
+                               "</Key>") [[1]] [1] )
     files <- unlist (files)
     if (bucket == 'tripdata')
         files <- files [2:length (files)]
@@ -50,7 +49,7 @@ test_that ('dl_bikedata boston', {
 })
 
 test_that ('dl_bikedata la', {
-               files <- c ("MetroBikeShare_2016_Q3_trips.zip", 
+               files <- c ("MetroBikeShare_2016_Q3_trips.zip",
                            "Metro_trips_Q4_2016.zip")
                for (f in files) write ('a', file = f)
                expect_message (dl_bikedata (city = 'la', data_dir = '.'),

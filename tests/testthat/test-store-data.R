@@ -3,9 +3,9 @@ context ("store data in db")
 require (testthat)
 
 test_that ('read and append data', {
-               expect_silent (store_bikedata (data_dir = "..", 
-                                              bikedb = "testdb", 
-                                              quiet=TRUE))
+               expect_silent (store_bikedata (data_dir = "..",
+                                              bikedb = "testdb",
+                                              quiet = TRUE))
                invisible (file.remove ("testdb"))
 })
 
@@ -33,8 +33,13 @@ test_that ('date limits', {
                expect_length (x, 2)
 })
 
-test_that ('db size', {
-               expect_equal (bike_total_trips ('testdb'), 162)
+test_that ('db stats', {
+               db_stats <- bike_summary_stats ('testdb')
+               expect_is (db_stats, 'data.frame')
+               expect_equal (names (db_stats), c ('num_trips', 'num_stations',
+                                                  'first_trip', 'last_trip'))
+               expect_equal (db_stats$num_trips, c (162, 162))
+               expect_equal (db_stats$num_stations, c (9, 9))
 })
 
 invisible (file.remove ("testdb"))

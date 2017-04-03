@@ -7,7 +7,6 @@
 #' @export
 bike_stations <- function (bikedb)
 {
-    db <- dplyr::src_sqlite (bikedb, create=F)
+    db <- dplyr::src_sqlite (bikedb, create = F)
     dplyr::collect (dplyr::tbl (db, 'stations'))
 }
-

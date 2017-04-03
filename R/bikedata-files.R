@@ -6,6 +6,10 @@
 #'
 #' @return List of URLs used to download data
 #'
+#' @note bukets which work straight from AWS are
+#' c ('tripdata', 'capitalbikeshare-data', 'hubway-data') for the cities
+#' c ('ny', 'dc', 'bo'), respectively.
+#'
 #' @noRd
 get_aws_bike_files <- function (bucket)
 {
@@ -64,7 +68,7 @@ get_chicago_bike_files <- function ()
     nodes <- httr::content (httr::GET (host), encoding = 'UTF-8') %>%
         xml2::xml_find_all (., ".//aside") %>%
         xml2::xml_find_all (., ".//a")
-    xml2::xml_attr (nodes, "href")
+    unique (xml2::xml_attr (nodes, "href"))
 }
 
 
@@ -81,7 +85,6 @@ get_chicago_bike_files <- function ()
 get_bike_files <- function (city = "nyc")
 {
     city <- convert_city_names (city)
-    aws <- TRUE
     aws_cities <- c ('ny', 'dc', 'bo')
     buckets <- c ('tripdata', 'capitalbikeshare-data', 'hubway-data')
 

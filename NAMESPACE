@@ -2,10 +2,10 @@
 
 export(bike_datelimits)
 export(bike_stations)
-export(bike_total_trips)
+export(bike_summary_stats)
+export(bike_tripmat)
 export(dl_bikedata)
 export(store_bikedata)
-export(tripmat)
 import(RSQLite)
 importFrom(Rcpp,evalCpp)
 importFrom(dplyr,"%>%")

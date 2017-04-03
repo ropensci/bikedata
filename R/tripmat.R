@@ -9,11 +9,11 @@
 #' by the specified times
 #'
 #' @noRd
-filter_tripmat_by_datetime <- function (db, ...)
+filter_bike_tripmat <- function (db, ...)
 {
     # NOTE that this approach is much more efficient than the `dplyr::filter`
     # command, because that can only be applied to the entire datetime field:
-    # dplyr::filter (trips, start_time > "2014-07-07 00:00:00", 
+    # dplyr::filter (trips, start_time > "2014-07-07 00:00:00",
     #                       start_time < "2014-07-10 23:59:59")
     # ... and there is no direct way to filter based on distinct dates AND
     # times, nor can the SQL `date` and `time` functions be applied through
@@ -25,7 +25,7 @@ filter_tripmat_by_datetime <- function (db, ...)
                  "FROM stations s1, stations s2 LEFT OUTER JOIN",
                  "(SELECT start_station_id, end_station_id,",
                  "COUNT(*) as numtrips FROM trips")
-    
+
     qry_dt <- NULL
     if ('start_date' %in% names (x)) {
       qry_dt <- c (qry_dt, "stop_time >= ?")
@@ -48,13 +48,13 @@ filter_tripmat_by_datetime <- function (db, ...)
     if ('weekday' %in% names (x))
     {
         qry_wd <- "strftime('%w', start_time) IN "
-        qry_wd <- paste0(qry_wd, " (", paste(rep("?", times = 
-                                length(x$weekday)), collapse=", "), ")")
+        qry_wd <- paste0(qry_wd, " (", paste(rep("?", times =
+                                length(x$weekday)), collapse = ", "), ")")
         qry_dt <- c (qry_dt, qry_wd)
         qryargs <- c (qryargs, x$weekday)
     }
 
-    qry <- paste (qry, "WHERE", paste (qry_dt, collapse=" AND "))
+    qry <- paste (qry, "WHERE", paste (qry_dt, collapse = " AND "))
     qry <- paste (qry, "GROUP BY start_station_id, end_station_id) iq",
                   "ON s1.stn_id = iq.start_station_id AND",
                   "s2.stn_id = iq.end_station_id")
@@ -71,9 +71,8 @@ filter_tripmat_by_datetime <- function (db, ...)
     RSQLite::dbBind(qryres, as.list(qryargs))
     trips <- RSQLite::dbFetch(qryres)
     RSQLite::dbClearResult(qryres)
-    
+
     return(trips)
-    
 }
 
 #' Extract station-to-station trip matrix or data.frame from SQLite3 database
@@ -108,8 +107,9 @@ filter_tripmat_by_datetime <- function (db, ...)
 #' 23:59:59.
 #'
 #' @export
-tripmat <- function (bikedb, city, start_date, end_date, start_time, end_time,
-                     weekday, long=FALSE, quiet=FALSE)
+bike_tripmat <- function (bikedb, city, start_date, end_date,
+                          start_time, end_time, weekday,
+                          long=FALSE, quiet=FALSE)
 {
     db_cities <- bike_cities_in_db (bikedb)
     if (missing (city) & length (db_cities) > 1)
@@ -137,11 +137,12 @@ tripmat <- function (bikedb, city, start_date, end_date, start_time, end_time,
     if (!missing (weekday))
         x <- c (x, 'weekday' = list (convert_weekday (weekday)))
 
-    if ((missing (city) & length (x) > 0) | 
-        (!missing (city) & length (x) > 1))  {
-        trips <- filter_tripmat_by_datetime (db, x)
-    }
-    else {
+    if ( (missing (city) & length (x) > 0) |
+        (!missing (city) & length (x) > 1) )
+    {
+        trips <- filter_bike_tripmat (db, x)
+    } else
+    {
         qry <- paste("SELECT s1.stn_id AS start_station_id,",
                      "s2.stn_id AS end_station_id, iq.numtrips",
                      "FROM stations s1, stations s2 LEFT OUTER JOIN",
@@ -151,26 +152,24 @@ tripmat <- function (bikedb, city, start_date, end_date, start_time, end_time,
                      "ON s1.stn_id = iq.start_station_id AND",
                      "s2.stn_id = iq.end_station_id")
         if (!missing (city))
-            qry <- paste0 (qry, " WHERE s1.city = '", city, 
+            qry <- paste0 (qry, " WHERE s1.city = '", city,
                            "' AND s2.city = '", city, "'")
         qry <- paste (qry, "ORDER BY s1.stn_id, s2.stn_id")
         trips <- RSQLite::dbGetQuery (db, qry)
     }
-    
+
     RSQLite::dbDisconnect(db)
 
-    # suppress R CMD check notes:
-    start_station_id <- end_station_id <- n <- NULL
-    if (!long) 
+    if (!long)
     {
-        trips <- reshape2::dcast (trips, start_station_id ~ end_station_id, 
+        trips <- reshape2::dcast (trips, start_station_id ~ end_station_id,
                                   value.var = "numtrips", fill = 0)
         row.names (trips) <- trips$start_station_id
         trips$start_station_id <- NULL
         trips <- as.matrix (trips)
-    } else 
+    } else
     {
-        trips$numtrips <- ifelse (is.na (trips$numtrips) == TRUE, 0, 
+        trips$numtrips <- ifelse (is.na (trips$numtrips) == TRUE, 0,
                                   trips$numtrips)
     }
 
