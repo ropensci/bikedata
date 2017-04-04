@@ -13,6 +13,8 @@
  *  Compiler Options:   -std=c++11
  ***************************************************************************/
 
+#include <curl/curl.h>
+
 #include "sqlite3db-utils.h"
 
 int import_to_station_table (sqlite3 * dbcon,

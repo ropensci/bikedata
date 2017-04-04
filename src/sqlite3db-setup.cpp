@@ -15,8 +15,6 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <sqlite3.h>
-#include <boost/algorithm/string/replace.hpp>
 
 #define BUFFER_SIZE 512
 
