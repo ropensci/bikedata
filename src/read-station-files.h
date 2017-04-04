@@ -20,6 +20,8 @@
 int import_to_station_table (sqlite3 * dbcon,
     std::map <std::string, std::string> stationqry);
 int import_boston_stations (sqlite3 * dbcon);
+int rcpp_import_ch_stns (const char * bikedb, 
+        Rcpp::CharacterVector station_files);
 
 
 //' import_to_station_table
@@ -146,6 +148,75 @@ int import_boston_stations (sqlite3 * dbcon)
     int rc = sqlite3_exec (dbcon, stationqry.c_str(), NULL, 0, &zErrMsg);
     if (rc != SQLITE_OK)
         throw std::runtime_error ("Unable to insert Boston stations");
+
+    return get_stn_table_size (dbcon) - num_stns_old;
+}
+
+//' rcpp_import_ch_stns
+//'
+//' @param dbcon Active connection to sqlite3 database
+//' @param stationqry Station query constructed during reading of data 
+//'
+//' @return Number of stations to potentially be added to stations table (if not
+//'         already there).
+//'
+//' @noRd
+// [[Rcpp::export]]
+int rcpp_import_ch_stns (const char* bikedb, 
+        Rcpp::CharacterVector station_files)
+{
+    sqlite3 *dbcon;
+    char *zErrMsg = 0;
+
+    int rc = sqlite3_open_v2(bikedb, &dbcon, SQLITE_OPEN_READWRITE, NULL);
+    if (rc != SQLITE_OK)
+        throw std::runtime_error ("Can't establish sqlite3 connection");
+
+    std::map <std::string, std::string> stationqry;
+    char in_line [BUFFER_SIZE] = "\0";
+    const char * delim;
+    delim = ",";
+
+    int num_stns_old = get_stn_table_size (dbcon);
+
+    for(unsigned int filenum = 0; filenum < station_files.length(); filenum++) 
+    {
+        FILE * pFile = fopen (station_files [filenum], "r");
+        char * junk = fgets (in_line, BUFFER_SIZE, pFile);
+        rm_dos_end (in_line);
+        while (fgets (in_line, BUFFER_SIZE, pFile) != NULL) 
+        {
+            char * token = std::strtok (in_line, delim); // stn id
+            std::string stn_id = token;
+            if (stationqry.find (stn_id) == stationqry.end ())
+            {
+                std::string stn_name = std::strtok (NULL, delim);
+                std::string stn_lat = std::strtok (NULL, delim);
+                std::string stn_lon = std::strtok (NULL, delim);
+                // Note: ch also pre-pended to station id
+                stationqry [stn_id] = "(\'ch\',\'ch" + stn_id + "\',\'" + 
+                    stn_name + "\'," + stn_lon + "," + stn_lat + ")";
+            }
+        }
+    } // end for filenum over station_files
+
+    std::string fullstationqry = "INSERT OR IGNORE INTO stations "
+        "(city, stn_id, name, latitude, longitude) VALUES ";
+    fullstationqry += stationqry.begin ()->second;
+    for (auto stn = std::next (stationqry.begin ());
+            stn != stationqry.end (); ++stn)
+    {
+        fullstationqry += ", " + stn->second;
+    }
+    fullstationqry += ";";
+
+    rc = sqlite3_exec(dbcon, fullstationqry.c_str(), NULL, 0, &zErrMsg);
+    if (rc != SQLITE_OK)
+        throw std::runtime_error ("Unable to insert Chicago stations");
+
+    rc = sqlite3_close_v2(dbcon);
+    if (rc != SQLITE_OK)
+        throw std::runtime_error ("Unable to close sqlite database");
 
     return get_stn_table_size (dbcon) - num_stns_old;
 }

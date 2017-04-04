@@ -73,7 +73,7 @@ store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
         if (!quiet & length (city) > 1)
             message ('Reading files for ', ci, ' ...')
 
-        if (city == 'ch')
+        if (ci == 'ch')
             flists <- bike_list_zipfiles_chicago (data_dir, bikedb)
         else
             flists <- bike_list_zipfiles_to_add (data_dir, bikedb, ci)
@@ -86,6 +86,8 @@ store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
                                                  ci, nf)
             ntrips_city <- rcpp_import_to_trip_table (bikedb, flists$flist_csv,
                                                       ci, quiet)
+            if (ci == 'ch')
+                nstations <- rcpp_import_ch_stns (bikedb, flists$flist_csv_stns)
 
             if (length (flists$flist_rm) > 0)
                 invisible (file.remove (flists$flist_rm))

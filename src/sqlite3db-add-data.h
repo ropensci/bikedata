@@ -111,12 +111,9 @@ int rcpp_import_to_trip_table (const char* bikedb,
 
     sqlite3_exec(dbcon, "END TRANSACTION", NULL, NULL, &zErrMsg);
 
-    //int num_stns = import_boston_stations (dbcon);
-    if (city == "ch")
-    {
-        // int num_stns = import_chicago_stations (dbcon);
-    } else // city = "bo" or "ny"
+    if (city == "ny" || city == "bo")
         import_to_station_table (dbcon, stationqry);
+    // chicago stations loaded with separate R call
 
     rc = sqlite3_close_v2(dbcon);
     if (rc != SQLITE_OK)

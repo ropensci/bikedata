@@ -5,6 +5,18 @@
 
 using namespace Rcpp;
 
+// rcpp_import_ch_stns
+int rcpp_import_ch_stns(const char* bikedb, Rcpp::CharacterVector station_files);
+RcppExport SEXP bikedata_rcpp_import_ch_stns(SEXP bikedbSEXP, SEXP station_filesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const char* >::type bikedb(bikedbSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type station_files(station_filesSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_import_ch_stns(bikedb, station_files));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rcpp_import_to_trip_table
 int rcpp_import_to_trip_table(const char* bikedb, Rcpp::CharacterVector datafiles, std::string city, bool quiet);
 RcppExport SEXP bikedata_rcpp_import_to_trip_table(SEXP bikedbSEXP, SEXP datafilesSEXP, SEXP citySEXP, SEXP quietSEXP) {
