@@ -272,13 +272,13 @@ bike_list_zipfiles_chicago <- function (data_dir, bikedb)
             flist_csv_stns <- c (flist_csv_stns, basename (fi_stns))
             if (!all (basename (fi_trips) %in% existing_csv_files))
             {
-                unzip (f, file = fi_trips, exdir = data_dir, junkpaths = TRUE)
+                unzip (f, files = fi_trips, exdir = data_dir, junkpaths = TRUE)
                 flist_rm <- c (flist_rm, basename (fi_trips))
             }
             if (length (fi_stns) > 0) # always except 2014_Q1Q2 with .xlsx
                 if (!all (basename (fi_stns) %in% existing_csv_files))
                 {
-                    unzip (f, file = fi_stns, exdir = data_dir, junkpaths = TRUE)
+                    unzip (f, files = fi_stns, exdir = data_dir, junkpaths = TRUE)
                     flist_rm <- c (flist_rm, basename (fi_stns))
                 }
         }
