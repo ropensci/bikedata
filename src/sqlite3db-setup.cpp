@@ -55,8 +55,7 @@ int rcpp_create_sqlite3_db (const char * bikedb)
     // this citibike sequence prior to injection into db.
 
     std::string createqry = "CREATE TABLE trips ("
-        "id serial primary key,"
-        "trip_id integer,"
+        "id integer primary key,"
         "city text,"
         "trip_duration numeric,"
         "start_time timestamp without time zone,"

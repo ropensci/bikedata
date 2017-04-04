@@ -81,9 +81,8 @@ int rcpp_import_to_trip_table (const char* bikedb,
     std::map <std::string, std::string> stationqry;
 
     int ntrips = 0; // ntrips is # added in this call
-    int trip_id = get_max_trip_id (dbcon); // # trips already in db
 
-    sprintf(sqlqry, "INSERT INTO trips VALUES (NULL, @ID, @CI, @TD, @ST, @ET, @SSID, @ESID, @BID, @UT, @BY, @GE)");
+    sprintf(sqlqry, "INSERT INTO trips VALUES (NOT NULL, @CI, @TD, @ST, @ET, @SSID, @ESID, @BID, @UT, @BY, @GE)");
 
     sqlite3_prepare_v2(dbcon, sqlqry, BUFFER_SIZE, &stmt, NULL);
 
@@ -114,16 +113,13 @@ int rcpp_import_to_trip_table (const char* bikedb,
         while (fgets (in_line, BUFFER_SIZE, pFile) != NULL) 
         {
             rm_dos_end (in_line);
-            sqlite3_bind_text(stmt, 1, std::to_string (trip_id).c_str(), -1, 
-                    SQLITE_TRANSIENT); // Trip ID
-            sqlite3_bind_text(stmt, 2, city.c_str (), -1, SQLITE_TRANSIENT); 
+            sqlite3_bind_text(stmt, 1, city.c_str (), -1, SQLITE_TRANSIENT); 
             if (city == "ny")
                 read_one_line_nyc (stmt, in_line, &stationqry, max_stn_id, delim);
             else if (city == "bo")
                 read_one_line_boston (stmt, in_line, &stationqry, max_stn_id);
             else if (city == "ch")
                 read_one_line_chicago (stmt, in_line, delim);
-            trip_id++;
             ntrips++;
 
             sqlite3_step(stmt);
@@ -343,13 +339,13 @@ void read_one_line_nyc (sqlite3_stmt * stmt, char * line,
     } else
         token = strtokm(&in_line2[0u], delim);
 
-    sqlite3_bind_text(stmt, 3, token, -1, SQLITE_TRANSIENT); // Trip duration
+    sqlite3_bind_text(stmt, 2, token, -1, SQLITE_TRANSIENT); // Trip duration
 
     std::string tempstr = convert_datetime (strtokm(NULL, delim)); // Start time
-    sqlite3_bind_text(stmt, 4, tempstr.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 3, tempstr.c_str(), -1, SQLITE_TRANSIENT); 
 
     tempstr = convert_datetime (strtokm(NULL, delim)); // Stop time
-    sqlite3_bind_text(stmt, 5, tempstr.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 4, tempstr.c_str(), -1, SQLITE_TRANSIENT); 
     std::string start_station_id = strtokm(NULL, delim);
     start_station_id = "ny" + start_station_id;
     if (stationqry->count(start_station_id) == 0) {
@@ -367,7 +363,7 @@ void read_one_line_nyc (sqlite3_stmt * stmt, char * line,
         strtokm(NULL, delim); // lon
     }
 
-    sqlite3_bind_text(stmt, 6, start_station_id.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 5, start_station_id.c_str(), -1, SQLITE_TRANSIENT); 
 
     std::string end_station_id = strtokm(NULL, delim);
     end_station_id = "ny" + end_station_id;
@@ -386,15 +382,15 @@ void read_one_line_nyc (sqlite3_stmt * stmt, char * line,
         strtokm(NULL, delim); // lon
     }
 
-    sqlite3_bind_text(stmt, 7, end_station_id.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 6, end_station_id.c_str(), -1, SQLITE_TRANSIENT); 
     std::string user_type = strtokm(NULL, delim);
     if (user_type == "Subscriber")
         user_type = "1";
     else
         user_type = "0";
-    sqlite3_bind_text(stmt, 8, user_type.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 7, user_type.c_str(), -1, SQLITE_TRANSIENT); 
     // next is bike id 
-    sqlite3_bind_text(stmt, 9, strtokm(NULL, delim), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 8, strtokm(NULL, delim), -1, SQLITE_TRANSIENT); 
     std::string birthyear = strtokm(NULL, delim);
     std::string gender = strtokm(NULL, delim);
     if (gender.length () == 2) // gender still has a terminal quote
@@ -405,8 +401,8 @@ void read_one_line_nyc (sqlite3_stmt * stmt, char * line,
     if (gender.empty()) {
         gender = "NULL";
     }
-    sqlite3_bind_text(stmt, 10, birthyear.c_str(), -1, SQLITE_TRANSIENT); // Birth Year
-    sqlite3_bind_text(stmt, 11, gender.c_str(), -1, SQLITE_TRANSIENT); // Gender
+    sqlite3_bind_text(stmt, 9, birthyear.c_str(), -1, SQLITE_TRANSIENT); // Birth Year
+    sqlite3_bind_text(stmt, 10, gender.c_str(), -1, SQLITE_TRANSIENT); // Gender
 }
 
 //' read_one_line_boston
@@ -479,15 +475,15 @@ void read_one_line_boston (sqlite3_stmt * stmt, char * line,
     } else
         user_type = "0";
 
-    sqlite3_bind_text(stmt, 3, duration.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 4, start_time.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 5, end_time.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 6, start_station_id.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 7, end_station_id.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 8, bike_number.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 9, user_type.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 10, birth_year.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 11, gender.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 2, duration.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 3, start_time.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 4, end_time.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 5, start_station_id.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 6, end_station_id.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 7, bike_number.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 8, user_type.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 9, birth_year.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 10, gender.c_str(), -1, SQLITE_TRANSIENT); 
 }
 
 //' read_one_line_chicago
@@ -537,13 +533,13 @@ void read_one_line_chicago (sqlite3_stmt * stmt, char * line,
     } else
         user_type = "0";
 
-    sqlite3_bind_text(stmt, 3, duration.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 4, start_time.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 5, end_time.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 6, start_station_id.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 7, end_station_id.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 8, bike_id.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 9, user_type.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 10, birth_year.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 11, gender.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 2, duration.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 3, start_time.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 4, end_time.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 5, start_station_id.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 6, end_station_id.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 7, bike_id.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 8, user_type.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 9, birth_year.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 10, gender.c_str(), -1, SQLITE_TRANSIENT); 
 }

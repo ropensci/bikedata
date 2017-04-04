@@ -15,8 +15,8 @@ test_that ('read data', {
                db <- dplyr::src_sqlite ('testdb', create = F)
 
                trips <- dplyr::collect (dplyr::tbl (db, 'trips'))
-               expect_equal (dim (trips), c (162, 12))
-               nms <- c ("id", "trip_id", "city", "trip_duration", "start_time",
+               expect_equal (dim (trips), c (162, 11))
+               nms <- c ("id", "city", "trip_duration", "start_time",
                          "stop_time", "start_station_id", "end_station_id",
                          "bike_id", "user_type", "birth_year", "gender")
                expect_equal (names (trips), nms)
