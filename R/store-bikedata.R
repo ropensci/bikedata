@@ -73,7 +73,10 @@ store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
         if (!quiet & length (city) > 1)
             message ('Reading files for ', ci, ' ...')
 
-        flists <- bike_list_zipfiles_to_add (data_dir, bikedb, ci)
+        if (city == 'ch')
+            flists <- bike_list_zipfiles_chicago (data_dir, bikedb)
+        else
+            flists <- bike_list_zipfiles_to_add (data_dir, bikedb, ci)
 
         if (length (flists$flist_csv) > 0)
         {
@@ -211,18 +214,82 @@ bike_list_zipfiles_to_add <- function (data_dir, bikedb, city)
         for (f in flist_zip)
         {
             fi <- unzip (f, list = TRUE)$Name
+            flist_csv <- c (flist_csv, fi)
             if (!fi %in% existing_csv_files)
             {
-                flist_csv <- c (flist_csv, fi)
                 unzip (f, exdir = data_dir)
+                flist_rm <- c (flist_rm, fi)
             }
         }
         flist_csv <- paste0 (data_dir, '/', flist_csv)
-        if (length (existing_csv_files) > 0)
-            existing_csv_files <- paste0 (data_dir, '/', existing_csv_files)
-        flist_rm <- c (flist_csv, existing_csv_files)
+        flist_rm <- paste0 (data_dir, '/', flist_rm)
     }
+
     return (list (flist_zip = flist_zip,
                   flist_csv = flist_csv,
                   flist_rm = flist_rm))
 }
+
+#' Get list of Chicago files to be unzipped and added to database
+#'
+#' @param data_dir Directory containing data files
+#' @param bikedb A string containing the path to the SQLite3 database 
+#'
+#' @return List of three vectors of file names:
+#' \itemize{
+#' \item @code{flist_zip} contains names of all zip archives to be added to
+#' database;
+#' \item \code{flist_csv_trip} contains all corresponding \code{.csv} files of
+#' trip data;
+#' \item \code{flist_csv_stn} contains all corresponding \code{.csv} files of
+#' station data;
+#' \item \code{flist_rm} contains files to be deleted after having been added,
+#' }
+#'
+#' @note File 'Divvy_Stations_Trips_2014_Q1Q2.zip' has a 'Divvy_Stations' file
+#' in \code{.xlsx} format. The stations are identical to those from 2013, so
+#' this is *NOT* extracted here. That's the only archive with an \code{.xlxs}
+#' file.
+#'
+#' @noRd
+bike_list_zipfiles_chicago <- function (data_dir, bikedb)
+{
+    flist_zip <- get_flist_city (data_dir, city = 'chicago')
+    flist_zip <- get_new_datafiles (bikedb, flist_zip)
+    existing_csv_files <- list.files (data_dir, pattern = '.csv')
+    if (length (existing_csv_files) == 0)
+        existing_csv_files <- NULL
+    flist_csv_trips <- flist_csv_stns <- flist_rm <- NULL
+    if (length (flist_zip) > 0)
+    {
+        for (f in flist_zip)
+        {
+            fi <- unzip (f, list = TRUE)$Name
+            fi_trips <- fi [which (grepl ('Trips', basename (fi)))]
+            fi_stns <- fi [which (grepl ('Stations', basename (fi)) &
+                                            grepl ('.csv', basename (fi)))]
+            flist_csv_trips <- c (flist_csv_trips, basename (fi_trips))
+            flist_csv_stns <- c (flist_csv_stns, basename (fi_stns))
+            if (!all (basename (fi_trips) %in% existing_csv_files))
+            {
+                unzip (f, file = fi_trips, exdir = data_dir, junkpaths = TRUE)
+                flist_rm <- c (flist_rm, basename (fi_trips))
+            }
+            if (length (fi_stns) > 0) # always except 2014_Q1Q2 with .xlsx
+                if (!all (basename (fi_stns) %in% existing_csv_files))
+                {
+                    unzip (f, file = fi_stns, exdir = data_dir, junkpaths = TRUE)
+                    flist_rm <- c (flist_rm, basename (fi_stns))
+                }
+        }
+        flist_csv_trips <- paste0 (data_dir, '/', flist_csv_trips)
+        flist_csv_stns <- paste0 (data_dir, '/', flist_csv_stns)
+        if (length (flist_rm) > 0)
+            flist_rm <- paste0 (data_dir, '/', flist_rm)
+    }
+    return (list (flist_zip = flist_zip,
+                  flist_csv = flist_csv_trips,
+                  flist_csv_stns = flist_csv_stns,
+                  flist_rm = flist_rm))
+}
+

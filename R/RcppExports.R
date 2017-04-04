@@ -58,6 +58,14 @@ NULL
 #' @noRd
 NULL
 
+#' read_one_line_chicago
+#'
+#' @param stmt An sqlit3 statement to be assembled by reading the line of data
+#' @param line Line of data read from citibike file
+#'
+#' @noRd
+NULL
+
 #' rcpp_import_to_trip_table
 #'
 #' Extracts bike data for NYC citibike
