@@ -22,6 +22,8 @@ int import_to_station_table (sqlite3 * dbcon,
 int import_boston_stations (sqlite3 * dbcon);
 int rcpp_import_ch_stns (const char * bikedb, 
         Rcpp::CharacterVector station_files);
+std::string import_dc_stations ();
+std::map <std::string, std::string> get_dc_stn_table (sqlite3 * dbcon);
 
 
 //' import_to_station_table
@@ -87,10 +89,6 @@ int import_to_station_table (sqlite3 * dbcon,
 //' not used. It is nevertheless kept for the plausible day when the Hubway folk
 //' fix up this inconsistency.
 //'
-//' Note also that the curl dependency is only required for this function, so
-//' this might actually be better being deleted? It can always be recovered in
-//' the git tree if needed later.
-//'
 //' @noRd
 int import_boston_stations (sqlite3 * dbcon)
 {
@@ -150,6 +148,171 @@ int import_boston_stations (sqlite3 * dbcon)
         throw std::runtime_error ("Unable to insert Boston stations");
 
     return get_stn_table_size (dbcon) - num_stns_old;
+}
+
+//' import_dc_stations
+//'
+//' The Washington DC CapitalBikeShare system does not actually have any station
+//' coordinates. These are instead provided by the DC government.  This
+//' function reads the contents of the "Captial Bike Share Locations" file into a
+//' std::string object used to construct the SQL query that inserts those data
+//' into the 'sqlite3' database.
+//'
+//' @return std::string to be passed directly as SQLite3 query
+//'
+//' @noRd
+std::string import_dc_stations ()
+{
+    // Step#1 / 3: Use lcurl to download the file
+    CURL *curl;
+    CURLcode res;
+    std::string file_str, line;
+
+    curl_global_init(CURL_GLOBAL_DEFAULT);
+
+    curl = curl_easy_init();
+    if(curl) {
+        curl_easy_setopt(curl, CURLOPT_URL, 
+                "https://opendata.arcgis.com/datasets/a1f7acf65795451d89f0a38565a975b3_5.csv"); // nolint
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L); 
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L); 
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, 
+                CurlWrite_CallbackFunc_StdString);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &file_str);
+
+        res = curl_easy_perform(curl);
+
+        if(res != CURLE_OK)
+            throw std::runtime_error ("curl_easy_perform() failed");
+
+        curl_easy_cleanup(curl);
+    }
+    curl_global_cleanup();
+
+    std::string stationqry = "INSERT OR IGNORE INTO stations "
+        "(city, stn_id, longitude, latitude, name) VALUES ";
+    std::istringstream iss (file_str);
+    getline (iss, line); // header
+    bool first = true;
+    while (getline (iss, line))
+    {
+        std::string name = str_token (&line); 
+        name = str_token (&line); // First 2 tokens are junk
+        name = str_token (&line);
+        boost::replace_all (name, "\'", ""); // rm apostrophes
+        std::string id = str_token (&line);
+        std::string lat = str_token (&line);
+        std::string lon = str_token (&line);
+        if (first)
+            first = false;
+        else
+            stationqry += ", ";
+        stationqry += "(\'dc\',\'dc" + id + "\'," + lon + "," + lat + ",\'" + 
+            name + "\')";
+    }
+    stationqry += ";";
+
+    return stationqry;
+}
+
+//' get_dc_stn_table
+//'
+//' Because some data files for Washington DC contain only the names of stations
+//' and not their ID numbers, a std::map is generated here mapping those names
+//' onto IDs for easy insertion into the trips data table.
+//'
+//' @param dbcon Active connection to SQLite3 database
+//'
+//' @return std::map of <station name, station ID>
+//'
+//' @note The map is tiny, so it's okay to return values rather than refs
+//'
+//' @noRd
+std::map <std::string, std::string> get_dc_stn_table (sqlite3 * dbcon)
+{
+    std::string stn_id, stn_name;
+    sqlite3_stmt * stmt;
+    std::stringstream ss;
+    std::map <std::string, std::string> stn_map;
+
+    char qry_stns [BUFFER_SIZE] = "\0";
+    sprintf (qry_stns, 
+            "SELECT stn_id, name FROM stations WHERE city = 'dc'");
+
+    int rc = sqlite3_prepare_v2 (dbcon, qry_stns, BUFFER_SIZE, &stmt, NULL);
+
+    while (rc = sqlite3_step (stmt) == SQLITE_ROW)
+    {
+        const unsigned char * c1 = sqlite3_column_text (stmt, 0);
+        ss << c1;
+        std::string stn_id = ss.str ();
+        ss.str ("");
+        c1 = sqlite3_column_text (stmt, 1);
+        ss << c1;
+        std::string stn_name = ss.str ();
+        ss.str ("");
+        stn_map [stn_name] = stn_id;
+    }
+
+    sqlite3_reset(stmt);
+
+    // Then add additional stations that have names different to those given in
+    // the official DC govt data
+    stn_map ["1st & N ST SE"] = "dc31209"; // Typo: "ST" instead of "St"
+    stn_map ["4th St & Rhode Island Ave NE"] = "dc31500"; // 4th & W St NE
+    stn_map ["4th St & Massachusetts Ave NW"] = "dc31604"; // 3rd & H St
+    stn_map ["5th St & K St NW"] = "dc31600";
+    stn_map ["5th & Kennedy St NW"] = "dc31403"; // 4th & Kennedy 
+    stn_map ["7th & Water St SW / SW Waterfront"] = "dc31609";
+    stn_map ["7th & F St NW / National Portrait Gallery"] = "dc31232";
+    stn_map ["8th & F St NW / National Portrait Gallery"] = "dc31232"; // 7 & F 
+    stn_map ["11th & K St NW"] = "dc31263"; // 10th & K 
+    stn_map ["12th & Hayes St"] = "dc31005";
+    stn_map ["12th & Hayes St /  Pentagon City Metro"] = "dc31005"; 
+    stn_map ["13th & U St NW"] = "dc31268"; // 12th & U 
+    stn_map ["16th & U St NW"] = "dc31229"; // New Hampshire Ave & T St 
+    stn_map ["18th & Bell St"] = "dc31007";
+    stn_map ["18th & Hayes St"] = "dc31004";
+    stn_map ["18th & Wyoming Ave NW"] = "dc31114"; 
+    stn_map ["22nd & Eads St"] = "dc31013"; 
+    stn_map ["23rd & Eads"] = "dc31013";
+    stn_map ["26th & Crystal Dr"] = "dc31012"; // 26th & Clark St 
+
+    // American Land Title Assoc at 18th & M St NW
+    stn_map ["Alta Tech Office"] = "dc31221"; 
+    stn_map ["Bethesda Ave & Arlington Blvd"] = "dc32002"; // Arington ROAD! 
+    stn_map ["Central Library"] = "dc31025"; 
+    stn_map ["Connecticut Ave & Nebraska Ave NW"] = "dc31310"; 
+    stn_map ["Court House Metro / Wilson Blvd & N Uhle St"] = "dc31089";
+    stn_map ["Fallsgove Dr & W Montgomery Ave"] = "dc32016"; // FallsgRove!
+    stn_map ["Idaho Ave & Newark St NW"] = "dc31302"; // Wisconsin & Newark
+    stn_map ["L'Enfant Plaza / 7th & C St SW"] = "dc31218";
+    stn_map ["McPherson Square - 14th & H St NW"] = "dc31216"; // 14th & NY Ave
+    stn_map ["McPherson Square / 14th & H St NW"] = "dc31216"; 
+    stn_map ["MLK Library/9th & G St NW"] = "dc31274"; // 10th & G 
+    stn_map ["N Adams St & Lee Hwy"] = "dc31030"; 
+    stn_map ["N Fillmore St & Clarendon Blvd"] = "dc31021"; 
+    stn_map ["N Highland St & Wilson Blvd"] = "dc31022";
+    stn_map ["N Nelson St & Lee Hwy"] = "dc31092"; 
+    stn_map ["N Quincy St & Wilson Blvd"] = "dc31039"; 
+    stn_map ["Pentagon City Metro / 12th & Hayes St"] = "dc31005"; 
+    stn_map ["Randle Circle & Minnesota Ave NE"] = "dc31702"; // "NE" -> "SE"
+    stn_map ["Smithsonian / Jefferson Dr & 12th St SW"] = "dc31248"; 
+    stn_map ["Thomas Jefferson Cmty Ctr / 2nd St S & Ivy"] = "dc31074"; 
+    stn_map ["Virginia Square"] = "dc31024"; 
+    stn_map ["Wisconsin Ave & Macomb St NW"] = "dc31302"; // Wisconsin & Newark 
+
+    // Next ones are uncertain:
+    stn_map ["20th & Bell St"] = "dc31007"; // 18th & Bell - or 31002?
+    stn_map ["15th & Hayes St"] = "dc31004"; // 18th & Hayes - or 31005?
+    // 31702 is randle circle, which is 700m away, but nearest nonetheless
+    stn_map ["34th St & Minnesota Ave SE"] = "dc31702"; 
+    stn_map ["Fairfax Dr & Glebe Rd"] = "dc31038"; // glebe & 11th - or 31049?
+    // King St Metro N is much closer to station than S = 31048:
+    stn_map ["King St Metro"] = "dc31098"; 
+    stn_map ["S Abingdon St & 36th St S"] = "dc31064"; // or 31908?
+
+    return stn_map;
 }
 
 //' rcpp_import_ch_stns

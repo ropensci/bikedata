@@ -12,6 +12,8 @@
  *  Compiler Options:   -std=c++11
  ***************************************************************************/
 
+#define BUFFER_SIZE 512
+
 #include <sqlite3.h>
 
 int get_max_stn_id (sqlite3 * dbcon);

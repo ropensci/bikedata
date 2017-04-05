@@ -223,8 +223,10 @@ bike_list_zipfiles_to_add <- function (data_dir, bikedb, city)
                 flist_rm <- c (flist_rm, fi)
             }
         }
-        flist_csv <- paste0 (data_dir, '/', flist_csv)
-        flist_rm <- paste0 (data_dir, '/', flist_rm)
+        if (length (flist_csv) > 0)
+            flist_csv <- paste0 (data_dir, '/', flist_csv)
+        if (length (flist_rm) > 0)
+            flist_rm <- paste0 (data_dir, '/', flist_rm)
     }
 
     return (list (flist_zip = flist_zip,

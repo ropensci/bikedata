@@ -19,6 +19,9 @@ void read_one_line_boston (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry);
 void read_one_line_chicago (sqlite3_stmt * stmt, char * line,
         const char * delim);
+void read_one_line_dc (sqlite3_stmt * stmt, char * line, 
+        std::map <std::string, std::string> &stn_map, bool id,
+        bool end_date_first);
 
 
 //' read_one_line_nyc
@@ -208,10 +211,6 @@ void read_one_line_chicago (sqlite3_stmt * stmt, char * line,
         token = strtokm(&in_line2[0u], delim);
     // First token is trip ID, which is not used here
 
-    // trip_id,starttime,stoptime,bikeid,tripduration,
-    // from_station_id,from_station_name,
-    // to_station_id,to_station_name,usertype,gender,birthday
-
     std::string start_time = convert_datetime (strtokm(NULL, delim)); 
     std::string end_time = convert_datetime (strtokm(NULL, delim)); 
     std::string bike_id = strtokm(NULL, delim); 
@@ -244,4 +243,115 @@ void read_one_line_chicago (sqlite3_stmt * stmt, char * line,
     sqlite3_bind_text(stmt, 8, user_type.c_str(), -1, SQLITE_TRANSIENT); 
     sqlite3_bind_text(stmt, 9, birth_year.c_str(), -1, SQLITE_TRANSIENT); 
     sqlite3_bind_text(stmt, 10, gender.c_str(), -1, SQLITE_TRANSIENT); 
+}
+
+//' read_one_line_dc
+//'
+//' @param stmt An sqlit3 statement to be assembled by reading the line of data
+//' @param line Line of data read from citibike file
+//' @param dur_ms True if duration is single number (in ms); otherwise duration
+//' has to be explicitly parsed
+//' @param id True if file contains station ID columns
+//'
+//' @note Trip durations were initially reported as "0h 5min. 2sec.", then
+//' changed for 2012Q1 only to "0h 5m 2sec.", then again from 2012Q2 to
+//' "0h 5m 2s" and remained in that form until end 2014. They nevertheless are
+//' always separated by spaces. From 2015Q1, these were replaced with single
+//' durations in milliseconds.
+//' Start and end stations were initially station addresses with ID numbers
+//' parenthesised within the same records, but then from 2012Q1 the ID numbers
+//' disappeared and only addresses were given. Only from 2015Q3 onwards do
+//' trip records contain separate station IDs
+//'
+//' @noRd
+void read_one_line_dc (sqlite3_stmt * stmt, char * line, 
+        std::map <std::string, std::string> &stn_map, bool id,
+        bool end_date_first)
+{
+    std::string in_line2 = line;
+
+    // Duration,Start date,End date,Start station,End station,Bike#,Member Type
+    // 
+    // Duration (ms),Start date,End date,Start station number,Start station,
+    // End station number,End station,Bike number,Member Type
+
+    char * token = strtokm(&in_line2[0u], ",");
+    std::string duration = token;
+    size_t ipos = duration.find ("h", 0);
+    if (ipos != std::string::npos)
+    {
+        unsigned hh = atoi (duration.substr (0, ipos).c_str ());
+        ipos = duration.find (" ", 0);
+        duration = duration.substr (ipos + 1, duration.length () - ipos - 1);
+        ipos = duration.find ("m", 0);
+        unsigned mm = atoi (duration.substr (0, ipos).c_str ());
+        ipos = duration.find (" ", 0);
+        duration = duration.substr (ipos + 1, duration.length () - ipos - 1);
+        ipos = duration.find ("s", 0);
+        unsigned ss = atoi (duration.substr (0, ipos).c_str ());
+        hh = hh * 3600 + mm * 60 + ss;
+        hh = hh * 1000; // milliseconds
+        duration = std::to_string (hh);
+    }
+
+    std::string start_date = convert_datetime (strtokm(NULL, ",")); 
+
+    std::string start_station_name, end_date;
+    if (end_date_first)
+    {
+        end_date = convert_datetime (strtokm(NULL, ",")); 
+        start_station_name = strtokm(NULL, ",");
+    } else
+    {
+        start_station_name = strtokm(NULL, ",");
+        end_date = convert_datetime (strtokm(NULL, ",")); 
+    }
+    boost::replace_all (start_station_name, "\'", ""); // rm apostrophes
+
+    std::string start_station_id = "";
+    ipos = start_station_name.find ("(", 0);
+    std::string junkstr; // TODO: Delete that!
+    if (ipos != std::string::npos)
+    {
+        junkstr = start_station_name;
+        start_station_id = start_station_name.substr (ipos + 1,
+                start_station_name.length () - ipos - 2);
+        start_station_name = start_station_name.substr (0, ipos - 1);
+    } 
+    // Some stations have " [formerly ...]" in their names which is stripped off
+    // here.
+    ipos = start_station_name.find (" [", 0);
+    if (ipos != std::string::npos)
+        start_station_name = start_station_name.substr (0, ipos);
+    // Some of these also have additional trailing white space:
+    while (start_station_name.substr (start_station_name.length () - 1,
+                start_station_name.length () - 0) == " ")
+        start_station_name = start_station_name.substr (0,
+                start_station_name.length () - 1);
+    if (!id && start_station_id == "")
+    {
+        std::map <std::string, std::string>::const_iterator mpos;
+        mpos = stn_map.find (start_station_name);
+        if (mpos == stn_map.end ())
+        {
+            Rcpp::Rcout << "-----" << start_station_name << "-----[" << 
+                junkstr <<"]-----" << std::endl;
+        } else
+            start_station_id = mpos->second;
+    }
+    //start_station = "ch" + start_station;
+    std::string end_station = strtokm(NULL, ",");
+    //end_station = "ch" + end_station;
+    
+    /*
+    sqlite3_bind_text(stmt, 2, duration.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 3, start_date.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 4, end_date.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 5, start_station.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 6, end_station.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 7, bike_id.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 8, user_type.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 9, birth_year.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 10, gender.c_str(), -1, SQLITE_TRANSIENT); 
+    */
 }

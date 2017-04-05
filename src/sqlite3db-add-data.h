@@ -16,8 +16,6 @@
 #include <sstream>
 #include <boost/algorithm/string/replace.hpp>
 
-#define BUFFER_SIZE 512
-
 // [[Rcpp::depends(BH)]]
 #include <Rcpp.h>
 #include "utils.h"
@@ -57,6 +55,19 @@ int rcpp_import_to_trip_table (const char* bikedb,
     if (rc != SQLITE_OK)
         throw std::runtime_error ("Can't establish sqlite3 connection");
 
+    // dc stations have to be initially imported because for 3.5 years only
+    // station addresses were given with no IDs. The stations table is needed in
+    // these cases to extract the right IDs.
+    std::map <std::string, std::string> stn_map;
+    if (city == "dc")
+    {
+        std::string dc_stn_qry = import_dc_stations ();
+        rc = sqlite3_exec (dbcon, dc_stn_qry.c_str(), NULL, 0, &zErrMsg);
+        if (rc != SQLITE_OK)
+            throw std::runtime_error ("Unable to insert Washington DC stations");
+        stn_map = get_dc_stn_table (dbcon);
+    }
+
     FILE * pFile;
     char in_line [BUFFER_SIZE] = "\0";
     char sqlqry [BUFFER_SIZE] = "\0";
@@ -84,6 +95,21 @@ int rcpp_import_to_trip_table (const char* bikedb,
         char * junk = fgets(in_line, BUFFER_SIZE, pFile);
         rm_dos_end (in_line);
 
+        // DC files change structure a lot, with explicit station ID fields only
+        // appearing in later files, and files changing order from 2013Q3 with
+        // (Start date, End date, Start Station, End Station) to 2013Q4 with
+        // (Start date, Start Station, End date, End Station)
+        bool id_in_dc_file = false, dc_end_date_first = true;
+        if (city == "dc")
+        {
+            std::string in_line2 = in_line;
+            if (in_line2.find ("station number") != std::string::npos)
+                id_in_dc_file = true;
+            if (in_line2.find ("End date", 0) > 
+                    in_line2.find ("Start Station", 0))
+                dc_end_date_first = false;
+        }
+
         const char * delim;
         // both ny and chicago sometimes place fields in double quotes,
         // sometimes not.
@@ -102,6 +128,9 @@ int rcpp_import_to_trip_table (const char* bikedb,
                 read_one_line_boston (stmt, in_line, &stationqry);
             else if (city == "ch")
                 read_one_line_chicago (stmt, in_line, delim);
+            else if (city == "dc")
+                read_one_line_dc (stmt, in_line, stn_map, 
+                        id_in_dc_file, dc_end_date_first);
             ntrips++;
 
             sqlite3_step(stmt);
@@ -113,9 +142,11 @@ int rcpp_import_to_trip_table (const char* bikedb,
 
     if (city == "ny" || city == "bo")
         import_to_station_table (dbcon, stationqry);
+    //else if (city == "dc")
+    //    import_dc_stns (dbcon);
     // chicago stations loaded with separate R call
 
-    rc = sqlite3_close_v2(dbcon);
+    rc = sqlite3_close_v2 (dbcon);
     if (rc != SQLITE_OK)
         throw std::runtime_error ("Unable to close sqlite database");
 

@@ -33,9 +33,33 @@ NULL
 #' not used. It is nevertheless kept for the plausible day when the Hubway folk
 #' fix up this inconsistency.
 #'
-#' Note also that the curl dependency is only required for this function, so
-#' this might actually be better being deleted? It can always be recovered in
-#' the git tree if needed later.
+#' @noRd
+NULL
+
+#' import_dc_stations
+#'
+#' The Washington DC CapitalBikeShare system does not actually have any station
+#' coordinates. These are instead provided by the DC government.  This
+#' function reads the contents of the "Captial Bike Share Locations" file into a
+#' std::string object used to construct the SQL query that inserts those data
+#' into the 'sqlite3' database.
+#'
+#' @return std::string to be passed directly as SQLite3 query
+#'
+#' @noRd
+NULL
+
+#' get_dc_stn_table
+#'
+#' Because some data files for Washington DC contain only the names of stations
+#' and not their ID numbers, a std::map is generated here mapping those names
+#' onto IDs for easy insertion into the trips data table.
+#'
+#' @param dbcon Active connection to SQLite3 database
+#'
+#' @return std::map of <station name, station ID>
+#'
+#' @note The map is tiny, so it's okay to return values rather than refs
 #'
 #' @noRd
 NULL
