@@ -1,4 +1,3 @@
-#pragma once
 /***************************************************************************
  *  Project:    bikedata
  *  File:       read-city-files
@@ -12,6 +11,7 @@
  *
  *  Compiler Options:   -std=c++11
  ***************************************************************************/
+#pragma once
 
 void read_one_line_nyc (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry, const char * delim);
@@ -21,7 +21,9 @@ void read_one_line_chicago (sqlite3_stmt * stmt, char * line,
         const char * delim);
 void read_one_line_dc (sqlite3_stmt * stmt, char * line, 
         std::map <std::string, std::string> &stn_map, bool id,
-        bool end_date_first);
+        bool end_date_first, bool dump);
+std::string convert_dc_stn_name (std::string &station_name, bool id,
+        std::map <std::string, std::string> &stn_map);
 
 
 //' read_one_line_nyc
@@ -43,63 +45,63 @@ void read_one_line_nyc (sqlite3_stmt * stmt, char * line,
     {
         // Example of the following on L#19 of 2014-07
         boost::replace_all(in_line2, "\\N","\"\"");
-        token = strtokm(&in_line2[0u], "\""); //First double speech marks
-        token = strtokm(NULL, delim); 
+        token = strtokm (&in_line2[0u], "\""); //First double speech marks
+        token = strtokm (NULL, delim); 
     } else
-        token = strtokm(&in_line2[0u], delim);
+        token = strtokm (&in_line2[0u], delim);
 
     sqlite3_bind_text(stmt, 2, token, -1, SQLITE_TRANSIENT); // Trip duration
 
-    std::string tempstr = convert_datetime (strtokm(NULL, delim)); // Start time
+    std::string tempstr = convert_datetime (strtokm (NULL, delim)); // Start time
     sqlite3_bind_text(stmt, 3, tempstr.c_str(), -1, SQLITE_TRANSIENT); 
 
-    tempstr = convert_datetime (strtokm(NULL, delim)); // Stop time
+    tempstr = convert_datetime (strtokm (NULL, delim)); // Stop time
     sqlite3_bind_text(stmt, 4, tempstr.c_str(), -1, SQLITE_TRANSIENT); 
-    std::string start_station_id = strtokm(NULL, delim);
+    std::string start_station_id = strtokm (NULL, delim);
     start_station_id = "ny" + start_station_id;
     if (stationqry->count(start_station_id) == 0) {
-        std::string start_station_name = strtokm(NULL, delim);
-        std::string start_station_lat = strtokm(NULL, delim);
-        std::string start_station_lon = strtokm(NULL, delim);
+        std::string start_station_name = strtokm (NULL, delim);
+        std::string start_station_lat = strtokm (NULL, delim);
+        std::string start_station_lon = strtokm (NULL, delim);
         (*stationqry)[start_station_id] = "(\'ny\',\'" + 
             start_station_id + "\',\'" + start_station_name + "\'," +
             start_station_lat + "," + start_station_lon + ")";
     }
     else {
-        strtokm(NULL, delim); // station name
-        strtokm(NULL, delim); // lat
-        strtokm(NULL, delim); // lon
+        strtokm (NULL, delim); // station name
+        strtokm (NULL, delim); // lat
+        strtokm (NULL, delim); // lon
     }
 
     sqlite3_bind_text(stmt, 5, start_station_id.c_str(), -1, SQLITE_TRANSIENT); 
 
-    std::string end_station_id = strtokm(NULL, delim);
+    std::string end_station_id = strtokm (NULL, delim);
     end_station_id = "ny" + end_station_id;
     if (stationqry->count(end_station_id) == 0) {
-        std::string end_station_name = strtokm(NULL, delim);
-        std::string end_station_lat = strtokm(NULL, delim);
-        std::string end_station_lon = strtokm(NULL, delim);
+        std::string end_station_name = strtokm (NULL, delim);
+        std::string end_station_lat = strtokm (NULL, delim);
+        std::string end_station_lon = strtokm (NULL, delim);
         (*stationqry)[end_station_id] = "(\'ny\',\'" + 
             end_station_id + "\',\'" + end_station_name + "\'," +
             end_station_lat + "," + end_station_lon + ")";
     }
     else {
-        strtokm(NULL, delim); // station name
-        strtokm(NULL, delim); // lat
-        strtokm(NULL, delim); // lon
+        strtokm (NULL, delim); // station name
+        strtokm (NULL, delim); // lat
+        strtokm (NULL, delim); // lon
     }
 
     sqlite3_bind_text(stmt, 6, end_station_id.c_str(), -1, SQLITE_TRANSIENT); 
-    std::string user_type = strtokm(NULL, delim);
+    std::string user_type = strtokm (NULL, delim);
     if (user_type == "Subscriber")
         user_type = "1";
     else
         user_type = "0";
     sqlite3_bind_text(stmt, 7, user_type.c_str(), -1, SQLITE_TRANSIENT); 
     // next is bike id 
-    sqlite3_bind_text(stmt, 8, strtokm(NULL, delim), -1, SQLITE_TRANSIENT); 
-    std::string birthyear = strtokm(NULL, delim);
-    std::string gender = strtokm(NULL, delim);
+    sqlite3_bind_text(stmt, 8, strtokm (NULL, delim), -1, SQLITE_TRANSIENT); 
+    std::string birthyear = strtokm (NULL, delim);
+    std::string gender = strtokm (NULL, delim);
     if (gender.length () == 2) // gender still has a terminal quote
         gender = gender [0];
     if (birthyear.empty()) {
@@ -128,53 +130,53 @@ void read_one_line_boston (sqlite3_stmt * stmt, char * line,
 
     std::string in_line2 = line;
     boost::replace_all(in_line2, "\\N","\"\"");
-    char * token = strtokm(&in_line2[0u], "\""); // opening quote
-    std::string duration = strtokm(NULL, delim);
-    std::string start_time = convert_datetime (strtokm(NULL, delim)); 
-    std::string end_time = convert_datetime (strtokm(NULL, delim)); 
+    char * token = strtokm (&in_line2[0u], "\""); // opening quote
+    std::string duration = strtokm (NULL, delim);
+    std::string start_time = convert_datetime (strtokm (NULL, delim)); 
+    std::string end_time = convert_datetime (strtokm (NULL, delim)); 
 
-    std::string start_station_id = strtokm(NULL, delim);
+    std::string start_station_id = strtokm (NULL, delim);
     start_station_id = "bo" + start_station_id;
     if (stationqry->count (start_station_id) == 0) {
-        std::string start_station_name = strtokm(NULL, delim);
+        std::string start_station_name = strtokm (NULL, delim);
         boost::replace_all (start_station_name, "\'", ""); // rm apostrophes
-        std::string start_station_lat = strtokm(NULL, delim);
-        std::string start_station_lon = strtokm(NULL, delim);
+        std::string start_station_lat = strtokm (NULL, delim);
+        std::string start_station_lon = strtokm (NULL, delim);
         (*stationqry)[start_station_id] = "(\'bo\',\'" + 
             start_station_id + "\',\'" + start_station_name + "\'," +
             start_station_lat + "," + start_station_lon + ")";
     } else
     {
-        strtokm(NULL, delim);
-        strtokm(NULL, delim);
-        strtokm(NULL, delim);
+        strtokm (NULL, delim);
+        strtokm (NULL, delim);
+        strtokm (NULL, delim);
     }
 
 
-    std::string end_station_id = strtokm(NULL, delim);
+    std::string end_station_id = strtokm (NULL, delim);
     end_station_id = "bo" + end_station_id;
     if (stationqry->count (end_station_id) == 0) {
-        std::string end_station_name = strtokm(NULL, delim);
+        std::string end_station_name = strtokm (NULL, delim);
         boost::replace_all (end_station_name, "\'", ""); // rm apostrophes
-        std::string end_station_lat = strtokm(NULL, delim);
-        std::string end_station_lon = strtokm(NULL, delim);
+        std::string end_station_lat = strtokm (NULL, delim);
+        std::string end_station_lon = strtokm (NULL, delim);
         (*stationqry)[end_station_id] = "(\'bo\',\'" + 
             end_station_id + "\',\'" + end_station_name + "\'," +
             end_station_lat + "," + end_station_lon + ")";
     } else
     {
-        strtokm(NULL, delim);
-        strtokm(NULL, delim);
-        strtokm(NULL, delim);
+        strtokm (NULL, delim);
+        strtokm (NULL, delim);
+        strtokm (NULL, delim);
     }
 
-    std::string bike_number = strtokm(NULL, delim);
-    std::string user_type = strtokm(NULL, delim);
+    std::string bike_number = strtokm (NULL, delim);
+    std::string user_type = strtokm (NULL, delim);
     std::string birth_year = "", gender = "";
     if (user_type == "Subscriber")
     {
-        birth_year = strtokm(NULL, delim);
-        gender = strtokm(NULL, delim);
+        birth_year = strtokm (NULL, delim);
+        gender = strtokm (NULL, delim);
         boost::replace_all (gender, "\"", ""); // Remove terminal quote
         user_type = "1";
     } else
@@ -205,30 +207,30 @@ void read_one_line_chicago (sqlite3_stmt * stmt, char * line,
     if (strncmp (delim, "\",\"", 3) == 0)
     {
         //boost::replace_all(in_line2, "\\N","\"\"");
-        token = strtokm(&in_line2[0u], "\""); //First double speech marks
-        token = strtokm(NULL, delim); 
+        token = strtokm (&in_line2[0u], "\""); //First double speech marks
+        token = strtokm (NULL, delim); 
     } else
-        token = strtokm(&in_line2[0u], delim);
+        token = strtokm (&in_line2[0u], delim);
     // First token is trip ID, which is not used here
 
-    std::string start_time = convert_datetime (strtokm(NULL, delim)); 
-    std::string end_time = convert_datetime (strtokm(NULL, delim)); 
-    std::string bike_id = strtokm(NULL, delim); 
-    std::string duration = strtokm(NULL, delim);
+    std::string start_time = convert_datetime (strtokm (NULL, delim)); 
+    std::string end_time = convert_datetime (strtokm (NULL, delim)); 
+    std::string bike_id = strtokm (NULL, delim); 
+    std::string duration = strtokm (NULL, delim);
 
-    std::string start_station_id = strtokm(NULL, delim);
+    std::string start_station_id = strtokm (NULL, delim);
     start_station_id = "ch" + start_station_id;
-    strtokm(NULL, delim); // start station name
-    std::string end_station_id = strtokm(NULL, delim);
+    strtokm (NULL, delim); // start station name
+    std::string end_station_id = strtokm (NULL, delim);
     end_station_id = "ch" + end_station_id;
-    strtokm(NULL, delim); // end station name
+    strtokm (NULL, delim); // end station name
 
-    std::string user_type = strtokm(NULL, delim);
+    std::string user_type = strtokm (NULL, delim);
     std::string birth_year = "", gender = "";
     if (user_type == "Subscriber")
     {
-        gender = strtokm(NULL, delim);
-        birth_year = strtokm(NULL, delim);
+        gender = strtokm (NULL, delim);
+        birth_year = strtokm (NULL, delim);
         boost::replace_all (birth_year, "\"", ""); // Remove terminal quote
         user_type = "1";
     } else
@@ -266,7 +268,7 @@ void read_one_line_chicago (sqlite3_stmt * stmt, char * line,
 //' @noRd
 void read_one_line_dc (sqlite3_stmt * stmt, char * line, 
         std::map <std::string, std::string> &stn_map, bool id,
-        bool end_date_first)
+        bool end_date_first, bool dump)
 {
     std::string in_line2 = line;
 
@@ -275,7 +277,7 @@ void read_one_line_dc (sqlite3_stmt * stmt, char * line,
     // Duration (ms),Start date,End date,Start station number,Start station,
     // End station number,End station,Bike number,Member Type
 
-    char * token = strtokm(&in_line2[0u], ",");
+    char * token = strtokm (&in_line2[0u], ",");
     std::string duration = token;
     size_t ipos = duration.find ("h", 0);
     if (ipos != std::string::npos)
@@ -294,54 +296,52 @@ void read_one_line_dc (sqlite3_stmt * stmt, char * line,
         duration = std::to_string (hh);
     }
 
-    std::string start_date = convert_datetime (strtokm(NULL, ",")); 
+    std::string start_date = convert_datetime (strtokm (NULL, ",")); 
 
-    std::string start_station_name, end_date;
-    if (end_date_first)
+    std::string start_station_name, start_station_id,
+        end_station_name, end_station_id, end_date;
+    if (id)
     {
-        end_date = convert_datetime (strtokm(NULL, ",")); 
-        start_station_name = strtokm(NULL, ",");
+            end_date = convert_datetime (strtokm (NULL, ",")); 
+            start_station_id = strtokm (NULL, ",");
+            start_station_id = "dc" + start_station_id;
+            start_station_name = strtokm (NULL, ",");
+            end_station_id = strtokm (NULL, ",");
+            end_station_id = "dc" + end_station_id;
+            end_station_name = strtokm (NULL, ",");
     } else
     {
-        start_station_name = strtokm(NULL, ",");
-        end_date = convert_datetime (strtokm(NULL, ",")); 
-    }
-    boost::replace_all (start_station_name, "\'", ""); // rm apostrophes
-
-    std::string start_station_id = "";
-    ipos = start_station_name.find ("(", 0);
-    std::string junkstr; // TODO: Delete that!
-    if (ipos != std::string::npos)
-    {
-        junkstr = start_station_name;
-        start_station_id = start_station_name.substr (ipos + 1,
-                start_station_name.length () - ipos - 2);
-        start_station_name = start_station_name.substr (0, ipos - 1);
-    } 
-    // Some stations have " [formerly ...]" in their names which is stripped off
-    // here.
-    ipos = start_station_name.find (" [", 0);
-    if (ipos != std::string::npos)
-        start_station_name = start_station_name.substr (0, ipos);
-    // Some of these also have additional trailing white space:
-    while (start_station_name.substr (start_station_name.length () - 1,
-                start_station_name.length () - 0) == " ")
-        start_station_name = start_station_name.substr (0,
-                start_station_name.length () - 1);
-    if (!id && start_station_id == "")
-    {
-        std::map <std::string, std::string>::const_iterator mpos;
-        mpos = stn_map.find (start_station_name);
-        if (mpos == stn_map.end ())
+        if (end_date_first)
         {
-            Rcpp::Rcout << "-----" << start_station_name << "-----[" << 
-                junkstr <<"]-----" << std::endl;
+            end_date = convert_datetime (strtokm (NULL, ",")); 
+            start_station_name = strtokm (NULL, ",");
         } else
-            start_station_id = mpos->second;
+        {
+            start_station_name = strtokm (NULL, ",");
+            end_date = convert_datetime (strtokm (NULL, ",")); 
+        }
+        end_station_name = strtokm (NULL, ",");
+
+        start_station_id = convert_dc_stn_name (start_station_name, id, stn_map);
+        end_station_id = convert_dc_stn_name (start_station_name, id, stn_map);
     }
-    //start_station = "ch" + start_station;
-    std::string end_station = strtokm(NULL, ",");
-    //end_station = "ch" + end_station;
+    if (dump)
+        Rcpp::Rcout << "(" << start_station_id << ": " <<
+            start_station_name << ") -> (" << end_station_id << ": " <<
+            end_station_name << ")" << std::endl;
+
+    std::string bike_number, subscriber;
+    if (id)
+    {
+    } else
+    {
+        bike_number = strtokm (NULL, ",");
+        subscriber = strtokm (NULL, ",");
+        if (subscriber == "Casual")
+            subscriber = "0";
+        else // sometimes "Member", sometimes "Registered"
+            subscriber = "1";
+    }
     
     /*
     sqlite3_bind_text(stmt, 2, duration.c_str(), -1, SQLITE_TRANSIENT); 
@@ -354,4 +354,54 @@ void read_one_line_dc (sqlite3_stmt * stmt, char * line,
     sqlite3_bind_text(stmt, 9, birth_year.c_str(), -1, SQLITE_TRANSIENT); 
     sqlite3_bind_text(stmt, 10, gender.c_str(), -1, SQLITE_TRANSIENT); 
     */
+}
+
+//' Convert names of DC stations as given in trip files to standard names
+//'
+//' @param station_name String as read from trip file
+//' @param id True if trip file contains separate station ID field
+//' @param stn_map Map of station names to IDs
+//'
+//' @note ' Start and end stations were initially station addresses with ID
+//' numbers parenthesised within the same records, but then from 2012Q1 the ID
+//' numbers disappeared and only addresses were given. Some station names in
+//' trip files also contain "[formerly ...]" guff, where the former names never
+//' appear in the official station file, and so this must be removed.
+//'
+//' @noRd
+std::string convert_dc_stn_name (std::string &station_name, bool id,
+        std::map <std::string, std::string> &stn_map)
+{
+    std::string station, station_id = "";
+    boost::replace_all (station_name, "\'", ""); // rm apostrophes
+
+    size_t ipos = station_name.find ("(", 0);
+    if (ipos != std::string::npos)
+    {
+        station_id = station_name.substr (ipos + 1,
+                station_name.length () - ipos - 2);
+        station_name = station_name.substr (0, ipos - 1);
+    } 
+    // Strip off instances of " [formerly ...]"
+    ipos = station_name.find (" [", 0);
+    if (ipos != std::string::npos)
+        station_name = station_name.substr (0, ipos);
+    // Some of these also have additional trailing white space:
+    while (station_name.substr (station_name.length () - 1,
+                station_name.length () - 0) == " ")
+        station_name = station_name.substr (0,
+                station_name.length () - 1);
+    if (!id)
+    {
+        std::map <std::string, std::string>::const_iterator mpos;
+        mpos = stn_map.find (station_name);
+        if (mpos == stn_map.end ())
+        {
+            Rcpp::Rcout << "-----" << station_name << "-----" << 
+                std::endl;
+        } else
+            station_id = mpos->second;
+    }
+
+    return station_id;
 }

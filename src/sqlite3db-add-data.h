@@ -105,8 +105,13 @@ int rcpp_import_to_trip_table (const char* bikedb,
             std::string in_line2 = in_line;
             if (in_line2.find ("station number") != std::string::npos)
                 id_in_dc_file = true;
-            if (in_line2.find ("End date", 0) > 
-                    in_line2.find ("Start Station", 0))
+            size_t ss_pos = in_line2.find ("Start Station");
+            if (ss_pos == std::string::npos)
+                ss_pos = in_line2.find ("Start station");
+            if (ss_pos == std::string::npos)
+                throw std::runtime_error ("DC trip file has no Start Station field"); //nolint
+
+            if (in_line2.find ("End date", 0) > ss_pos)
                 dc_end_date_first = false;
         }
 
@@ -118,6 +123,7 @@ int rcpp_import_to_trip_table (const char* bikedb,
         else
             delim = ",";
 
+        int count = 0; // TODO: Delete that!
         while (fgets (in_line, BUFFER_SIZE, pFile) != NULL) 
         {
             rm_dos_end (in_line);
@@ -129,8 +135,15 @@ int rcpp_import_to_trip_table (const char* bikedb,
             else if (city == "ch")
                 read_one_line_chicago (stmt, in_line, delim);
             else if (city == "dc")
-                read_one_line_dc (stmt, in_line, stn_map, 
-                        id_in_dc_file, dc_end_date_first);
+            {
+                if (count < 10)
+                    read_one_line_dc (stmt, in_line, stn_map, 
+                            id_in_dc_file, dc_end_date_first, true);
+                else
+                    read_one_line_dc (stmt, in_line, stn_map, 
+                            id_in_dc_file, dc_end_date_first, false);
+            }
+            count++;
             ntrips++;
 
             sqlite3_step(stmt);

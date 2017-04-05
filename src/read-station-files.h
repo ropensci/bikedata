@@ -257,9 +257,11 @@ std::map <std::string, std::string> get_dc_stn_table (sqlite3 * dbcon)
     sqlite3_reset(stmt);
 
     // Then add additional stations that have names different to those given in
-    // the official DC govt data
+    // the official DC govt data. Note that it's much easier this way than doing
+    // any kind of string cleaning or grep searching.
     stn_map ["1st & N ST SE"] = "dc31209"; // Typo: "ST" instead of "St"
     stn_map ["4th St & Rhode Island Ave NE"] = "dc31500"; // 4th & W St NE
+    stn_map ["4th & Adams St NE"] = "dc31500"; // 4th & W St NE
     stn_map ["4th St & Massachusetts Ave NW"] = "dc31604"; // 3rd & H St
     stn_map ["5th St & K St NW"] = "dc31600";
     stn_map ["5th & Kennedy St NW"] = "dc31403"; // 4th & Kennedy 
@@ -274,6 +276,7 @@ std::map <std::string, std::string> get_dc_stn_table (sqlite3 * dbcon)
     stn_map ["18th & Bell St"] = "dc31007";
     stn_map ["18th & Hayes St"] = "dc31004";
     stn_map ["18th & Wyoming Ave NW"] = "dc31114"; 
+
     stn_map ["22nd & Eads St"] = "dc31013"; 
     stn_map ["23rd & Eads"] = "dc31013";
     stn_map ["26th & Crystal Dr"] = "dc31012"; // 26th & Clark St 
@@ -311,6 +314,12 @@ std::map <std::string, std::string> get_dc_stn_table (sqlite3 * dbcon)
     // King St Metro N is much closer to station than S = 31048:
     stn_map ["King St Metro"] = "dc31098"; 
     stn_map ["S Abingdon St & 36th St S"] = "dc31064"; // or 31908?
+
+    // next two are excluded for obvious reasons
+    stn_map ["Alta Bicycle Share Demonstration Station"] = "00000";
+    stn_map ["Birthday Station"] = "00000";
+    // And this one because i've no idea where it is
+    stn_map ["19th & New Hampshire Ave NW"] = "00000";
 
     return stn_map;
 }

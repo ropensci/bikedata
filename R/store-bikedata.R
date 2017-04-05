@@ -217,7 +217,7 @@ bike_list_zipfiles_to_add <- function (data_dir, bikedb, city)
         {
             fi <- unzip (f, list = TRUE)$Name
             flist_csv <- c (flist_csv, fi)
-            if (!fi %in% existing_csv_files)
+            if (!all (fi %in% existing_csv_files))
             {
                 unzip (f, exdir = data_dir)
                 flist_rm <- c (flist_rm, fi)
