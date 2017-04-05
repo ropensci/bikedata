@@ -13,6 +13,7 @@
  *  Compiler Options:   -std=c++11
  ***************************************************************************/
 
+#include <unordered_set>
 #include <curl/curl.h>
 
 #include "sqlite3db-utils.h"
@@ -24,6 +25,7 @@ int rcpp_import_ch_stns (const char * bikedb,
         Rcpp::CharacterVector station_files);
 std::string import_dc_stations ();
 std::map <std::string, std::string> get_dc_stn_table (sqlite3 * dbcon);
+std::unordered_set <std::string> get_dc_stn_ids (sqlite3 * dbcon);
 
 
 //' import_to_station_table
@@ -276,7 +278,6 @@ std::map <std::string, std::string> get_dc_stn_table (sqlite3 * dbcon)
     stn_map ["18th & Bell St"] = "dc31007";
     stn_map ["18th & Hayes St"] = "dc31004";
     stn_map ["18th & Wyoming Ave NW"] = "dc31114"; 
-
     stn_map ["22nd & Eads St"] = "dc31013"; 
     stn_map ["23rd & Eads"] = "dc31013";
     stn_map ["26th & Crystal Dr"] = "dc31012"; // 26th & Clark St 
@@ -318,10 +319,49 @@ std::map <std::string, std::string> get_dc_stn_table (sqlite3 * dbcon)
     // next two are excluded for obvious reasons
     stn_map ["Alta Bicycle Share Demonstration Station"] = "00000";
     stn_map ["Birthday Station"] = "00000";
-    // And this one because i've no idea where it is
+    // And this one because i've no idea where it is, and is only 5 or so trips
     stn_map ["19th & New Hampshire Ave NW"] = "00000";
 
     return stn_map;
+}
+
+//' get_dc_stn_ids
+//'
+//' Returns vector of all station IDs in the official DC Govt file. Only
+//' trips from and to stations with codes in this file are loaded into db.
+//'
+//' @param dbcon Active connection to SQLite3 database
+//'
+//' @return std::unordered_set of <std::string station ID>
+//'
+//' @note The map is tiny, so it's okay to return values rather than refs
+//'
+//' @noRd
+std::unordered_set <std::string> get_dc_stn_ids (sqlite3 * dbcon)
+{
+    std::string stn_id, stn_name;
+    sqlite3_stmt * stmt;
+    std::stringstream ss;
+    std::unordered_set <std::string> stn_ids;
+
+    char qry_stns [BUFFER_SIZE] = "\0";
+    sprintf (qry_stns, 
+            "SELECT stn_id FROM stations WHERE city = 'dc'");
+
+    int rc = sqlite3_prepare_v2 (dbcon, qry_stns, BUFFER_SIZE, &stmt, NULL);
+
+    while (rc = sqlite3_step (stmt) == SQLITE_ROW)
+    {
+        const unsigned char * c1 = sqlite3_column_text (stmt, 0);
+        ss << c1;
+        std::string stn_id = ss.str ();
+        stn_ids.insert (stn_id);
+        ss.str ("");
+    }
+
+    sqlite3_reset(stmt);
+
+    return stn_ids;
 }
 
 //' rcpp_import_ch_stns

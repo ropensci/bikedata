@@ -14,6 +14,7 @@
  ***************************************************************************/
 
 #include <sstream>
+#include <unordered_set>
 #include <boost/algorithm/string/replace.hpp>
 
 // [[Rcpp::depends(BH)]]
@@ -58,14 +59,16 @@ int rcpp_import_to_trip_table (const char* bikedb,
     // dc stations have to be initially imported because for 3.5 years only
     // station addresses were given with no IDs. The stations table is needed in
     // these cases to extract the right IDs.
-    std::map <std::string, std::string> stn_map;
+    std::map <std::string, std::string> dc_stn_map;
+    std::unordered_set <std::string> dc_stn_ids;
     if (city == "dc")
     {
         std::string dc_stn_qry = import_dc_stations ();
         rc = sqlite3_exec (dbcon, dc_stn_qry.c_str(), NULL, 0, &zErrMsg);
         if (rc != SQLITE_OK)
             throw std::runtime_error ("Unable to insert Washington DC stations");
-        stn_map = get_dc_stn_table (dbcon);
+        dc_stn_map = get_dc_stn_table (dbcon);
+        dc_stn_ids = get_dc_stn_ids (dbcon);
     }
 
     FILE * pFile;
@@ -123,11 +126,11 @@ int rcpp_import_to_trip_table (const char* bikedb,
         else
             delim = ",";
 
-        int count = 0; // TODO: Delete that!
         while (fgets (in_line, BUFFER_SIZE, pFile) != NULL) 
         {
             rm_dos_end (in_line);
             sqlite3_bind_text(stmt, 1, city.c_str (), -1, SQLITE_TRANSIENT); 
+
             if (city == "ny")
                 read_one_line_nyc (stmt, in_line, &stationqry, delim);
             else if (city == "bo")
@@ -135,15 +138,9 @@ int rcpp_import_to_trip_table (const char* bikedb,
             else if (city == "ch")
                 read_one_line_chicago (stmt, in_line, delim);
             else if (city == "dc")
-            {
-                if (count < 10)
-                    read_one_line_dc (stmt, in_line, stn_map, 
-                            id_in_dc_file, dc_end_date_first, true);
-                else
-                    read_one_line_dc (stmt, in_line, stn_map, 
-                            id_in_dc_file, dc_end_date_first, false);
-            }
-            count++;
+                read_one_line_dc (stmt, in_line, dc_stn_map, dc_stn_ids,
+                        id_in_dc_file, dc_end_date_first);
+
             ntrips++;
 
             sqlite3_step(stmt);

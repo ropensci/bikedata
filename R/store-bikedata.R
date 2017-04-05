@@ -70,13 +70,20 @@ store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
     ntrips <- 0
     for (ci in city)
     {
+        if (!quiet)
+        {
+            if (length (city) == 1)
+                message ('Unzipping raw data files ...')
+            else
+                message ('Unzipping raw data files for ', ci, ' ...')
+        }
+        if (ci == 'ch')
+            flists <- bike_unzip_files_chicago (data_dir, bikedb)
+        else
+            flists <- bike_unzip_files (data_dir, bikedb, ci)
+
         if (!quiet & length (city) > 1)
             message ('Reading files for ', ci, ' ...')
-
-        if (ci == 'ch')
-            flists <- bike_list_zipfiles_chicago (data_dir, bikedb)
-        else
-            flists <- bike_list_zipfiles_to_add (data_dir, bikedb, ci)
 
         if (length (flists$flist_csv) > 0)
         {
@@ -205,7 +212,7 @@ get_flist_city <- function (data_dir, city)
 #' multi-file zip archives (Chicago) have their own equivalent routines.
 #'
 #' @noRd
-bike_list_zipfiles_to_add <- function (data_dir, bikedb, city)
+bike_unzip_files <- function (data_dir, bikedb, city)
 {
     flist_zip <- get_flist_city (data_dir, city)
     flist_zip <- get_new_datafiles (bikedb, flist_zip)
@@ -256,7 +263,7 @@ bike_list_zipfiles_to_add <- function (data_dir, bikedb, city)
 #' file.
 #'
 #' @noRd
-bike_list_zipfiles_chicago <- function (data_dir, bikedb)
+bike_unzip_files_chicago <- function (data_dir, bikedb)
 {
     flist_zip <- get_flist_city (data_dir, city = 'chicago')
     flist_zip <- get_new_datafiles (bikedb, flist_zip)

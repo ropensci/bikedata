@@ -130,17 +130,23 @@ bike_summary_stats <- function (bikedb)
 
     num_trips <- bike_db_totals (bikedb, TRUE)
     num_stations <- bike_db_totals (bikedb, FALSE)
-    dates <- bike_datelimits (bikedb)
+    dates <- rbind (c (NULL, NULL), bike_datelimits (bikedb)) # so [,1] works
+    rnames <- cities
 
-    for (ci in cities)
+    if (length (cities) > 1)
     {
-        num_trips <- c (num_trips, bike_db_totals (bikedb, TRUE, city = ci))
-        num_stations <- c (num_stations, bike_db_totals (bikedb, FALSE, 
-                                                         city = ci))
-        dates <- rbind (dates, bike_datelimits (bikedb, city = ci))
+        rnames <- c ('all', cities)
+        for (ci in cities)
+        {
+            num_trips <- c (num_trips, bike_db_totals (bikedb, TRUE, city = ci))
+            num_stations <- c (num_stations, bike_db_totals (bikedb, FALSE, 
+                                                             city = ci))
+            dates <- rbind (dates, bike_datelimits (bikedb, city = ci))
+        }
     }
+
     res <- data.frame (num_trips = num_trips, num_stations = num_stations,
                        first_trip = dates [,1], last_trip = dates [,2])
-    rownames (res) <- c ('all', cities)
+    rownames (res) <- rnames
     return (res)
 }

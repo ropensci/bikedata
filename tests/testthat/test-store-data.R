@@ -38,8 +38,8 @@ test_that ('db stats', {
                expect_is (db_stats, 'data.frame')
                expect_equal (names (db_stats), c ('num_trips', 'num_stations',
                                                   'first_trip', 'last_trip'))
-               expect_equal (db_stats$num_trips, c (162, 162))
-               expect_equal (db_stats$num_stations, c (9, 9))
+               expect_equal (db_stats$num_trips, 162)
+               expect_equal (db_stats$num_stations, 9)
 })
 
 invisible (file.remove ("testdb"))

@@ -64,6 +64,20 @@ NULL
 #' @noRd
 NULL
 
+#' get_dc_stn_ids
+#'
+#' Returns vector of all station IDs in the official DC Govt file. Only
+#' trips from and to stations with codes in this file are loaded into db.
+#'
+#' @param dbcon Active connection to SQLite3 database
+#'
+#' @return std::unordered_set of <std::string station ID>
+#'
+#' @note The map is tiny, so it's okay to return values rather than refs
+#'
+#' @noRd
+NULL
+
 #' rcpp_import_ch_stns
 #'
 #' @param dbcon Active connection to sqlite3 database
