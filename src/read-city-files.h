@@ -20,8 +20,9 @@ void read_one_line_boston (sqlite3_stmt * stmt, char * line,
 void read_one_line_chicago (sqlite3_stmt * stmt, char * line,
         const char * delim);
 void read_one_line_dc (sqlite3_stmt * stmt, char * line, 
-        std::map <std::string, std::string> &stn_map, bool id,
-        bool end_date_first, bool dump);
+        std::map <std::string, std::string> &stn_map, 
+        std::unordered_set <std::string> &stn_ids,
+        bool id, bool end_date_first);
 std::string convert_dc_stn_name (std::string &station_name, bool id,
         std::map <std::string, std::string> &stn_map);
 
@@ -267,15 +268,10 @@ void read_one_line_chicago (sqlite3_stmt * stmt, char * line,
 //'
 //' @noRd
 void read_one_line_dc (sqlite3_stmt * stmt, char * line, 
-        std::map <std::string, std::string> &stn_map, bool id,
-        bool end_date_first, bool dump)
+        std::map <std::string, std::string> &stn_map, 
+        std::unordered_set <std::string> &stn_ids, bool id, bool end_date_first)
 {
     std::string in_line2 = line;
-
-    // Duration,Start date,End date,Start station,End station,Bike#,Member Type
-    // 
-    // Duration (ms),Start date,End date,Start station number,Start station,
-    // End station number,End station,Bike number,Member Type
 
     char * token = strtokm (&in_line2[0u], ",");
     std::string duration = token;
@@ -322,38 +318,37 @@ void read_one_line_dc (sqlite3_stmt * stmt, char * line,
         }
         end_station_name = strtokm (NULL, ",");
 
-        start_station_id = convert_dc_stn_name (start_station_name, id, stn_map);
+        start_station_id = convert_dc_stn_name (start_station_name, id,
+                stn_map);
         end_station_id = convert_dc_stn_name (start_station_name, id, stn_map);
     }
-    if (dump)
-        Rcpp::Rcout << "(" << start_station_id << ": " <<
-            start_station_name << ") -> (" << end_station_id << ": " <<
-            end_station_name << ")" << std::endl;
 
-    std::string bike_number, subscriber;
+    std::string bike_id, user_type;
     if (id)
     {
     } else
     {
-        bike_number = strtokm (NULL, ",");
-        subscriber = strtokm (NULL, ",");
-        if (subscriber == "Casual")
-            subscriber = "0";
+        // Only personal data for DC is user_type
+        bike_id = strtokm (NULL, ",");
+        user_type = strtokm (NULL, ",");
+        if (user_type == "Casual")
+            user_type = "0";
         else // sometimes "Member", sometimes "Registered"
-            subscriber = "1";
+            user_type = "1";
     }
-    
-    /*
-    sqlite3_bind_text(stmt, 2, duration.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 3, start_date.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 4, end_date.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 5, start_station.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 6, end_station.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 7, bike_id.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 8, user_type.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 9, birth_year.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 10, gender.c_str(), -1, SQLITE_TRANSIENT); 
-    */
+
+    // Only store those trip with stations in the official list:
+    if (stn_ids.find (start_station_id) != stn_ids.end () &&
+            stn_ids.find (end_station_id) != stn_ids.end ())
+    {
+        sqlite3_bind_text(stmt, 2, duration.c_str(), -1, SQLITE_TRANSIENT); 
+        sqlite3_bind_text(stmt, 3, start_date.c_str(), -1, SQLITE_TRANSIENT); 
+        sqlite3_bind_text(stmt, 4, end_date.c_str(), -1, SQLITE_TRANSIENT); 
+        sqlite3_bind_text(stmt, 5, start_station_id.c_str(), -1, SQLITE_TRANSIENT); 
+        sqlite3_bind_text(stmt, 6, end_station_id.c_str(), -1, SQLITE_TRANSIENT); 
+        sqlite3_bind_text(stmt, 7, bike_id.c_str(), -1, SQLITE_TRANSIENT); 
+        sqlite3_bind_text(stmt, 8, user_type.c_str(), -1, SQLITE_TRANSIENT); 
+    }
 }
 
 //' Convert names of DC stations as given in trip files to standard names
@@ -395,11 +390,7 @@ std::string convert_dc_stn_name (std::string &station_name, bool id,
     {
         std::map <std::string, std::string>::const_iterator mpos;
         mpos = stn_map.find (station_name);
-        if (mpos == stn_map.end ())
-        {
-            Rcpp::Rcout << "-----" << station_name << "-----" << 
-                std::endl;
-        } else
+        if (mpos != stn_map.end ())
             station_id = mpos->second;
     }
 
