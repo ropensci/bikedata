@@ -37,7 +37,8 @@ test_that ('db stats', {
                db_stats <- bike_summary_stats ('testdb')
                expect_is (db_stats, 'data.frame')
                expect_equal (names (db_stats), c ('num_trips', 'num_stations',
-                                                  'first_trip', 'last_trip'))
+                                                  'first_trip', 'last_trip',
+                                                  'latest_files'))
                expect_equal (db_stats$num_trips, 162)
                expect_equal (db_stats$num_stations, 9)
 })

@@ -82,7 +82,7 @@ get_chicago_bike_files <- function ()
 #' @return List of URLs used to download data
 #'
 #' @noRd
-get_bike_files <- function (city = "nyc")
+get_bike_files <- function (city)
 {
     city <- convert_city_names (city)
     aws_cities <- c ('ny', 'dc', 'bo')

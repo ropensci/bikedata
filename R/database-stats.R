@@ -85,6 +85,35 @@ get_new_datafiles <- function (bikedb, flist_zip)
     flist_zip [which (!basename (flist_zip) %in% old_files)]
 }
 
+#' Check whether files in database are the latest published files
+#'
+#' @param bikedb Path to the SQLite3 database 
+#'
+#' @return A named vector of binary values: TRUE is files in \code{bikedb} are
+#' the latest versions; otherwise FALSE, in which case \code{store_bikedata}
+#' could be run to update the database.
+#'
+#' @export
+bike_latest_files <- function (bikedb)
+{
+    db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
+    files <- dbGetQuery (db, "SELECT * FROM datafiles")
+    cities <- unique (files$city)
+    RSQLite::dbDisconnect (db)
+
+    latest_files <- rep (TRUE, length (cities))
+    names (latest_files) <- cities
+    for (i in seq (cities))
+    {
+        files_i <- files$name [which (files$city == cities [i])]
+        all_files <- basename (get_bike_files (city = cities [i]))
+        if (sort (all_files, decreasing = TRUE) [1] !=
+            sort (files_i, decreasing = TRUE) [1])
+            latest_files [i] <- FALSE
+    }
+    return (latest_files)
+}
+
 #' Extract date-time limits from trip database
 #'
 #' @param bikedb Path to the SQLite3 database 
@@ -121,7 +150,9 @@ bike_datelimits <- function (bikedb, city)
 #' @param bikedb Path to the SQLite3 database 
 #'
 #' @return A \code{data.frame} containing numbers of trips and stations along
-#' with times and dates of first and last trips for each city in database
+#' with times and dates of first and last trips for each city in database and a
+#' final column indicating whether the files match the latest published
+#' versions.
 #'
 #' @export
 bike_summary_stats <- function (bikedb)
@@ -133,8 +164,10 @@ bike_summary_stats <- function (bikedb)
     dates <- rbind (c (NULL, NULL), bike_datelimits (bikedb)) # so [,1] works
     rnames <- cities
 
+    latest_files <- bike_latest_files (bikedb)
     if (length (cities) > 1)
     {
+        latest <- NULL # latest_files aren't necessarily in db order
         rnames <- c ('all', cities)
         for (ci in cities)
         {
@@ -142,11 +175,15 @@ bike_summary_stats <- function (bikedb)
             num_stations <- c (num_stations, bike_db_totals (bikedb, FALSE, 
                                                              city = ci))
             dates <- rbind (dates, bike_datelimits (bikedb, city = ci))
+            latest <- c (latest, 
+                         latest_files [which (names (latest_files) == ci)])
         }
+        latest_files <- c (NA, latest)
     }
 
     res <- data.frame (num_trips = num_trips, num_stations = num_stations,
-                       first_trip = dates [,1], last_trip = dates [,2])
+                       first_trip = dates [,1], last_trip = dates [,2],
+                       latest_files = latest_files)
     rownames (res) <- rnames
     return (res)
 }

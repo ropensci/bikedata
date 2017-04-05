@@ -11,7 +11,9 @@ bike_summary_stats(bikedb)
 }
 \value{
 A \code{data.frame} containing numbers of trips and stations along
-with times and dates of first and last trips for each city in database
+with times and dates of first and last trips for each city in database and a
+final column indicating whether the files match the latest published
+versions.
 }
 \description{
 Extract summary statistics of database
