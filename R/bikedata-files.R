@@ -47,13 +47,14 @@ get_la_bike_files <- function ()
     host <- paste0 ("https://11ka1d3b35pv1aah0c3m9ced-wpengine.netdna-ssl.com/",
                     "wp-content/uploads/")
     files <- c ("2016/10/MetroBikeShare_2016_Q3_trips.zip",
-                "2017/01/Metro_trips_Q4_2016.zip")
+                "2017/01/Metro_trips_Q4_2016.zip",
+                "2017/04/la_metro_gbfs_trips_Q1_2017.zip")
     paste0 (host, files)
 }
 
-#' get_boston_bike_files
+#' get_chicago_bike_files
 #'
-#' Returns list of URLs for each trip data file from Boston's Hubway system
+#' Returns list of URLs for each trip data file from Chicago's Divvy system
 #'
 #' @return List of URLs used to download data
 #'
@@ -72,6 +73,38 @@ get_chicago_bike_files <- function ()
 }
 
 
+#' get_london_bike_files
+#'
+#' Returns list of URLs for each trip data file from London's Santander Cycles
+#' system
+#'
+#' @return List of URLs used to download data
+#'
+#' @noRd
+get_london_bike_files <- function ()
+{
+    # First get list of base file names from AWS:
+    aws_url <- "https://s3-eu-west-1.amazonaws.com/cycling.data.tfl.gov.uk/"
+    doc <- httr::content (httr::GET (aws_url), encoding  =  'UTF-8')
+    xml2::write_xml (doc, file="junk.xml")
+    nodes <- xml2::xml_children (doc)
+    getflist <- function (nodes, type = 'zip')
+    {
+        f <- lapply (nodes, function (i) if (grepl (type, i))
+                     strsplit (strsplit (as.character (i),
+                                         "<Key>") [[1]] [2], "</Key>") [[1]] [1] )
+        basename (unlist (f))
+    }
+    flist_zip <- getflist (nodes, type = 'zip')
+    flist_zip <- flist_zip [which (grepl ('usage', flist_zip))]
+    flist_csv <- getflist (nodes, type = 'csv')
+
+    # Then convert to tfl.gov.uk filenames
+    addr_base <- "http://cycling.data.tfl.gov.uk/usage-stats/"
+    paste0 (addr_base, c (flist_zip, flist_csv))
+}
+
+
 
 #' get_bike_files
 #'
@@ -84,7 +117,6 @@ get_chicago_bike_files <- function ()
 #' @noRd
 get_bike_files <- function (city)
 {
-    city <- convert_city_names (city)
     aws_cities <- c ('ny', 'dc', 'bo')
     buckets <- c ('tripdata', 'capitalbikeshare-data', 'hubway-data')
 
@@ -96,6 +128,8 @@ get_bike_files <- function (city)
         files <- get_la_bike_files ()
     else if (city == 'ch')
         files <- get_chicago_bike_files ()
+    else if (city == 'lo')
+        files <- get_london_bike_files ()
 
     return (files)
 }
