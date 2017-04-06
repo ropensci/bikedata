@@ -28,9 +28,12 @@ convert_city_names <- function (city)
                     'dc', 'dc', 'dc', 'la', 'la') 
     city_code <- city_code [pmatch (city, city_names)]
 
-    city <- rep (NA, length (city))
-    city [indx_lo] <- city_lo
-    city [indx] <- city_code
+    if (length (indx_lo) > 0)
+    {
+        city <- rep (NA, length (city))
+        city [indx_lo] <- city_lo
+        city [indx] <- city_code
+    }
 
     return (city)
 }
