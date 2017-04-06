@@ -5,6 +5,7 @@
 #' @param data_dir Directory to which to download the files
 #' @param dates Character vector of dates to download data with dates formated
 #' as YYYYMM.
+#' @param quiet If FALSE, progress is displayed on screen
 #'
 #' @section Details:
 #' This function produces zip-compressed data in R's temporary directory. City
@@ -18,6 +19,7 @@
 #'  Chicago (ch)\tab Divvy Bikes\cr
 #'  Los Angeles (la)\tab Metro Bike Share\cr
 #'  Boston (bo)\tab Hubway\cr
+#'  London (lo)\tab Santander Cycles\cr
 #' }
 #'
 #' Ensure you have a fast internet connection and at least 100 Mb space
@@ -27,8 +29,11 @@
 #' by downloading more recent files.
 #'
 #' @export
-dl_bikedata <- function(city = 'nyc', data_dir = tempdir(), dates)
+dl_bikedata <- function(city = 'nyc', data_dir = tempdir(), dates,
+                        quiet = FALSE)
 {
+    city <- convert_city_names (city)
+
     dl_files <- get_bike_files (city)
     files <- file.path (data_dir, basename (dl_files))
 
@@ -43,7 +48,11 @@ dl_bikedata <- function(city = 'nyc', data_dir = tempdir(), dates)
         for (f in dl_files [indx])
         {
             destfile <- file.path (data_dir, basename(f))
-            download.file (f, destfile)
+            if (!quiet)
+                message ('Downloading ', basename (f))
+            resp <- httr::GET (f, httr::write_disk (destfile, overwrite = TRUE))
+            if (resp$status_code != 200)
+                stop ('Download request failed')
         }
     } else
         message ('All data files already exist')
