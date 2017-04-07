@@ -4,12 +4,11 @@
 bikedata
 ================
 
--   [bikedata](#bikedata)
-    -   [1 Installation](#installation)
-    -   [2 Usage](#usage)
-        -   [2.1 Filtering trips by date](#filtering-trips-by-date)
-        -   [2.2 Filtering trips by time of day](#filtering-trips-by-time-of-day)
-        -   [2.3 Filtering trips by day of week](#filtering-trips-by-day-of-week)
+-   [1 Installation](#installation)
+-   [2 Usage](#usage)
+    -   [2.1 Filtering trips by date](#filtering-trips-by-date)
+    -   [2.2 Filtering trips by time of day](#filtering-trips-by-time-of-day)
+    -   [2.3 Filtering trips by day of week](#filtering-trips-by-day-of-week)
 
 
 The `bikedata` package aims to enable ready importing of historical trip data from all public bicycle hire systems which provide data, and will be expanded on an ongoing basis as more systems publish open data. Cities and names of associated public bicycle Systems currently included, along with numbers of bikes and of docking stations, are:
