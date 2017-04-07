@@ -4,7 +4,7 @@
                    "database rights 2016\n",
                    "Data for New York City provided and owned by:\n",
                    "  NYC Bike Share, LLC and ",
-                   "Jersey City Bike Share, LLC (“Bikeshare”)\n",
+                   "Jersey City Bike Share, LLC (\"Bikeshare\")\n",
                    "  see https://www.citibikenyc.com/data-sharing-policy\n",
                    "Data for Washington DC (Captialbikeshare), ",
                    "Chiago (Divvybikes) and Boston (Hubway)\n",

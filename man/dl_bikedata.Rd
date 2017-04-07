@@ -23,7 +23,10 @@ Download hire bicycle data
 \note{
 Only files that don't already exist in \code{data_dir} will be
 downloaded, and this function may thus be used to update a directory of files
-by downloading more recent files.
+by downloading more recent files. If a particular file request fails,
+downloading will continue regardless. To ensure all files are downloaded,
+this function may need to be run several times until a message appears
+declaring that 'All data files already exist'
 }
 \section{Details}{
 

@@ -26,7 +26,10 @@
 #'
 #' @note Only files that don't already exist in \code{data_dir} will be
 #' downloaded, and this function may thus be used to update a directory of files
-#' by downloading more recent files.
+#' by downloading more recent files. If a particular file request fails,
+#' downloading will continue regardless. To ensure all files are downloaded,
+#' this function may need to be run several times until a message appears
+#' declaring that 'All data files already exist'
 #'
 #' @export
 dl_bikedata <- function(city = 'nyc', data_dir = tempdir(), dates,
@@ -37,10 +40,10 @@ dl_bikedata <- function(city = 'nyc', data_dir = tempdir(), dates,
     dl_files <- get_bike_files (city)
     files <- file.path (data_dir, basename (dl_files))
 
-    if (missing (dates)) 
+    if (missing (dates))
       indx <- which (!file.exists (files))
-    else 
-      indx <- which (!file.exists (files) & 
+    else
+      indx <- which (!file.exists (files) &
                      grepl (paste (dates, collapse = "|"), files))
 
     if (length (indx) > 0)
@@ -52,7 +55,17 @@ dl_bikedata <- function(city = 'nyc', data_dir = tempdir(), dates,
                 message ('Downloading ', basename (f))
             resp <- httr::GET (f, httr::write_disk (destfile, overwrite = TRUE))
             if (resp$status_code != 200)
-                stop ('Download request failed')
+            {
+                count <- 0
+                while (!file.exists (destfile) & count < 5)
+                {
+                    resp <- httr::GET (f, httr::write_disk (destfile,
+                                                            overwrite = TRUE))
+                    count <- count + 1
+                }
+                if (!file.exists (destfile))
+                    stop ('Download request failed')
+            }
         }
     } else
         message ('All data files already exist')

@@ -21,9 +21,9 @@ public bicycle hire, or bike share, systems. Although there are very many
 public bicycle hire systems in the world [see this wikipedia
 list](https://en.wikipedia.org/wiki/List_of_bicycle-sharing_systems), very few
 openly publish data on system usage. The `bikedata` package aims to enable
-ready importing of data from all systems provide data, and will be expanded on
-an ongoing basis as more systems publish open data. Cities and names of
-associated public bicycle Systems currently included, along with numbers of
+ready importing of data from all systems which provide data, and will be
+expanded on an ongoing basis as more systems publish open data. Cities and names
+of associated public bicycle Systems currently included, along with numbers of
 bikes and of docking stations, are:
 
 City | Hire Bicycle System | Number of Bicycles | Number of Docking Stations
