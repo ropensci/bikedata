@@ -8,7 +8,7 @@ bikedata
     -   [2.3 Filtering trips by day of week](#filtering-trips-by-day-of-week)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-[![Build Status](https://travis-ci.org/mpadge/bikedata.svg)](https://travis-ci.org/mpadge/bikedata) [![codecov](https://codecov.io/gh/mpadge/bikedata/branch/master/graph/badge.svg)](https://codecov.io/gh/mpadge/bikedata) [![Project Status: Concept - Minimal or no implementation has been done yet.](http://www.repostatus.org/badges/0.1.0/concept.svg)](http://www.repostatus.org/#concept) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/bikedata)](http://cran.r-project.org/web/packages/bikedata)
+[![Build Status](https://travis-ci.org/mpadge/bikedata.svg)](https://travis-ci.org/mpadge/bikedata) [![Build status](https://ci.appveyor.com/api/projects/status/github/mpadge/bikedata?svg=true)](https://ci.appveyor.com/project/mpadge/bikedata) [![codecov](https://codecov.io/gh/mpadge/bikedata/branch/master/graph/badge.svg)](https://codecov.io/gh/mpadge/bikedata) [![Project Status: Concept - Minimal or no implementation has been done yet.](http://www.repostatus.org/badges/0.1.0/concept.svg)](http://www.repostatus.org/#concept) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/bikedata)](http://cran.r-project.org/web/packages/bikedata)
 
 bikedata
 ========
@@ -64,11 +64,9 @@ A summary of all data contained in a given database can be produced as
 
 ``` r
 bike_summary_stats (bikedb = 'bikedb')
+#>    num_trips num_stations          first_trip       last_trip latest_files
+#> ny  36902025          689 2014-11-01 00:00:11 2017-01-31 9:59        TRUE
 ```
-
-    #>    num_trips num_stations          first_trip       last_trip latest_files
-    #> ny  36902025          689 2014-11-01 00:00:11 2017-01-31 9:59        TRUE
-
 
 The final field, `latest_files`, indicates whether the files in the database are up to date with the latest published files.
 
