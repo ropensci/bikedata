@@ -26,6 +26,7 @@ int rcpp_import_ch_stns (const char * bikedb,
 std::string import_dc_stations ();
 std::map <std::string, std::string> get_dc_stn_table (sqlite3 * dbcon);
 std::unordered_set <std::string> get_dc_stn_ids (sqlite3 * dbcon);
+int rcpp_import_lo_stns (const char * bikedb, Rcpp::DataFrame stn_data);
 
 
 //' import_to_station_table
@@ -129,11 +130,11 @@ int import_boston_stations (sqlite3 * dbcon)
     bool first = true;
     while (getline (iss, line))
     {
-        std::string name = str_token (&line);
+        std::string name = str_token (&line, ",");
         boost::replace_all (name, "\'", ""); // rm apostrophes
-        std::string id = str_token (&line);
-        std::string lat = str_token (&line);
-        std::string lon = str_token (&line);
+        std::string id = str_token (&line, ",");
+        std::string lat = str_token (&line, ",");
+        std::string lon = str_token (&line, ",");
         if (first)
             first = false;
         else
@@ -198,13 +199,13 @@ std::string import_dc_stations ()
     bool first = true;
     while (getline (iss, line))
     {
-        std::string name = str_token (&line); 
-        name = str_token (&line); // First 2 tokens are junk
-        name = str_token (&line);
+        std::string name = str_token (&line, ","); 
+        name = str_token (&line, ","); // First 2 tokens are junk
+        name = str_token (&line, ",");
         boost::replace_all (name, "\'", ""); // rm apostrophes
-        std::string id = str_token (&line);
-        std::string lat = str_token (&line);
-        std::string lon = str_token (&line);
+        std::string id = str_token (&line, ",");
+        std::string lat = str_token (&line, ",");
+        std::string lon = str_token (&line, ",");
         if (first)
             first = false;
         else
@@ -366,7 +367,7 @@ std::unordered_set <std::string> get_dc_stn_ids (sqlite3 * dbcon)
 
 //' rcpp_import_ch_stns
 //'
-//' @param dbcon Active connection to sqlite3 database
+//' @param bikedb Name of SQLite3 database
 //' @param stationqry Station query constructed during reading of data 
 //'
 //' @return Number of stations to potentially be added to stations table (if not
@@ -431,4 +432,56 @@ int rcpp_import_ch_stns (const char* bikedb,
         throw std::runtime_error ("Unable to close sqlite database");
 
     return get_stn_table_size (dbcon) - num_stns_old;
+}
+
+
+//' rcpp_import_lo_stns
+//'
+//' @param dbcon Active connection to sqlite3 database
+//' @param stationqry Station query constructed during reading of data 
+//'
+//' @return Number of stations to potentially be added to stations table (if not
+//'         already there).
+//'
+//' @noRd
+// [[Rcpp::export]]
+int rcpp_import_lo_stns (const char * bikedb, Rcpp::DataFrame stn_data)
+{
+    sqlite3 *dbcon;
+    char *zErrMsg = 0;
+
+    int rc = sqlite3_open_v2 (bikedb, &dbcon, SQLITE_OPEN_READWRITE, NULL);
+    if (rc != SQLITE_OK)
+        throw std::runtime_error ("Can't establish sqlite3 connection");
+
+    std::string stationqry = "INSERT OR IGNORE INTO stations "
+        "(city, stn_id, name, longitude, latitude) VALUES ";
+
+    int num_stns_old = get_stn_table_size (dbcon);
+
+    Rcpp::CharacterVector stn_id = stn_data ["id"];
+    Rcpp::CharacterVector stn_name = stn_data ["name"];
+    Rcpp::CharacterVector stn_lon = stn_data ["lon"];
+    Rcpp::CharacterVector stn_lat = stn_data ["lat"];
+
+    for (unsigned i = 0; i<stn_data.nrow (); i++)
+    {
+        stationqry += "(\'lo\',\'lo" + stn_id (i) + "\',\'" + stn_name (i) + 
+            "\'," + stn_lon (i) + "," + stn_lat (i) + ")";
+        if (i < (stn_data.nrow () - 1))
+            stationqry += ",";
+    }
+    stationqry += ";";
+
+    rc = sqlite3_exec(dbcon, stationqry.c_str(), NULL, 0, &zErrMsg);
+    if (rc != SQLITE_OK)
+        throw std::runtime_error ("Unable to insert London stations");
+
+    int num_stns_added = get_stn_table_size (dbcon) - num_stns_old;
+
+    rc = sqlite3_close_v2(dbcon);
+    if (rc != SQLITE_OK)
+        throw std::runtime_error ("Unable to close sqlite database");
+
+    return num_stns_added;
 }

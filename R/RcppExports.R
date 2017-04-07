@@ -80,7 +80,7 @@ NULL
 
 #' rcpp_import_ch_stns
 #'
-#' @param dbcon Active connection to sqlite3 database
+#' @param bikedb Name of SQLite3 database
 #' @param stationqry Station query constructed during reading of data 
 #'
 #' @return Number of stations to potentially be added to stations table (if not
@@ -89,6 +89,19 @@ NULL
 #' @noRd
 rcpp_import_ch_stns <- function(bikedb, station_files) {
     .Call('bikedata_rcpp_import_ch_stns', PACKAGE = 'bikedata', bikedb, station_files)
+}
+
+#' rcpp_import_lo_stns
+#'
+#' @param dbcon Active connection to sqlite3 database
+#' @param stationqry Station query constructed during reading of data 
+#'
+#' @return Number of stations to potentially be added to stations table (if not
+#'         already there).
+#'
+#' @noRd
+rcpp_import_lo_stns <- function(bikedb, stn_data) {
+    .Call('bikedata_rcpp_import_lo_stns', PACKAGE = 'bikedata', bikedb, stn_data)
 }
 
 #' rcpp_import_to_trip_table
@@ -110,7 +123,7 @@ rcpp_import_to_trip_table <- function(bikedb, datafiles, city, quiet) {
     .Call('bikedata_rcpp_import_to_trip_table', PACKAGE = 'bikedata', bikedb, datafiles, city, quiet)
 }
 
-#' rcpp_import_to_datafile_table
+#' rcpp_import_to_file_table
 #'
 #' Creates and/or updates the table of datafile names in the database
 #' 
@@ -123,8 +136,8 @@ rcpp_import_to_trip_table <- function(bikedb, datafiles, city, quiet) {
 #' @return Number of datafile names added to database table
 #'
 #' @noRd
-rcpp_import_to_datafile_table <- function(bikedb, datafiles, city, nfiles) {
-    .Call('bikedata_rcpp_import_to_datafile_table', PACKAGE = 'bikedata', bikedb, datafiles, city, nfiles)
+rcpp_import_to_file_table <- function(bikedb, datafiles, city, nfiles) {
+    .Call('bikedata_rcpp_import_to_file_table', PACKAGE = 'bikedata', bikedb, datafiles, city, nfiles)
 }
 
 #' rcpp_create_sqlite3_db
@@ -190,6 +203,7 @@ NULL
 #' A delimiter function for comma-separated std::string
 #'
 #' @param line The line of text to be tokenised
+#' @param delim The desired delimiter
 #'
 #' @return Next token
 #'

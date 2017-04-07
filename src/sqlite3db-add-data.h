@@ -26,7 +26,7 @@
 
 int rcpp_import_to_trip_table (const char* bikedb, 
         Rcpp::CharacterVector datafiles, std::string city, bool quiet);
-int rcpp_import_to_datafile_table (const char * bikedb,
+int rcpp_import_to_file_table (const char * bikedb,
         Rcpp::CharacterVector datafiles, std::string city);
 
 //' rcpp_import_to_trip_table
@@ -140,6 +140,8 @@ int rcpp_import_to_trip_table (const char* bikedb,
             else if (city == "dc")
                 read_one_line_dc (stmt, in_line, dc_stn_map, dc_stn_ids,
                         id_in_dc_file, dc_end_date_first);
+            else if (city == "lo")
+                read_one_line_london (stmt, in_line);
 
             ntrips++;
 
@@ -164,7 +166,7 @@ int rcpp_import_to_trip_table (const char* bikedb,
 }
 
 
-//' rcpp_import_to_datafile_table
+//' rcpp_import_to_file_table
 //'
 //' Creates and/or updates the table of datafile names in the database
 //' 
@@ -178,7 +180,7 @@ int rcpp_import_to_trip_table (const char* bikedb,
 //'
 //' @noRd
 // [[Rcpp::export]]
-int rcpp_import_to_datafile_table (const char * bikedb,
+int rcpp_import_to_file_table (const char * bikedb,
         Rcpp::CharacterVector datafiles, std::string city, int nfiles)
 {
     sqlite3 *dbcon;

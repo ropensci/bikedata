@@ -27,6 +27,7 @@ void read_one_line_dc (sqlite3_stmt * stmt, char * line,
         bool id, bool end_date_first);
 std::string convert_dc_stn_name (std::string &station_name, bool id,
         std::map <std::string, std::string> &stn_map);
+void read_one_line_london (sqlite3_stmt * stmt, char * line);
 
 
 //' read_one_line_nyc
@@ -398,3 +399,47 @@ std::string convert_dc_stn_name (std::string &station_name, bool id,
 
     return station_id;
 }
+
+//' read_one_line_london
+//'
+//' @param stmt An sqlit3 statement to be assembled by reading the line of data
+//' @param line Line of data read from citibike file
+//'
+//' @noRd
+void read_one_line_london (sqlite3_stmt * stmt, char * line)
+{
+    std::string in_line = line;
+
+    // London is done with str_token which uses std::strings because
+    // end_station_names are sometimes but not always surrounded by double
+    // quotes.  They also sometimes have commas, but if so they  always have
+    // double quotes. It is therefore necessary to get relative positions of
+    // commas and double quotes, and this is much easier to do with strings than
+    // with char arrays. Only disadvantage: Somewhat slower.
+    std::string duration = str_token (&in_line, ","); // Rental ID: not used
+    duration = str_token (&in_line, ",");
+    std::string bike_id = str_token (&in_line, ",");
+    std::string end_date = convert_datetime (str_token (&in_line, ","));
+    std::string end_station_id = str_token (&in_line, ",");
+    end_station_id = "lo" + end_station_id;
+    std::string end_station_name;
+    if (strcspn (in_line.c_str (), "\"") == 0) // name in quotes
+    {
+        end_station_name = str_token (&in_line, "\",");
+        end_station_name = end_station_name.substr (1, 
+                end_station_name.length ()); // rm quote from start
+        in_line = in_line.substr (1, in_line.length ()); // rm comma from start
+    } else
+        end_station_name = str_token (&in_line, ",");
+    std::string start_date = convert_datetime (str_token (&in_line, ","));
+    std::string start_station_id = str_token (&in_line, ",");
+    start_station_id = "lo" + start_station_id;
+
+    sqlite3_bind_text(stmt, 2, duration.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 3, start_date.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 4, end_date.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 5, start_station_id.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 6, end_station_id.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 7, bike_id.c_str(), -1, SQLITE_TRANSIENT); 
+}
+

@@ -17,6 +17,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rcpp_import_lo_stns
+int rcpp_import_lo_stns(const char * bikedb, Rcpp::DataFrame stn_data);
+RcppExport SEXP bikedata_rcpp_import_lo_stns(SEXP bikedbSEXP, SEXP stn_dataSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const char * >::type bikedb(bikedbSEXP);
+    Rcpp::traits::input_parameter< Rcpp::DataFrame >::type stn_data(stn_dataSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_import_lo_stns(bikedb, stn_data));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rcpp_import_to_trip_table
 int rcpp_import_to_trip_table(const char* bikedb, Rcpp::CharacterVector datafiles, std::string city, bool quiet);
 RcppExport SEXP bikedata_rcpp_import_to_trip_table(SEXP bikedbSEXP, SEXP datafilesSEXP, SEXP citySEXP, SEXP quietSEXP) {
@@ -31,9 +43,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// rcpp_import_to_datafile_table
-int rcpp_import_to_datafile_table(const char * bikedb, Rcpp::CharacterVector datafiles, std::string city, int nfiles);
-RcppExport SEXP bikedata_rcpp_import_to_datafile_table(SEXP bikedbSEXP, SEXP datafilesSEXP, SEXP citySEXP, SEXP nfilesSEXP) {
+// rcpp_import_to_file_table
+int rcpp_import_to_file_table(const char * bikedb, Rcpp::CharacterVector datafiles, std::string city, int nfiles);
+RcppExport SEXP bikedata_rcpp_import_to_file_table(SEXP bikedbSEXP, SEXP datafilesSEXP, SEXP citySEXP, SEXP nfilesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -41,7 +53,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type datafiles(datafilesSEXP);
     Rcpp::traits::input_parameter< std::string >::type city(citySEXP);
     Rcpp::traits::input_parameter< int >::type nfiles(nfilesSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_import_to_datafile_table(bikedb, datafiles, city, nfiles));
+    rcpp_result_gen = Rcpp::wrap(rcpp_import_to_file_table(bikedb, datafiles, city, nfiles));
     return rcpp_result_gen;
 END_RCPP
 }

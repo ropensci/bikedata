@@ -86,7 +86,6 @@ get_london_bike_files <- function ()
     # First get list of base file names from AWS:
     aws_url <- "https://s3-eu-west-1.amazonaws.com/cycling.data.tfl.gov.uk/"
     doc <- httr::content (httr::GET (aws_url), encoding  =  'UTF-8')
-    xml2::write_xml (doc, file="junk.xml")
     nodes <- xml2::xml_children (doc)
     getflist <- function (nodes, type = 'zip')
     {

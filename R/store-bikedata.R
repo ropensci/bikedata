@@ -82,9 +82,9 @@ store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
     {
         if (!quiet)
         {
-            if (length (city) == 1)
+            if (length (city) == 1 & city != 'lo')
                 message ('Unzipping raw data files ...')
-            else
+            else if (ci != 'lo') # mostly csv files that don't need unzipping
                 message ('Unzipping raw data files for ', ci, ' ...')
         }
         if (ci == 'ch')
@@ -97,14 +97,29 @@ store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
 
         if (length (flists$flist_csv) > 0)
         {
+            # Import file names to datafile table
             nf <- num_datafiles_in_db (bikedb)
-            nf <- rcpp_import_to_datafile_table (bikedb, 
+            if (length (flists$flist_zip) > 0)
+                nf <- rcpp_import_to_file_table (bikedb, 
                                                  basename (flists$flist_zip),
                                                  ci, nf)
+            if (ci == 'lo' & length (flists$flist_csv) > 0)
+                nf <- rcpp_import_to_file_table (bikedb, 
+                                                 basename (flists$flist_csv),
+                                                 ci, nf)
+
+            # main step: Import trips
             ntrips_city <- rcpp_import_to_trip_table (bikedb, flists$flist_csv,
                                                       ci, quiet)
+
+            # import stations to stations table
             if (ci == 'ch')
                 nstations <- rcpp_import_ch_stns (bikedb, flists$flist_csv_stns)
+            else if (city == 'lo')
+            {
+                lo_stns <- bike_get_london_stations ()
+                nstations <- rcpp_import_lo_stns (bikedb, lo_stns)
+            }
 
             if (length (flists$flist_rm) > 0)
                 invisible (file.remove (flists$flist_rm))
@@ -152,12 +167,18 @@ store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
 #' @noRd
 get_bike_cities <- function (data_dir)
 {
-    flist <- list.files (data_dir, pattern = ".zip")
+    ptn <- '.zip'
+    flist <- list.files (data_dir)
+    if (any (grepl ('cyclehireusagestats', flist, ignore.case = TRUE) |
+             grepl ('JourneyDataExtract', flist, ignore.case = TRUE)))
+        ptn <- paste0 (ptn, '|.csv') # London has raw csv files too
+    flist <- list.files (data_dir, pattern = ptn)
     cities <- list ('nyc' = FALSE,
                     'boston' = FALSE,
                     'chicago' = FALSE,
                     'dc' = FALSE,
-                    'la' = FALSE)
+                    'la' = FALSE,
+                    'lo' = FALSE)
 
     if (any (grepl ('citibike', flist, ignore.case = TRUE)))
         cities$nyc <- TRUE
@@ -167,8 +188,9 @@ get_bike_cities <- function (data_dir)
         cities$boston <- TRUE
     if (any (grepl ('cabi', flist, ignore.case = TRUE)))
         cities$dc <- TRUE
-    if (any (grepl ('metro', flist, ignore.case = TRUE)))
-        cities$la <- TRUE
+    if (any (grepl ('cyclehireusagestats', flist, ignore.case = TRUE) |
+             grepl ('JourneyDataExtract', flist, ignore.case = TRUE)))
+        cities$lo <- TRUE
 
     cities <- which (unlist (cities))
     names (cities)
@@ -200,7 +222,11 @@ get_flist_city <- function (data_dir, city)
     else if (city %in% c ('la', 'lo'))
         index <- which (grepl ('metro', flist, ignore.case = TRUE))
 
-    paste0 (data_dir, '/', flist [index])
+    ret <- NULL
+    if (length (index) > 0)
+        ret <- paste0 (data_dir, '/', flist [index])
+
+    return (ret)
 }
 
 #' Get list of files to be unzipped and added to database
@@ -225,11 +251,11 @@ get_flist_city <- function (data_dir, city)
 bike_unzip_files <- function (data_dir, bikedb, city)
 {
     flist_zip <- get_flist_city (data_dir, city)
-    flist_zip <- get_new_datafiles (bikedb, flist_zip)
     existing_csv_files <- list.files (data_dir, pattern = '.csv')
     flist_csv <- flist_rm <- NULL
     if (length (flist_zip) > 0)
     {
+        flist_zip <- get_new_datafiles (bikedb, flist_zip)
         for (f in flist_zip)
         {
             fi <- unzip (f, list = TRUE)$Name
@@ -245,6 +271,8 @@ bike_unzip_files <- function (data_dir, bikedb, city)
         if (length (flist_rm) > 0)
             flist_rm <- paste0 (data_dir, '/', flist_rm)
     }
+    if (city == 'lo')
+        flist_csv <- c (flist_csv, paste0 (data_dir, '/', existing_csv_files))
 
     return (list (flist_zip = flist_zip,
                   flist_csv = flist_csv,

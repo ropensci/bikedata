@@ -45,13 +45,14 @@ char *strtokm(char *str, const char *delim)
 //' A delimiter function for comma-separated std::string
 //'
 //' @param line The line of text to be tokenised
+//' @param delim The desired delimiter
 //'
 //' @return Next token
 //'
 //' @noRd
-std::string str_token (std::string * line)
+std::string str_token (std::string * line, const char * delim)
 {
-    unsigned ipos = line->find (",", 0);
+    unsigned ipos = line->find (delim, 0);
     std::string res = line->substr (0, ipos);
     (*line) = line->substr (ipos + 1, line->length () - ipos - 1);
     return res;
