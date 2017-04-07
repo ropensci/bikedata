@@ -1,12 +1,11 @@
 bikedata
 ================
 
--   [bikedata](#bikedata)
-    -   [1 Installation](#installation)
-    -   [2 Usage](#usage)
-        -   [2.1 Filtering trips by date](#filtering-trips-by-date)
-        -   [2.2 Filtering trips by time of day](#filtering-trips-by-time-of-day)
-        -   [2.3 Filtering trips by day of week](#filtering-trips-by-day-of-week)
+-   [1 Installation](#installation)
+-   [2 Usage](#usage)
+    -   [2.1 Filtering trips by date](#filtering-trips-by-date)
+    -   [2.2 Filtering trips by time of day](#filtering-trips-by-time-of-day)
+    -   [2.3 Filtering trips by day of week](#filtering-trips-by-day-of-week)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 [![Build Status](https://travis-ci.org/mpadge/bikedata.svg)](https://travis-ci.org/mpadge/bikedata) [![codecov](https://codecov.io/gh/mpadge/bikedata/branch/master/graph/badge.svg)](https://codecov.io/gh/mpadge/bikedata) [![Project Status: Concept - Minimal or no implementation has been done yet.](http://www.repostatus.org/badges/0.1.0/concept.svg)](http://www.repostatus.org/#concept) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/bikedata)](http://cran.r-project.org/web/packages/bikedata)
