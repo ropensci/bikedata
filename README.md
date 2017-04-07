@@ -1,17 +1,16 @@
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+[![Build Status](https://travis-ci.org/mpadge/bikedata.svg)](https://travis-ci.org/mpadge/bikedata) [![codecov](https://codecov.io/gh/mpadge/bikedata/branch/master/graph/badge.svg)](https://codecov.io/gh/mpadge/bikedata) [![Project Status: Concept - Minimal or no implementation has been done yet.](http://www.repostatus.org/badges/0.1.0/concept.svg)](http://www.repostatus.org/#concept) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/bikedata)](http://cran.r-project.org/web/packages/bikedata)
+
 bikedata
 ================
 
--   [1 Installation](#installation)
--   [2 Usage](#usage)
-    -   [2.1 Filtering trips by date](#filtering-trips-by-date)
-    -   [2.2 Filtering trips by time of day](#filtering-trips-by-time-of-day)
-    -   [2.3 Filtering trips by day of week](#filtering-trips-by-day-of-week)
+-   [bikedata](#bikedata)
+    -   [1 Installation](#installation)
+    -   [2 Usage](#usage)
+        -   [2.1 Filtering trips by date](#filtering-trips-by-date)
+        -   [2.2 Filtering trips by time of day](#filtering-trips-by-time-of-day)
+        -   [2.3 Filtering trips by day of week](#filtering-trips-by-day-of-week)
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-[![Build Status](https://travis-ci.org/mpadge/bikedata.svg)](https://travis-ci.org/mpadge/bikedata) [![Build status](https://ci.appveyor.com/api/projects/status/github/mpadge/bikedata?svg=true)](https://ci.appveyor.com/project/mpadge/bikedata) [![codecov](https://codecov.io/gh/mpadge/bikedata/branch/master/graph/badge.svg)](https://codecov.io/gh/mpadge/bikedata) [![Project Status: Concept - Minimal or no implementation has been done yet.](http://www.repostatus.org/badges/0.1.0/concept.svg)](http://www.repostatus.org/#concept) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/bikedata)](http://cran.r-project.org/web/packages/bikedata)
-
-bikedata
-========
 
 The `bikedata` package aims to enable ready importing of historical trip data from all public bicycle hire systems which provide data, and will be expanded on an ongoing basis as more systems publish open data. Cities and names of associated public bicycle Systems currently included, along with numbers of bikes and of docking stations, are:
 
