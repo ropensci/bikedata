@@ -40,7 +40,17 @@ store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
                             quiet = FALSE)
 {
     if (missing (city) & missing (data_dir))
-        stop ('One of city or data_dir must be specified to store bikedata')
+    {
+        mt <- paste0 ("Calling this function without specifying a city or ",
+                     "data_dir will download\n*ALL* avaialable data ",
+                     "for all cities and store it in a *HUGE* database.\n",
+                     "This will likely take quite a long time. ",
+                     "Is this really what you want to do?")
+        val <- menu (c ("yes", "no"), graphics=FALSE, title = mt)
+        if (val != 1)
+            stop ('Yeah, probably better not to do that')
+    }
+
     if (missing (data_dir))
     {
         if (!quiet)
