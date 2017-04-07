@@ -50,7 +50,8 @@ test_that ('dl_bikedata boston', {
 
 test_that ('dl_bikedata la', {
                files <- c ("MetroBikeShare_2016_Q3_trips.zip",
-                           "Metro_trips_Q4_2016.zip")
+                           "Metro_trips_Q4_2016.zip",
+                           "la_metro_gbfs_trips_Q1_2017.zip")
                for (f in files) write ('a', file = f)
                expect_message (dl_bikedata (city = 'la', data_dir = '.'),
                                'All data files already exist')

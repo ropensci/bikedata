@@ -4,7 +4,7 @@
 \alias{dl_bikedata}
 \title{Download hire bicycle data}
 \usage{
-dl_bikedata(city = "nyc", data_dir = tempdir(), dates)
+dl_bikedata(city = "nyc", data_dir = tempdir(), dates, quiet = FALSE)
 }
 \arguments{
 \item{city}{City for which to download bike data, or name of corresponding
@@ -14,6 +14,8 @@ bike system (see Details below).}
 
 \item{dates}{Character vector of dates to download data with dates formated
 as YYYYMM.}
+
+\item{quiet}{If FALSE, progress is displayed on screen}
 }
 \description{
 Download hire bicycle data
@@ -36,6 +38,7 @@ and names of bike hire systems are:
  Chicago (ch)\tab Divvy Bikes\cr
  Los Angeles (la)\tab Metro Bike Share\cr
  Boston (bo)\tab Hubway\cr
+ London (lo)\tab Santander Cycles\cr
 }
 
 Ensure you have a fast internet connection and at least 100 Mb space
