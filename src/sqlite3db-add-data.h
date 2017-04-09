@@ -142,21 +142,20 @@ int rcpp_import_to_trip_table (const char* bikedb,
                         id_in_dc_file, dc_end_date_first);
             else if (city == "lo")
                 read_one_line_london (stmt, in_line);
+            else if (city == "la")
+                read_one_line_la (stmt, in_line, &stationqry);
 
             ntrips++;
 
-            sqlite3_step(stmt);
-            sqlite3_reset(stmt);
+            sqlite3_step (stmt);
+            sqlite3_reset (stmt);
         }
     }
 
     sqlite3_exec(dbcon, "END TRANSACTION", NULL, NULL, &zErrMsg);
 
-    if (city == "ny" || city == "bo")
+    if (city == "ny" || city == "bo" || city == "la")
         import_to_station_table (dbcon, stationqry);
-    //else if (city == "dc")
-    //    import_dc_stns (dbcon);
-    // chicago stations loaded with separate R call
 
     rc = sqlite3_close_v2 (dbcon);
     if (rc != SQLITE_OK)

@@ -458,41 +458,46 @@ void read_one_line_london (sqlite3_stmt * stmt, char * line)
 void read_one_line_la (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry)
 {
+    std::string in_line = line;
+    // "\\N" symbols exist but don't actually affect the file reading here
+    //boost::replace_all (in_line, "\\N"," "); 
+    // and replace_all only works with the following two lines, NOT with a
+    // single attempt to replace all ",,"!
+    boost::replace_all (in_line, ",,,",", , ,");
+    boost::replace_all (in_line, ",,",", ,");
+
     const char * delim;
     delim = ",";
-    char * token = std::strtok (line, delim); // trip ID; not used
+    char * trip_id = std::strtok (&in_line[0u], delim); 
 
-    std::string trip_duration = convert_datetime (std::strtok (NULL, delim));
+    std::string trip_duration = std::strtok (NULL, delim);
     std::string start_date = convert_datetime (std::strtok (NULL, delim));
     std::string end_date = convert_datetime (std::strtok (NULL, delim));
     std::string start_station_id = std::strtok (NULL, delim);
     start_station_id = "la" + start_station_id;
-    if (stationqry->count(start_station_id) == 0) {
+    std::string start_station_lat = std::strtok (NULL, delim);
+    std::string start_station_lon = std::strtok (NULL, delim);
+    // lat and lons are sometimes empty, which is useless for station table
+    if (stationqry->count(start_station_id) == 0 &&
+            start_station_lat != " " && start_station_lon != " ") 
+    {
         std::string start_station_name = "";
-        std::string start_station_lat = std::strtok (NULL, delim);
-        std::string start_station_lon = std::strtok (NULL, delim);
         (*stationqry)[start_station_id] = "(\'la\',\'" + 
-            start_station_id + "\',\'" + start_station_name + "\'," +
+            start_station_id + "\',\'\'," + // no start_station_name
             start_station_lat + delim + start_station_lon + ")";
-    }
-    else {
-        std::strtok (NULL, delim); // lat
-        std::strtok (NULL, delim); // lon
     }
 
     std::string end_station_id = std::strtok (NULL, delim);
     end_station_id = "la" + end_station_id;
-    if (stationqry->count(end_station_id) == 0) {
+    std::string end_station_lat = std::strtok (NULL, delim);
+    std::string end_station_lon = std::strtok (NULL, delim);
+    if (stationqry->count(end_station_id) == 0 &&
+            end_station_lat != " " && end_station_lon != " ")
+    {
         std::string end_station_name = "";
-        std::string end_station_lat = std::strtok (NULL, delim);
-        std::string end_station_lon = std::strtok (NULL, delim);
         (*stationqry)[end_station_id] = "(\'la\',\'" + 
-            end_station_id + "\',\'" + end_station_name + "\'," +
+            end_station_id + "\',\'\'," +
             end_station_lat + "," + end_station_lon + ")";
-    }
-    else {
-        std::strtok (NULL, delim); // lat
-        std::strtok (NULL, delim); // lon
     }
     // LA only has duration of membership as (30 = monthly, etc)
     std::string user_type = std::strtok (NULL, delim);

@@ -3,8 +3,10 @@
 
 #' import_to_station_table
 #'
-#' Inserts data into the table of stations in the database
-#' 
+#' Inserts data into the table of stations in the database. Applies to those
+#' cities for which station data are included and read as part of the actual
+#' raw trips data: ny, boston, la.
+#'
 #' @param dbcon Active connection to sqlite3 database
 #' @param stationqry Station query constructed during reading of data with
 #'        rcpp_import_to_trip_table ()

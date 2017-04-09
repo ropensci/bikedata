@@ -31,8 +31,10 @@ int rcpp_import_lo_stns (const char * bikedb, Rcpp::DataFrame stn_data);
 
 //' import_to_station_table
 //'
-//' Inserts data into the table of stations in the database
-//' 
+//' Inserts data into the table of stations in the database. Applies to those
+//' cities for which station data are included and read as part of the actual
+//' raw trips data: ny, boston, la.
+//'
 //' @param dbcon Active connection to sqlite3 database
 //' @param stationqry Station query constructed during reading of data with
 //'        rcpp_import_to_trip_table ()
@@ -47,6 +49,9 @@ int import_to_station_table (sqlite3 * dbcon,
     int rc;
 
     int n = 0;
+
+    Rcpp::Rcout << "stationqry has " << stationqry.size () <<
+        " entries" << std::endl;
 
     // http://stackoverflow.com/questions/19337029/insert-if-not-exists-statement-in-sqlite
     std::string fullstationqry = "INSERT OR IGNORE INTO stations "

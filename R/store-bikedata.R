@@ -191,6 +191,8 @@ get_bike_cities <- function (data_dir)
     if (any (grepl ('cyclehireusagestats', flist, ignore.case = TRUE) |
              grepl ('JourneyDataExtract', flist, ignore.case = TRUE)))
         cities$lo <- TRUE
+    if (any (grepl ('metro', flist, ignore.case = TRUE)))
+        cities$la <- TRUE
 
     cities <- which (unlist (cities))
     names (cities)
