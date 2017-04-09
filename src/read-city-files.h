@@ -28,6 +28,8 @@ void read_one_line_dc (sqlite3_stmt * stmt, char * line,
 std::string convert_dc_stn_name (std::string &station_name, bool id,
         std::map <std::string, std::string> &stn_map);
 void read_one_line_london (sqlite3_stmt * stmt, char * line);
+void read_one_line_la (sqlite3_stmt * stmt, char * line,
+        std::map <std::string, std::string> * stationqry);
 
 
 //' read_one_line_nyc
@@ -443,3 +445,67 @@ void read_one_line_london (sqlite3_stmt * stmt, char * line)
     sqlite3_bind_text(stmt, 7, bike_id.c_str(), -1, SQLITE_TRANSIENT); 
 }
 
+
+
+//' read_one_line_la
+//'
+//' @param stmt An sqlit3 statement to be assembled by reading the line of data
+//' @param line Line of data read from citibike file
+//' @param stationqry Sqlite3 query for station data table to be subsequently
+//'        passed to 'import_to_station_table()'
+//'
+//' @noRd
+void read_one_line_la (sqlite3_stmt * stmt, char * line,
+        std::map <std::string, std::string> * stationqry)
+{
+    const char * delim;
+    delim = ",";
+    char * token = std::strtok (line, delim); // trip ID; not used
+
+    std::string trip_duration = convert_datetime (std::strtok (NULL, delim));
+    std::string start_date = convert_datetime (std::strtok (NULL, delim));
+    std::string end_date = convert_datetime (std::strtok (NULL, delim));
+    std::string start_station_id = std::strtok (NULL, delim);
+    start_station_id = "la" + start_station_id;
+    if (stationqry->count(start_station_id) == 0) {
+        std::string start_station_name = "";
+        std::string start_station_lat = std::strtok (NULL, delim);
+        std::string start_station_lon = std::strtok (NULL, delim);
+        (*stationqry)[start_station_id] = "(\'la\',\'" + 
+            start_station_id + "\',\'" + start_station_name + "\'," +
+            start_station_lat + delim + start_station_lon + ")";
+    }
+    else {
+        std::strtok (NULL, delim); // lat
+        std::strtok (NULL, delim); // lon
+    }
+
+    std::string end_station_id = std::strtok (NULL, delim);
+    end_station_id = "la" + end_station_id;
+    if (stationqry->count(end_station_id) == 0) {
+        std::string end_station_name = "";
+        std::string end_station_lat = std::strtok (NULL, delim);
+        std::string end_station_lon = std::strtok (NULL, delim);
+        (*stationqry)[end_station_id] = "(\'la\',\'" + 
+            end_station_id + "\',\'" + end_station_name + "\'," +
+            end_station_lat + "," + end_station_lon + ")";
+    }
+    else {
+        std::strtok (NULL, delim); // lat
+        std::strtok (NULL, delim); // lon
+    }
+    // LA only has duration of membership as (30 = monthly, etc)
+    std::string user_type = std::strtok (NULL, delim);
+    if (user_type == "")
+        user_type = "0";
+    else
+        user_type = "1";
+
+    sqlite3_bind_text(stmt, 2, trip_duration.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 3, start_date.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 4, end_date.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 5, start_station_id.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 6, end_station_id.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 7, "", -1, SQLITE_TRANSIENT); // bike ID
+    sqlite3_bind_text(stmt, 8, user_type.c_str(), -1, SQLITE_TRANSIENT); 
+}
