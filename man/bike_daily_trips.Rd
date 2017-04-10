@@ -4,10 +4,16 @@
 \alias{bike_daily_trips}
 \title{Extract daily trip counts for all stations}
 \usage{
-bike_daily_trips(bikedb)
+bike_daily_trips(bikedb, city, station)
 }
 \arguments{
 \item{bikedb}{Path to the SQLite3 database}
+
+\item{city}{City for which trips are to be counted - mandatory if database
+contains data for more than one city}
+
+\item{station}{Optional argument specifying bike station for which trips are
+to be counted}
 }
 \value{
 A \code{data.frame} containing daily dates and total numbers of trips
