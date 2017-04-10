@@ -21,12 +21,11 @@
 int import_to_station_table (sqlite3 * dbcon,
     std::map <std::string, std::string> stationqry);
 int import_boston_stations (sqlite3 * dbcon);
-int rcpp_import_ch_stns (const char * bikedb, 
-        Rcpp::CharacterVector station_files);
 std::string import_dc_stations ();
 std::map <std::string, std::string> get_dc_stn_table (sqlite3 * dbcon);
 std::unordered_set <std::string> get_dc_stn_ids (sqlite3 * dbcon);
-int rcpp_import_lo_stns (const char * bikedb, Rcpp::DataFrame stn_data);
+int rcpp_import_stn_df (const char * bikedb, Rcpp::DataFrame stn_data,
+        std::string city);
 
 
 //' import_to_station_table
@@ -367,87 +366,23 @@ std::unordered_set <std::string> get_dc_stn_ids (sqlite3 * dbcon)
     return stn_ids;
 }
 
-//' rcpp_import_ch_stns
+
+//' rcpp_import_stn_df
 //'
-//' @param bikedb Name of SQLite3 database
-//' @param stationqry Station query constructed during reading of data 
-//'
-//' @return Number of stations to potentially be added to stations table (if not
-//'         already there).
-//'
-//' @noRd
-// [[Rcpp::export]]
-int rcpp_import_ch_stns (const char* bikedb, 
-        Rcpp::CharacterVector station_files)
-{
-    sqlite3 *dbcon;
-    char *zErrMsg = 0;
-
-    int rc = sqlite3_open_v2(bikedb, &dbcon, SQLITE_OPEN_READWRITE, NULL);
-    if (rc != SQLITE_OK)
-        throw std::runtime_error ("Can't establish sqlite3 connection");
-
-    std::map <std::string, std::string> stationqry;
-    char in_line [BUFFER_SIZE] = "\0";
-    const char * delim;
-    delim = ",";
-
-    int num_stns_old = get_stn_table_size (dbcon);
-
-    for(unsigned int filenum = 0; filenum < station_files.length(); filenum++) 
-    {
-        FILE * pFile = fopen (station_files [filenum], "r");
-        char * junk = fgets (in_line, BUFFER_SIZE, pFile);
-        rm_dos_end (in_line);
-        while (fgets (in_line, BUFFER_SIZE, pFile) != NULL) 
-        {
-            char * token = std::strtok (in_line, delim); // stn id
-            std::string stn_id = token;
-            if (stationqry.find (stn_id) == stationqry.end ())
-            {
-                std::string stn_name = std::strtok (NULL, delim);
-                std::string stn_lat = std::strtok (NULL, delim);
-                std::string stn_lon = std::strtok (NULL, delim);
-                // Note: ch also pre-pended to station id
-                stationqry [stn_id] = "(\'ch\',\'ch" + stn_id + "\',\'" + 
-                    stn_name + "\'," + stn_lon + "," + stn_lat + ")";
-            }
-        }
-    } // end for filenum over station_files
-
-    std::string fullstationqry = "INSERT OR IGNORE INTO stations "
-        "(city, stn_id, name, latitude, longitude) VALUES ";
-    fullstationqry += stationqry.begin ()->second;
-    for (auto stn = std::next (stationqry.begin ());
-            stn != stationqry.end (); ++stn)
-    {
-        fullstationqry += ", " + stn->second;
-    }
-    fullstationqry += ";";
-
-    rc = sqlite3_exec(dbcon, fullstationqry.c_str(), NULL, 0, &zErrMsg);
-    if (rc != SQLITE_OK)
-        throw std::runtime_error ("Unable to insert Chicago stations");
-
-    rc = sqlite3_close_v2(dbcon);
-    if (rc != SQLITE_OK)
-        throw std::runtime_error ("Unable to close sqlite database");
-
-    return get_stn_table_size (dbcon) - num_stns_old;
-}
-
-
-//' rcpp_import_lo_stns
+//' Import a data.frame of station (id, name, lon, lat) into the SQLite3
+//' database. Used for London and Chicago, for both of which stations are loaded
+//' within R and passed to this function.
 //'
 //' @param dbcon Active connection to sqlite3 database
-//' @param stationqry Station query constructed during reading of data 
+//' @param stn_data An R DataFrame of (id, name, lon, lat) for all stations
 //'
 //' @return Number of stations to potentially be added to stations table (if not
 //'         already there).
 //'
 //' @noRd
 // [[Rcpp::export]]
-int rcpp_import_lo_stns (const char * bikedb, Rcpp::DataFrame stn_data)
+int rcpp_import_stn_df (const char * bikedb, Rcpp::DataFrame stn_data,
+        std::string city)
 {
     sqlite3 *dbcon;
     char *zErrMsg = 0;
@@ -468,8 +403,8 @@ int rcpp_import_lo_stns (const char * bikedb, Rcpp::DataFrame stn_data)
 
     for (unsigned i = 0; i<stn_data.nrow (); i++)
     {
-        stationqry += "(\'lo\',\'lo" + stn_id (i) + "\',\'" + stn_name (i) + 
-            "\'," + stn_lon (i) + "," + stn_lat (i) + ")";
+        stationqry += "(\'" + city + "\',\'" + city + stn_id (i) + "\',\'" + 
+            stn_name (i) + "\'," + stn_lon (i) + "," + stn_lat (i) + ")";
         if (i < (stn_data.nrow () - 1))
             stationqry += ",";
     }

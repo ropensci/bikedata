@@ -80,30 +80,21 @@ NULL
 #' @noRd
 NULL
 
-#' rcpp_import_ch_stns
+#' rcpp_import_stn_df
 #'
-#' @param bikedb Name of SQLite3 database
-#' @param stationqry Station query constructed during reading of data 
-#'
-#' @return Number of stations to potentially be added to stations table (if not
-#'         already there).
-#'
-#' @noRd
-rcpp_import_ch_stns <- function(bikedb, station_files) {
-    .Call('bikedata_rcpp_import_ch_stns', PACKAGE = 'bikedata', bikedb, station_files)
-}
-
-#' rcpp_import_lo_stns
+#' Import a data.frame of station (id, name, lon, lat) into the SQLite3
+#' database. Used for London and Chicago, for both of which stations are loaded
+#' within R and passed to this function.
 #'
 #' @param dbcon Active connection to sqlite3 database
-#' @param stationqry Station query constructed during reading of data 
+#' @param stn_data An R DataFrame of (id, name, lon, lat) for all stations
 #'
 #' @return Number of stations to potentially be added to stations table (if not
 #'         already there).
 #'
 #' @noRd
-rcpp_import_lo_stns <- function(bikedb, stn_data) {
-    .Call('bikedata_rcpp_import_lo_stns', PACKAGE = 'bikedata', bikedb, stn_data)
+rcpp_import_stn_df <- function(bikedb, stn_data, city) {
+    .Call('bikedata_rcpp_import_stn_df', PACKAGE = 'bikedata', bikedb, stn_data, city)
 }
 
 #' rcpp_import_to_trip_table

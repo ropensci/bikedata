@@ -5,27 +5,16 @@
 
 using namespace Rcpp;
 
-// rcpp_import_ch_stns
-int rcpp_import_ch_stns(const char* bikedb, Rcpp::CharacterVector station_files);
-RcppExport SEXP bikedata_rcpp_import_ch_stns(SEXP bikedbSEXP, SEXP station_filesSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const char* >::type bikedb(bikedbSEXP);
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type station_files(station_filesSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_import_ch_stns(bikedb, station_files));
-    return rcpp_result_gen;
-END_RCPP
-}
-// rcpp_import_lo_stns
-int rcpp_import_lo_stns(const char * bikedb, Rcpp::DataFrame stn_data);
-RcppExport SEXP bikedata_rcpp_import_lo_stns(SEXP bikedbSEXP, SEXP stn_dataSEXP) {
+// rcpp_import_stn_df
+int rcpp_import_stn_df(const char * bikedb, Rcpp::DataFrame stn_data, std::string city);
+RcppExport SEXP bikedata_rcpp_import_stn_df(SEXP bikedbSEXP, SEXP stn_dataSEXP, SEXP citySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const char * >::type bikedb(bikedbSEXP);
     Rcpp::traits::input_parameter< Rcpp::DataFrame >::type stn_data(stn_dataSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_import_lo_stns(bikedb, stn_data));
+    Rcpp::traits::input_parameter< std::string >::type city(citySEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_import_stn_df(bikedb, stn_data, city));
     return rcpp_result_gen;
 END_RCPP
 }

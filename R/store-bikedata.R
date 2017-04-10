@@ -114,11 +114,13 @@ store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
 
             # import stations to stations table
             if (ci == 'ch')
-                nstations <- rcpp_import_ch_stns (bikedb, flists$flist_csv_stns)
-            else if (ci == 'lo')
+            {
+                ch_stns <- bike_get_chicago_stations (flists)
+                nstations <- rcpp_import_stn_df (bikedb, ch_stns, 'ch')
+            } else if (ci == 'lo')
             {
                 lo_stns <- bike_get_london_stations ()
-                nstations <- rcpp_import_lo_stns (bikedb, lo_stns)
+                nstations <- rcpp_import_stn_df (bikedb, lo_stns, 'lo')
             }
 
             if (length (flists$flist_rm) > 0)

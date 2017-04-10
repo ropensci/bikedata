@@ -187,8 +187,6 @@ int rcpp_import_to_file_table (const char * bikedb,
     char *zErrMsg = 0;
     int rc;
 
-    nfiles++;
-
     rc = sqlite3_open_v2(bikedb, &dbcon, SQLITE_OPEN_READWRITE, NULL);
     if (rc != SQLITE_OK)
         throw std::runtime_error ("Can't establish sqlite3 connection");
@@ -197,15 +195,17 @@ int rcpp_import_to_file_table (const char * bikedb,
     {
         std::string datafile_qry = "INSERT INTO datafiles "
                                    "(id, city, name) VALUES (";
-        datafile_qry += std::to_string (nfiles++) + ",\"" + city + "\",\"" + 
+        datafile_qry += std::to_string (nfiles) + ",\"" + city + "\",\"" + 
             i + "\");";
 
         rc = sqlite3_exec(dbcon, datafile_qry.c_str(), NULL, 0, &zErrMsg);
+        if (rc == 0)
+            nfiles++;
     }
 
     rc = sqlite3_close_v2(dbcon);
     if (rc != SQLITE_OK)
         throw std::runtime_error ("Unable to close sqlite database");
 
-    return rc;
+    return nfiles;
 }
