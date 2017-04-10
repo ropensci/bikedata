@@ -129,23 +129,24 @@ int rcpp_import_to_trip_table (const char* bikedb,
         while (fgets (in_line, BUFFER_SIZE, pFile) != NULL) 
         {
             rm_dos_end (in_line);
-            sqlite3_bind_text(stmt, 1, city.c_str (), -1, SQLITE_TRANSIENT); 
+            sqlite3_bind_text (stmt, 1, city.c_str (), -1, SQLITE_TRANSIENT); 
 
             if (city == "ny")
-                read_one_line_nyc (stmt, in_line, &stationqry, delim);
+                rc = read_one_line_nyc (stmt, in_line, &stationqry, delim);
             else if (city == "bo")
-                read_one_line_boston (stmt, in_line, &stationqry);
+                rc = read_one_line_boston (stmt, in_line, &stationqry);
             else if (city == "ch")
-                read_one_line_chicago (stmt, in_line, delim);
+                rc = read_one_line_chicago (stmt, in_line, delim);
             else if (city == "dc")
-                read_one_line_dc (stmt, in_line, dc_stn_map, dc_stn_ids,
+                rc = read_one_line_dc (stmt, in_line, dc_stn_map, dc_stn_ids,
                         id_in_dc_file, dc_end_date_first);
             else if (city == "lo")
-                read_one_line_london (stmt, in_line);
+                rc = read_one_line_london (stmt, in_line);
             else if (city == "la")
-                read_one_line_la (stmt, in_line, &stationqry);
+                rc = read_one_line_la (stmt, in_line, &stationqry);
 
-            ntrips++;
+            if (rc == 0) // only != 0 for LA
+                ntrips++;
 
             sqlite3_step (stmt);
             sqlite3_reset (stmt);

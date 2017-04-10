@@ -15,20 +15,22 @@
 
 #include <unordered_set>
 
-void read_one_line_nyc (sqlite3_stmt * stmt, char * line,
+// NOTE: Return values are only used for LA
+
+unsigned read_one_line_nyc (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry, const char * delim);
-void read_one_line_boston (sqlite3_stmt * stmt, char * line,
+unsigned read_one_line_boston (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry);
-void read_one_line_chicago (sqlite3_stmt * stmt, char * line,
+unsigned read_one_line_chicago (sqlite3_stmt * stmt, char * line,
         const char * delim);
-void read_one_line_dc (sqlite3_stmt * stmt, char * line, 
+unsigned read_one_line_dc (sqlite3_stmt * stmt, char * line, 
         std::map <std::string, std::string> &stn_map, 
         std::unordered_set <std::string> &stn_ids,
         bool id, bool end_date_first);
 std::string convert_dc_stn_name (std::string &station_name, bool id,
         std::map <std::string, std::string> &stn_map);
-void read_one_line_london (sqlite3_stmt * stmt, char * line);
-void read_one_line_la (sqlite3_stmt * stmt, char * line,
+unsigned read_one_line_london (sqlite3_stmt * stmt, char * line);
+unsigned read_one_line_la (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry);
 
 
@@ -42,7 +44,7 @@ void read_one_line_la (sqlite3_stmt * stmt, char * line,
 //'        double-quoted fields to plain comma-separators.
 //'
 //' @noRd
-void read_one_line_nyc (sqlite3_stmt * stmt, char * line,
+unsigned read_one_line_nyc (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry, const char * delim)
 {
     std::string in_line2 = line;
@@ -118,6 +120,8 @@ void read_one_line_nyc (sqlite3_stmt * stmt, char * line,
     }
     sqlite3_bind_text(stmt, 9, birthyear.c_str(), -1, SQLITE_TRANSIENT); // Birth Year
     sqlite3_bind_text(stmt, 10, gender.c_str(), -1, SQLITE_TRANSIENT); // Gender
+
+    return 0;
 }
 
 //' read_one_line_boston
@@ -128,7 +132,7 @@ void read_one_line_nyc (sqlite3_stmt * stmt, char * line,
 //'        passed to 'import_to_station_table()'
 //'
 //' @noRd
-void read_one_line_boston (sqlite3_stmt * stmt, char * line,
+unsigned read_one_line_boston (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry)
 {
     // TDOD: Replace strokm with strok here!
@@ -197,6 +201,8 @@ void read_one_line_boston (sqlite3_stmt * stmt, char * line,
     sqlite3_bind_text(stmt, 8, user_type.c_str(), -1, SQLITE_TRANSIENT); 
     sqlite3_bind_text(stmt, 9, birth_year.c_str(), -1, SQLITE_TRANSIENT); 
     sqlite3_bind_text(stmt, 10, gender.c_str(), -1, SQLITE_TRANSIENT); 
+
+    return 0;
 }
 
 //' read_one_line_chicago
@@ -205,7 +211,7 @@ void read_one_line_boston (sqlite3_stmt * stmt, char * line,
 //' @param line Line of data read from citibike file
 //'
 //' @noRd
-void read_one_line_chicago (sqlite3_stmt * stmt, char * line,
+unsigned read_one_line_chicago (sqlite3_stmt * stmt, char * line,
         const char * delim)
 {
     std::string in_line2 = line;
@@ -251,6 +257,8 @@ void read_one_line_chicago (sqlite3_stmt * stmt, char * line,
     sqlite3_bind_text(stmt, 8, user_type.c_str(), -1, SQLITE_TRANSIENT); 
     sqlite3_bind_text(stmt, 9, birth_year.c_str(), -1, SQLITE_TRANSIENT); 
     sqlite3_bind_text(stmt, 10, gender.c_str(), -1, SQLITE_TRANSIENT); 
+
+    return 0;
 }
 
 //' read_one_line_dc
@@ -272,7 +280,7 @@ void read_one_line_chicago (sqlite3_stmt * stmt, char * line,
 //' trip records contain separate station IDs
 //'
 //' @noRd
-void read_one_line_dc (sqlite3_stmt * stmt, char * line, 
+unsigned read_one_line_dc (sqlite3_stmt * stmt, char * line, 
         std::map <std::string, std::string> &stn_map, 
         std::unordered_set <std::string> &stn_ids, bool id, bool end_date_first)
 {
@@ -354,6 +362,8 @@ void read_one_line_dc (sqlite3_stmt * stmt, char * line,
         sqlite3_bind_text(stmt, 7, bike_id.c_str(), -1, SQLITE_TRANSIENT); 
         sqlite3_bind_text(stmt, 8, user_type.c_str(), -1, SQLITE_TRANSIENT); 
     }
+
+    return 0;
 }
 
 //' Convert names of DC stations as given in trip files to standard names
@@ -408,7 +418,7 @@ std::string convert_dc_stn_name (std::string &station_name, bool id,
 //' @param line Line of data read from citibike file
 //'
 //' @noRd
-void read_one_line_london (sqlite3_stmt * stmt, char * line)
+unsigned read_one_line_london (sqlite3_stmt * stmt, char * line)
 {
     std::string in_line = line;
 
@@ -443,6 +453,8 @@ void read_one_line_london (sqlite3_stmt * stmt, char * line)
     sqlite3_bind_text(stmt, 5, start_station_id.c_str(), -1, SQLITE_TRANSIENT); 
     sqlite3_bind_text(stmt, 6, end_station_id.c_str(), -1, SQLITE_TRANSIENT); 
     sqlite3_bind_text(stmt, 7, bike_id.c_str(), -1, SQLITE_TRANSIENT); 
+
+    return 0;
 }
 
 
@@ -455,25 +467,27 @@ void read_one_line_london (sqlite3_stmt * stmt, char * line)
 //'        passed to 'import_to_station_table()'
 //'
 //' @noRd
-void read_one_line_la (sqlite3_stmt * stmt, char * line,
+unsigned read_one_line_la (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry)
 {
     std::string in_line = line;
-    // "\\N" symbols exist but don't actually affect the file reading here
-    //boost::replace_all (in_line, "\\N"," "); 
-    // and replace_all only works with the following two lines, NOT with a
-    // single attempt to replace all ",,"!
+    boost::replace_all (in_line, "\\N"," "); 
+    // replace_all only works with the following two lines, NOT with a single
+    // attempt to replace all ",,"!
     boost::replace_all (in_line, ",,,",", , ,");
     boost::replace_all (in_line, ",,",", ,");
 
     const char * delim;
     delim = ",";
     char * trip_id = std::strtok (&in_line[0u], delim); 
+    unsigned ret = 0;
 
     std::string trip_duration = std::strtok (NULL, delim);
     std::string start_date = convert_datetime (std::strtok (NULL, delim));
     std::string end_date = convert_datetime (std::strtok (NULL, delim));
     std::string start_station_id = std::strtok (NULL, delim);
+    if (start_station_id == " ")
+        ret = 1;
     start_station_id = "la" + start_station_id;
     std::string start_station_lat = std::strtok (NULL, delim);
     std::string start_station_lon = std::strtok (NULL, delim);
@@ -488,6 +502,8 @@ void read_one_line_la (sqlite3_stmt * stmt, char * line,
     }
 
     std::string end_station_id = std::strtok (NULL, delim);
+    if (end_station_id == " ")
+        ret = 1;
     end_station_id = "la" + end_station_id;
     std::string end_station_lat = std::strtok (NULL, delim);
     std::string end_station_lon = std::strtok (NULL, delim);
@@ -513,4 +529,12 @@ void read_one_line_la (sqlite3_stmt * stmt, char * line,
     sqlite3_bind_text(stmt, 6, end_station_id.c_str(), -1, SQLITE_TRANSIENT); 
     sqlite3_bind_text(stmt, 7, "", -1, SQLITE_TRANSIENT); // bike ID
     sqlite3_bind_text(stmt, 8, user_type.c_str(), -1, SQLITE_TRANSIENT); 
+
+    // The boost::replace_all above ensures void values are all single spaces
+    if (start_station_id == " " || end_station_id == " " ||
+            start_station_lat == " " || start_station_lon == " " ||
+            end_station_lat == " " || end_station_lon == " ")
+        ret = 1;
+
+    return ret;
 }
