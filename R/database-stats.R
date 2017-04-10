@@ -191,15 +191,40 @@ bike_summary_stats <- function (bikedb)
 #' Extract daily trip counts for all stations
 #'
 #' @param bikedb Path to the SQLite3 database 
+#' @param city City for which trips are to be counted - mandatory if database
+#' contains data for more than one city
+#' @param station Optional argument specifying bike station for which trips are
+#' to be counted
 #'
 #' @return A \code{data.frame} containing daily dates and total numbers of trips
 #'
 #' @export
-bike_daily_trips <- function (bikedb)
+bike_daily_trips <- function (bikedb, city, station)
 {
-    qry <- paste ("SELECT STRFTIME('%Y-%m-%d', start_time) AS 'date', COUNT() AS",
-                  "'ntrips' FROM trips GROUP BY STRFTIME('%Y-%m-%d', date);")
+    cities <- bike_cities_in_db (bikedb)
+    if (missing (city))
+    {
+        if (length (cities) > 1)
+            stop ('bikedb contains multiple cities; please specify one')
+        else 
+            city <- cities
+    } else
+        city <- convert_city_names (city)
+
+    qry <- paste0 ("SELECT STRFTIME('%Y-%m-%d', start_time) AS 'date', COUNT() AS ",
+                  "'ntrips' FROM trips WHERE city = '", city, "'")
     db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
+    if (!missing (station))
+    {
+        if (substring (stn, 1, 2) != city)
+            stn <- paste0 (city, stn)
+        # Then just check that station is in stations table
+        stns <- dbGetQuery (db, "SELECT stn_id FROM stations")$stn_id
+        if (!stn %in% stns)
+            stop ('Station ', stn, ' does not exist in database')
+        qry <- paste0 (qry, " AND start_station_id = '", station, "'")
+    }
+    qry <- paste0 (qry, " GROUP BY STRFTIME('%Y-%m-%d', date);")
     ret <- dbGetQuery (db, qry)
     RSQLite::dbDisconnect (db)
 
