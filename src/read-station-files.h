@@ -50,9 +50,6 @@ int import_to_station_table (sqlite3 * dbcon,
 
     int n = 0;
 
-    Rcpp::Rcout << "stationqry has " << stationqry.size () <<
-        " entries" << std::endl;
-
     // http://stackoverflow.com/questions/19337029/insert-if-not-exists-statement-in-sqlite
     std::string fullstationqry = "INSERT OR IGNORE INTO stations "
         "(city, stn_id, name, latitude, longitude) VALUES ";
