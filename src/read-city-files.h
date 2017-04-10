@@ -30,6 +30,7 @@ unsigned read_one_line_dc (sqlite3_stmt * stmt, char * line,
 std::string convert_dc_stn_name (std::string &station_name, bool id,
         std::map <std::string, std::string> &stn_map);
 unsigned read_one_line_london (sqlite3_stmt * stmt, char * line);
+std::string add_0_to_la_time (std::string time);
 unsigned read_one_line_la (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry);
 
@@ -458,6 +459,27 @@ unsigned read_one_line_london (sqlite3_stmt * stmt, char * line)
 }
 
 
+//' add_0_to_la_time
+//'
+//' The hours part of LA times are single digit for HH < 10. SQLite requires
+//' strict HH, so this function inserts an extra zero where needed.
+//'
+//' @param time A datetime column from the LA data
+//'
+//' @return datetime with two-digit hour field
+//'
+//' @noRd
+std::string add_0_to_la_time (std::string time)
+{
+    unsigned gap_pos = time.find (" ");
+    unsigned time_div_pos = time.find (":");
+    if ((time_div_pos - gap_pos) == 2)
+        time = time.substr (0, gap_pos + 1) + "0" +
+            time.substr (time_div_pos - 1, time.length () - 1);
+
+    return time;
+}
+
 
 //' read_one_line_la
 //'
@@ -483,8 +505,12 @@ unsigned read_one_line_la (sqlite3_stmt * stmt, char * line,
     unsigned ret = 0;
 
     std::string trip_duration = std::strtok (NULL, delim);
-    std::string start_date = convert_datetime (std::strtok (NULL, delim));
-    std::string end_date = convert_datetime (std::strtok (NULL, delim));
+    std::string start_date = std::strtok (NULL, delim);
+    start_date = add_0_to_la_time (start_date);
+    start_date = convert_datetime (start_date);
+    std::string end_date = std::strtok (NULL, delim);
+    end_date = add_0_to_la_time (end_date);
+    end_date = convert_datetime (end_date);
     std::string start_station_id = std::strtok (NULL, delim);
     if (start_station_id == " ")
         ret = 1;

@@ -187,3 +187,23 @@ bike_summary_stats <- function (bikedb)
     rownames (res) <- rnames
     return (res)
 }
+
+#' Extract daily trip counts for all stations
+#'
+#' @param bikedb Path to the SQLite3 database 
+#'
+#' @return A \code{data.frame} containing daily dates and total numbers of trips
+#'
+#' @export
+bike_daily_trips <- function (bikedb)
+{
+    qry <- paste ("SELECT STRFTIME('%Y-%m-%d', start_time) AS 'date', COUNT() AS",
+                  "'ntrips' FROM trips GROUP BY STRFTIME('%Y-%m-%d', date);")
+    db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
+    ret <- dbGetQuery (db, qry)
+    RSQLite::dbDisconnect (db)
+
+    ret$date <- as.Date (ret$date)
+
+    return (ret)
+}
