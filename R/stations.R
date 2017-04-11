@@ -52,9 +52,9 @@ bike_get_chicago_stations <- function (flists)
     {
         fi <- read.csv (f, header = TRUE)
         id <- c (id, paste0 (fi$id))
-        name <- c (name, fi$name)
-        lon <- c (lon, fi$longitude)
-        lat <- c (lat, fi$latitude)
+        name <- c (name, paste0 (fi$name))
+        lon <- c (lon, paste0 (fi$longitude))
+        lat <- c (lat, paste0 (fi$latitude))
     }
     res <- data.frame (id = id, name = name, lon = lon, lat = lat)
     res <- res [which (!duplicated (res)), ]
