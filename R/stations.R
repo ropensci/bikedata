@@ -51,7 +51,7 @@ bike_get_chicago_stations <- function (flists)
     for (f in flists$flist_csv_stns)
     {
         fi <- read.csv (f, header = TRUE)
-        id <- c (id, fi$id)
+        id <- c (id, paste0 (fi$id))
         name <- c (name, fi$name)
         lon <- c (lon, fi$longitude)
         lat <- c (lat, fi$latitude)

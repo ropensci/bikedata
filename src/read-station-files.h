@@ -412,7 +412,10 @@ int rcpp_import_stn_df (const char * bikedb, Rcpp::DataFrame stn_data,
 
     rc = sqlite3_exec(dbcon, stationqry.c_str(), NULL, 0, &zErrMsg);
     if (rc != SQLITE_OK)
-        throw std::runtime_error ("Unable to insert London stations");
+    {
+        std::string msg = "Unable to insert stations for " + city;
+        throw std::runtime_error (msg);
+    }
 
     int num_stns_added = get_stn_table_size (dbcon) - num_stns_old;
 

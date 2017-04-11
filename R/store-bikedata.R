@@ -308,7 +308,7 @@ bike_unzip_files <- function (data_dir, bikedb, city)
 #' @noRd
 bike_unzip_files_chicago <- function (data_dir, bikedb)
 {
-    flist_zip <- get_flist_city (data_dir, city = 'chicago')
+    flist_zip <- get_flist_city (data_dir, city = 'ch')
     flist_zip <- get_new_datafiles (bikedb, flist_zip)
     existing_csv_files <- list.files (data_dir, pattern = "Divvy.*\\.csv")
     if (length (existing_csv_files) == 0)
