@@ -15,14 +15,16 @@ test_that ('read data', {
                db <- dplyr::src_sqlite ('testdb', create = F)
 
                trips <- dplyr::collect (dplyr::tbl (db, 'trips'))
-               expect_equal (dim (trips), c (1200, 11))
+               #expect_equal (dim (trips), c (1200, 11))
+               expect_equal (dim (trips), c (800, 11))
                nms <- c ("id", "city", "trip_duration", "start_time",
                          "stop_time", "start_station_id", "end_station_id",
                          "bike_id", "user_type", "birth_year", "gender")
                expect_equal (names (trips), nms)
 
                stns <- dplyr::collect (dplyr::tbl (db, 'stations'))
-               expect_equal (dim (stns), c (2189, 6))
+               #expect_equal (dim (stns), c (2189, 6))
+               expect_equal (dim (stns), c (830, 6))
                expect_equal (names (stns), c ('id', 'city', 'stn_id', 'name',
                                               'longitude', 'latitude'))
 })
@@ -39,11 +41,16 @@ test_that ('db stats', {
                expect_equal (names (db_stats), c ('num_trips', 'num_stations',
                                                   'first_trip', 'last_trip',
                                                   'latest_files'))
-               expect_equal (dim (db_stats), c (7, 5))
-               expect_equal (rownames (db_stats), c ('all', 'bo', 'ch', 'dc',
-                                                     'la', 'lo', 'ny'))
-               expect_equal (sum (db_stats$num_trips), 2400)
-               expect_equal (sum (db_stats$num_stations), 4378)
+               #expect_equal (dim (db_stats), c (7, 5))
+               #expect_equal (rownames (db_stats), c ('all', 'bo', 'ch', 'dc',
+               #                                      'la', 'lo', 'ny'))
+               #expect_equal (sum (db_stats$num_trips), 2400)
+               #expect_equal (sum (db_stats$num_stations), 4378)
+               expect_equal (dim (db_stats), c (5, 5))
+               expect_equal (rownames (db_stats), c ('all', 'bo', 'dc',
+                                                     'la', 'ny'))
+               expect_equal (sum (db_stats$num_trips), 1600)
+               expect_equal (sum (db_stats$num_stations), 1660)
 })
 
 invisible (file.remove ("testdb"))
