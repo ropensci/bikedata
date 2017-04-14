@@ -1,4 +1,12 @@
 # miscellaneous functions for retrieving summary stats from database
+#
+# *****************************************************
+# *****************************************************
+# ***                                               ***
+# ***            NON-EXPORTED FUNCTIONS             ***
+# ***                                               ***
+# *****************************************************
+# *****************************************************
 
 #' Check whether indexes have been created for database
 #'
@@ -84,6 +92,40 @@ get_new_datafiles <- function (bikedb, flist_zip)
     old_files <- dplyr::collect (dplyr::tbl (db, 'datafiles'))$name
     flist_zip [which (!basename (flist_zip) %in% old_files)]
 }
+
+#' Get date of first trip for each station
+#'
+#' @param bikedb A string containing the path to the SQLite3 database to 
+#'          use. 
+#' @param city City for which dates are to be extracted
+#'
+#' @return Vector of dates with each element named according to the station
+#'
+#' @noRd
+get_first_trips <- function (bikedb, city)
+{
+    db <- RSQLite::dbConnect(SQLite(), bikedb, create = FALSE)
+    qry <- paste0 ("SELECT MIN (STRFTIME('%Y-%m-%d', start_time)) AS 'date',
+                   start_station_id AS 'station' ",
+                   "FROM trips WHERE city = '", city,
+                   "' GROUP BY start_station_id")
+    dates <- RSQLite::dbGetQuery(db, qry)
+    stns <- dates$station
+    dates <- as.vector (dates$date)
+    names (dates) <- stns
+    RSQLite::dbDisconnect(db)
+
+    return (dates)
+}
+
+# *****************************************************
+# *****************************************************
+# ***                                               ***
+# ***              EXPORTED FUNCTIONS               ***
+# ***                                               ***
+# *****************************************************
+# *****************************************************
+
 
 #' Check whether files in database are the latest published files
 #'

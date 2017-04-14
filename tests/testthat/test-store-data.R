@@ -24,7 +24,7 @@ test_that ('read data', {
 
                stns <- dplyr::collect (dplyr::tbl (db, 'stations'))
                #expect_equal (dim (stns), c (2189, 6))
-               expect_equal (dim (stns), c (830, 6))
+               expect_equal (dim (stns), c (831, 6))
                expect_equal (names (stns), c ('id', 'city', 'stn_id', 'name',
                                               'longitude', 'latitude'))
 })
@@ -50,7 +50,7 @@ test_that ('db stats', {
                expect_equal (rownames (db_stats), c ('all', 'bo', 'dc',
                                                      'la', 'ny'))
                expect_equal (sum (db_stats$num_trips), 1600)
-               expect_equal (sum (db_stats$num_stations), 1660)
+               expect_equal (sum (db_stats$num_stations), 1662)
 })
 
 invisible (file.remove ("testdb"))
