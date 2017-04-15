@@ -93,14 +93,15 @@ get_new_datafiles <- function (bikedb, flist_zip)
     flist_zip [which (!basename (flist_zip) %in% old_files)]
 }
 
-#' Get dates of first and last trips for each station
+#' Get dates of first and last trips, and number of days in between, for each
+#' station
 #'
 #' @param bikedb A string containing the path to the SQLite3 database to 
 #'          use. 
 #' @param city City for which dates are to be extracted
 #'
-#' @return Three-column \code{data.frame} of first and last dates and station
-#'          IDs
+#' @return Four-column \code{data.frame} of dates of first and last trips for
+#' each station, number of days between those dates, and station IDs. 
 #'
 #' @noRd
 bike_station_dates <- function (bikedb, city)
@@ -115,6 +116,12 @@ bike_station_dates <- function (bikedb, city)
     # re-order stations to numeric order
     stn <- as.numeric (substr (dates$station, 3, 10)) # 10 = arbitrarily length
     dates <- dates [order (stn), c (3, 1, 2)] # station ID in 1st column
+    # Then add numbers of days in operation
+    ndays <- lubridate::interval (dates$first, dates$last) / lubridate::ddays (1)
+    dates <- data.frame (first = dates$first,
+                         last = dates$last,
+                         ndays = ndays,
+                         station = dates$station)
     rownames (dates) <- NULL
 
     return (dates)
