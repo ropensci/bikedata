@@ -6,7 +6,7 @@
 #' @import RSQLite 
 #' @importFrom dplyr %>% collect filter group_by src_sqlite summarise sql tbl
 #' @importFrom httr content GET
-#' @importFrom lubridate ymd
+#' @importFrom lubridate ddays interval ymd
 #' @importFrom methods as
 #' @importFrom Rcpp evalCpp
 #' @importFrom reshape2 dcast
