@@ -93,27 +93,29 @@ get_new_datafiles <- function (bikedb, flist_zip)
     flist_zip [which (!basename (flist_zip) %in% old_files)]
 }
 
-#' Get date of first trip for each station
+#' Get dates of first and last trips for each station
 #'
 #' @param bikedb A string containing the path to the SQLite3 database to 
 #'          use. 
 #' @param city City for which dates are to be extracted
 #'
-#' @return Vector of dates with each element named according to the station
+#' @return Three-column \code{data.frame} of first and last dates and station
+#'          IDs
 #'
 #' @noRd
-get_first_trips <- function (bikedb, city)
+bike_station_dates <- function (bikedb, city)
 {
     db <- RSQLite::dbConnect(SQLite(), bikedb, create = FALSE)
-    qry <- paste0 ("SELECT MIN (STRFTIME('%Y-%m-%d', start_time)) AS 'date',
-                   start_station_id AS 'station' ",
-                   "FROM trips WHERE city = '", city,
-                   "' GROUP BY start_station_id")
+    qry <- paste0 ("SELECT MIN (STRFTIME('%Y-%m-%d', start_time)) AS 'first',",
+                   "MAX (STRFTIME('%Y-%m-%d', start_time)) AS 'last',",
+                   "start_station_id AS 'station' FROM trips WHERE city = '",
+                   city, "' GROUP BY start_station_id")
     dates <- RSQLite::dbGetQuery(db, qry)
-    stns <- dates$station
-    dates <- as.vector (dates$date)
-    names (dates) <- stns
     RSQLite::dbDisconnect(db)
+    # re-order stations to numeric order
+    stn <- as.numeric (substr (dates$station, 3, 10)) # 10 = arbitrarily length
+    dates <- dates [order (stn), c (3, 1, 2)] # station ID in 1st column
+    rownames (dates) <- NULL
 
     return (dates)
 }
