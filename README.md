@@ -11,7 +11,7 @@ bikedata
     -   [2.3 Filtering trips by day of week](#filtering-trips-by-day-of-week)
 
 
-The `bikedata` package aims to enable ready importing of historical trip data from all public bicycle hire systems which provide data, and will be expanded on an ongoing basis as more systems publish open data. Cities and names of associated public bicycle Systems currently included, along with numbers of bikes and of docking stations, are:
+The `bikedata` package aims to enable ready importing of historical trip data from all public bicycle hire systems which provide data, and will be expanded on an ongoing basis as more systems publish open data. Cities and names of associated public bicycle systems currently included, along with numbers of bikes and of docking stations, are:
 
 | City                     | Hire Bicycle System                                                   | Number of Bicycles | Number of Docking Stations |
 |--------------------------|-----------------------------------------------------------------------|--------------------|----------------------------|
