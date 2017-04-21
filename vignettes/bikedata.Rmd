@@ -35,10 +35,6 @@ Washingon DC, U.S.A. | [Capital BikeShare](https://www.capitalbikeshare.com/) | 
 Boston MA, U.S.A. | [Hubway](https://www.thehubway.com/) | 1,461 | 158
 Los Angeles CA, U.S.A. | [Metro](https://bikeshare.metro.net/) | 1,000 | 65
 
-Note that access to data from the Santander Cycles system of London,
-U.K. requires an initial registration in order to obtain an `OAuth` key to
-access the data.
-
 Cities with extensively developed systems and cultures of public hire bicycles,
 yet which do not provide (publicly available) data include:
 
@@ -80,30 +76,30 @@ above list and the name of a database in which the data will be stored.
 store_bikedata (bikedb = 'bikedb', city = 'la')
 ```
 This function call will download all available data from the Metro system of Los
-Angeles, CA and store it in an `SQLite3` database. The function returns the
-number of trips added to the database. By default, both the downloaded data and
-the `SQLite3` database are stored in the temporary directory of the current `R`
-session. The downloaded data are deleted after having been loaded into the
-`SQLite3` database, and the database itself is deleted on termination of the `R`
-session.  (All of these options may be overridden as described below.)
+Angeles, CA and store it in an `SQLite3` database named `bikedb`. Both the
+downloaded data and the `SQLite3` database are stored in the temporary
+directory of the current `R` session. The downloaded data are deleted after
+having been loaded into the `SQLite3` database, and the database itself is
+deleted on termination of the `R` session.  (All of these options may be
+overridden as described below.)
 
 Successive calls to `store_bikedata()` will append additional data to the same
-database. For example,
+database. For example, the following line will append all data from Chicago's
+Divvy bike system from the year 2017 to the database created with the first
+call above. 
 ```{r, eval = FALSE}
 store_bikedata (bikedb = 'bikedb', city = 'divvy', dates = 2017)
 ```
-will append all data from Chicago's Divvy bike system from the year 2017 to the
-database created with the first call above. The function again returns the
-number of trips *added* to the database, which is now less than the total
-number of trips stored of:
+The function again returns the number of trips *added* to the database, which
+is now less than the total number of trips stored of:
 ```{r, eval=FALSE}
 bike_total_trips (bikedb = 'bikedb')
 ```
 For consistency and to avoid potential confusion of function names, most
-functions in the `bikedata` package begin with `bike_`.
+functions in the `bikedata` package begin with the prefix `bike_`.
 
 Finally, the main way that individual trip data are aggregated in the
-`bikedata` package is a trip matrices containing aggregate numbers of trips
+`bikedata` package is as trip matrices containing aggregate numbers of trips
 between all pairs of stations for a given city. Trip matrices can be extracted
 with the call, 
 ```{r, eval = FALSE}
@@ -280,7 +276,30 @@ English words. Minimal character specifications are thus `'so', 'm', 'tu', 'w',
 be denoted with `weekdays = c ('sa', 'so')` or `weekdays = c (1, 7)`.
 
 
-### 5.2. Demographic filtering of trip matrices
+### 5.2. Standarding trip counts by durations of operation
+
+Most bicycle hire systems have progressively expanded over time through ongoing
+addition of new docking stations. Total numbers of counts within a trip matrix
+will thus be generally less for more recently installed stations, and more for
+older stations. The `bike_tripmat()` function has an option to allow trip
+matrices to be standardised for durations of station operation, so that numbers
+of trips between any pair of stations reflect what they would be if all
+stations had been in operation for the same duration.
+
+Total numbers of trips to and from each station are simply linearly scaled
+according to the total duration of operation, and the final matrix again
+standardised to have the same total number of trips as the original matrix.
+This has two immediate consequences:
+
+1. Trip numbers will not necessarily be integer values, but are rounded for
+sanity purposes to three digits, corresponding to the maximal likely precision
+attainable for daily differences in operating durations;
+2. Trip numbers will generally **not** equal actual observed numbers. Counts
+for the longest operating durations will be lower than actually recorded, while
+counts for more recent stations will be greater than observed values.
+
+
+### 5.4. Demographic filtering of trip matrices
 
 As described at the outset, the bicycle hire systems of several cities provide
 additional demographic information including whether or not cyclists are
@@ -325,7 +344,7 @@ declare this as their birth year.
 
 
 
-### 5.3. Summary Statistics
+### 5.5. Summary Statistics
 
 `bikedata` provides a number of helper functions for extracting summary
 statistics from the `SQLite3` database. The function `bike_summary_stats
@@ -354,7 +373,7 @@ Specifying an additional `city` parameter will return information only on bike
 stations for the nominated city.
 
 
-### 5.4 Analytical Statistics
+### 5.6 Analytical Statistics
 
 The `bikedata` package currently provides only one mode of analysing aggregate
 trip data, through calculating covariances or corresponding correlation
