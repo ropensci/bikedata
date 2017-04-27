@@ -50,7 +50,7 @@ test_that ('db stats', {
                expect_equal (rownames (db_stats), c ('all', 'bo', 'dc',
                                                      'la', 'ny'))
                expect_equal (sum (db_stats$num_trips), 1600)
-               expect_equal (sum (db_stats$num_stations), 1662)
+               expect_equal (sum (db_stats$num_stations), 1664)
 })
 
 invisible (file.remove ("testdb"))

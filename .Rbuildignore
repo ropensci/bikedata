@@ -4,6 +4,7 @@
 ^appveyor.yml$
 ^README\.md$
 ^makefile$
+^vignettes/makefile$
 ^data/*.*
 ^.*\.Rproj$
 ^\.Rproj\.user$

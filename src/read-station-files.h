@@ -156,6 +156,10 @@ int import_boston_stations (sqlite3 * dbcon)
 
 //' import_dc_stations
 //'
+//' NOTE: This function is no longer used as the arcgis URL is unreliable -
+//' surprise, surprise! The coordinates have simply been hard copied to a data
+//' file and have to manually extended if and when new stations are opened.
+//'
 //' The Washington DC CapitalBikeShare system does not actually have any station
 //' coordinates. These are instead provided by the DC government.  This
 //' function reads the contents of the "Captial Bike Share Locations" file into a

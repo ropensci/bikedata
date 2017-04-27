@@ -59,14 +59,18 @@ int rcpp_import_to_trip_table (const char* bikedb,
     // dc stations have to be initially imported because for 3.5 years only
     // station addresses were given with no IDs. The stations table is needed in
     // these cases to extract the right IDs.
+    // --> The stations are now hard-coded in R/sysdata.rda because the
+    //     opendata.arcgis.com is too unreliable.
     std::map <std::string, std::string> dc_stn_map;
     std::unordered_set <std::string> dc_stn_ids;
     if (city == "dc")
     {
+        /*
         std::string dc_stn_qry = import_dc_stations ();
         rc = sqlite3_exec (dbcon, dc_stn_qry.c_str(), NULL, 0, &zErrMsg);
         if (rc != SQLITE_OK)
             throw std::runtime_error ("Unable to insert Washington DC stations");
+        */
         dc_stn_map = get_dc_stn_table (dbcon);
         dc_stn_ids = get_dc_stn_ids (dbcon);
     }

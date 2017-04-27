@@ -61,3 +61,31 @@ bike_get_chicago_stations <- function (flists)
 
     return (res)
 }
+
+#' Get Washington DC station data
+#'
+#' @return \code{data.frame} of (id, name, lon, lat) of all stations in
+#' Washington DC's Capital Bike Share system
+#'
+#' @note This data is available online from 
+#' http://opendata.dc.gov/datasets/capital-bike-share-locations/
+#' but this is a wrapper around an opendata.argis.com server that is not
+#' reliable because it very commonly returns errors and fails to retrieve the
+#' data. The relevant data were therefore downloaded and stored in
+#' R/sysdata.rda. These data will need updating as the system expands in the
+#' future.
+#'
+#' @noRd
+bike_get_dc_stations <- function ()
+{
+    # rm apostrophes from names (only "L'Enfant Plaza"):
+    name <- noquote (gsub ("'", "", stations_dc$address))
+    res <- data.frame (id = stations_dc$terminal_number,
+                       name = name,
+                       lon = stations_dc$longitude,
+                       lat = stations_dc$latitude)
+
+    return (res)
+}
+
+

@@ -108,10 +108,6 @@ store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
                                                  basename (flists$flist_csv),
                                                  ci, nf)
 
-            # main step: Import trips
-            ntrips_city <- rcpp_import_to_trip_table (bikedb, flists$flist_csv,
-                                                      ci, quiet)
-
             # import stations to stations table
             if (ci == 'ch')
             {
@@ -121,7 +117,15 @@ store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
             {
                 lo_stns <- bike_get_london_stations ()
                 nstations <- rcpp_import_stn_df (bikedb, lo_stns, 'lo')
+            } else if (ci == 'dc')
+            {
+                dc_stns <- bike_get_dc_stations ()
+                nstations <- rcpp_import_stn_df (bikedb, dc_stns, 'dc')
             }
+
+            # main step: Import trips
+            ntrips_city <- rcpp_import_to_trip_table (bikedb, flists$flist_csv,
+                                                      ci, quiet)
 
             if (length (flists$flist_rm) > 0)
                 invisible (file.remove (flists$flist_rm))
