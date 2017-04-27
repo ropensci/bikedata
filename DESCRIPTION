@@ -18,7 +18,7 @@ Imports:
 Suggests:
     knitr,
     rmarkdown,
-    roxygen2 (>= 6.0.0),
+    roxygen2,
     testthat
 LinkingTo: 
     BH,
