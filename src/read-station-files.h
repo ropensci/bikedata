@@ -395,8 +395,11 @@ int rcpp_import_stn_df (const char * bikedb, Rcpp::DataFrame stn_data,
     if (rc != SQLITE_OK)
         throw std::runtime_error ("Can't establish sqlite3 connection");
 
-    std::string stationqry = "INSERT OR IGNORE INTO stations "
+    std::string stationqry_base = "INSERT OR IGNORE INTO stations "
         "(city, stn_id, name, longitude, latitude) VALUES ";
+    std::string stationqry = stationqry_base;
+
+    std::string msg = "Unable to insert stations for " + city; // used below
 
     int num_stns_old = get_stn_table_size (dbcon);
 
@@ -405,21 +408,31 @@ int rcpp_import_stn_df (const char * bikedb, Rcpp::DataFrame stn_data,
     Rcpp::CharacterVector stn_lon = stn_data ["lon"];
     Rcpp::CharacterVector stn_lat = stn_data ["lat"];
 
+    unsigned count = 0;
     for (unsigned i = 0; i<stn_data.nrow (); i++)
     {
         stationqry += "(\'" + city + "\',\'" + city + stn_id (i) + "\',\'" + 
             stn_name (i) + "\'," + stn_lon (i) + "," + stn_lat (i) + ")";
-        if (i < (stn_data.nrow () - 1))
+        // Older versions of SQLite3 only allow queries to contain max 500
+        // elements, so they are broken up here into chunks of 100
+        if (count == 100)
+        {
+            stationqry += ";";
+            rc = sqlite3_exec(dbcon, stationqry.c_str(), NULL, 0, &zErrMsg);
+            if (rc != SQLITE_OK)
+                throw std::runtime_error (msg);
+            stationqry = stationqry_base;
+            count = 0;
+        }
+        else if (i < (stn_data.nrow () - 1))
             stationqry += ",";
+        count++;
     }
     stationqry += ";";
 
     rc = sqlite3_exec(dbcon, stationqry.c_str(), NULL, 0, &zErrMsg);
     if (rc != SQLITE_OK)
-    {
-        std::string msg = "Unable to insert stations for " + city;
         throw std::runtime_error (msg);
-    }
 
     int num_stns_added = get_stn_table_size (dbcon) - num_stns_old;
 
