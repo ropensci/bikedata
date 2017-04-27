@@ -16,11 +16,13 @@ Imports:
     reshape2,
     xml2
 Suggests:
+    knitr,
     testthat
 LinkingTo: 
     BH,
     Rcpp
 License: GPL-3 + file LICENSE
+VignetteBuilder: knitr
 SystemRequirements: C++11
 NeedsCompilation: yes
 Encoding: UTF-8
