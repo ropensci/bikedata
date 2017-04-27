@@ -17,6 +17,8 @@ Imports:
     xml2
 Suggests:
     knitr,
+    rmarkdown,
+    roxygen2 (>= 6.0.0),
     testthat
 LinkingTo: 
     BH,
