@@ -16,45 +16,6 @@
 #' @noRd
 NULL
 
-#' import_boston_stations
-#'
-#' The Boston Hubway system has a separate \code{.csv} table with station data.
-#' This function reads the contents of that file into a std::string object used
-#' to construct the SQL query that inserts those data into the ' sqlite3
-#' database.
-#'
-#' @param stationqry Station query constructed during reading of data 
-#'
-#' @return Number of stations in the Hubway system
-#'
-#' @note This station table is actually useless, because the station ID values
-#' given do not match those used in the raw data files! The latter are simple
-#' integer codes, while IDs in the "official" \code{.csv} file are like
-#' "A32000" - all beginning with an alpha and then five digits. These codes
-#' do not appear anywhere in the trip data files, and so this whole function is
-#' not used. It is nevertheless kept for the plausible day when the Hubway folk
-#' fix up this inconsistency.
-#'
-#' @noRd
-NULL
-
-#' import_dc_stations
-#'
-#' NOTE: This function is no longer used as the arcgis URL is unreliable -
-#' surprise, surprise! The coordinates have simply been hard copied to a data
-#' file and have to manually extended if and when new stations are opened.
-#'
-#' The Washington DC CapitalBikeShare system does not actually have any station
-#' coordinates. These are instead provided by the DC government.  This
-#' function reads the contents of the "Captial Bike Share Locations" file into a
-#' std::string object used to construct the SQL query that inserts those data
-#' into the 'sqlite3' database.
-#'
-#' @return std::string to be passed directly as SQLite3 query
-#'
-#' @noRd
-NULL
-
 #' get_dc_stn_table
 #'
 #' Because some data files for Washington DC contain only the names of stations
