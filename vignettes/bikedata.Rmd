@@ -209,7 +209,7 @@ described above. These pre-downloaded files may also be passed directly to
 `store_bikedata()` by simply specifying the data directory in the `data_dir`
 argument. The following call will load all previously downloaded files in the
 specified directly in the nominated database.
-```{r}
+```{r, eval = FALSE}
 store_bikedata (bikedb = 'bikedb', data_dir = '/data/bikedata/')
 ```
 As described above, the function `dl_bikedata()` may be used to periodically
