@@ -212,9 +212,9 @@ std::string convert_datetime_ny (std::string str)
 //' @noRd
 std::string convert_datetime_la (std::string str)
 {
-    std::string mm = str_token (&str, "/");
+    std::string mon = str_token (&str, "/");
     if (mm.length () == 1)
-        mm = "0" + mm;
+        mon = "0" + mon;
     std::string dd = str_token (&str, "/");
     if (dd.length () == 1)
         dd = "0" + dd;
@@ -223,7 +223,7 @@ std::string convert_datetime_la (std::string str)
     if (hh.length () == 1)
         hh = "0" + hh;
     std::string mm = str;
-    str = yy + "-" + mm + "-" + dd + " " + hh + ":" + mm + ":00";
+    str = yy + "-" + mon + "-" + dd + " " + hh + ":" + mm + ":00";
 
     return str;
 }
@@ -233,9 +233,9 @@ std::string convert_datetime_la (std::string str)
 //' @noRd
 std::string convert_datetime_dc (std::string str)
 {
-    std::string mm = str_token (&str, "/");
+    std::string mon = str_token (&str, "/");
     if (mm.length () == 1)
-        mm = "0" + mm;
+        mon = "0" + mon;
     std::string dd = str_token (&str, "/");
     if (dd.length () == 1)
         dd = "0" + dd;
@@ -244,7 +244,7 @@ std::string convert_datetime_dc (std::string str)
     if (hh.length () == 1)
         hh = "0" + hh;
     std::string mm = str;
-    str = yy + "-" + mm + "-" + dd + " " + hh + ":" + mm + ":00";
+    str = yy + "-" + mon + "-" + dd + " " + hh + ":" + mm + ":00";
 
     return str;
 }
@@ -255,11 +255,11 @@ std::string convert_datetime_dc (std::string str)
 std::string convert_datetime_lo (std::string str)
 {
     std::string dd = str_token (&str, "/");
-    std::string mm = str_token (&str, "/");
+    std::string mon = str_token (&str, "/");
     std::string yy = str_token (&str, " ");
     std::string hh = str_token (&str, ":");
     std::string mm = str;
-    str = yy + "-" + mm + "-" + dd + " " + hh + ":" + mm + ":00";
+    str = yy + "-" + mon + "-" + dd + " " + hh + ":" + mm + ":00";
 
     return str;
 }
