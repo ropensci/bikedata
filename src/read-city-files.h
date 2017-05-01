@@ -306,13 +306,13 @@ unsigned read_one_line_dc (sqlite3_stmt * stmt, char * line,
         duration = std::to_string (hh);
     }
 
-    std::string start_date = convert_datetime_ny (strtokm (NULL, ",")); 
+    std::string start_date = convert_datetime_dc (strtokm (NULL, ",")); 
 
     std::string start_station_name, start_station_id,
         end_station_name, end_station_id, end_date;
     if (id)
     {
-            end_date = convert_datetime_ny (strtokm (NULL, ",")); 
+            end_date = convert_datetime_dc (strtokm (NULL, ",")); 
             start_station_id = strtokm (NULL, ",");
             start_station_id = "dc" + start_station_id;
             start_station_name = strtokm (NULL, ",");
@@ -432,7 +432,7 @@ unsigned read_one_line_london (sqlite3_stmt * stmt, char * line)
     std::string duration = str_token (&in_line, ","); // Rental ID: not used
     duration = str_token (&in_line, ",");
     std::string bike_id = str_token (&in_line, ",");
-    std::string end_date = convert_datetime_ny (str_token (&in_line, ","));
+    std::string end_date = convert_datetime_lo (str_token (&in_line, ","));
     std::string end_station_id = str_token (&in_line, ",");
     end_station_id = "lo" + end_station_id;
     std::string end_station_name;
@@ -444,7 +444,7 @@ unsigned read_one_line_london (sqlite3_stmt * stmt, char * line)
         in_line = in_line.substr (1, in_line.length ()); // rm comma from start
     } else
         end_station_name = str_token (&in_line, ",");
-    std::string start_date = convert_datetime_ny (str_token (&in_line, ","));
+    std::string start_date = convert_datetime_lo (str_token (&in_line, ","));
     std::string start_station_id = str_token (&in_line, ",");
     start_station_id = "lo" + start_station_id;
 

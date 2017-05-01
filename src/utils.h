@@ -228,6 +228,42 @@ std::string convert_datetime_la (std::string str)
     return str;
 }
 
+//' convert_datetime_dc
+//'
+//' @noRd
+std::string convert_datetime_dc (std::string str)
+{
+    std::string mm = str_token (&str, "/");
+    if (mm.length () == 1)
+        mm = "0" + mm;
+    std::string dd = str_token (&str, "/");
+    if (dd.length () == 1)
+        dd = "0" + dd;
+    std::string yy = str_token (&str, " ");
+    std::string hh = str_token (&str, ":");
+    if (hh.length () == 1)
+        hh = "0" + hh;
+    std::string mm = str;
+    str = yy + "-" + mm + "-" + dd + " " + hh + ":" + mm + ":00";
+
+    return str;
+}
+
+//' convert_datetime_lo
+//'
+//' @noRd
+std::string convert_datetime_lo (std::string str)
+{
+    std::string dd = str_token (&str, "/");
+    std::string mm = str_token (&str, "/");
+    std::string yy = str_token (&str, " ");
+    std::string hh = str_token (&str, ":");
+    std::string mm = str;
+    str = yy + "-" + mm + "-" + dd + " " + hh + ":" + mm + ":00";
+
+    return str;
+}
+
 // write result of curl call to std::string
 // http://stackoverflow.com/questions/2329571/c-libcurl-get-output-into-a-string
 size_t CurlWrite_CallbackFunc_StdString(void *contents, size_t size, 
