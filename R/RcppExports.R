@@ -200,11 +200,26 @@ NULL
 #' @noRd
 NULL
 
-#' convert_datetime
+#' convert_datetime_ny
 #'
 #' Datetime strings for NYC change between 08/2014 and 09/2014 from
 #' yyyy-mm-dd HH:MM:SS to m/d/yyyy HH:MM:SS. sqlite3 can't combine dates in
 #' different formats, so this converts the latter to former formats.
+#'
+#' @noRd
+NULL
+
+#' convert_datetime_la
+#'
+#' @noRd
+NULL
+
+#' convert_datetime_dc
+#'
+#' @noRd
+NULL
+
+#' convert_datetime_lo
 #'
 #' @noRd
 NULL

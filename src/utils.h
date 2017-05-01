@@ -175,14 +175,14 @@ bool line_has_quotes (char * line)
     return has_quotes;
 }
 
-//' convert_datetime
+//' convert_datetime_ny
 //'
 //' Datetime strings for NYC change between 08/2014 and 09/2014 from
 //' yyyy-mm-dd HH:MM:SS to m/d/yyyy HH:MM:SS. sqlite3 can't combine dates in
 //' different formats, so this converts the latter to former formats.
 //'
 //' @noRd
-std::string convert_datetime (std::string str)
+std::string convert_datetime_ny (std::string str)
 {
     // NOTE that the following does not work for some reason?
     //if (size_t ipos = str.find ("/") != std::string::npos)
@@ -203,6 +203,63 @@ std::string convert_datetime (std::string str)
         str = str.substr (ipos + 1, str.length () - ipos - 1);
         str = yy + "-" + mm + "-" + dd + " " + str;
     }
+
+    return str;
+}
+
+//' convert_datetime_la
+//'
+//' @noRd
+std::string convert_datetime_la (std::string str)
+{
+    std::string mon = str_token (&str, "/");
+    if (mon.length () == 1)
+        mon = "0" + mon;
+    std::string dd = str_token (&str, "/");
+    if (dd.length () == 1)
+        dd = "0" + dd;
+    std::string yy = str_token (&str, " ");
+    std::string hh = str_token (&str, ":");
+    if (hh.length () == 1)
+        hh = "0" + hh;
+    std::string mm = str;
+    str = yy + "-" + mon + "-" + dd + " " + hh + ":" + mm + ":00";
+
+    return str;
+}
+
+//' convert_datetime_dc
+//'
+//' @noRd
+std::string convert_datetime_dc (std::string str)
+{
+    std::string mon = str_token (&str, "/");
+    if (mon.length () == 1)
+        mon = "0" + mon;
+    std::string dd = str_token (&str, "/");
+    if (dd.length () == 1)
+        dd = "0" + dd;
+    std::string yy = str_token (&str, " ");
+    std::string hh = str_token (&str, ":");
+    if (hh.length () == 1)
+        hh = "0" + hh;
+    std::string mm = str;
+    str = yy + "-" + mon + "-" + dd + " " + hh + ":" + mm + ":00";
+
+    return str;
+}
+
+//' convert_datetime_lo
+//'
+//' @noRd
+std::string convert_datetime_lo (std::string str)
+{
+    std::string dd = str_token (&str, "/");
+    std::string mon = str_token (&str, "/");
+    std::string yy = str_token (&str, " ");
+    std::string hh = str_token (&str, ":");
+    std::string mm = str;
+    str = yy + "-" + mon + "-" + dd + " " + hh + ":" + mm + ":00";
 
     return str;
 }
