@@ -213,7 +213,7 @@ std::string convert_datetime_ny (std::string str)
 std::string convert_datetime_la (std::string str)
 {
     std::string mon = str_token (&str, "/");
-    if (mm.length () == 1)
+    if (mon.length () == 1)
         mon = "0" + mon;
     std::string dd = str_token (&str, "/");
     if (dd.length () == 1)
@@ -234,7 +234,7 @@ std::string convert_datetime_la (std::string str)
 std::string convert_datetime_dc (std::string str)
 {
     std::string mon = str_token (&str, "/");
-    if (mm.length () == 1)
+    if (mon.length () == 1)
         mon = "0" + mon;
     std::string dd = str_token (&str, "/");
     if (dd.length () == 1)
