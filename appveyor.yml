@@ -11,6 +11,17 @@ install:
   ps: Bootstrap
 
 # Adapt as necessary starting from here
+#
+#
+environment:
+    global:
+        SQLITE_URL: https://www.sqlite.org/2017/sqlite-dll-win64-x64-3170000.zip
+
+install:
+    - curl -fsSL -o sqlite_dll.zip %SQLITE_URL%
+    - 7z x sqlite_dll.zip sqlite3.dll
+    - mkdir %TEMP%\DLLs
+    - copy /Y sqlite3.dll %TEMP%\DLLs
 
 build_script:
   - travis-tool.sh install_deps
