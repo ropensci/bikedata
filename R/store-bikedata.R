@@ -149,17 +149,19 @@ store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
         } else
             message ('All data already in database; no new data added')
 
-    rcpp_create_city_index (bikedb, er_idx - 1)
-
-    if (ntrips > 0 & create_index) # additional indexes for stations and times
+    if (ntrips > 0)
     {
-        if (!quiet)
-            message (c ('Creating', 'Re-creating') [er_idx], ' indexes')
-        rcpp_create_db_indexes (bikedb,
-                           tables = rep("trips", times = 4),
-                           cols = c("start_station_id", "end_station_id",
-                                    "start_time", "stop_time"),
-                           indexes_exist (bikedb))
+        rcpp_create_city_index (bikedb, er_idx - 1)
+        if (create_index) # additional indexes for stations and times
+        {
+            if (!quiet)
+                message (c ('Creating', 'Re-creating') [er_idx], ' indexes')
+            rcpp_create_db_indexes (bikedb,
+                                    tables = rep("trips", times = 4),
+                                    cols = c("start_station_id", "end_station_id",
+                                             "start_time", "stop_time"),
+                                    indexes_exist (bikedb))
+        }
     }
 
     return (ntrips)

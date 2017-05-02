@@ -107,6 +107,10 @@ int rcpp_import_to_trip_table (const char* bikedb,
         // (Start date, End date, Start Station, End Station) to 2013Q4 with
         // (Start date, Start Station, End date, End Station)
         bool id_in_dc_file = false, dc_end_date_first = true;
+        // One London file ("21JourneyDataExtract31Aug2016-06Sep2016.csv") has
+        // "Start/EndStation Logical Terminal" numbers instead of IDs.  These
+        // don't map on to any known station numbers and so can't be used.
+        bool london_is_junk = false;
 
         if (city == "dc")
         {
@@ -121,6 +125,11 @@ int rcpp_import_to_trip_table (const char* bikedb,
 
             if (in_line2.find ("End date", 0) > ss_pos)
                 dc_end_date_first = false;
+        } else if (city == "lo")
+        {
+            std::string in_line2 = in_line;
+            if (in_line2.find ("Logical Terminal") != std::string::npos)
+                london_is_junk = true;
         }
 
         const char * delim;
@@ -131,31 +140,34 @@ int rcpp_import_to_trip_table (const char* bikedb,
         else
             delim = ",";
 
-        while (fgets (in_line, BUFFER_SIZE, pFile) != NULL) 
+        if (!london_is_junk)
         {
-            rm_dos_end (in_line);
-            sqlite3_bind_text (stmt, 1, city.c_str (), -1, SQLITE_TRANSIENT); 
-
-            if (city == "ny")
-                rc = read_one_line_nyc (stmt, in_line, &stationqry, delim);
-            else if (city == "bo")
-                rc = read_one_line_boston (stmt, in_line, &stationqry);
-            else if (city == "ch")
-                rc = read_one_line_chicago (stmt, in_line, delim);
-            else if (city == "dc")
-                rc = read_one_line_dc (stmt, in_line, dc_stn_map, dc_stn_ids,
-                        id_in_dc_file, dc_end_date_first);
-            else if (city == "lo")
-                rc = read_one_line_london (stmt, in_line);
-            else if (city == "la")
-                rc = read_one_line_la (stmt, in_line, &stationqry);
-
-            if (rc == 0) // only != 0 for LA and London
+            while (fgets (in_line, BUFFER_SIZE, pFile) != NULL) 
             {
-                ntrips++;
-                sqlite3_step (stmt);
+                rm_dos_end (in_line);
+                sqlite3_bind_text (stmt, 1, city.c_str (), -1, SQLITE_TRANSIENT); 
+
+                if (city == "ny")
+                    rc = read_one_line_nyc (stmt, in_line, &stationqry, delim);
+                else if (city == "bo")
+                    rc = read_one_line_boston (stmt, in_line, &stationqry);
+                else if (city == "ch")
+                    rc = read_one_line_chicago (stmt, in_line, delim);
+                else if (city == "dc")
+                    rc = read_one_line_dc (stmt, in_line, dc_stn_map, dc_stn_ids,
+                            id_in_dc_file, dc_end_date_first);
+                else if (city == "lo")
+                    rc = read_one_line_london (stmt, in_line);
+                else if (city == "la")
+                    rc = read_one_line_la (stmt, in_line, &stationqry);
+
+                if (rc == 0) // only != 0 for LA and London
+                {
+                    ntrips++;
+                    sqlite3_step (stmt);
+                }
+                sqlite3_reset (stmt);
             }
-            sqlite3_reset (stmt);
         }
     }
 
@@ -168,7 +180,7 @@ int rcpp_import_to_trip_table (const char* bikedb,
     if (rc != SQLITE_OK)
         throw std::runtime_error ("Unable to close sqlite database");
 
-    return (ntrips);
+    return ntrips;
 }
 
 
