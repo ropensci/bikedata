@@ -207,6 +207,51 @@ std::string convert_datetime_ny (std::string str)
     return str;
 }
 
+//' convert_datetime_ch
+//'
+//' Datetime strings for Chicago vary between the following formats:
+//' YYYY-MM-DD hh:mm
+//' M/D/YYYY hh:mm
+//' M/D/YYYY hh:mm:ss
+//'
+//' @noRd
+std::string convert_datetime_ch (std::string str)
+{
+    // NOTE that the following does not work for some reason?
+    //if (size_t ipos = str.find ("/") != std::string::npos)
+    if (str.find ("-") != std::string::npos)
+    {
+        std::string yy = str_token (&str, "-");
+        std::string mon = str_token (&str, "-");
+        std::string dd = str_token (&str, " ");
+        std::string hh = str_token (&str, ":");
+        str = yy + "-" + mon + "-" + dd + " " + hh + ":" + str + ":00";
+    } else if (str.find ("/") != std::string::npos)
+    {
+        std::string mon = str_token (&str, "/");
+        if (mon.length () == 1)
+            mon = "0" + mon;
+        std::string dd = str_token (&str, "/");
+        if (dd.length () == 1)
+            dd = "0" + dd;
+        std::string yy = str_token (&str, " ");
+        std::string hh = str_token (&str, ":");
+        if (hh.length () == 1)
+            hh = "0" + hh;
+        std::string mm, ss = "00";
+        if (str.find (":") == std::string::npos)
+            mm = str;
+        else
+        {
+            mm = str_token (&str, ":");
+            ss = str;
+        }
+        str = yy + "-" + mon + "-" + dd + " " + hh + ":" + mm + ":" + ss;
+    }
+
+    return str;
+}
+
 //' convert_datetime_la
 //'
 //' @noRd

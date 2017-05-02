@@ -226,8 +226,8 @@ unsigned read_one_line_chicago (sqlite3_stmt * stmt, char * line,
         token = strtokm (&in_line2[0u], delim);
     // First token is trip ID, which is not used here
 
-    std::string start_time = convert_datetime_ny (strtokm (NULL, delim)); 
-    std::string end_time = convert_datetime_ny (strtokm (NULL, delim)); 
+    std::string start_time = convert_datetime_ch (strtokm (NULL, delim)); 
+    std::string end_time = convert_datetime_ch (strtokm (NULL, delim)); 
     std::string bike_id = strtokm (NULL, delim); 
     std::string duration = strtokm (NULL, delim);
 

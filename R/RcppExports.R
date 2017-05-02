@@ -209,6 +209,16 @@ NULL
 #' @noRd
 NULL
 
+#' convert_datetime_ch
+#'
+#' Datetime strings for Chicago vary between the following formats:
+#' YYYY-MM-DD hh:mm
+#' M/D/YYYY hh:mm
+#' M/D/YYYY hh:mm:ss
+#'
+#' @noRd
+NULL
+
 #' convert_datetime_la
 #'
 #' @noRd
