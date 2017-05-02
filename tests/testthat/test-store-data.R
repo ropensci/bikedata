@@ -18,17 +18,18 @@ store_bikedata (data_dir = "..", bikedb = "testdb")
 # DC stations are read from internal data; CH from unzipped station data file
 # containing 581 stations; and LO from server delivering all 777 stations
 #
-# Final expected values:
+# Final expected values (from "bike_summary_stats ()"):
 # city  |   ntrips  |   nstations
 # ------|-----------|-------------
-#  LA   |   198     |   50
-#  DC   |   200     |   456
-#  NY   |   200     |   233
 #  BO   |   200     |   93
 #  CH   |   200     |   581
-#  LO   |   200     |   777
+#  DC   |   200     |   456
+#  LA   |   198     |   50
+#  LO   |   200     |   778
+#  NY   |   200     |   233
 # ------|-----------|-------------
-# Total |   1198    |   2190
+# Total |   1198    |   2191
+# London in particlar expands rapidly and so tests are all for values >= these
 test_that ('read data', {
                db <- dplyr::src_sqlite ('testdb', create = F)
 
@@ -40,7 +41,8 @@ test_that ('read data', {
                expect_equal (names (trips), nms)
 
                stns <- dplyr::collect (dplyr::tbl (db, 'stations'))
-               expect_equal (dim (stns), c (2190, 6))
+               #expect_equal (dim (stns), c (2191, 6))
+               expect_true (nrow (stns) >= 2191)
                expect_equal (names (stns), c ('id', 'city', 'stn_id', 'name',
                                               'longitude', 'latitude'))
 })
@@ -61,7 +63,7 @@ test_that ('db stats', {
                expect_equal (rownames (db_stats), c ('all', 'bo', 'ch', 'dc',
                                                      'la', 'lo', 'ny'))
                expect_equal (sum (db_stats$num_trips), 2396)
-               expect_equal (sum (db_stats$num_stations), 4380)
+               expect_true (sum (db_stats$num_stations) >= 4382)
 })
 
 invisible (file.remove ("testdb"))
