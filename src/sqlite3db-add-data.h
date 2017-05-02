@@ -150,10 +150,11 @@ int rcpp_import_to_trip_table (const char* bikedb,
                 rc = read_one_line_la (stmt, in_line, &stationqry);
 
             if (rc == 0) // only != 0 for LA
+            {
                 ntrips++;
-
-            sqlite3_step (stmt);
-            sqlite3_reset (stmt);
+                sqlite3_step (stmt);
+                sqlite3_reset (stmt);
+            }
         }
     }
 

@@ -6,7 +6,7 @@ store_bikedata (data_dir = "..", bikedb = "testdb")
 
 test_that ('station data', {
                st <- bike_stations ('testdb')
-               expect_equal (nrow (st), 2187)
+               expect_equal (nrow (st), 2190)
 })
 
 invisible (file.remove ("testdb"))

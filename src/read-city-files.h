@@ -517,7 +517,7 @@ unsigned read_one_line_la (sqlite3_stmt * stmt, char * line,
     start_station_id = "la" + start_station_id;
     std::string start_station_lat = std::strtok (NULL, delim);
     std::string start_station_lon = std::strtok (NULL, delim);
-    // lat and lons are sometimes empty, which is useless for station table
+    // lat and lons are sometimes empty, which is useless 
     if (stationqry->count(start_station_id) == 0 &&
             start_station_lat != " " && start_station_lon != " ") 
     {
@@ -560,7 +560,7 @@ unsigned read_one_line_la (sqlite3_stmt * stmt, char * line,
     if (start_station_id == " " || end_station_id == " " ||
             start_station_lat == " " || start_station_lon == " " ||
             end_station_lat == " " || end_station_lon == " ")
-        ret = 1;
+        ret = 1; // trip data not stored!
 
     return ret;
 }
