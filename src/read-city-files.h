@@ -464,7 +464,11 @@ unsigned read_one_line_london (sqlite3_stmt * stmt, char * line)
     sqlite3_bind_text(stmt, 6, end_station_id.c_str(), -1, SQLITE_TRANSIENT); 
     sqlite3_bind_text(stmt, 7, bike_id.c_str(), -1, SQLITE_TRANSIENT); 
 
-    return 0;
+    unsigned res = 0;
+    if (start_date == "" || end_date == "")
+        res = 1;
+
+    return res;
 }
 
 

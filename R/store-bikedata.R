@@ -264,6 +264,15 @@ bike_unzip_files <- function (data_dir, bikedb, city)
     flist_zip <- get_flist_city (data_dir, city)
     existing_csv_files <- list.files (data_dir, pattern = '\\.csv$')
     flist_csv <- flist_rm <- NULL
+
+    # Recent London data files are not compressed
+    if (city == 'lo' && length (existing_csv_files) > 0)
+    {
+        flist_csv <- get_new_datafiles (bikedb, existing_csv_files)
+        if (length (flist_csv) > 0)
+            flist_csv <- paste0 (data_dir, '/', flist_csv)
+    }
+
     if (length (flist_zip) > 0)
     {
         flist_zip <- get_new_datafiles (bikedb, flist_zip)

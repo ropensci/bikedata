@@ -150,12 +150,12 @@ int rcpp_import_to_trip_table (const char* bikedb,
             else if (city == "la")
                 rc = read_one_line_la (stmt, in_line, &stationqry);
 
-            if (rc == 0) // only != 0 for LA
+            if (rc == 0) // only != 0 for LA and London
             {
+                ntrips++;
                 sqlite3_step (stmt);
-                sqlite3_reset (stmt);
             }
-            ntrips++;
+            sqlite3_reset (stmt);
         }
     }
 

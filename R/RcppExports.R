@@ -233,6 +233,8 @@ NULL
 
 #' convert_datetime_lo
 #'
+#' Only issue with London is sometimes seconds are present; sometimes not
+#'
 #' @noRd
 NULL
 

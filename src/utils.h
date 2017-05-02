@@ -312,6 +312,8 @@ std::string convert_datetime_dc (std::string str)
 
 //' convert_datetime_lo
 //'
+//' Only issue with London is sometimes seconds are present; sometimes not
+//'
 //' @noRd
 std::string convert_datetime_lo (std::string str)
 {
@@ -319,8 +321,18 @@ std::string convert_datetime_lo (std::string str)
     std::string mon = str_token (&str, "/");
     std::string yy = str_token (&str, " ");
     std::string hh = str_token (&str, ":");
-    std::string mm = str;
-    str = yy + "-" + mon + "-" + dd + " " + hh + ":" + mm + ":00";
+    std::string mm = str, ss = "00";
+    if (str.find (":") != std::string::npos)
+    {
+        mm = str_token (&str, ":");
+        ss = str;
+    }
+    str = yy + "-" + mon + "-" + dd + " " + hh + ":" + mm + ":" + ss;
+    // Years 1900-1901 are for test stations - see 
+    // "6. Journey Data Extract_27May-23Jun12.csv" and some files also have
+    // masses of empty records ("10b... 28Sep14-11Oct14", for example)
+    if (yy == "" || yy == "1900" || yy == "1901") 
+        str = "";
 
     return str;
 }
