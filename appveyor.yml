@@ -11,43 +11,38 @@ install:
   ps: Bootstrap
 
 # Adapt as necessary starting from here
-#
-#
-environment:
-    global:
-        SQLITE_URL: https://www.sqlite.org/2017/sqlite-dll-win64-x64-3170000.zip
 
-install:
-    - curl -fsSL -o sqlite_dll.zip %SQLITE_URL%
-    - 7z x sqlite_dll.zip sqlite3.dll
-    - mkdir %TEMP%\DLLs
-    - copy /Y sqlite3.dll %TEMP%\DLLs
+environment:
+    matrix:
+        - R_VERSION: devel
+          R_ARCH: x64
 
 build_script:
-  - travis-tool.sh install_deps
+    - travis-tool.sh install_github rstats-db/RSQLite
+    - travis-tool.sh install_deps
 
 test_script:
-  - travis-tool.sh run_tests
+    - travis-tool.sh run_tests
 
 on_failure:
-  - 7z a failure.zip *.Rcheck\*
-  - appveyor PushArtifact failure.zip
+    - 7z a failure.zip *.Rcheck\*
+    - appveyor PushArtifact failure.zip
 
 artifacts:
-  - path: '*.Rcheck\**\*.log'
-    name: Logs
+    - path: '*.Rcheck\**\*.log'
+      name: Logs
 
-  - path: '*.Rcheck\**\*.out'
-    name: Logs
+    - path: '*.Rcheck\**\*.out'
+      name: Logs
 
-  - path: '*.Rcheck\**\*.fail'
-    name: Logs
+    - path: '*.Rcheck\**\*.fail'
+      name: Logs
 
-  - path: '*.Rcheck\**\*.Rout'
-    name: Logs
+    - path: '*.Rcheck\**\*.Rout'
+      name: Logs
 
-  - path: '\*_*.tar.gz'
-    name: Bits
+    - path: '\*_*.tar.gz'
+      name: Bits
 
-  - path: '\*_*.zip'
-    name: Bits
+    - path: '\*_*.zip'
+      name: Bits
