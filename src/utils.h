@@ -275,21 +275,33 @@ std::string convert_datetime_la (std::string str)
 
 //' convert_datetime_dc
 //'
+//' Datetime strings for DC are either M/D/YYYY h:mm, where "mm" is always
+//' 0-padded, or YYYY-MM-DD hh:mm, where "hh" is always 0-padded
+//'
 //' @noRd
 std::string convert_datetime_dc (std::string str)
 {
-    std::string mon = str_token (&str, "/");
-    if (mon.length () == 1)
-        mon = "0" + mon;
-    std::string dd = str_token (&str, "/");
-    if (dd.length () == 1)
-        dd = "0" + dd;
-    std::string yy = str_token (&str, " ");
-    std::string hh = str_token (&str, ":");
-    if (hh.length () == 1)
-        hh = "0" + hh;
-    std::string mm = str;
-    str = yy + "-" + mon + "-" + dd + " " + hh + ":" + mm + ":00";
+    std::string yy, mon, dd, hh;
+    if (str.find ("-") != std::string::npos)
+    {
+        yy = str_token (&str, "-");
+        mon = str_token (&str, "-");
+        dd = str_token (&str, " ");
+        hh = str_token (&str, ":");
+    } else if (str.find ("/") != std::string::npos)
+    {
+        mon = str_token (&str, "/");
+        if (mon.length () == 1)
+            mon = "0" + mon;
+        dd = str_token (&str, "/");
+        if (dd.length () == 1)
+            dd = "0" + dd;
+        yy = str_token (&str, " ");
+        hh = str_token (&str, ":");
+        if (hh.length () == 1)
+            hh = "0" + hh;
+    }
+    str = yy + "-" + mon + "-" + dd + " " + hh + ":" + str + ":00";
 
     return str;
 }

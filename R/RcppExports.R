@@ -226,6 +226,9 @@ NULL
 
 #' convert_datetime_dc
 #'
+#' Datetime strings for DC are either M/D/YYYY h:mm, where "mm" is always
+#' 0-padded, or YYYY-MM-DD hh:mm, where "hh" is always 0-padded
+#'
 #' @noRd
 NULL
 

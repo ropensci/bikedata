@@ -107,6 +107,7 @@ int rcpp_import_to_trip_table (const char* bikedb,
         // (Start date, End date, Start Station, End Station) to 2013Q4 with
         // (Start date, Start Station, End date, End Station)
         bool id_in_dc_file = false, dc_end_date_first = true;
+
         if (city == "dc")
         {
             std::string in_line2 = in_line;
@@ -151,10 +152,10 @@ int rcpp_import_to_trip_table (const char* bikedb,
 
             if (rc == 0) // only != 0 for LA
             {
-                ntrips++;
                 sqlite3_step (stmt);
                 sqlite3_reset (stmt);
             }
+            ntrips++;
         }
     }
 

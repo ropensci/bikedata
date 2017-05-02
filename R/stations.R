@@ -80,6 +80,7 @@ bike_get_dc_stations <- function ()
 {
     # rm apostrophes from names (only "L'Enfant Plaza"):
     name <- noquote (gsub ("'", "", stations_dc$address))
+    name <- trimws (name, which = 'right') # trim terminal white space
     res <- data.frame (id = stations_dc$terminal_number,
                        name = name,
                        lon = stations_dc$longitude,

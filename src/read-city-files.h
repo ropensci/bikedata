@@ -310,33 +310,38 @@ unsigned read_one_line_dc (sqlite3_stmt * stmt, char * line,
 
     std::string start_date = convert_datetime_dc (strtokm (NULL, ",")); 
 
-    std::string start_station_name, start_station_id,
-        end_station_name, end_station_id, end_date;
+    std::string start_station_name, start_station_id = "0",
+        end_station_name, end_station_id = "0", end_date;
+    bool stations_empty = false;
     if (id)
     {
-            end_date = convert_datetime_dc (strtokm (NULL, ",")); 
-            start_station_id = strtokm (NULL, ",");
-            start_station_id = "dc" + start_station_id;
-            start_station_name = strtokm (NULL, ",");
-            end_station_id = strtokm (NULL, ",");
-            end_station_id = "dc" + end_station_id;
-            end_station_name = strtokm (NULL, ",");
+        end_date = convert_datetime_dc (strtokm (NULL, ",")); 
+        start_station_id = strtokm (NULL, ",");
+        start_station_id = "dc" + start_station_id;
+        start_station_name = strtokm (NULL, ",");
+        end_station_id = strtokm (NULL, ",");
+        end_station_id = "dc" + end_station_id;
+        end_station_name = strtokm (NULL, ",");
     } else
     {
         if (end_date_first)
         {
-            end_date = convert_datetime_ny (strtokm (NULL, ",")); 
+            end_date = convert_datetime_dc (strtokm (NULL, ",")); 
             start_station_name = strtokm (NULL, ",");
         } else
         {
             start_station_name = strtokm (NULL, ",");
-            end_date = convert_datetime_ny (strtokm (NULL, ",")); 
+            end_date = convert_datetime_dc (strtokm (NULL, ",")); 
         }
         end_station_name = strtokm (NULL, ",");
 
-        start_station_id = convert_dc_stn_name (start_station_name, id,
-                stn_map);
-        end_station_id = convert_dc_stn_name (start_station_name, id, stn_map);
+        if (start_station_name != "" && end_station_name != "")
+        {
+            start_station_id = convert_dc_stn_name (start_station_name, id,
+                    stn_map);
+            end_station_id = convert_dc_stn_name (end_station_name, id,
+                    stn_map);
+        }
     }
 
     std::string bike_id, user_type;
@@ -389,11 +394,13 @@ std::string convert_dc_stn_name (std::string &station_name, bool id,
     boost::replace_all (station_name, "\'", ""); // rm apostrophes
 
     size_t ipos = station_name.find ("(", 0);
+    bool id_in_namestr = false;
     if (ipos != std::string::npos)
     {
-        station_id = station_name.substr (ipos + 1,
+        station_id = "dc" + station_name.substr (ipos + 1,
                 station_name.length () - ipos - 2);
         station_name = station_name.substr (0, ipos - 1);
+        id_in_namestr = true;
     } 
     // Strip off instances of " [formerly ...]"
     ipos = station_name.find (" [", 0);
@@ -404,7 +411,7 @@ std::string convert_dc_stn_name (std::string &station_name, bool id,
                 station_name.length () - 0) == " ")
         station_name = station_name.substr (0,
                 station_name.length () - 1);
-    if (!id)
+    if (!id && !id_in_namestr)
     {
         std::map <std::string, std::string>::const_iterator mpos;
         mpos = stn_map.find (station_name);
