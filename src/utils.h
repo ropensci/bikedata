@@ -178,8 +178,7 @@ bool line_has_quotes (char * line)
 //' convert_datetime_ny
 //'
 //' Datetime strings for NYC change between 08/2014 and 09/2014 from
-//' yyyy-mm-dd HH:MM:SS to m/d/yyyy HH:MM:SS. sqlite3 can't combine dates in
-//' different formats, so this converts the latter to former formats.
+//' yyyy-mm-dd HH:MM:SS to either m/d/yyyy HH:MM:SS or m/d/yyyy H:M
 //'
 //' @noRd
 std::string convert_datetime_ny (std::string str)
@@ -188,20 +187,25 @@ std::string convert_datetime_ny (std::string str)
     //if (size_t ipos = str.find ("/") != std::string::npos)
     if (str.find ("/") != std::string::npos)
     {
-        size_t ipos = str.find ("/");
-        std::string mm = str.substr (0, ipos);
-        if (ipos == 1)
-            mm = std::string ("0") + mm;
-        str = str.substr (ipos + 1, str.length () - ipos - 1);
-        ipos = str.find ("/");
-        std::string dd = str.substr (0, ipos);
-        if (ipos == 1)
-            dd = std::string ("0") + dd;
-        str = str.substr (ipos + 1, str.length () - ipos - 1);
-        ipos = str.find (" ");
-        std::string yy = str.substr (0, ipos);
-        str = str.substr (ipos + 1, str.length () - ipos - 1);
-        str = yy + "-" + mm + "-" + dd + " " + str;
+        std::string mon = str_token (&str, "/");
+        if (mon.length () == 1)
+            mon = "0" + mon;
+        std::string dd = str_token (&str, "/");
+        if (dd.length () == 1)
+            dd = "0" + dd;
+        std::string yy = str_token (&str, " ");
+        std::string hh = str_token (&str, ":");
+        if (hh.length () == 1)
+            hh = "0" + hh;
+        std::string mm, ss = "00";
+        if (str.find (":") != std::string::npos)
+        {
+            mm = str_token (&str, ":");
+            ss = str;
+        } else
+            mm = str;
+            
+        str = yy + "-" + mon + "-" + dd + " " + hh + ":" + str;
     }
 
     return str;
