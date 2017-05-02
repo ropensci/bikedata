@@ -140,7 +140,7 @@ unsigned read_one_line_boston (sqlite3_stmt * stmt, char * line,
     const char * delim = "\",\"";
 
     std::string in_line2 = line;
-    boost::replace_all(in_line2, "\\N","\"\"");
+    boost::replace_all (in_line2, "\\N","\"\"");
     char * token = strtokm (&in_line2[0u], "\""); // opening quote
     std::string duration = strtokm (NULL, delim);
     std::string start_time = strtokm (NULL, delim); // no need to convert
@@ -153,9 +153,10 @@ unsigned read_one_line_boston (sqlite3_stmt * stmt, char * line,
         boost::replace_all (start_station_name, "\'", ""); // rm apostrophes
         std::string start_station_lat = strtokm (NULL, delim);
         std::string start_station_lon = strtokm (NULL, delim);
-        (*stationqry)[start_station_id] = "(\'bo\',\'" + 
-            start_station_id + "\',\'" + start_station_name + "\'," +
-            start_station_lat + "," + start_station_lon + ")";
+        if (start_station_lat != "" && start_station_lon != "")
+            (*stationqry)[start_station_id] = "(\'bo\',\'" + 
+                start_station_id + "\',\'" + start_station_name + "\'," +
+                start_station_lat + "," + start_station_lon + ")";
     } else
     {
         strtokm (NULL, delim);
@@ -171,9 +172,10 @@ unsigned read_one_line_boston (sqlite3_stmt * stmt, char * line,
         boost::replace_all (end_station_name, "\'", ""); // rm apostrophes
         std::string end_station_lat = strtokm (NULL, delim);
         std::string end_station_lon = strtokm (NULL, delim);
-        (*stationqry)[end_station_id] = "(\'bo\',\'" + 
-            end_station_id + "\',\'" + end_station_name + "\'," +
-            end_station_lat + "," + end_station_lon + ")";
+        if (end_station_lat != "" && end_station_lon != "")
+            (*stationqry)[end_station_id] = "(\'bo\',\'" + 
+                end_station_id + "\',\'" + end_station_name + "\'," +
+                end_station_lat + "," + end_station_lon + ")";
     } else
     {
         strtokm (NULL, delim);
