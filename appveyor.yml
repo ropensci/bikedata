@@ -9,7 +9,13 @@ init:
 
 install:
     - ps: Bootstrap
-    - cinst sqlite
+      #- cinst sqlite # installs win32-x86 version
+    - ps: Start-FileDownload 'http://sqlite.org/2017/sqlite-dll-win64-x64-3180000.zip'
+    - cmd: 7z e sqlite-dll-win64-x64-3180000.zip -y > nul
+    - ps: Start-FileDownload 'http://sqlite.org/2017/sqlite-amalgamation-3180000.zip'
+    - cmd: 7z e sqlite-amalgamation-3180000.zip -y > nul
+    - SET SQLITE3_LIB_DIR=%APPVEYOR_BUILD_FOLDER% 
+    - SET SQLITE3_INCLUDE_DIR=%APPVEYOR_BUILD_FOLDER% 
 
 # Adapt as necessary starting from here
 
