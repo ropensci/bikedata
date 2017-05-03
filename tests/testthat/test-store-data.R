@@ -3,16 +3,16 @@ context ("store data in db")
 require (testthat)
 
 test_that ('read and append data', {
-               bike_write_test_data ()
-               expect_silent (store_bikedata (data_dir = tempdir (), 
+               #bike_write_test_data ()
+               expect_silent (store_bikedata (data_dir = "..",
                                               bikedb = "testdb",
                                               quiet = TRUE))
-               bike_rm_test_data ()
+               #bike_rm_test_data ()
                invisible (file.remove (file.path (tempdir (), "testdb")))
 })
 
-bike_write_test_data ()
-store_bikedata (data_dir = tempdir (), bikedb = "testdb")
+#bike_write_test_data ()
+store_bikedata (data_dir = "..", bikedb = "testdb")
 # NOTE:
 # All files have 200 trips, but LA stations are read from trips, and has 2 trips
 # that end at station#3000 which has no lat-lon, so there are only 198 trips and
@@ -70,5 +70,5 @@ test_that ('db stats', {
                expect_true (sum (db_stats$num_stations) >= 4382)
 })
 
-bike_rm_test_data ()
+#bike_rm_test_data ()
 invisible (file.remove (file.path (tempdir (), "testdb")))

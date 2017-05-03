@@ -2,8 +2,8 @@ context ("tripmat")
 
 require (testthat)
 
-bike_write_test_data ()
-store_bikedata (data_dir = tempdir (), bikedb = "testdb")
+#bike_write_test_data ()
+store_bikedata (data_dir = "..", bikedb = "testdb")
 
 test_that ('tripmat-full', {
                expect_message (tm <- bike_tripmat ("testdb", quiet = TRUE),
@@ -114,5 +114,5 @@ test_that ('weekday', {
                              'weekday specification is ambiguous')
 })
 
-bike_rm_test_data ()
+#bike_rm_test_data ()
 invisible (file.remove (file.path (tempdir (), "testdb")))

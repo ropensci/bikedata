@@ -13,6 +13,7 @@
 #' @export
 bike_write_test_data <- function (data_dir = tempdir ())
 {
+    bike_dat <- bike_dat # suppress no visible binding note
     # chicago has to be done separately
     fdir <- file.path (data_dir, 'Divvy_Trips_sample')
     dir.create (fdir)
