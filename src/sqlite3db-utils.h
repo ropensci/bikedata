@@ -34,7 +34,8 @@ int get_max_trip_id (sqlite3 * dbcon)
     rc = sqlite3_prepare_v2(dbcon, qry_id, BUFFER_SIZE, &stmt, NULL);
     rc = sqlite3_step (stmt);
     int max_trip_id = sqlite3_column_int (stmt, 0);
-    sqlite3_reset(stmt);
+    sqlite3_reset (stmt);
+    (void) rc; // supress unused variable warning;
 
     return max_trip_id;
 }
@@ -54,7 +55,8 @@ int get_max_stn_id (sqlite3 * dbcon)
     int rc = sqlite3_prepare_v2(dbcon, qry_id, BUFFER_SIZE, &stmt, NULL);
     rc = sqlite3_step (stmt);
     int max_stn_id = sqlite3_column_int (stmt, 0);
-    sqlite3_reset(stmt);
+    sqlite3_reset (stmt);
+    (void) rc; // supress unused variable warning;
 
     return max_stn_id;
 }
@@ -74,7 +76,8 @@ int get_stn_table_size (sqlite3 * dbcon)
     int rc = sqlite3_prepare_v2(dbcon, qry_id, BUFFER_SIZE, &stmt, NULL);
     rc = sqlite3_step (stmt);
     int num_stns = sqlite3_column_int (stmt, 0);
-    sqlite3_reset(stmt);
+    sqlite3_reset (stmt);
+    (void) rc; // supress unused variable warning;
 
     return num_stns;
 }

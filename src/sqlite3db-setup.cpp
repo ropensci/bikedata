@@ -12,10 +12,6 @@
  *  Compiler Options:   -std=c++11
  ***************************************************************************/
 
-#include <string>
-#include <vector>
-#include <map>
-
 #define BUFFER_SIZE 512
 
 // [[Rcpp::depends(BH)]]
@@ -111,7 +107,6 @@ int rcpp_create_db_indexes (const char* bikedb, Rcpp::CharacterVector tables,
 {
     sqlite3 *dbcon;
     char *zErrMsg = 0;
-    const char *zStmtMsg;
     int rc;
 
     rc = sqlite3_open_v2(bikedb, &dbcon, SQLITE_OPEN_READWRITE, NULL);
@@ -132,7 +127,7 @@ int rcpp_create_db_indexes (const char* bikedb, Rcpp::CharacterVector tables,
         sqliteversion = (char *)sqlite3_column_text(versionstmt, 0);
     rc = sqlite3_reset(versionstmt);
 
-    for (unsigned int i = 0; i < cols.length(); ++i) 
+    for (int i = 0; i < cols.length(); ++i) 
     {
         if (((std::string) cols[i]).find("(") == std::string::npos || 
                 compare_version_numbers (sqliteversion, "3.9.0") >= 0) 
@@ -143,13 +138,15 @@ int rcpp_create_db_indexes (const char* bikedb, Rcpp::CharacterVector tables,
             boost::replace_all(idxname, ")", "_");
             boost::replace_all(idxname, " ", "_");
 
+            int sprrc;
             if (reindex)
-                int sprrc = asprintf(&idxsql, "REINDEX %s ", 
+                sprrc = asprintf(&idxsql, "REINDEX %s ", 
                         idxname.c_str());
             else
-                int sprrc = asprintf(&idxsql, "CREATE INDEX %s ON %s(%s)", 
+                sprrc = asprintf(&idxsql, "CREATE INDEX %s ON %s(%s)", 
                         idxname.c_str(), (char *)(tables[i]), 
                         (char *)(cols[i]));
+            (void) sprrc; // suppress unused variable warning
 
             rc = sqlite3_exec(dbcon, idxsql, NULL, NULL, &zErrMsg);
             if (rc != SQLITE_OK) 
@@ -185,7 +182,6 @@ int rcpp_create_city_index (const char* bikedb, bool reindex)
 {
     sqlite3 *dbcon;
     char *zErrMsg = 0;
-    const char *zStmtMsg;
     int rc;
 
     rc = sqlite3_open_v2(bikedb, &dbcon, SQLITE_OPEN_READWRITE, NULL);

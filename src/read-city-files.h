@@ -142,6 +142,7 @@ unsigned read_one_line_boston (sqlite3_stmt * stmt, char * line,
     std::string in_line2 = line;
     boost::replace_all (in_line2, "\\N","\"\"");
     char * token = strtokm (&in_line2[0u], "\""); // opening quote
+    (void) token; // supress unused variable warning;
     std::string duration = strtokm (NULL, delim);
     std::string start_time = strtokm (NULL, delim); // no need to convert
     std::string end_time = strtokm (NULL, delim); 
@@ -226,6 +227,7 @@ unsigned read_one_line_chicago (sqlite3_stmt * stmt, char * line,
         token = strtokm (NULL, delim); 
     } else
         token = strtokm (&in_line2[0u], delim);
+    (void) token; // supress unused variable warning;
     // First token is trip ID, which is not used here
 
     std::string start_time = convert_datetime_ch (strtokm (NULL, delim)); 
@@ -312,7 +314,6 @@ unsigned read_one_line_dc (sqlite3_stmt * stmt, char * line,
 
     std::string start_station_name, start_station_id = "0",
         end_station_name, end_station_id = "0", end_date;
-    bool stations_empty = false;
     if (id)
     {
         end_date = convert_datetime_dc (strtokm (NULL, ",")); 
@@ -515,6 +516,7 @@ unsigned read_one_line_la (sqlite3_stmt * stmt, char * line,
     const char * delim;
     delim = ",";
     char * trip_id = std::strtok (&in_line[0u], delim); 
+    (void) trip_id; // supress unused variable warning;
     unsigned ret = 0;
 
     std::string trip_duration = std::strtok (NULL, delim);

@@ -46,8 +46,6 @@ int import_to_station_table (sqlite3 * dbcon,
     char *zErrMsg = 0;
     int rc;
 
-    int n = 0;
-
     // http://stackoverflow.com/questions/19337029/insert-if-not-exists-statement-in-sqlite
     std::string fullstationqry = "INSERT OR IGNORE INTO stations "
         "(city, stn_id, name, latitude, longitude) VALUES ";
@@ -100,7 +98,7 @@ std::map <std::string, std::string> get_dc_stn_table (sqlite3 * dbcon)
 
     int rc = sqlite3_prepare_v2 (dbcon, qry_stns, BUFFER_SIZE, &stmt, NULL);
 
-    while (rc = sqlite3_step (stmt) == SQLITE_ROW)
+    while ((rc = sqlite3_step (stmt)) == SQLITE_ROW)
     {
         const unsigned char * c1 = sqlite3_column_text (stmt, 0);
         ss << c1;
@@ -207,7 +205,7 @@ std::unordered_set <std::string> get_dc_stn_ids (sqlite3 * dbcon)
 
     int rc = sqlite3_prepare_v2 (dbcon, qry_stns, BUFFER_SIZE, &stmt, NULL);
 
-    while (rc = sqlite3_step (stmt) == SQLITE_ROW)
+    while ((rc = sqlite3_step (stmt)) == SQLITE_ROW)
     {
         const unsigned char * c1 = sqlite3_column_text (stmt, 0);
         ss << c1;
@@ -260,7 +258,7 @@ int rcpp_import_stn_df (const char * bikedb, Rcpp::DataFrame stn_data,
     Rcpp::CharacterVector stn_lat = stn_data ["lat"];
 
     unsigned count = 0;
-    for (unsigned i = 0; i<stn_data.nrow (); i++)
+    for (int i = 0; i<stn_data.nrow (); i++)
     {
         stationqry += "(\'" + city + "\',\'" + city + stn_id (i) + "\',\'" + 
             stn_name (i) + "\'," + stn_lon (i) + "," + stn_lat (i) + ")";

@@ -80,7 +80,6 @@ int rcpp_import_to_trip_table (const char* bikedb,
     char sqlqry [BUFFER_SIZE] = "\0";
 
     sqlite3_stmt * stmt;
-    char * tail = 0;
     std::map <std::string, std::string> stationqry;
 
     int ntrips = 0; // ntrips is # added in this call
@@ -91,7 +90,7 @@ int rcpp_import_to_trip_table (const char* bikedb,
 
     sqlite3_exec(dbcon, "BEGIN TRANSACTION", NULL, NULL, &zErrMsg);
 
-    for(unsigned int filenum = 0; filenum < datafiles.length(); filenum++) 
+    for(int filenum = 0; filenum < datafiles.length(); filenum++) 
     {
         if (!quiet)
             Rcpp::Rcout << "reading file " << filenum + 1 << "/" <<
@@ -100,6 +99,7 @@ int rcpp_import_to_trip_table (const char* bikedb,
 
         pFile = fopen(datafiles[filenum], "r");
         char * junk = fgets(in_line, BUFFER_SIZE, pFile);
+        (void) junk; // suppress unused variable warning
         rm_dos_end (in_line);
 
         // DC files change structure a lot, with explicit station ID fields only
