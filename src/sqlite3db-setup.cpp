@@ -115,7 +115,6 @@ int rcpp_create_db_indexes (const char* bikedb, Rcpp::CharacterVector tables,
     if (rc != SQLITE_OK)
         throw std::runtime_error ("Can't establish sqlite3 connection");
 
-    char *idxsql = NULL;
     sqlite3_stmt *versionstmt;
     char *sqliteversion = (char *)"0.1";
 
@@ -140,19 +139,20 @@ int rcpp_create_db_indexes (const char* bikedb, Rcpp::CharacterVector tables,
             boost::replace_all(idxname, ")", "_");
             boost::replace_all(idxname, " ", "_");
 
-            int sprrc;
+            std::string idxqry;
             if (reindex)
-                sprrc = asprintf (&idxsql, "REINDEX %s ", idxname.c_str());
+                idxqry = "REINDEX " + idxname;
             else
-                sprrc = asprintf (&idxsql, "CREATE INDEX %s ON %s(%s)", 
-                        idxname.c_str(), (char *)(tables[i]), 
-                        (char *)(cols[i]));
-            (void) sprrc; // suppress unused variable warning
+                idxqry = "CREATE INDEX " + idxname + " ON " +
+                    (char *)(tables [i]) + "(" + (char *)(cols [i]) + ")";
 
-            rc = sqlite3_exec(dbcon, idxsql, NULL, NULL, &zErrMsg);
+            rc = sqlite3_exec(dbcon, idxqry.c_str(), NULL, NULL, &zErrMsg);
             if (rc != SQLITE_OK) 
-                throw std::runtime_error ("Unable to execute index query: " + 
-                        (std::string)idxsql);
+            {
+                std::string errMsg = "Unable to execute index query: " + 
+                        idxqry;
+                throw std::runtime_error (errMsg);
+            }
         }
         else 
             Rcpp::warning ("Unable to create index on " + cols[i] + 
@@ -189,22 +189,20 @@ int rcpp_create_city_index (const char* bikedb, bool reindex)
     if (rc != SQLITE_OK)
         throw std::runtime_error ("Can't establish sqlite3 connection");
 
-    char *idxsql = NULL;
-
     std::string idxname = "idx_trips_city";
-
-    int sprrc;
+    std::string idxqry;
     if (reindex)
-        sprrc = asprintf (&idxsql, "REINDEX %s ", idxname.c_str());
+        idxqry = "REINDEX " + idxname;
     else
-        sprrc = asprintf (&idxsql, "CREATE INDEX %s ON trips(city)",
-                idxname.c_str());
-    (void) sprrc; // suppress unused variable warning
+        idxqry = "CREATE INDEX " + idxname + " ON trips(city)";
 
-    rc = sqlite3_exec(dbcon, idxsql, NULL, NULL, &zErrMsg);
+    rc = sqlite3_exec(dbcon, idxqry.c_str(), NULL, NULL, &zErrMsg);
+
     if (rc != SQLITE_OK) 
-        throw std::runtime_error ("Unable to execute index query: " + 
-                (std::string)idxsql);
+    {
+        std::string errMsg = "Unable to execute index query: " + idxqry;
+        throw std::runtime_error (errMsg);
+    }
 
     rc = sqlite3_close_v2(dbcon);
     if (rc != SQLITE_OK) 
