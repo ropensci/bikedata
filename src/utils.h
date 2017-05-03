@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <cstdio>
+#include <stdio.h>
 #include <sqlite3.h>
 
 // [[Rcpp::depends(BH)]]

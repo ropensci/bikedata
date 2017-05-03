@@ -12,3 +12,11 @@ bike_rm_test_data(data_dir = tempdir())
 \description{
 Removes test data written with 'bike_write_test_data()'
 }
+\examples{
+\dontrun{
+data (bike_dat)
+bike_write_test_data ()
+list.files (tempdir ())
+bike_rm_test_data ()
+}
+}

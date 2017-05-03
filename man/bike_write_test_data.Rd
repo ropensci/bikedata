@@ -21,3 +21,10 @@ package, but these need to be written to zip-compressed archives in order for
 the package to be able to use them. This function enables the package to be
 tested, both for general use, and for the \code{testhtat} routines.
 }
+\examples{
+\dontrun{
+bike_write_test_data ()
+list.files (tempdir ())
+bike_rm_test_data ()
+}
+}

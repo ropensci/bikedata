@@ -11,9 +11,19 @@
 #' tested, both for general use, and for the \code{testhtat} routines.
 #'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' bike_write_test_data ()
+#' list.files (tempdir ())
+#' bike_rm_test_data ()
+#' }
 bike_write_test_data <- function (data_dir = tempdir ())
 {
-    bike_dat <- bike_dat # suppress no visible binding note
+    #data ("bike_dat", package = 'bikedata', envir = parent.env (environment ()))
+    #data (bike_dat, envir = parent.env (environment ()))
+    bike_dat <- bike_dat 
+    #bike_dat <- get (bike_dat, envir = parent.env (environment ()))
     # chicago has to be done separately
     fdir <- file.path (data_dir, 'Divvy_Trips_sample')
     dir.create (fdir)
@@ -59,6 +69,14 @@ bike_write_test_data <- function (data_dir = tempdir ())
 #' @param data_dir Directory in which data were extracted.
 #'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' data (bike_dat)
+#' bike_write_test_data ()
+#' list.files (tempdir ())
+#' bike_rm_test_data ()
+#' }
 bike_rm_test_data <- function (data_dir = tempdir ())
 {
     zips <- c ("sample-hubway-trip-data.zip",

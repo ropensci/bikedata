@@ -14,6 +14,8 @@
 
 #define BUFFER_SIZE 512
 
+#include <stdio.h>
+
 // [[Rcpp::depends(BH)]]
 #include <Rcpp.h>
 #include "utils.h"
@@ -140,10 +142,9 @@ int rcpp_create_db_indexes (const char* bikedb, Rcpp::CharacterVector tables,
 
             int sprrc;
             if (reindex)
-                sprrc = asprintf(&idxsql, "REINDEX %s ", 
-                        idxname.c_str());
+                sprrc = asprintf (&idxsql, "REINDEX %s ", idxname.c_str());
             else
-                sprrc = asprintf(&idxsql, "CREATE INDEX %s ON %s(%s)", 
+                sprrc = asprintf (&idxsql, "CREATE INDEX %s ON %s(%s)", 
                         idxname.c_str(), (char *)(tables[i]), 
                         (char *)(cols[i]));
             (void) sprrc; // suppress unused variable warning
@@ -192,11 +193,13 @@ int rcpp_create_city_index (const char* bikedb, bool reindex)
 
     std::string idxname = "idx_trips_city";
 
+    int sprrc;
     if (reindex)
-        int sprrc = asprintf (&idxsql, "REINDEX %s ", idxname.c_str());
+        sprrc = asprintf (&idxsql, "REINDEX %s ", idxname.c_str());
     else
-        int sprrc = asprintf (&idxsql, "CREATE INDEX %s ON trips(city)",
+        sprrc = asprintf (&idxsql, "CREATE INDEX %s ON trips(city)",
                 idxname.c_str());
+    (void) sprrc; // suppress unused variable warning
 
     rc = sqlite3_exec(dbcon, idxsql, NULL, NULL, &zErrMsg);
     if (rc != SQLITE_OK) 
