@@ -14,7 +14,6 @@
  ***************************************************************************/
 
 #include <unordered_set>
-#include <curl/curl.h>
 
 #include "sqlite3db-utils.h"
 

@@ -336,25 +336,3 @@ std::string convert_datetime_lo (std::string str)
 
     return str;
 }
-
-// write result of curl call to std::string
-// http://stackoverflow.com/questions/2329571/c-libcurl-get-output-into-a-string
-size_t CurlWrite_CallbackFunc_StdString(void *contents, size_t size, 
-        size_t nmemb, std::string *s)
-{
-    size_t newLength = size*nmemb;
-    size_t oldLength = s->size();
-    try
-    {
-        s->resize(oldLength + newLength);
-    }
-    catch(std::bad_alloc &e)
-    {
-        //handle memory problem
-        return 0;
-    }
-
-    std::copy((char*)contents,(char*)contents+newLength,s->begin()+oldLength);
-    return size*nmemb;
-}
-
