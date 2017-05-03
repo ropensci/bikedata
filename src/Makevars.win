@@ -1,0 +1,2 @@
+PKG_CPPFLAGS=-I -frounding-math
+PKG_LIBS=-lsqlite3
