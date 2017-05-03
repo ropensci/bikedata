@@ -11,7 +11,7 @@
 #' @importFrom Rcpp evalCpp
 #' @importFrom reshape2 dcast
 #' @importFrom stats xtabs
-#' @importFrom utils download.file menu read.csv unzip
+#' @importFrom utils download.file menu read.csv unzip write.csv zip
 #' @importFrom xml2 xml_children xml_find_all
 #' @useDynLib bikedata
 NULL

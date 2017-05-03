@@ -7,7 +7,8 @@
 bike_datelimits(bikedb, city)
 }
 \arguments{
-\item{bikedb}{Path to the SQLite3 database}
+\item{bikedb}{A string containing the path to the SQLite3 database.
+If no directory specified, it is presumed to be in \code{tempdir()}.}
 
 \item{city}{If given, date limits are calculated only for trips in 
 that city.}

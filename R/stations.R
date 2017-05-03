@@ -1,12 +1,16 @@
 #' Extract station matrix from SQLite3 database
 #'
-#' @param bikedb Path to the SQLite3 database 
+#' @param bikedb A string containing the path to the SQLite3 database.
+#' If no directory specified, it is presumed to be in \code{tempdir()}.
 #'
 #' @return Matrix containing data for each station
 #'
 #' @export
 bike_stations <- function (bikedb)
 {
+    if (dirname (bikedb) == '.')
+        bikedb <- file.path (tempdir (), bikedb)
+
     db <- dplyr::src_sqlite (bikedb, create = F)
     dplyr::collect (dplyr::tbl (db, 'stations'))
 }

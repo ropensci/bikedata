@@ -7,7 +7,8 @@
 bike_daily_trips(bikedb, city, station)
 }
 \arguments{
-\item{bikedb}{Path to the SQLite3 database}
+\item{bikedb}{A string containing the path to the SQLite3 database.
+If no directory specified, it is presumed to be in \code{tempdir()}.}
 
 \item{city}{City for which trips are to be counted - mandatory if database
 contains data for more than one city}

@@ -11,11 +11,14 @@
 #' Check whether indexes have been created for database
 #'
 #' @param bikedb A string containing the path to the SQLite3 database to 
-#' use. 
+#' use. If no directory specified, it is presumed to be in \code{tempdir()}.
 #'
 #' @noRd
 indexes_exist <- function (bikedb)
 {
+    if (dirname (bikedb) == '.')
+        bikedb <- file.path (tempdir (), bikedb)
+
     db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
     idx_list <- dbGetQuery (db, "PRAGMA index_list (trips)")
     RSQLite::dbDisconnect (db)
@@ -24,8 +27,8 @@ indexes_exist <- function (bikedb)
 
 #' Count number of entries in sqlite3 database tables
 #'
-#' @param bikedb A string containing the path to the SQLite3 database to 
-#' use. 
+#' @param bikedb A string containing the path to the SQLite3 database.
+#' If no directory specified, it is presumed to be in \code{tempdir()}.
 #' @param trips If true, numbers of trips are counted; otherwise numbers of
 #' stations
 #' @param city Optional city for which numbers of trips are to be counted
@@ -33,6 +36,9 @@ indexes_exist <- function (bikedb)
 #' @noRd
 bike_db_totals <- function (bikedb, trips = TRUE, city)
 {
+    if (dirname (bikedb) == '.')
+        bikedb <- file.path (tempdir (), bikedb)
+
     db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
     if (trips)
         qry <- "SELECT Count(*) FROM trips"
@@ -47,12 +53,15 @@ bike_db_totals <- function (bikedb, trips = TRUE, city)
 
 #' Count number of datafiles in sqlite3 database
 #'
-#' @param bikedb A string containing the path to the SQLite3 database to 
-#' use. 
+#' @param bikedb A string containing the path to the SQLite3 database.
+#' If no directory specified, it is presumed to be in \code{tempdir()}.
 #'
 #' @noRd
 num_datafiles_in_db <- function (bikedb)
 {
+    if (dirname (bikedb) == '.')
+        bikedb <- file.path (tempdir (), bikedb)
+
     db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
     ntrips <- dbGetQuery (db, "SELECT Count(*) FROM datafiles")
     RSQLite::dbDisconnect (db)
@@ -61,12 +70,15 @@ num_datafiles_in_db <- function (bikedb)
 
 #' List the cities with data containined in SQLite3 database
 #'
-#' @param bikedb A string containing the path to the SQLite3 database to 
-#' use. 
+#' @param bikedb A string containing the path to the SQLite3 database.
+#' If no directory specified, it is presumed to be in \code{tempdir()}.
 #'
 #' @noRd
 bike_cities_in_db <- function (bikedb)
 {
+    if (dirname (bikedb) == '.')
+        bikedb <- file.path (tempdir (), bikedb)
+
     db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
     cities <- dbGetQuery (db, "SELECT city FROM stations")
     RSQLite::dbDisconnect (db)
@@ -77,8 +89,8 @@ bike_cities_in_db <- function (bikedb)
 #' Return names of files in nominated directory that are **not** already in
 #' database
 #'
-#' @param bikedb A string containing the path to the SQLite3 database to 
-#'          use. 
+#' @param bikedb A string containing the path to the SQLite3 database.
+#' If no directory specified, it is presumed to be in \code{tempdir()}.
 #' @param flist_zip A character vector listing the names of \code{.zip} files
 #'          for a particular city as returned from \code{get_flist_city}
 #'
@@ -88,6 +100,9 @@ bike_cities_in_db <- function (bikedb)
 #' @noRd
 get_new_datafiles <- function (bikedb, flist_zip)
 {
+    if (dirname (bikedb) == '.')
+        bikedb <- file.path (tempdir (), bikedb)
+
     db <- dplyr::src_sqlite (bikedb, create = F)
     old_files <- dplyr::collect (dplyr::tbl (db, 'datafiles'))$name
     flist_zip [which (!basename (flist_zip) %in% old_files)]
@@ -96,8 +111,8 @@ get_new_datafiles <- function (bikedb, flist_zip)
 #' Get dates of first and last trips, and number of days in between, for each
 #' station
 #'
-#' @param bikedb A string containing the path to the SQLite3 database to 
-#'          use. 
+#' @param bikedb A string containing the path to the SQLite3 database.
+#' If no directory specified, it is presumed to be in \code{tempdir()}.
 #' @param city City for which dates are to be extracted
 #'
 #' @return Four-column \code{data.frame} of dates of first and last trips for
@@ -106,6 +121,9 @@ get_new_datafiles <- function (bikedb, flist_zip)
 #' @noRd
 bike_station_dates <- function (bikedb, city)
 {
+    if (dirname (bikedb) == '.')
+        bikedb <- file.path (tempdir (), bikedb)
+
     db <- RSQLite::dbConnect(SQLite(), bikedb, create = FALSE)
     qry <- paste0 ("SELECT MIN (STRFTIME('%Y-%m-%d', start_time)) AS 'first',",
                    "MAX (STRFTIME('%Y-%m-%d', start_time)) AS 'last',",
@@ -138,7 +156,8 @@ bike_station_dates <- function (bikedb, city)
 
 #' Check whether files in database are the latest published files
 #'
-#' @param bikedb Path to the SQLite3 database 
+#' @param bikedb A string containing the path to the SQLite3 database.
+#' If no directory specified, it is presumed to be in \code{tempdir()}.
 #'
 #' @return A named vector of binary values: TRUE is files in \code{bikedb} are
 #' the latest versions; otherwise FALSE, in which case \code{store_bikedata}
@@ -147,6 +166,9 @@ bike_station_dates <- function (bikedb, city)
 #' @export
 bike_latest_files <- function (bikedb)
 {
+    if (dirname (bikedb) == '.')
+        bikedb <- file.path (tempdir (), bikedb)
+
     db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
     files <- dbGetQuery (db, "SELECT * FROM datafiles")
     cities <- unique (files$city)
@@ -167,7 +189,8 @@ bike_latest_files <- function (bikedb)
 
 #' Extract date-time limits from trip database
 #'
-#' @param bikedb Path to the SQLite3 database 
+#' @param bikedb A string containing the path to the SQLite3 database.
+#' If no directory specified, it is presumed to be in \code{tempdir()}.
 #' @param city If given, date limits are calculated only for trips in 
 #'          that city.
 #'
@@ -177,6 +200,9 @@ bike_latest_files <- function (bikedb)
 #' @export
 bike_datelimits <- function (bikedb, city)
 {
+    if (dirname (bikedb) == '.')
+        bikedb <- file.path (tempdir (), bikedb)
+
     qry_min <- "SELECT MIN(start_time) FROM trips"
     qry_max <- "SELECT MAX(start_time) FROM trips"
     if (!missing (city))
@@ -198,7 +224,8 @@ bike_datelimits <- function (bikedb, city)
 
 #' Extract summary statistics of database
 #'
-#' @param bikedb Path to the SQLite3 database 
+#' @param bikedb A string containing the path to the SQLite3 database.
+#' If no directory specified, it is presumed to be in \code{tempdir()}.
 #'
 #' @return A \code{data.frame} containing numbers of trips and stations along
 #' with times and dates of first and last trips for each city in database and a
@@ -208,6 +235,9 @@ bike_datelimits <- function (bikedb, city)
 #' @export
 bike_summary_stats <- function (bikedb)
 {
+    if (dirname (bikedb) == '.')
+        bikedb <- file.path (tempdir (), bikedb)
+
     cities <- bike_cities_in_db (bikedb)
 
     num_trips <- bike_db_totals (bikedb, TRUE)
@@ -241,7 +271,8 @@ bike_summary_stats <- function (bikedb)
 
 #' Extract daily trip counts for all stations
 #'
-#' @param bikedb Path to the SQLite3 database 
+#' @param bikedb A string containing the path to the SQLite3 database.
+#' If no directory specified, it is presumed to be in \code{tempdir()}.
 #' @param city City for which trips are to be counted - mandatory if database
 #' contains data for more than one city
 #' @param station Optional argument specifying bike station for which trips are
@@ -252,6 +283,9 @@ bike_summary_stats <- function (bikedb)
 #' @export
 bike_daily_trips <- function (bikedb, city, station)
 {
+    if (dirname (bikedb) == '.')
+        bikedb <- file.path (tempdir (), bikedb)
+
     cities <- bike_cities_in_db (bikedb)
     if (missing (city))
     {

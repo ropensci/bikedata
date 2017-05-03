@@ -6,7 +6,7 @@ test_that ('read and append data', {
                expect_silent (store_bikedata (data_dir = "..",
                                               bikedb = "testdb",
                                               quiet = TRUE))
-               invisible (file.remove ("testdb"))
+               invisible (file.remove (file.path (tempdir (), "testdb")))
 })
 
 store_bikedata (data_dir = "..", bikedb = "testdb")
@@ -31,7 +31,8 @@ store_bikedata (data_dir = "..", bikedb = "testdb")
 # Total |   1198    |   2191
 # London in particlar expands rapidly and so tests are all for values >= these
 test_that ('read data', {
-               db <- dplyr::src_sqlite ('testdb', create = F)
+               db <- dplyr::src_sqlite (file.path (tempdir (), 'testdb'), 
+                                        create = F)
 
                trips <- dplyr::collect (dplyr::tbl (db, 'trips'))
                expect_equal (dim (trips), c (1198, 11))
@@ -66,4 +67,4 @@ test_that ('db stats', {
                expect_true (sum (db_stats$num_stations) >= 4382)
 })
 
-invisible (file.remove ("testdb"))
+invisible (file.remove (file.path (tempdir (), "testdb")))

@@ -7,7 +7,8 @@
 bike_summary_stats(bikedb)
 }
 \arguments{
-\item{bikedb}{Path to the SQLite3 database}
+\item{bikedb}{A string containing the path to the SQLite3 database.
+If no directory specified, it is presumed to be in \code{tempdir()}.}
 }
 \value{
 A \code{data.frame} containing numbers of trips and stations along

@@ -9,4 +9,4 @@ test_that ('station data', {
                expect_true (nrow (st) >= 2191)
 })
 
-invisible (file.remove ("testdb"))
+invisible (file.remove (file.path (tempdir (), "testdb")))

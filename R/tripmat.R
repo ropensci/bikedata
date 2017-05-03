@@ -1,15 +1,15 @@
 #' Filter a trip matrix by date and/or time
 #'
-#' @param db The spatiallite database containing the trips (and established by a
-#' \code{dplyr::src_sqlite} call)
+#' @param bikedb A string containing the path to the SQLite3 database.
+#' If no directory specified, it is presumed to be in \code{tempdir()}.
 #' @param ... Additional arguments including start_time, end_time, start_date,
 #' end_date, and weekday
 #'
-#' @return A modified version of the \code{trips} table from \code{db}, filtered
-#' by the specified times
+#' @return A modified version of the \code{trips} table from \code{bikedb},
+#' filtered by the specified times
 #'
 #' @noRd
-filter_bike_tripmat <- function (db, ...)
+filter_bike_tripmat <- function (bikedb, ...)
 {
     # NOTE that this approach is much more efficient than the `dplyr::filter`
     # command, because that can only be applied to the entire datetime field:
@@ -67,7 +67,7 @@ filter_bike_tripmat <- function (db, ...)
 
     qry <- paste (qry, "ORDER BY s1.stn_id, s2.stn_id")
 
-    qryres <- RSQLite::dbSendQuery(db, qry)
+    qryres <- RSQLite::dbSendQuery (bikedb, qry)
     RSQLite::dbBind(qryres, as.list(qryargs))
     trips <- RSQLite::dbFetch(qryres)
     RSQLite::dbClearResult(qryres)
@@ -77,7 +77,8 @@ filter_bike_tripmat <- function (db, ...)
 
 #' Extract station-to-station trip matrix or data.frame from SQLite3 database
 #'
-#' @param bikedb Path to the SQLite3 database 
+#' @param bikedb A string containing the path to the SQLite3 database.
+#' If no directory specified, it is presumed to be in \code{tempdir()}.
 #' @param city City for which tripmat is to be aggregated
 #' @param start_date If given (as year, month, day) , extract only those records
 #' from and including this date
@@ -111,6 +112,9 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
                           start_time, end_time, weekday,
                           long=FALSE, quiet=FALSE)
 {
+    if (dirname (bikedb) == '.')
+        bikedb <- file.path (tempdir (), bikedb)
+
     db_cities <- bike_cities_in_db (bikedb)
     if (missing (city) & length (db_cities) > 1)
     {

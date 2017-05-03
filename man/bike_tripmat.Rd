@@ -8,7 +8,8 @@ bike_tripmat(bikedb, city, start_date, end_date, start_time, end_time, weekday,
   long = FALSE, quiet = FALSE)
 }
 \arguments{
-\item{bikedb}{Path to the SQLite3 database}
+\item{bikedb}{A string containing the path to the SQLite3 database.
+If no directory specified, it is presumed to be in \code{tempdir()}.}
 
 \item{city}{City for which tripmat is to be aggregated}
 

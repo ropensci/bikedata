@@ -16,7 +16,8 @@ cities. Only if this parameter is missing will data be downloaded.}
 
 \item{bikedb}{A string containing the path to the SQLite3 database to 
 use. If it doesn't already exist, it will be created, otherwise data
-will be appended to existing database.}
+will be appended to existing database.  If no directory specified,
+it is presumed to be in \code{tempdir()}.}
 
 \item{create_index}{If TRUE, creates an index on the start and end station
 IDs and start and stop times.}

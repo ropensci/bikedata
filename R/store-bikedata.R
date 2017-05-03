@@ -7,7 +7,8 @@
 #'          cities. Only if this parameter is missing will data be downloaded.
 #' @param bikedb A string containing the path to the SQLite3 database to 
 #'          use. If it doesn't already exist, it will be created, otherwise data
-#'          will be appended to existing database.
+#'          will be appended to existing database.  If no directory specified,
+#'          it is presumed to be in \code{tempdir()}.
 #' @param quiet If FALSE, progress is displayed on screen
 #' @param create_index If TRUE, creates an index on the start and end station
 #'          IDs and start and stop times.
@@ -64,6 +65,10 @@ store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
             stop ('data_dir contains no files')
         city <- get_bike_cities (data_dir)
     } 
+
+    # Finally, stored bikedb in tempdir if not otherwise specified
+    if (dirname (bikedb) == '.')
+        bikedb <- file.path (tempdir (), bikedb)
 
     city <- convert_city_names (city)
 
@@ -245,7 +250,8 @@ get_flist_city <- function (data_dir, city)
 #' Get list of files to be unzipped and added to database
 #'
 #' @param data_dir Directory containing data files
-#' @param bikedb A string containing the path to the SQLite3 database 
+#' @param bikedb A string containing the path to the SQLite3 database.
+#' If no directory specified, it is presumed to be in \code{tempdir()}.
 #' @param city City for which files are to be added to database
 #'
 #' @return List of three vectors of file names:
@@ -263,6 +269,9 @@ get_flist_city <- function (data_dir, city)
 #' @noRd
 bike_unzip_files <- function (data_dir, bikedb, city)
 {
+    if (dirname (bikedb) == '.')
+        bikedb <- file.path (tempdir (), bikedb)
+
     flist_zip <- get_flist_city (data_dir, city)
     existing_csv_files <- list.files (data_dir, pattern = '\\.csv$')
     flist_csv <- flist_rm <- NULL
@@ -303,6 +312,7 @@ bike_unzip_files <- function (data_dir, bikedb, city)
 #'
 #' @param data_dir Directory containing data files
 #' @param bikedb A string containing the path to the SQLite3 database 
+#' If no directory specified, it is presumed to be in \code{tempdir()}.
 #'
 #' @return List of three vectors of file names:
 #' \itemize{
@@ -323,6 +333,9 @@ bike_unzip_files <- function (data_dir, bikedb, city)
 #' @noRd
 bike_unzip_files_chicago <- function (data_dir, bikedb)
 {
+    if (dirname (bikedb) == '.')
+        bikedb <- file.path (tempdir (), bikedb)
+
     flist_zip <- get_flist_city (data_dir, city = 'ch')
     flist_zip <- get_new_datafiles (bikedb, flist_zip)
     existing_csv_files <- list.files (data_dir, pattern = "Divvy.*\\.csv")

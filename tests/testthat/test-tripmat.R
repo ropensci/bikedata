@@ -14,7 +14,7 @@ test_that ('tripmat-full', {
 })
 
 test_that ('tripmat-startday', {
-               expect_silent (tm <- bike_tripmat ("testdb", city = 'ny',
+               expect_silent (tm <- bike_tripmat (bikedb = "testdb", city = 'ny',
                                                   start_date = 20161201,
                                                   quiet = TRUE))
                expect_equal (dim (tm), c (233, 233))
@@ -113,4 +113,4 @@ test_that ('weekday', {
                              'weekday specification is ambiguous')
 })
 
-invisible (file.remove ("testdb"))
+invisible (file.remove (file.path (tempdir (), "testdb")))
