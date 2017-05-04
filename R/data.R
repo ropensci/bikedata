@@ -12,4 +12,4 @@
 #' @note These data are only used to convert to \code{.zip}-compressed files
 #' using \code{bike_write_test_data()}. These \code{.zip} files can be
 #' subsequently read into an SQLite3 database using \code{store_bikedata}.
-"bike_dat"
+"bike_test_data"

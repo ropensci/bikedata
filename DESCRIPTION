@@ -5,7 +5,9 @@ Authors@R: c(
     person("Mark", "Padgham", email="mark.padgham@email.com", role=c("aut", "cre")),
     person("Richard", "Ellison", role="aut"))
 Description: Load data from public hire bicycle systems.
+License: GPL-3 + file LICENSE
 Depends:
+    R (>= 2.10),
     RSQLite
 Imports:
     dplyr,
@@ -23,7 +25,6 @@ Suggests:
 LinkingTo: 
     BH,
     Rcpp
-License: GPL-3 + file LICENSE
 VignetteBuilder: knitr
 SystemRequirements: C++11
 NeedsCompilation: yes

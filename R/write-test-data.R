@@ -25,19 +25,20 @@
 bike_write_test_data <- function (data_dir = tempdir ())
 {
     # http://tolstoy.newcastle.edu.au/R/e17/devel/12/04/0876.html
-    # This works but brings tdat into the global env; 2nd option doesn't
-    # tdat <- get ("bike_dat", envir=.GlobalEnv) 
+    # This works but brings bike_test_data into the global env; 2nd option
+    # doesn't
+    #bike_test_data <- get ("bike_test_data", envir = .GlobalEnv) 
     env <- new.env ()
-    data ('bike_dat', envir=env)
+    data ('bike_test_data', envir=env)
 
     # chicago has to be done separately
     fdir <- file.path (data_dir, 'Divvy_Trips_sample')
     dir.create (fdir)
     fst <- file.path (data_dir, 'Divvy_Trips_sample/Divvy_Stations.csv')
     ftr <- file.path (data_dir, 'Divvy_Trips_sample/Divvy_Trips_sample.csv')
-    write.csv (env$bike_dat$ch_st, file = fst,
+    write.csv (env$bike_test_data$ch_st, file = fst,
                quote = FALSE, row.names = FALSE, na = '')
-    write.csv (env$bike_dat$ch_tr, file = ftr,
+    write.csv (env$bike_test_data$ch_tr, file = ftr,
                quote = TRUE, row.names = FALSE, na = '')
     zip (file.path (data_dir, 'sample-divvy-trips.zip'), fdir)
     invisible (file.remove (fst, ftr, fdir))
@@ -60,7 +61,7 @@ bike_write_test_data <- function (data_dir = tempdir ())
 
     for (i in seq (csvs))
     {
-        dati <- env$bike_dat [[cities [i]]]
+        dati <- env$bike_test_data [[cities [i]]]
         write.csv (dati, file = csvs [i], quote = quotes [i], na = '',
                    row.names = FALSE)
         # Note: Output of zip can't be suppressed because it's a 'system2()'
