@@ -23,14 +23,12 @@ A \code{data.frame} containing daily dates and total numbers of trips
 Extract daily trip counts for all stations
 }
 \examples{
-\dontrun{
 bike_write_test_data (data_dir = '.')
 # dl_bikedata (city = 'la', data_dir = '.') # or download some real data!
 store_bikedata (data_dir = '.', bikedb = 'testdb')
-bike_daily_trips (bikedb, city = 'ny')
+bike_daily_trips (bikedb = 'testdb', city = 'ny')
 bike_rm_test_data (data_dir = '.')
 bike_rm_db ('testdb')
 # don't forget to remove real data!
 # file.remove (list.files ('.', pattern = '.zip'))
-}
 }

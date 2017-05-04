@@ -24,12 +24,12 @@ bike_write_test_data (data_dir = data_dir)
 # or download some real data!
 # dl_bikedata (city = 'la', data_dir = data_dir)
 bikedb <- file.path (data_dir, 'testdb')
-# store_bikedata (data_dir = data_dir, bikedb = bikedb)
+store_bikedata (data_dir = data_dir, bikedb = bikedb)
 # bike_latest_files (bikedb)
 # All false because test data are not current, but would pass with real data
 
 bike_rm_test_data (data_dir = data_dir)
-# bike_rm_db (bikedb)
+bike_rm_db (bikedb)
 # don't forget to remove real data!
 # file.remove (list.files (data_dir, pattern = '.zip'))
 }

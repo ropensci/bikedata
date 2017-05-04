@@ -5,6 +5,6 @@
 ^README\.md$
 ^makefile$
 ^vignettes/makefile$
-^data/*.*
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^aaa.Rmd$

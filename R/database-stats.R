@@ -147,12 +147,12 @@ bike_station_dates <- function (bikedb, city)
 #' # or download some real data!
 #' # dl_bikedata (city = 'la', data_dir = data_dir)
 #' bikedb <- file.path (data_dir, 'testdb')
-#' # store_bikedata (data_dir = data_dir, bikedb = bikedb)
+#' store_bikedata (data_dir = data_dir, bikedb = bikedb)
 #' # bike_latest_files (bikedb)
 #' # All false because test data are not current, but would pass with real data
 #' 
 #' bike_rm_test_data (data_dir = data_dir)
-#' # bike_rm_db (bikedb)
+#' bike_rm_db (bikedb)
 #' # don't forget to remove real data!
 #' # file.remove (list.files (data_dir, pattern = '.zip'))
 bike_latest_files <- function (bikedb)
@@ -191,7 +191,6 @@ bike_latest_files <- function (bikedb)
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' bike_write_test_data (data_dir = '.')
 #' # dl_bikedata (city = 'la', data_dir = '.') # or download some real data!
 #' store_bikedata (data_dir = '.', bikedb = 'testdb')
@@ -202,7 +201,6 @@ bike_latest_files <- function (bikedb)
 #' bike_rm_db ('testdb')
 #' # don't forget to remove real data!
 #' # file.remove (list.files ('.', pattern = '.zip'))
-#' }
 bike_datelimits <- function (bikedb, city)
 {
     if (!grepl ('/', bikedb) | !grepl ('*//*', bikedb))
@@ -240,7 +238,6 @@ bike_datelimits <- function (bikedb, city)
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' bike_write_test_data (data_dir = '.')
 #' # dl_bikedata (city = 'la', data_dir = '.') # or download some real data!
 #' store_bikedata (data_dir = '.', bikedb = 'testdb')
@@ -249,7 +246,6 @@ bike_datelimits <- function (bikedb, city)
 #' bike_rm_db ('testdb')
 #' # don't forget to remove real data!
 #' # file.remove (list.files ('.', pattern = '.zip'))
-#' }
 bike_summary_stats <- function (bikedb)
 {
     if (!grepl ('/', bikedb) | !grepl ('*//*', bikedb))
@@ -300,16 +296,14 @@ bike_summary_stats <- function (bikedb)
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' bike_write_test_data (data_dir = '.')
 #' # dl_bikedata (city = 'la', data_dir = '.') # or download some real data!
 #' store_bikedata (data_dir = '.', bikedb = 'testdb')
-#' bike_daily_trips (bikedb, city = 'ny')
+#' bike_daily_trips (bikedb = 'testdb', city = 'ny')
 #' bike_rm_test_data (data_dir = '.')
 #' bike_rm_db ('testdb')
 #' # don't forget to remove real data!
 #' # file.remove (list.files ('.', pattern = '.zip'))
-#' }
 bike_daily_trips <- function (bikedb, city, station)
 {
     if (!grepl ('/', bikedb) | !grepl ('*//*', bikedb))
