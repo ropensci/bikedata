@@ -88,9 +88,9 @@ bike_write_test_data <- function (data_dir = tempdir ())
 #' list.files (tempdir ())
 #' bike_rm_test_data ()
 #'
-#' bike_write_test_data (data_dir = '.')
+#' bike_write_test_data (data_dir = getwd ())
 #' list.files ()
-#' bike_rm_test_data (data_dir = '.')
+#' bike_rm_test_data (data_dir = getwd ())
 bike_rm_test_data <- function (data_dir = tempdir ())
 {
     zips <- c ('sample-hubway-trip-data.zip',

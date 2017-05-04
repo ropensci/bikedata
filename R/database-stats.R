@@ -142,21 +142,19 @@ bike_station_dates <- function (bikedb, city)
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' bike_write_test_data (data_dir = '.')
-#' store_bikedata (data_dir = '.', bikedb = 'testdb')
-#' # bike_latest_files ('testdb') # All false because test data are not current
+#' data_dir <- getwd ()
+#' bike_write_test_data (data_dir = data_dir)
+#' # or download some real data!
+#' # dl_bikedata (city = 'la', data_dir = data_dir)
+#' bikedb <- file.path (data_dir, 'testdb')
+#' #' store_bikedata (data_dir = data_dir, bikedb = bikedb)
+#' # bike_latest_files (bikedb)
+#' # All false because test data are not current, but would pass with real data
 #' 
-#' # But this would pass with some real data:
-#' # dl_bikedata (city = 'la', data_dir = '.') # or download some real data!
-#' # store_bikedata (data_dir = '.', bikedb = 'testdb')
-#' # bike_latest_files ('testdb')
-#' 
-#' bike_rm_test_data (data_dir = '.')
-#' bike_rm_db ('testdb')
+#' bike_rm_test_data (data_dir = data_dir)
+#' bike_rm_db (bikedb)
 #' # don't forget to remove real data!
-#' # file.remove (list.files ('.', pattern = '.zip'))
-#' }
+#' # file.remove (list.files (data_dir, pattern = '.zip'))
 bike_latest_files <- function (bikedb)
 {
     if (!grepl ('/', bikedb) | !grepl ('*//*', bikedb))

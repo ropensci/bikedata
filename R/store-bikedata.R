@@ -69,7 +69,7 @@ store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
     # Finally, stored bikedb in tempdir if not otherwise specified, noting that
     # dirname (bikedb) == '.' can not be used because that prevents
     # bikedb = "./bikedb", so grepl must be used instead.
-    if (!grepl ('/', bikedb) | !grepl ('*//*', bikedb))
+    if (!(grepl ('/', bikedb) | grepl ('*//*', bikedb)))
         bikedb <- file.path (tempdir (), bikedb)
 
     city <- convert_city_names (city)
@@ -304,7 +304,7 @@ bike_unzip_files <- function (data_dir, bikedb, city)
     {
         flist_csv <- get_new_datafiles (bikedb, existing_csv_files)
         if (length (flist_csv) > 0)
-            flist_csv <- paste0 (data_dir, '/', flist_csv)
+            flist_csv <- file.path (data_dir, basename (flist_csv))
     }
 
     if (length (flist_zip) > 0)
@@ -313,17 +313,17 @@ bike_unzip_files <- function (data_dir, bikedb, city)
         for (f in flist_zip)
         {
             fi <- unzip (f, list = TRUE)$Name
-            flist_csv <- c (flist_csv, fi)
+            flist_csv <- c (flist_csv, basename (fi))
             if (!all (fi %in% existing_csv_files))
             {
-                unzip (f, exdir = data_dir)
+                unzip (f, exdir = data_dir, junkpaths = TRUE)
                 flist_rm <- c (flist_rm, fi)
             }
         }
         if (length (flist_csv) > 0)
-            flist_csv <- paste0 (data_dir, '/', flist_csv)
+            flist_csv <- file.path (data_dir, basename (flist_csv))
         if (length (flist_rm) > 0)
-            flist_rm <- paste0 (data_dir, '/', flist_rm)
+            flist_rm <- file.path (data_dir, basename (flist_rm))
     }
 
     return (list (flist_zip = flist_zip,
@@ -384,10 +384,11 @@ bike_unzip_files_chicago <- function (data_dir, bikedb)
                     flist_rm <- c (flist_rm, basename (fi_stns))
                 }
         }
-        flist_csv_trips <- paste0 (data_dir, '/', flist_csv_trips)
-        flist_csv_stns <- paste0 (data_dir, '/', flist_csv_stns)
+        flist_csv_trips <- file.path (data_dir, basename (flist_csv_trips))
+        flist_csv_trips <- file.path (data_dir, basename (flist_csv_trips))
+        flist_csv_stns <- file.path (data_dir, basename (flist_csv_stns))
         if (length (flist_rm) > 0)
-            flist_rm <- paste0 (data_dir, '/', flist_rm)
+            flist_rm <- file.path (data_dir, basename (flist_rm))
     }
     return (list (flist_zip = flist_zip,
                   flist_csv = flist_csv_trips,
