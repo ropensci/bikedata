@@ -12,19 +12,20 @@ bike_write_test_data(data_dir = tempdir())
 removed with \code{bike_rm_test_data()}.}
 }
 \description{
-Writes test data bundled with package to zip files
-}
-\note{
-The entire package works by reading zip-compressed data files provided
-by the various hire bicycle systems. Sample data are included with the
-package, but these need to be written to zip-compressed archives in order for
-the package to be able to use them. This function enables the package to be
-tested, both for general use, and for the \code{testhtat} routines.
+Writes very small test files to disk that can be used to test the package.
+The entire package works by reading zip-compressed data files provided by the
+various hire bicycle systems. This function generates some equivalent data
+that can be read into an \code{SQLite} database by the
+\code{store_bikedata()} function, so that all other package functionality can
+then be tested from the resultant database. This function is also used in the
+examples of all other functions.
 }
 \examples{
-\dontrun{
 bike_write_test_data ()
 list.files (tempdir ())
 bike_rm_test_data ()
-}
+
+bike_write_test_data (data_dir = '.')
+list.files ()
+bike_rm_test_data (data_dir = '.')
 }

@@ -10,13 +10,19 @@ bike_rm_test_data(data_dir = tempdir())
 \item{data_dir}{Directory in which data were extracted.}
 }
 \description{
-Removes test data written with 'bike_write_test_data()'
+The function \code{bike_write_test_data()} writes several small
+zip-compressed files to disk. The default location is \code{tempdir()}, in
+which case these files will be automatically removed on termination of
+current R session. If, however, any other value for \code{data_dir} is passed
+to \code{bike_write_test_data()}, then the resultant files ought be deleted
+by calling this function.
 }
 \examples{
-\dontrun{
-data (bike_dat)
 bike_write_test_data ()
 list.files (tempdir ())
 bike_rm_test_data ()
-}
+
+bike_write_test_data (data_dir = '.')
+list.files ()
+bike_rm_test_data (data_dir = '.')
 }
