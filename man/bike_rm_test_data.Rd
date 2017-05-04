@@ -18,7 +18,6 @@ to \code{bike_write_test_data()}, then the resultant files ought be deleted
 by calling this function.
 }
 \examples{
-\dontrun{
 bike_write_test_data ()
 list.files (tempdir ())
 bike_rm_test_data ()
@@ -26,5 +25,4 @@ bike_rm_test_data ()
 bike_write_test_data (data_dir = '.')
 list.files ()
 bike_rm_test_data (data_dir = '.')
-}
 }

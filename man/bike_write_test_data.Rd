@@ -21,7 +21,6 @@ then be tested from the resultant database. This function is also used in the
 examples of all other functions.
 }
 \examples{
-\dontrun{
 bike_write_test_data ()
 list.files (tempdir ())
 bike_rm_test_data ()
@@ -29,5 +28,4 @@ bike_rm_test_data ()
 bike_write_test_data (data_dir = '.')
 list.files ()
 bike_rm_test_data (data_dir = '.')
-}
 }
