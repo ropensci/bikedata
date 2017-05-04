@@ -19,3 +19,15 @@ versions.
 \description{
 Extract summary statistics of database
 }
+\examples{
+\dontrun{
+bike_write_test_data (data_dir = '.')
+# dl_bikedata (city = 'la', data_dir = '.') # or download some real data!
+store_bikedata (data_dir = '.', bikedb = 'testdb')
+bike_summary_stats ('testdb')
+bike_rm_test_data (data_dir = '.')
+bike_rm_db ('testdb')
+# don't forget to remove real data!
+# file.remove (list.files ('.', pattern = '.zip'))
+}
+}

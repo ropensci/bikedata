@@ -66,8 +66,10 @@ store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
         city <- get_bike_cities (data_dir)
     } 
 
-    # Finally, stored bikedb in tempdir if not otherwise specified
-    if (dirname (bikedb) == '.')
+    # Finally, stored bikedb in tempdir if not otherwise specified, noting that
+    # dirname (bikedb) == '.' can not be used because that prevents
+    # bikedb = "./bikedb", so grepl must be used instead.
+    if (!grepl ('/', bikedb) | !grepl ('*//*', bikedb))
         bikedb <- file.path (tempdir (), bikedb)
 
     city <- convert_city_names (city)
@@ -172,6 +174,30 @@ store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
     return (ntrips)
 }
 
+#' Remove SQLite3 database generated with 'store_bikedat()'
+#'
+#' If no directory is specified the \code{bikedb} argument passed to
+#' \code{store_bikedata}, the database is created in \code{tempdir()}. This
+#' function provides a convenient way to remove the database in such cases by
+#' simply passing the name.
+#'
+#' @param bikedb A string containing the path to the SQLite3 database.
+#' If no directory specified, it is presumed to be in \code{tempdir()}.
+#'
+#' @return TRUE if \code{bikedb} successfully removed; otherwise FALSE
+#'
+#' @export
+bike_rm_db <- function (bikedb)
+{
+    if (!grepl ('/', bikedb) | !grepl ('*//*', bikedb))
+        bikedb <- file.path (tempdir (), bikedb)
+    ret <- FALSE
+    if (file.exists (bikedb))
+        ret <- file.remove (bikedb)
+
+    return (ret)
+}
+
 #' Get list of cities from files in specified data directory
 #'
 #' @param data_dir A character vector giving the directory containing the
@@ -269,9 +295,6 @@ get_flist_city <- function (data_dir, city)
 #' @noRd
 bike_unzip_files <- function (data_dir, bikedb, city)
 {
-    if (dirname (bikedb) == '.')
-        bikedb <- file.path (tempdir (), bikedb)
-
     flist_zip <- get_flist_city (data_dir, city)
     existing_csv_files <- list.files (data_dir, pattern = '\\.csv$')
     flist_csv <- flist_rm <- NULL
@@ -333,9 +356,6 @@ bike_unzip_files <- function (data_dir, bikedb, city)
 #' @noRd
 bike_unzip_files_chicago <- function (data_dir, bikedb)
 {
-    if (dirname (bikedb) == '.')
-        bikedb <- file.path (tempdir (), bikedb)
-
     flist_zip <- get_flist_city (data_dir, city = 'ch')
     flist_zip <- get_new_datafiles (bikedb, flist_zip)
     existing_csv_files <- list.files (data_dir, pattern = "Divvy.*\\.csv")

@@ -20,3 +20,17 @@ trips
 \description{
 Extract date-time limits from trip database
 }
+\examples{
+\dontrun{
+bike_write_test_data (data_dir = '.')
+# dl_bikedata (city = 'la', data_dir = '.') # or download some real data!
+store_bikedata (data_dir = '.', bikedb = 'testdb')
+bike_datelimits ('testdb') # overall limits for all cities
+bike_datelimits ('testdb', city = 'NYC') 
+bike_datelimits ('testdb', city = 'los angeles') 
+bike_rm_test_data (data_dir = '.')
+bike_rm_db ('testdb')
+# don't forget to remove real data!
+# file.remove (list.files ('.', pattern = '.zip'))
+}
+}

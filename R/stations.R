@@ -8,7 +8,7 @@
 #' @export
 bike_stations <- function (bikedb)
 {
-    if (dirname (bikedb) == '.')
+    if (!grepl ('/', bikedb) | !grepl ('*//*', bikedb))
         bikedb <- file.path (tempdir (), bikedb)
 
     db <- dplyr::src_sqlite (bikedb, create = F)

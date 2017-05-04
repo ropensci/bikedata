@@ -3,6 +3,7 @@
 export(bike_daily_trips)
 export(bike_datelimits)
 export(bike_latest_files)
+export(bike_rm_db)
 export(bike_rm_test_data)
 export(bike_stations)
 export(bike_summary_stats)

@@ -15,6 +15,7 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' bike_write_test_data ()
 #' list.files (tempdir ())
 #' bike_rm_test_data ()
@@ -22,6 +23,7 @@
 #' bike_write_test_data (data_dir = '.')
 #' list.files ()
 #' bike_rm_test_data (data_dir = '.')
+#' }
 bike_write_test_data <- function (data_dir = tempdir ())
 {
     # http://tolstoy.newcastle.edu.au/R/e17/devel/12/04/0876.html
@@ -84,6 +86,7 @@ bike_write_test_data <- function (data_dir = tempdir ())
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' bike_write_test_data ()
 #' list.files (tempdir ())
 #' bike_rm_test_data ()
@@ -91,6 +94,7 @@ bike_write_test_data <- function (data_dir = tempdir ())
 #' bike_write_test_data (data_dir = '.')
 #' list.files ()
 #' bike_rm_test_data (data_dir = '.')
+#' }
 bike_rm_test_data <- function (data_dir = tempdir ())
 {
     zips <- c ('sample-hubway-trip-data.zip',
