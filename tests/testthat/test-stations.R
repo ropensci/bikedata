@@ -3,12 +3,14 @@ context ("stations")
 require (testthat)
 
 #bike_write_test_data ()
-store_bikedata (data_dir = "..", bikedb = "testdb")
+bikedb <- file.path (getwd (), "testdb")
+store_bikedata (data_dir = "..", bikedb = bikedb)
 
 test_that ('station data', {
-               st <- bike_stations ('testdb')
+               st <- bike_stations (bikedb)
                expect_true (nrow (st) >= 2191)
 })
 
 #bike_rm_test_data ()
-invisible (file.remove (file.path (tempdir (), "testdb")))
+#invisible (file.remove (file.path (tempdir (), "testdb")))
+invisible (file.remove (bikedb))

@@ -20,12 +20,15 @@ versions.
 Extract summary statistics of database
 }
 \examples{
-bike_write_test_data (data_dir = '.')
+data_dir <- tempdir ()
+bike_write_test_data (data_dir = data_dir)
 # dl_bikedata (city = 'la', data_dir = '.') # or download some real data!
-store_bikedata (data_dir = '.', bikedb = 'testdb')
+bikedb <- file.path (data_dir, 'testdb')
+store_bikedata (data_dir = data_dir, bikedb = bikedb)
 bike_summary_stats ('testdb')
-bike_rm_test_data (data_dir = '.')
-bike_rm_db ('testdb')
+
+bike_rm_test_data (data_dir = data_dir)
+bike_rm_db (bikedb)
 # don't forget to remove real data!
 # file.remove (list.files ('.', pattern = '.zip'))
 }

@@ -18,7 +18,7 @@ get_fake_trip_files <- function (bucket)
                  if (grepl ('zip', i))
                      strsplit (strsplit (as.character (i), "<Key>") [[1]] [2],
                                "</Key>") [[1]] [1] )
-    files <- unlist (files)
+    files <- file.path (getwd (), unlist (files))
     if (bucket == 'tripdata')
         files <- files [2:length (files)]
     for (f in files)
@@ -29,21 +29,21 @@ get_fake_trip_files <- function (bucket)
 
 test_that ('dl_bikedata nyc', {
                files <- get_fake_trip_files (bucket = 'tripdata')
-               expect_message (dl_bikedata (city = 'nyc', data_dir = '.'),
+               expect_message (dl_bikedata (city = 'nyc', data_dir = getwd ()),
                                'All data files already exist')
                invisible (file.remove (files))
 })
 
 test_that ('dl_bikedata dc', {
                files <- get_fake_trip_files (bucket = "capitalbikeshare-data")
-               expect_message (dl_bikedata (city = 'dc', data_dir = '.'),
+               expect_message (dl_bikedata (city = 'dc', data_dir = getwd ()),
                                'All data files already exist')
                invisible (file.remove (files))
 })
 
 test_that ('dl_bikedata boston', {
                files <- get_fake_trip_files (bucket = "hubway-data")
-               expect_message (dl_bikedata (city = 'boston', data_dir = '.'),
+               expect_message (dl_bikedata (city = 'boston', data_dir = getwd ()),
                                'All data files already exist')
                invisible (file.remove (files))
 })
@@ -53,7 +53,7 @@ test_that ('dl_bikedata la', {
                            "Metro_trips_Q4_2016.zip",
                            "la_metro_gbfs_trips_Q1_2017.zip")
                for (f in files) write ('a', file = f)
-               expect_message (dl_bikedata (city = 'la', data_dir = '.'),
+               expect_message (dl_bikedata (city = 'la', data_dir = getwd ()),
                                'All data files already exist')
                invisible (file.remove (files))
 })
@@ -64,8 +64,9 @@ test_that ('dl_bikedata chicago', {
                    xml2::xml_find_all (., ".//aside") %>%
                    xml2::xml_find_all (., ".//a")
                files <- unique (basename (xml2::xml_attr (nodes, "href")))
+               files <- file.path (getwd (), files)
                for (f in files) write ('a', file = f)
-               expect_message (dl_bikedata (city = 'chicago', data_dir = '.'),
+               expect_message (dl_bikedata (city = 'chicago', data_dir = getwd ()),
                                'All data files already exist')
                invisible (file.remove (files))
 })

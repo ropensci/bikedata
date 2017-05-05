@@ -19,7 +19,7 @@ could be run to update the database.
 Check whether files in database are the latest published files
 }
 \examples{
-data_dir <- getwd ()
+data_dir <- tempdir ()
 bike_write_test_data (data_dir = data_dir)
 # or download some real data!
 # dl_bikedata (city = 'la', data_dir = data_dir)

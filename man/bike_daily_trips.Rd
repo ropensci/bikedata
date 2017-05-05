@@ -23,12 +23,15 @@ A \code{data.frame} containing daily dates and total numbers of trips
 Extract daily trip counts for all stations
 }
 \examples{
-bike_write_test_data (data_dir = '.')
+data_dir <- tempdir ()
+bike_write_test_data (data_dir = data_dir)
 # dl_bikedata (city = 'la', data_dir = '.') # or download some real data!
-store_bikedata (data_dir = '.', bikedb = 'testdb')
+bikedb <- file.path (data_dir, 'testdb')
+store_bikedata (data_dir = data_dir, bikedb = bikedb)
 bike_daily_trips (bikedb = 'testdb', city = 'ny')
-bike_rm_test_data (data_dir = '.')
-bike_rm_db ('testdb')
+
+bike_rm_test_data (data_dir = data_dir)
+bike_rm_db (bikedb)
 # don't forget to remove real data!
 # file.remove (list.files ('.', pattern = '.zip'))
 }

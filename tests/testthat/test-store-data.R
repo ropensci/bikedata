@@ -4,15 +4,17 @@ require (testthat)
 
 test_that ('read and append data', {
                #bike_write_test_data ()
+               bikedb <- file.path (getwd (), "testdb")
                expect_silent (store_bikedata (data_dir = "..",
-                                              bikedb = "testdb",
+                                              bikedb = bikedb,
                                               quiet = TRUE))
                #bike_rm_test_data ()
-               invisible (file.remove (file.path (tempdir (), "testdb")))
+               invisible (file.remove (bikedb))
 })
 
 #bike_write_test_data ()
-store_bikedata (data_dir = "..", bikedb = "testdb")
+bikedb <- file.path (getwd (), "testdb")
+store_bikedata (data_dir = "..", bikedb = bikedb)
 # NOTE:
 # All files have 200 trips, but LA stations are read from trips, and has 2 trips
 # that end at station#3000 which has no lat-lon, so there are only 198 trips and
@@ -34,8 +36,7 @@ store_bikedata (data_dir = "..", bikedb = "testdb")
 # Total |   1198    |   2191
 # London in particlar expands rapidly and so tests are all for values >= these
 test_that ('read data', {
-               db <- dplyr::src_sqlite (file.path (tempdir (), 'testdb'), 
-                                        create = F)
+               db <- dplyr::src_sqlite (bikedb, create = F)
 
                trips <- dplyr::collect (dplyr::tbl (db, 'trips'))
                expect_equal (dim (trips), c (1198, 11))
@@ -52,13 +53,13 @@ test_that ('read data', {
 })
 
 test_that ('date limits', {
-               x <- bike_datelimits ('testdb')
+               x <- bike_datelimits (bikedb)
                expect_is (x, 'character')
                expect_length (x, 2)
 })
 
 test_that ('db stats', {
-               db_stats <- bike_summary_stats ('testdb')
+               db_stats <- bike_summary_stats (bikedb)
                expect_is (db_stats, 'data.frame')
                expect_equal (names (db_stats), c ('num_trips', 'num_stations',
                                                   'first_trip', 'last_trip',
@@ -71,4 +72,4 @@ test_that ('db stats', {
 })
 
 #bike_rm_test_data ()
-invisible (file.remove (file.path (tempdir (), "testdb")))
+invisible (file.remove (bikedb))

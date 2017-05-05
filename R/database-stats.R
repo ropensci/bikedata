@@ -100,13 +100,13 @@ get_new_datafiles <- function (bikedb, flist_zip)
 #' @noRd
 bike_station_dates <- function (bikedb, city)
 {
-    db <- RSQLite::dbConnect(SQLite(), bikedb, create = FALSE)
+    db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
     qry <- paste0 ("SELECT MIN (STRFTIME('%Y-%m-%d', start_time)) AS 'first',",
                    "MAX (STRFTIME('%Y-%m-%d', start_time)) AS 'last',",
                    "start_station_id AS 'station' FROM trips WHERE city = '",
                    city, "' GROUP BY start_station_id")
-    dates <- RSQLite::dbGetQuery(db, qry)
-    RSQLite::dbDisconnect(db)
+    dates <- RSQLite::dbGetQuery (db, qry)
+    RSQLite::dbDisconnect (db)
     # re-order stations to numeric order
     stn <- as.numeric (substr (dates$station, 3, 10)) # 10 = arbitrarily length
     dates <- dates [order (stn), c (3, 1, 2)] # station ID in 1st column
@@ -142,7 +142,7 @@ bike_station_dates <- function (bikedb, city)
 #' @export
 #'
 #' @examples
-#' data_dir <- getwd ()
+#' data_dir <- tempdir ()
 #' bike_write_test_data (data_dir = data_dir)
 #' # or download some real data!
 #' # dl_bikedata (city = 'la', data_dir = data_dir)
@@ -191,14 +191,17 @@ bike_latest_files <- function (bikedb)
 #' @export
 #'
 #' @examples
-#' bike_write_test_data (data_dir = '.')
+#' data_dir <- tempdir ()
+#' bike_write_test_data (data_dir = data_dir)
 #' # dl_bikedata (city = 'la', data_dir = '.') # or download some real data!
-#' store_bikedata (data_dir = '.', bikedb = 'testdb')
+#' bikedb <- file.path (data_dir, 'testdb')
+#' store_bikedata (data_dir = data_dir, bikedb = bikedb)
 #' bike_datelimits ('testdb') # overall limits for all cities
 #' bike_datelimits ('testdb', city = 'NYC') 
 #' bike_datelimits ('testdb', city = 'los angeles') 
-#' bike_rm_test_data (data_dir = '.')
-#' bike_rm_db ('testdb')
+#' 
+#' bike_rm_test_data (data_dir = data_dir)
+#' bike_rm_db (bikedb)
 #' # don't forget to remove real data!
 #' # file.remove (list.files ('.', pattern = '.zip'))
 bike_datelimits <- function (bikedb, city)
@@ -238,12 +241,15 @@ bike_datelimits <- function (bikedb, city)
 #' @export
 #'
 #' @examples
-#' bike_write_test_data (data_dir = '.')
+#' data_dir <- tempdir ()
+#' bike_write_test_data (data_dir = data_dir)
 #' # dl_bikedata (city = 'la', data_dir = '.') # or download some real data!
-#' store_bikedata (data_dir = '.', bikedb = 'testdb')
+#' bikedb <- file.path (data_dir, 'testdb')
+#' store_bikedata (data_dir = data_dir, bikedb = bikedb)
 #' bike_summary_stats ('testdb')
-#' bike_rm_test_data (data_dir = '.')
-#' bike_rm_db ('testdb')
+#' 
+#' bike_rm_test_data (data_dir = data_dir)
+#' bike_rm_db (bikedb)
 #' # don't forget to remove real data!
 #' # file.remove (list.files ('.', pattern = '.zip'))
 bike_summary_stats <- function (bikedb)
@@ -296,12 +302,15 @@ bike_summary_stats <- function (bikedb)
 #' @export
 #'
 #' @examples
-#' bike_write_test_data (data_dir = '.')
+#' data_dir <- tempdir ()
+#' bike_write_test_data (data_dir = data_dir)
 #' # dl_bikedata (city = 'la', data_dir = '.') # or download some real data!
-#' store_bikedata (data_dir = '.', bikedb = 'testdb')
+#' bikedb <- file.path (data_dir, 'testdb')
+#' store_bikedata (data_dir = data_dir, bikedb = bikedb)
 #' bike_daily_trips (bikedb = 'testdb', city = 'ny')
-#' bike_rm_test_data (data_dir = '.')
-#' bike_rm_db ('testdb')
+#' 
+#' bike_rm_test_data (data_dir = data_dir)
+#' bike_rm_db (bikedb)
 #' # don't forget to remove real data!
 #' # file.remove (list.files ('.', pattern = '.zip'))
 bike_daily_trips <- function (bikedb, city, station)
