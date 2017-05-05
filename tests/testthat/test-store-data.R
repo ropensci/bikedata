@@ -3,18 +3,20 @@ context ("store data in db")
 require (testthat)
 
 test_that ('read and append data', {
-               #bike_write_test_data ()
+               data_dir <- getwd ()
+               bike_write_test_data (data_dir = data_dir)
                bikedb <- file.path (getwd (), "testdb")
-               expect_silent (store_bikedata (data_dir = "..",
+               expect_silent (store_bikedata (data_dir = data_dir,
                                               bikedb = bikedb,
                                               quiet = TRUE))
-               #bike_rm_test_data ()
+               bike_rm_test_data (data_dir = data_dir)
                invisible (file.remove (bikedb))
 })
 
-#bike_write_test_data ()
+data_dir <- getwd ()
+bike_write_test_data (data_dir = data_dir)
 bikedb <- file.path (getwd (), "testdb")
-store_bikedata (data_dir = "..", bikedb = bikedb)
+store_bikedata (data_dir = data_dir, bikedb = bikedb)
 # NOTE:
 # All files have 200 trips, but LA stations are read from trips, and has 2 trips
 # that end at station#3000 which has no lat-lon, so there are only 198 trips and
@@ -73,3 +75,4 @@ test_that ('db stats', {
 
 #bike_rm_test_data ()
 invisible (file.remove (bikedb))
+bike_rm_test_data (data_dir = data_dir)
