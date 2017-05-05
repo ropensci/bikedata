@@ -3,10 +3,14 @@ context ("stations")
 require (testthat)
 
 data_dir <- getwd ()
-bike_write_test_data (data_dir = data_dir)
+# CRAN does not permit files to be removed, so this only writes them if they
+# don't already exist
+nf <- length (list.files (data_dir, pattern = '.zip'))
+if (nf < 6)
+    bike_write_test_data (data_dir = data_dir)
 bikedb <- file.path (getwd (), "testdb")
-store_bikedata (data_dir = data_dir, bikedb = bikedb)
-#store_bikedata (data_dir = "..", bikedb = bikedb)
+if (!exists (bikedb))
+    store_bikedata (data_dir = data_dir, bikedb = bikedb)
 
 test_that ('station data', {
                st <- bike_stations (bikedb)
@@ -14,5 +18,5 @@ test_that ('station data', {
 })
 
 #invisible (file.remove (file.path (tempdir (), "testdb")))
-bike_rm_test_data (data_dir = data_dir)
+n <- bike_rm_test_data (data_dir = data_dir)
 invisible (file.remove (bikedb))

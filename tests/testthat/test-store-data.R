@@ -3,20 +3,29 @@ context ("store data in db")
 require (testthat)
 
 test_that ('read and append data', {
+               # CRAN does not permit files to be removed, so this only writes
+               # them if they don't already exist
                data_dir <- getwd ()
-               bike_write_test_data (data_dir = data_dir)
+               nf <- length (list.files (data_dir, pattern = '.zip'))
+               if (nf < 6)
+                   bike_write_test_data (data_dir = data_dir)
                bikedb <- file.path (getwd (), "testdb")
-               expect_silent (store_bikedata (data_dir = data_dir,
-                                              bikedb = bikedb,
-                                              quiet = TRUE))
+               if (!exists (bikedb))
+                   expect_silent (store_bikedata (data_dir = data_dir, 
+                                                  bikedb = bikedb,
+                                                  quiet = TRUE))
                bike_rm_test_data (data_dir = data_dir)
                invisible (file.remove (bikedb))
 })
 
 data_dir <- getwd ()
-bike_write_test_data (data_dir = data_dir)
+nf <- length (list.files (data_dir, pattern = '.zip'))
+if (nf < 6)
+    bike_write_test_data (data_dir = data_dir)
 bikedb <- file.path (getwd (), "testdb")
-store_bikedata (data_dir = data_dir, bikedb = bikedb)
+if (!exists (bikedb))
+    store_bikedata (data_dir = data_dir, bikedb = bikedb)
+
 # NOTE:
 # All files have 200 trips, but LA stations are read from trips, and has 2 trips
 # that end at station#3000 which has no lat-lon, so there are only 198 trips and

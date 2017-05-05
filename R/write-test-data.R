@@ -82,6 +82,8 @@ bike_write_test_data <- function (data_dir = tempdir ())
 #'
 #' @param data_dir Directory in which data were extracted.
 #'
+#' @return Number of files successfully removed, which should equal six.
+#'
 #' @export
 #'
 #' @examples
@@ -101,7 +103,10 @@ bike_rm_test_data <- function (data_dir = tempdir ())
                'sample-JourneyDataExtract-london.csv.zip',
                'sample-citibike-tripdata.zip')
     zips <- file.path (data_dir, zips)
+    res <- NULL
     for (z in zips)
         if (file.exists (z))
-            invisible (file.remove (z))
+            res <- c (res, file.remove (z))
+
+    return (length (res))
 }
