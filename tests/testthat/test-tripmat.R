@@ -2,15 +2,7 @@ context ("tripmat")
 
 require (testthat)
 
-# CRAN does not permit files to be removed, so this only writes them if they
-# don't already exist
-data_dir <- getwd ()
-nf <- length (list.files (data_dir, pattern = '.zip'))
-if (nf < 6)
-    bike_write_test_data (data_dir = data_dir)
 bikedb <- file.path (getwd (), "testdb")
-if (!exists (bikedb))
-    store_bikedata (data_dir = data_dir, bikedb = bikedb)
 
 test_that ('tripmat-full', {
                expect_message (tm <- bike_tripmat (bikedb, quiet = TRUE),
@@ -120,6 +112,3 @@ test_that ('weekday', {
                                                  quiet = T),
                              'weekday specification is ambiguous')
 })
-
-#bike_rm_test_data ()
-invisible (file.remove (bikedb))
