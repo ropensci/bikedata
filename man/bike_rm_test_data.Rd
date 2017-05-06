@@ -9,6 +9,9 @@ bike_rm_test_data(data_dir = tempdir())
 \arguments{
 \item{data_dir}{Directory in which data were extracted.}
 }
+\value{
+Number of files successfully removed, which should equal six.
+}
 \description{
 The function \code{bike_write_test_data()} writes several small
 zip-compressed files to disk. The default location is \code{tempdir()}, in

@@ -9,7 +9,7 @@ test_that ('tripmat-full', {
                                'Calls to tripmat should specify city')
                #expect_equal (dim (tm), c (2191, 2191))
                expect_equal (nrow (tm), ncol (tm))
-               expect_true (nrow (tm) >= 2191)
+               expect_true (nrow (tm) >= 2190)
                #expect_equal (sum (tm), 1195)
 })
 
