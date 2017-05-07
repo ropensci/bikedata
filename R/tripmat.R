@@ -75,6 +75,29 @@ filter_bike_tripmat <- function (bikedb, ...)
     return(trips)
 }
 
+#' Calculation station weights for standardising trip matrix by operating
+#' durations of stations
+#'
+#' @param bikedb A string containing the path to the SQLite3 database.
+#' If no directory specified, it is presumed to be in \code{tempdir()}.
+#' @param city City for which standarisation is desired
+#'
+#' @return A vector of weights for each station of designated city. Weights are
+#' standardised to sum to nstations, so overall numbers of trips remain the
+#' same.
+#'
+#' @noRd
+bike_tripmat_standardisation <- function (bikedb, city)
+{
+    dates <- bike_station_dates (bikedb, city = 'ch')
+    wt <- 1 / dates$ndays # shorter durations are weighted higher
+    wt <- wt * nrow (dates) / sum (wt)
+    names (wt) <- dates$station
+
+    return (wt)
+}
+
+
 #' Extract station-to-station trip matrix or data.frame from SQLite3 database
 #'
 #' @param bikedb A string containing the path to the SQLite3 database.
@@ -91,6 +114,9 @@ filter_bike_tripmat <- function (bikedb, ...)
 #' @param weekday If given, extract only those records including the nominated
 #' weekdays. This can be a vector of numeric, starting with Sunday=1, or
 #' unambiguous characters, so "sa" and "tu" for Saturday and Tuesday.
+#' @param standardise If TRUE, numbers of trips are standardised to the
+#' operating durations of each stations, so trip numbers are increased for
+#' stations that have only operated a short time, and vice versa.
 #' @param long If FALSE, a square tripmat of (num-stations, num_stations) is
 #' returns; if TRUE, a long-format matrix of (stn-from, stn-to, ntrips) is
 #' returned.
@@ -110,6 +136,7 @@ filter_bike_tripmat <- function (bikedb, ...)
 #' @export
 bike_tripmat <- function (bikedb, city, start_date, end_date,
                           start_time, end_time, weekday,
+                          standardise = FALSE,
                           long=FALSE, quiet=FALSE)
 {
     if (dirname (bikedb) == '.')
@@ -163,6 +190,17 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
     }
 
     RSQLite::dbDisconnect(db)
+
+    if (standardise)
+    {
+        wts <- bike_tripmat_standardisation (bikedb, city)
+        wts_start <- wts [match (trips$start_station_id, names (wts))]
+        wts_end <- wts [match (trips$end_station_id, names (wts))]
+        trips$numtrips <- trips$numtrips * 
+            do.call (pmin, data.frame (wts_start, wts_end) [-1])
+        # Then round to 3 places
+        trips$numtrips <- round (trips$numtrips, digits = 3)
+    }
 
     if (!long)
     {

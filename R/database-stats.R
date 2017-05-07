@@ -114,7 +114,7 @@ bike_station_dates <- function (bikedb, city)
     ndays <- lubridate::interval (dates$first, dates$last) / lubridate::ddays (1)
     dates <- data.frame (first = dates$first,
                          last = dates$last,
-                         ndays = ndays,
+                         ndays = ndays + 1, # start = end -> 1 day
                          station = dates$station)
     rownames (dates) <- NULL
 

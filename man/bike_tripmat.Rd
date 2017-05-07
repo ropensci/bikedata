@@ -5,7 +5,7 @@
 \title{Extract station-to-station trip matrix or data.frame from SQLite3 database}
 \usage{
 bike_tripmat(bikedb, city, start_date, end_date, start_time, end_time, weekday,
-  long = FALSE, quiet = FALSE)
+  standardise = FALSE, long = FALSE, quiet = FALSE)
 }
 \arguments{
 \item{bikedb}{A string containing the path to the SQLite3 database.
@@ -28,6 +28,10 @@ this time of each day}
 \item{weekday}{If given, extract only those records including the nominated
 weekdays. This can be a vector of numeric, starting with Sunday=1, or
 unambiguous characters, so "sa" and "tu" for Saturday and Tuesday.}
+
+\item{standardise}{If TRUE, numbers of trips are standardised to the
+operating durations of each stations, so trip numbers are increased for
+stations that have only operated a short time, and vice versa.}
 
 \item{long}{If FALSE, a square tripmat of (num-stations, num_stations) is
 returns; if TRUE, a long-format matrix of (stn-from, stn-to, ntrips) is
