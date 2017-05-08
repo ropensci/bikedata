@@ -57,7 +57,7 @@ filter_bike_tripmat <- function (bikedb, ...)
     qry_demog <- NULL
     if ('member' %in% names (x))
     {
-        qry_demog <- c (qry_demog, "member = ?")
+        qry_demog <- c (qry_demog, "user_type = ?")
         qryargs <- c (qryargs, x$member)
     }
     if ('birth_year' %in% names (x))
@@ -77,6 +77,7 @@ filter_bike_tripmat <- function (bikedb, ...)
         qry_demog <- c (qry_demog, "gender = ?")
         qryargs <- c (qryargs, x$gender)
     }
+    qry_dt <- c (qry_dt, qry_demog)
 
     qry <- paste (qry, "WHERE", paste (qry_dt, collapse = " AND "))
     qry <- paste (qry, "GROUP BY start_station_id, end_station_id) iq",
@@ -207,10 +208,10 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
     {
         if (!is.logical (member) | !(member %in% 0:1))
             stop ('member must be TRUE/FALSE or 1/0')
-        if (member == 0)
-            member = FALSE
-        else if (member == 1)
-            member = TRUE
+        if (!member)
+            member = 0
+        else if (member)
+            member = 1
         x <- c (x, 'member' = member)
     }
     if (!missing (birth_year))
@@ -221,15 +222,18 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
     }
     if (!missing (gender))
     {
-        if (!is.numeric (gender) | !is.character (gender))
+        if (!(is.numeric (gender) | is.character (gender)))
             stop ('gender must be numeric or character')
-        if (gender == '2')
-            gender = 'f'
-        else if (gender == '1')
-            gender = 'm'
-        else if (is.numeric (gender))
-            gender = 'x'
-        gender = tolower (substring (gender, 1, 1))
+        if (is.character (gender))
+        {
+            gender = tolower (substring (gender, 1, 1))
+            if (gender == 'f')
+                gender = 2
+            else if (gender == 'm')
+                gender = 1
+            else if (is.numeric (gender))
+                gender = 0
+        }
         x <- c (x, 'gender' = gender)
     }
 
