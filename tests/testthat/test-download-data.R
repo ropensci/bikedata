@@ -60,6 +60,7 @@ if (!is_cran)
                    files <- c ("MetroBikeShare_2016_Q3_trips.zip",
                                "Metro_trips_Q4_2016.zip",
                                "la_metro_gbfs_trips_Q1_2017.zip")
+                   files <- file.path (getwd (), files)
                    for (f in files) write ('a', file = f)
                    expect_message (dl_bikedata (city = 'la', 
                                                 data_dir = getwd ()),
