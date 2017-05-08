@@ -19,10 +19,10 @@ bikedb <- file.path (getwd (), "testdb")
 #  CH   |   200     |   581
 #  DC   |   200     |   456
 #  LA   |   198     |   50
-#  LO   |   200     |   777
+#  LO   |   200     |   776
 #  NY   |   200     |   233
 # ------|-----------|-------------
-# Total |   1198    |   2190
+# Total |   1198    |   2189
 # London in particlar expands rapidly and so tests are all for values >= these
 test_that ('read data', {
                db <- dplyr::src_sqlite (bikedb, create = F)
@@ -35,8 +35,8 @@ test_that ('read data', {
                expect_equal (names (trips), nms)
 
                stns <- dplyr::collect (dplyr::tbl (db, 'stations'))
-               #expect_equal (dim (stns), c (2190, 6))
-               expect_true (nrow (stns) >= 2190)
+               #expect_equal (dim (stns), c (2189, 6))
+               expect_true (nrow (stns) >= 2189)
                expect_equal (names (stns), c ('id', 'city', 'stn_id', 'name',
                                               'longitude', 'latitude'))
 })
@@ -57,5 +57,5 @@ test_that ('db stats', {
                expect_equal (rownames (db_stats), c ('all', 'bo', 'ch', 'dc',
                                                      'la', 'lo', 'ny'))
                expect_equal (sum (db_stats$num_trips), 2396)
-               expect_true (sum (db_stats$num_stations) >= 4380)
+               expect_true (sum (db_stats$num_stations) >= 4378)
 })
