@@ -2,6 +2,8 @@
 
 require (testthat)
 
+is_cran <- identical (Sys.getenv ('NOT_CRAN'), 'false')
+
 # download can't really be tested, so this just tests that it does **NOT**
 # download if all files already exist
 
@@ -27,46 +29,56 @@ get_fake_trip_files <- function (bucket)
     return (files)
 }
 
-test_that ('dl_bikedata nyc', {
-               files <- get_fake_trip_files (bucket = 'tripdata')
-               expect_message (dl_bikedata (city = 'nyc', data_dir = getwd ()),
-                               'All data files already exist')
-               invisible (file.remove (files))
-})
+if (!is_cran)
+{
+    test_that ('dl_bikedata nyc', {
+                   files <- get_fake_trip_files (bucket = 'tripdata')
+                   expect_message (dl_bikedata (city = 'nyc', 
+                                                data_dir = getwd ()),
+                                   'All data files already exist')
+                   invisible (file.remove (files))
+                     })
 
-test_that ('dl_bikedata dc', {
-               files <- get_fake_trip_files (bucket = "capitalbikeshare-data")
-               expect_message (dl_bikedata (city = 'dc', data_dir = getwd ()),
-                               'All data files already exist')
-               invisible (file.remove (files))
-})
+    test_that ('dl_bikedata dc', {
+                   files <- get_fake_trip_files (bucket = 
+                                                 "capitalbikeshare-data")
+                   expect_message (dl_bikedata (city = 'dc', 
+                                                data_dir = getwd ()),
+                                   'All data files already exist')
+                   invisible (file.remove (files))
+                     })
 
-test_that ('dl_bikedata boston', {
-               files <- get_fake_trip_files (bucket = "hubway-data")
-               expect_message (dl_bikedata (city = 'boston', data_dir = getwd ()),
-                               'All data files already exist')
-               invisible (file.remove (files))
-})
+    test_that ('dl_bikedata boston', {
+                   files <- get_fake_trip_files (bucket = "hubway-data")
+                   expect_message (dl_bikedata (city = 'boston', 
+                                                data_dir = getwd ()),
+                                   'All data files already exist')
+                   invisible (file.remove (files))
+                     })
 
-test_that ('dl_bikedata la', {
-               files <- c ("MetroBikeShare_2016_Q3_trips.zip",
-                           "Metro_trips_Q4_2016.zip",
-                           "la_metro_gbfs_trips_Q1_2017.zip")
-               for (f in files) write ('a', file = f)
-               expect_message (dl_bikedata (city = 'la', data_dir = getwd ()),
-                               'All data files already exist')
-               invisible (file.remove (files))
-})
+    test_that ('dl_bikedata la', {
+                   files <- c ("MetroBikeShare_2016_Q3_trips.zip",
+                               "Metro_trips_Q4_2016.zip",
+                               "la_metro_gbfs_trips_Q1_2017.zip")
+                   for (f in files) write ('a', file = f)
+                   expect_message (dl_bikedata (city = 'la', 
+                                                data_dir = getwd ()),
+                                   'All data files already exist')
+                   invisible (file.remove (files))
+                     })
 
-test_that ('dl_bikedata chicago', {
-               host <- "https://www.divvybikes.com/system-data"
-               nodes <- httr::content (httr::GET (host), encoding = 'UTF-8') %>%
-                   xml2::xml_find_all (., ".//aside") %>%
-                   xml2::xml_find_all (., ".//a")
-               files <- unique (basename (xml2::xml_attr (nodes, "href")))
-               files <- file.path (getwd (), files)
-               for (f in files) write ('a', file = f)
-               expect_message (dl_bikedata (city = 'chicago', data_dir = getwd ()),
-                               'All data files already exist')
-               invisible (file.remove (files))
-})
+    test_that ('dl_bikedata chicago', {
+                   host <- "https://www.divvybikes.com/system-data"
+                   nodes <- httr::content (httr::GET (host), 
+                                           encoding = 'UTF-8') %>%
+                       xml2::xml_find_all (., ".//aside") %>%
+                       xml2::xml_find_all (., ".//a")
+                   files <- unique (basename (xml2::xml_attr (nodes, "href")))
+                   files <- file.path (getwd (), files)
+                   for (f in files) write ('a', file = f)
+                   expect_message (dl_bikedata (city = 'chicago', 
+                                                data_dir = getwd ()),
+                                   'All data files already exist')
+                   invisible (file.remove (files))
+                     })
+}
