@@ -94,12 +94,12 @@ unsigned read_one_line_nyc (sqlite3_stmt * stmt, char * line,
         strtokm (NULL, delim); // lon
     }
 
+    std::string bike_id = strtokm (NULL, delim);
     std::string user_type = strtokm (NULL, delim);
     if (user_type == "Subscriber")
         user_type = "1";
     else
         user_type = "0";
-    std::string bike_id = strtokm (NULL, delim);
 
     std::string birthyear = strtokm (NULL, delim);
     std::string gender = strtokm (NULL, delim);
@@ -117,8 +117,8 @@ unsigned read_one_line_nyc (sqlite3_stmt * stmt, char * line,
     sqlite3_bind_text(stmt, 4, end_time.c_str(), -1, SQLITE_TRANSIENT); 
     sqlite3_bind_text(stmt, 5, start_station_id.c_str(), -1, SQLITE_TRANSIENT); 
     sqlite3_bind_text(stmt, 6, end_station_id.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 7, user_type.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 8, bike_id.c_str (), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 7, bike_id.c_str (), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 8, user_type.c_str(), -1, SQLITE_TRANSIENT); 
     sqlite3_bind_text(stmt, 9, birthyear.c_str(), -1, SQLITE_TRANSIENT); // Birth Year
     sqlite3_bind_text(stmt, 10, gender.c_str(), -1, SQLITE_TRANSIENT); // Gender
 
@@ -247,6 +247,12 @@ unsigned read_one_line_chicago (sqlite3_stmt * stmt, char * line,
     if (user_type == "Subscriber")
     {
         gender = strtokm (NULL, delim);
+        if (gender == "Female")
+            gender = "2";
+        else if (gender == "Male")
+            gender = "1";
+        else
+            gender = "0";
         birth_year = strtokm (NULL, delim);
         boost::replace_all (birth_year, "\"", ""); // Remove terminal quote
         user_type = "1";
