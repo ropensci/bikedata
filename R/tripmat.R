@@ -54,6 +54,30 @@ filter_bike_tripmat <- function (bikedb, ...)
         qryargs <- c (qryargs, x$weekday)
     }
 
+    qry_demog <- NULL
+    if ('member' %in% names (x))
+    {
+        qry_demog <- c (qry_demog, "member = ?")
+        qryargs <- c (qryargs, x$member)
+    }
+    if ('birth_year' %in% names (x))
+    {
+        if (length (x$birth_year) == 1)
+        {
+            qry_demog <- c (qry_demog, "birth_year = ?")
+            qryargs <- c (qryargs, x$birth_year)
+        } else
+        {
+            qry_demog <- c (qry_demog, "birth_year >= ?", "birth_year <= ?")
+            qryargs <- c (qryargs, min (x$birth_year), max (x$birth_year))
+        }
+    }
+    if ('gender' %in% names (x))
+    {
+        qry_demog <- c (qry_demog, "gender = ?")
+        qryargs <- c (qryargs, x$gender)
+    }
+
     qry <- paste (qry, "WHERE", paste (qry_dt, collapse = " AND "))
     qry <- paste (qry, "GROUP BY start_station_id, end_station_id) iq",
                   "ON s1.stn_id = iq.start_station_id AND",
@@ -114,6 +138,13 @@ bike_tripmat_standardisation <- function (bikedb, city)
 #' @param weekday If given, extract only those records including the nominated
 #' weekdays. This can be a vector of numeric, starting with Sunday=1, or
 #' unambiguous characters, so "sa" and "tu" for Saturday and Tuesday.
+#' @param member If given, extract only trips by registered members
+#' (\code{member=1} or \code{TRUE}) or not (\code{member=0} or \code{FASE}).
+#' @param birth_year If given, extract only records for trips by registered
+#' using giving birth_years within stated values (either single value or
+#' continuous range).
+#' @param gender If given, extract only records for trips by registered
+#' using giving the specified genders (\code{f/m/.} or \code{2/1/0}).
 #' @param standardise If TRUE, numbers of trips are standardised to the
 #' operating durations of each stations, so trip numbers are increased for
 #' stations that have only operated a short time, and vice versa.
@@ -136,6 +167,7 @@ bike_tripmat_standardisation <- function (bikedb, city)
 #' @export
 bike_tripmat <- function (bikedb, city, start_date, end_date,
                           start_time, end_time, weekday,
+                          member, birth_year, gender,
                           standardise = FALSE,
                           long=FALSE, quiet=FALSE)
 {
@@ -167,6 +199,39 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
         x <- c (x, 'end_time' = convert_hms (end_time))
     if (!missing (weekday))
         x <- c (x, 'weekday' = list (convert_weekday (weekday)))
+
+    if ((!missing (member) | !missing (birth_year) | !missing (gender)) &
+        (!any (c ('bo', 'ch', 'ny') %in% db_cities)))
+        stop ('Only Boston, Chicago, and New York provide demographic data')
+    if (!missing (member))
+    {
+        if (!is.logical (member) | !(member %in% 0:1))
+            stop ('member must be TRUE/FALSE or 1/0')
+        if (member == 0)
+            member = FALSE
+        else if (member == 1)
+            member = TRUE
+        x <- c (x, 'member' = member)
+    }
+    if (!missing (birth_year))
+    {
+        if (!is.numeric (birth_year))
+            stop ('birth_year must be numeric')
+        x <- c (x, 'birth_year' = birth_year)
+    }
+    if (!missing (gender))
+    {
+        if (!is.numeric (gender) | !is.character (gender))
+            stop ('gender must be numeric or character')
+        if (gender == '2')
+            gender = 'f'
+        else if (gender == '1')
+            gender = 'm'
+        else if (is.numeric (gender))
+            gender = 'x'
+        gender = tolower (substring (gender, 1, 1))
+        x <- c (x, 'gender' = gender)
+    }
 
     if ( (missing (city) & length (x) > 0) |
         (!missing (city) & length (x) > 1) )

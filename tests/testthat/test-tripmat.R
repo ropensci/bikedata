@@ -7,10 +7,20 @@ bikedb <- file.path (getwd (), "testdb")
 test_that ('tripmat-full', {
                expect_message (tm <- bike_tripmat (bikedb, quiet = TRUE),
                                'Calls to tripmat should specify city')
-               #expect_equal (dim (tm), c (2191, 2191))
                expect_equal (nrow (tm), ncol (tm))
-               expect_true (nrow (tm) >= 2189)
-               #expect_equal (sum (tm), 1195)
+               expect_true (nrow (tm) >= 2113)
+               expect_equal (sum (tm), 1193)
+})
+
+test_that ('tripmat-cities', {
+               expect_equal (sum (bike_tripmat (bikedb, city = 'bo')), 200)
+               expect_equal (sum (bike_tripmat (bikedb, city = 'ch')), 200)
+               expect_equal (sum (bike_tripmat (bikedb, city = 'dc')), 200)
+               expect_equal (sum (bike_tripmat (bikedb, city = 'la')), 198)
+               #expect_equal (sum (bike_tripmat (bikedb, city = 'lo')), 200)
+               # chaning stations in London affect even this tripmat
+               expect_true (sum (bike_tripmat (bikedb, city = 'lo')) > 190)
+               expect_equal (sum (bike_tripmat (bikedb, city = 'ny')), 200)
 })
 
 test_that ('tripmat-startday', {

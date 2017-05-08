@@ -67,10 +67,8 @@ bike_write_test_data <- function (data_dir = tempdir ())
         # Note: Output of zip can't be suppressed because it's a 'system2()'
         # command
         zip (zips [i], csvs [i])
-        if (file.exists (csvs [i]))
-            file.remove (csvs [i])
     }
-    #invisible (file.remove (csvs))
+    invisible (file.remove (csvs))
 }
 
 #' Removes test data written with 'bike_write_test_data()'

@@ -349,3 +349,27 @@ bike_daily_trips <- function (bikedb, city, station)
 
     return (ret)
 }
+
+
+
+#' Static summary of which systems provide demographic data
+#'
+#' @return A \code{data.frame} detailing the kinds of demographc data provided
+#' by the different systems
+#'
+#' @export
+#'
+#' @examples
+#' bike_demographic_data ()
+bike_demographic_data <- function ()
+{
+    dat <- data.frame (city = c ('bo', 'ch', 'dc', 'la', 'lo', 'ny'),
+                       city_name = c ('Boston', 'Chicago', 'Washington DC',
+                                      'Los Angeles', 'London', 'New York'),
+                       bike_system = c ('Hubway', 'Divvy', 'CapitalBikeShare',
+                                        'Metro', 'Santander', 'Citibike'),
+                       demographic_data = c (TRUE, TRUE, FALSE, FALSE,
+                                             FALSE, TRUE))
+
+    return (dat)
+}
