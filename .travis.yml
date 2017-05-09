@@ -10,8 +10,8 @@ cache: packages
 
 addons:
     apt:
-        source:
-            - travis-ci/sqlite3
+        #source:
+        #    - travis-ci/sqlite3
         packages:
             - sqlite3
             - libsqlite3-dev
