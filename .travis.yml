@@ -3,17 +3,17 @@ warnings_are_errors: true
 sudo: true
 cache: packages
 
-before_install:
-    - sudo apt-add-repository -y ppa:travis-ci/sqlite3
-    - sudo apt-get -y update
-    - sudo apt-get -y install sqlite3=3.7.15.1-1~travis1
+#before_install:
+#    - sudo apt-add-repository -y ppa:travis-ci/sqlite3
+#    - sudo apt-get -y update
+#    - sudo apt-get -y install sqlite3
 
 addons:
     apt:
-        #source:
-        #    - travis-ci/sqlite3
+        source:
+            - travis-ci/sqlite3
         packages:
-              #- sqlite3
+            - sqlite3
             - libsqlite3-dev
             - libsqlite3-0
 
