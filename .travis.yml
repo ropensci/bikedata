@@ -3,14 +3,6 @@ warnings_are_errors: true
 sudo: true
 cache: packages
 
-before_install:
-    - sudo apt-add-repository -y ppa:travis-ci/sqlite3
-    - sudo apt-get -y update
-  # https://askubuntu.com/questions/41605/trouble-downloading-packages-list-due-to-a-hash-sum-mismatch-error/
-    - sudo rm -R /var/lib/apt/lists/*
-    - sudo apt-get -y update
-    - sudo apt-get -y install sqlite3=3.7.15.1-1~travis1 
-
 addons:
     apt:
         source:
@@ -25,3 +17,5 @@ r_github_packages:
 
 after_success:
       - Rscript -e 'covr::codecov()'
+      - Rscript -e 'library(goodpractice);gp(checks=all_checks()[grepl("(rcmdcheck|covr)",all_checks())])'
+
