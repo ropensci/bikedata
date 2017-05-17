@@ -14,9 +14,11 @@ addons:
             - libsqlite3-0
 
 r_github_packages:
-      - jimhester/covr
+    - jimhester/covr
 
 after_success:
-      - Rscript -e 'covr::codecov()'
-      - Rscript -e 'library(goodpractice);gp(checks=all_checks()[grepl("(rcmdcheck|covr)",all_checks())])'
+    - Rscript -e 'covr::codecov()'
+    - Rscript -e "source ('https://install-github.me/MangoTheCat/goodpractice')"
+      #- Rscript -e 'library(goodpractice);gp(checks=all_checks()[grepl("(rcmdcheck|covr)",all_checks())])'
+    - Rscript -e 'library(goodpractice);gp(checks=all_checks())'
 
