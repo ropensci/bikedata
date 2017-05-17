@@ -83,7 +83,7 @@ bike_cities_in_db <- function (bikedb)
 #' @noRd
 get_new_datafiles <- function (bikedb, flist_zip)
 {
-    db <- dplyr::src_sqlite (bikedb, create = F)
+    db <- dplyr::src_sqlite (bikedb, create = FALSE)
     old_files <- dplyr::collect (dplyr::tbl (db, 'datafiles'))$name
     flist_zip [which (!basename (flist_zip) %in% old_files)]
 }
@@ -111,7 +111,8 @@ bike_station_dates <- function (bikedb, city)
     stn <- as.numeric (substr (dates$station, 3, 10)) # 10 = arbitrarily length
     dates <- dates [order (stn), c (3, 1, 2)] # station ID in 1st column
     # Then add numbers of days in operation
-    ndays <- lubridate::interval (dates$first, dates$last) / lubridate::ddays (1)
+    ndays <- lubridate::interval (dates$first, dates$last) / 
+        lubridate::ddays (1)
     dates <- data.frame (first = dates$first,
                          last = dates$last,
                          ndays = ndays + 1, # start = end -> 1 day
@@ -328,8 +329,9 @@ bike_daily_trips <- function (bikedb, city, station)
     } else
         city <- convert_city_names (city)
 
-    qry <- paste0 ("SELECT STRFTIME('%Y-%m-%d', start_time) AS 'date', COUNT() AS ",
-                  "'ntrips' FROM trips WHERE city = '", city, "'")
+    qry <- paste0 ("SELECT STRFTIME('%Y-%m-%d', start_time) AS 'date', ",
+                   "COUNT() AS 'ntrips' FROM trips ",
+                   "WHERE city = '", city, "'")
     db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
     if (!missing (station))
     {

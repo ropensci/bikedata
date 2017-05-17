@@ -48,8 +48,9 @@ filter_bike_tripmat <- function (bikedb, ...)
     if ('weekday' %in% names (x))
     {
         qry_wd <- "strftime('%w', start_time) IN "
-        qry_wd <- paste0(qry_wd, " (", paste(rep("?", times =
-                                length(x$weekday)), collapse = ", "), ")")
+        qry_wd <- paste0(qry_wd, " (", 
+                         paste (rep("?", times = length(x$weekday)), 
+                                collapse = ", "), ")")
         qry_dt <- c (qry_dt, qry_wd)
         qryargs <- c (qryargs, x$weekday)
     }
@@ -140,7 +141,7 @@ bike_tripmat_standardisation <- function (bikedb, city)
 #' weekdays. This can be a vector of numeric, starting with Sunday=1, or
 #' unambiguous characters, so "sa" and "tu" for Saturday and Tuesday.
 #' @param member If given, extract only trips by registered members
-#' (\code{member=1} or \code{TRUE}) or not (\code{member=0} or \code{FASE}).
+#' (\code{member = 1} or \code{TRUE}) or not (\code{member = 0} or \code{FASE}).
 #' @param birth_year If given, extract only records for trips by registered
 #' using giving birth_years within stated values (either single value or
 #' continuous range).
@@ -154,7 +155,7 @@ bike_tripmat_standardisation <- function (bikedb, city)
 #' returned.
 #' @param quiet If FALSE, progress is displayed on screen
 #'
-#' @return If \code{long=FALSE}, a square matrix of numbers of trips between
+#' @return If \code{long = FALSE}, a square matrix of numbers of trips between
 #' each station, otherwise a long-form data.frame with three columns of of
 #' (start_station, end_station, num_trips)
 #'
@@ -170,7 +171,7 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
                           start_time, end_time, weekday,
                           member, birth_year, gender,
                           standardise = FALSE,
-                          long=FALSE, quiet=FALSE)
+                          long = FALSE, quiet = FALSE)
 {
     if (dirname (bikedb) == '.')
         bikedb <- file.path (tempdir (), bikedb)
@@ -209,9 +210,9 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
         if (!is.logical (member) | !(member %in% 0:1))
             stop ('member must be TRUE/FALSE or 1/0')
         if (!member)
-            member = 0
+            member <- 0
         else if (member)
-            member = 1
+            member <- 1
         x <- c (x, 'member' = member)
     }
     if (!missing (birth_year))
@@ -226,13 +227,13 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
             stop ('gender must be numeric or character')
         if (is.character (gender))
         {
-            gender = tolower (substring (gender, 1, 1))
+            gender <- tolower (substring (gender, 1, 1))
             if (gender == 'f')
-                gender = 2
+                gender <- 2
             else if (gender == 'm')
-                gender = 1
+                gender <- 1
             else if (is.numeric (gender))
-                gender = 0
+                gender <- 0
         }
         x <- c (x, 'gender' = gender)
     }

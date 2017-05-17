@@ -18,7 +18,7 @@ convert_hms <- function (x)
     } else if (is.character (x))
     {
         # split at all non-numeric characters
-        x <- sapply (strsplit (x, '[^0-9]') [[1]], as.numeric)
+        x <- vapply (strsplit (x, '[^0-9]') [[1]], as.numeric, numeric (1))
         if (length (x) == 0)
             stop ('Can not convert to hms without numeric values')
         if (length (x) == 1)
@@ -58,13 +58,13 @@ convert_weekday <- function (wd)
             stop ("don't know how to convert weekdays of class ", class (wd))
         wdlist <- c ("sunday", "monday", "tuesday", "wednesday", 
                      "thursday", "friday", "saturday")
-        wd <- sapply (tolower (wd), function (i)
+        wd <- vapply (tolower (wd), function (i)
                       {
                           res <- grep (paste0 ("\\<", i), wdlist)
                           if (length (res) != 1)
                               res <- NA
                           return (res)
-                      })
+                      }, numeric (1))
         if (any (is.na (wd)))
             stop ('weekday specification is ambiguous')
     } else if (any (!wd %in% 1:7))

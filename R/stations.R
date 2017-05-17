@@ -11,7 +11,7 @@ bike_stations <- function (bikedb)
     if (!grepl ('/', bikedb) | !grepl ('*//*', bikedb))
         bikedb <- file.path (tempdir (), bikedb)
 
-    db <- dplyr::src_sqlite (bikedb, create = F)
+    db <- dplyr::src_sqlite (bikedb, create = FALSE)
     dplyr::collect (dplyr::tbl (db, 'stations'))
 }
 

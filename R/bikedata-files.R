@@ -90,8 +90,8 @@ get_london_bike_files <- function ()
     getflist <- function (nodes, type = 'zip')
     {
         f <- lapply (nodes, function (i) if (grepl (type, i))
-                     strsplit (strsplit (as.character (i),
-                                         "<Key>") [[1]] [2], "</Key>") [[1]] [1] )
+                     strsplit (strsplit (as.character (i), "<Key>") [[1]] [2], 
+                               "</Key>") [[1]] [1])
         basename (unlist (f))
     }
     flist_zip <- getflist (nodes, type = 'zip')
