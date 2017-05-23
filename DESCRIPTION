@@ -21,7 +21,8 @@ Suggests:
     knitr,
     rmarkdown,
     roxygen2,
-    testthat
+    testthat,
+    covr
 LinkingTo: 
     BH,
     Rcpp
@@ -33,3 +34,4 @@ BugReports: https://github.com/mpadge/bikedata/issues
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
+Remotes: jimhester/covr
