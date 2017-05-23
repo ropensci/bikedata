@@ -52,6 +52,6 @@ test_that ('db stats', {
                expect_equal (dim (db_stats), c (7, 5))
                expect_equal (rownames (db_stats), c ('all', 'bo', 'ch', 'dc',
                                                      'la', 'lo', 'ny'))
-               expect_equal (sum (db_stats$num_trips), 2396)
+               expect_true (sum (db_stats$num_trips) >= 2396)
                expect_true (sum (db_stats$num_stations) >= (2 * 2113))
 })

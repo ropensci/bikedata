@@ -5,4 +5,6 @@ if (nf > 0)
     bike_rm_test_data (data_dir = data_dir)
 bikedb <- file.path (getwd (), "testdb")
 if (file.exists (bikedb))
-    chk <- tryCatch (file.remove (bikedb), error = function (e) NULL)
+    chk <- tryCatch (file.remove (bikedb), 
+                     warning = function (w) NULL,
+                     error = function (e) NULL)
