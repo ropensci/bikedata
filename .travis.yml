@@ -34,11 +34,14 @@ notifications:
     on_success: change
     on_failure: change
 
-r_github_packages:
-    - jimhester/covr
+#before_script
+before_script:
+    - R -q -e 'devtools::install_github("ropenscilabs/tic"); tic::prepare_all_stages()'
 
+#after_success
 after_success:
-    - Rscript -e 'covr::codecov()'
+    - R -q -e 'tic::after_success()'
+    #- Rscript -e 'covr::codecov()'
       #- Rscript -e "source ('https://install-github.me/MangoTheCat/goodpractice')"
       #- Rscript -e 'library(goodpractice);gp(checks=all_checks()[grepl("(rcmdcheck|covr)",all_checks())])'
       #- Rscript -e 'library(goodpractice);gp(checks=all_checks())'
