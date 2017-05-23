@@ -78,7 +78,9 @@ dl_bikedata <- function (city = 'nyc', data_dir = tempdir(), dates,
         csvs <- paste0 (data_dir, '/',
                         list.files (data_dir, pattern = '.csv'))
         indx <- which (file.info (csvs)$size < 1000)
-        invisible (file.remove (csvs [indx]))
+        invisible (tryCatch (file.remove (csvs [indx])
+                             warning = function (w) NULL,
+                             error = function (e) NULL))
         ptn <- paste0 (ptn, '|.csv')
     }
     invisible (list.files (data_dir, pattern = ptn, full.names = TRUE))

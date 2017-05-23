@@ -41,7 +41,9 @@ bike_write_test_data <- function (data_dir = tempdir ())
     write.csv (env$bike_test_data$ch_tr, file = ftr,
                quote = TRUE, row.names = FALSE, na = '')
     zip (file.path (data_dir, 'sample-divvy-trips.zip'), fdir)
-    invisible (file.remove (fst, ftr, fdir))
+    invisible (tryCatch (file.remove (fst, ftr, fdir),
+                         warning = function (w) NULL,
+                         error = function (e) NULL))
     # Then the remaining files
     cities <- c ('bo', 'dc', 'la', 'lo', 'ny')
     zips <- c ('sample-hubway-trip-data.zip',
@@ -68,7 +70,9 @@ bike_write_test_data <- function (data_dir = tempdir ())
         # command
         zip (zips [i], csvs [i])
     }
-    invisible (file.remove (csvs))
+    invisible (tryCatch (file.remove (csvs),
+                         warning = function (w) NULL,
+                         error = function (e) NULL))
 }
 
 #' Removes test data written with 'bike_write_test_data()'

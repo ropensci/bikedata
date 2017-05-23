@@ -196,7 +196,9 @@ bike_rm_db <- function (bikedb)
         bikedb <- file.path (tempdir (), bikedb)
     ret <- FALSE
     if (file.exists (bikedb))
-        ret <- file.remove (bikedb)
+        ret <- tryCatch (file.remove (bikedb),
+                         warning = function (w) NULL,
+                         error = function (e) NULL)
 
     return (ret)
 }
