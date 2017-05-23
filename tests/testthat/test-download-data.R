@@ -32,7 +32,9 @@ test_that ('dl_bikedata nyc', {
                expect_message (dl_bikedata (city = 'nyc', 
                                             data_dir = getwd ()),
                                'All data files already exist')
-               chk <- tryCatch (file.remove (files), error = function (e) NULL)
+               chk <- tryCatch (file.remove (files), 
+                                warning = function (w) NULL,
+                                error = function (e) NULL)
                          })
 
 test_that ('dl_bikedata dc', {
@@ -41,7 +43,9 @@ test_that ('dl_bikedata dc', {
                expect_message (dl_bikedata (city = 'dc', 
                                             data_dir = getwd ()),
                                'All data files already exist')
-               chk <- tryCatch (file.remove (files), error = function (e) NULL)
+               chk <- tryCatch (file.remove (files), 
+                                warning = function (w) NULL,
+                                error = function (e) NULL)
                          })
 
 test_that ('dl_bikedata boston', {
@@ -49,7 +53,9 @@ test_that ('dl_bikedata boston', {
                expect_message (dl_bikedata (city = 'boston', 
                                             data_dir = getwd ()),
                                'All data files already exist')
-               chk <- tryCatch (file.remove (files), error = function (e) NULL)
+               chk <- tryCatch (file.remove (files), 
+                                warning = function (w) NULL,
+                                error = function (e) NULL)
                          })
 
 test_that ('dl_bikedata la', {
@@ -61,7 +67,9 @@ test_that ('dl_bikedata la', {
                expect_message (dl_bikedata (city = 'la', 
                                             data_dir = getwd ()),
                                'All data files already exist')
-               chk <- tryCatch (file.remove (files), error = function (e) NULL)
+               chk <- tryCatch (file.remove (files), 
+                                warning = function (w) NULL,
+                                error = function (e) NULL)
                          })
 
 test_that ('dl_bikedata chicago', {
@@ -76,5 +84,7 @@ test_that ('dl_bikedata chicago', {
                expect_message (dl_bikedata (city = 'chicago', 
                                             data_dir = getwd ()),
                                'All data files already exist')
-               chk <- tryCatch (file.remove (files), error = function (e) NULL)
+               chk <- tryCatch (file.remove (files), 
+                                warning = function (w) NULL,
+                                error = function (e) NULL)
                          })
