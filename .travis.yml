@@ -1,24 +1,45 @@
 language: R
 warnings_are_errors: true
-dist: trusty
 sudo: true
 cache: packages
 
-addons:
-    apt:
-        source:
-            - travis-ci/sqlite3
-        packages:
-            - sqlite3
-            - libsqlite3-dev
-            - libsqlite3-0
+matrix:
+    allow_failures: # temporarily enabled. TODO: disable
+        -os: osx
+    include:
+        - os: linux
+          r: release
+          dist: trusty # 14.04
+          env: R_CODECOV=true
+        - os: linux
+          r: devel
+          dist: trusty
+        - os: linux
+          r: release
+          dist: precise
+        - os: linux
+          r: devel
+          dist: precise
+        - os: osx
+          r: release
+          before_install: ''
+          disable_homebrew: true
+          #- os: osx
+          #r: devel
+          #before_install: ''
+          #disable_homebrew: true
+
+notifications:
+  email:
+    on_success: change
+    on_failure: change
 
 r_github_packages:
     - jimhester/covr
 
 after_success:
     - Rscript -e 'covr::codecov()'
-    - Rscript -e "source ('https://install-github.me/MangoTheCat/goodpractice')"
+      #- Rscript -e "source ('https://install-github.me/MangoTheCat/goodpractice')"
       #- Rscript -e 'library(goodpractice);gp(checks=all_checks()[grepl("(rcmdcheck|covr)",all_checks())])'
-    - Rscript -e 'library(goodpractice);gp(checks=all_checks())'
+      #- Rscript -e 'library(goodpractice);gp(checks=all_checks())'
 

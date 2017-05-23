@@ -1,10 +1,9 @@
+[.]md$
 ^README\.Rmd$
-^README-.*\.png$
+^README\.html$
 ^\.travis\.yml$
-^appveyor.yml$
-^README\.md$
+^appveyor\.yml$
 ^makefile$
 ^vignettes/makefile$
 ^.*\.Rproj$
-^\.Rproj\.user$
-^aaa.Rmd$
+^aaa\.Rmd$
