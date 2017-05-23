@@ -1,2 +1,5 @@
-PKG_CPPFLAGS=-I -frounding-math -fprofile-arcs -ftest-coverage
-PKG_LIBS=-lgcov -lsqlite3
+PKG_CPPFLAGS=-I. -DRSQLITE_USE_BUNDLED_SQLITE
+
+PKG_LIBS = sqlite3/sqlite3.o
+
+$(SHLIB): $(PKG_LIBS)
