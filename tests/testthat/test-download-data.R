@@ -2,7 +2,8 @@
 
 require (testthat)
 
-is_cran <- identical (Sys.getenv ('NOT_CRAN'), 'false')
+is_cran <- identical (Sys.getenv ("_R_CHECK_CRAN_INCOMING_"), 'true')
+is_travis <- identical (Sys.getenv ("TRAVIS"), 'true')
 
 # download can't really be tested, so this just tests that it does **NOT**
 # download if all files already exist
@@ -29,7 +30,7 @@ get_fake_trip_files <- function (bucket)
     return (files)
 }
 
-if (!is_cran)
+if (!is_cran | is_travis)
 {
     test_that ('dl_bikedata nyc', {
                    files <- get_fake_trip_files (bucket = 'tripdata')
