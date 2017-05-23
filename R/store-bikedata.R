@@ -47,7 +47,7 @@ store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
                      "for all cities and store it in a *HUGE* database.\n",
                      "This will likely take quite a long time. ",
                      "Is this really what you want to do?")
-        val <- menu (c ("yes", "no"), graphics=FALSE, title = mt)
+        val <- menu (c ("yes", "no"), graphics = FALSE, title = mt)
         if (val != 1)
             stop ('Yeah, probably better not to do that')
     }
@@ -64,7 +64,7 @@ store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
         if (length (list.files (data_dir)) == 0)
             stop ('data_dir contains no files')
         city <- get_bike_cities (data_dir)
-    } 
+    }
 
     # Finally, stored bikedb in tempdir if not otherwise specified, noting that
     # dirname (bikedb) == '.' can not be used because that prevents
@@ -107,11 +107,11 @@ store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
             # Import file names to datafile table
             nf <- num_datafiles_in_db (bikedb)
             if (length (flists$flist_zip) > 0)
-                nf <- rcpp_import_to_file_table (bikedb, 
+                nf <- rcpp_import_to_file_table (bikedb,
                                                  basename (flists$flist_zip),
                                                  ci, nf)
             if (ci == 'lo' & length (flists$flist_csv) > 0)
-                nf <- rcpp_import_to_file_table (bikedb, 
+                nf <- rcpp_import_to_file_table (bikedb,
                                                  basename (flists$flist_csv),
                                                  ci, nf)
 
@@ -119,15 +119,15 @@ store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
             if (ci == 'ch')
             {
                 ch_stns <- bike_get_chicago_stations (flists)
-                nstations <- rcpp_import_stn_df (bikedb, ch_stns, 'ch')
+                nstations <- rcpp_import_stn_df (bikedb, ch_stns, 'ch') #nolint
             } else if (ci == 'lo')
             {
                 lo_stns <- bike_get_london_stations ()
-                nstations <- rcpp_import_stn_df (bikedb, lo_stns, 'lo')
+                nstations <- rcpp_import_stn_df (bikedb, lo_stns, 'lo') #nolint
             } else if (ci == 'dc')
             {
                 dc_stns <- bike_get_dc_stations ()
-                nstations <- rcpp_import_stn_df (bikedb, dc_stns, 'dc')
+                nstations <- rcpp_import_stn_df (bikedb, dc_stns, 'dc') #nolint
             }
 
             # main step: Import trips
@@ -137,8 +137,8 @@ store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
             if (length (flists$flist_rm) > 0)
                 invisible (file.remove (flists$flist_rm))
             if (!quiet & length (city) > 1)
-                message ('Trips read for ', ci, ' = ', 
-                         format (ntrips_city, big.mark = ',', 
+                message ('Trips read for ', ci, ' = ',
+                         format (ntrips_city, big.mark = ',',
                                  scientific = FALSE), '\n')
             ntrips <- ntrips + ntrips_city
         }
@@ -165,7 +165,8 @@ store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
                 message (c ('Creating', 'Re-creating') [er_idx], ' indexes')
             rcpp_create_db_indexes (bikedb,
                                     tables = rep("trips", times = 4),
-                                    cols = c("start_station_id", "end_station_id",
+                                    cols = c("start_station_id",
+                                             "end_station_id",
                                              "start_time", "stop_time"),
                                     indexes_exist (bikedb))
         }
@@ -380,7 +381,8 @@ bike_unzip_files_chicago <- function (data_dir, bikedb)
             if (length (fi_stns) > 0) # always except 2014_Q1Q2 with .xlsx
                 if (!all (basename (fi_stns) %in% existing_csv_files))
                 {
-                    unzip (f, files = fi_stns, exdir = data_dir, junkpaths = TRUE)
+                    unzip (f, files = fi_stns, exdir = data_dir,
+                           junkpaths = TRUE)
                     flist_rm <- c (flist_rm, basename (fi_stns))
                 }
         }
@@ -395,4 +397,3 @@ bike_unzip_files_chicago <- function (data_dir, bikedb)
                   flist_csv_stns = flist_csv_stns,
                   flist_rm = flist_rm))
 }
-

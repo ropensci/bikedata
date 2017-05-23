@@ -16,7 +16,7 @@
 indexes_exist <- function (bikedb)
 {
     db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
-    idx_list <- dbGetQuery (db, "PRAGMA index_list (trips)")
+    idx_list <- RSQLite::dbGetQuery (db, "PRAGMA index_list (trips)")
     RSQLite::dbDisconnect (db)
     nrow (idx_list) > 2 # 2 because city index is automatically created
 }
@@ -38,7 +38,7 @@ bike_db_totals <- function (bikedb, trips = TRUE, city)
         qry <- "SELECT Count(*) FROM stations"
     if (!missing (city))
         qry <- paste0 (qry, " WHERE city = '", city, "'")
-    ntrips <- dbGetQuery (db, qry)
+    ntrips <- RSQLite::dbGetQuery (db, qry)
     RSQLite::dbDisconnect (db)
     return (as.numeric (ntrips))
 }
@@ -51,7 +51,7 @@ bike_db_totals <- function (bikedb, trips = TRUE, city)
 num_datafiles_in_db <- function (bikedb)
 {
     db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
-    ntrips <- dbGetQuery (db, "SELECT Count(*) FROM datafiles")
+    ntrips <- RSQLite::dbGetQuery (db, "SELECT Count(*) FROM datafiles")
     RSQLite::dbDisconnect (db)
     return (as.numeric (ntrips))
 }
@@ -64,7 +64,7 @@ num_datafiles_in_db <- function (bikedb)
 bike_cities_in_db <- function (bikedb)
 {
     db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
-    cities <- dbGetQuery (db, "SELECT city FROM stations")
+    cities <- RSQLite::dbGetQuery (db, "SELECT city FROM stations")
     RSQLite::dbDisconnect (db)
     cities <- unique (cities)
     rownames (table (cities)) # TODO: Find a better way to do that
@@ -111,7 +111,7 @@ bike_station_dates <- function (bikedb, city)
     stn <- as.numeric (substr (dates$station, 3, 10)) # 10 = arbitrarily length
     dates <- dates [order (stn), c (3, 1, 2)] # station ID in 1st column
     # Then add numbers of days in operation
-    ndays <- lubridate::interval (dates$first, dates$last) / 
+    ndays <- lubridate::interval (dates$first, dates$last) /
         lubridate::ddays (1)
     dates <- data.frame (first = dates$first,
                          last = dates$last,
@@ -162,7 +162,7 @@ bike_latest_files <- function (bikedb)
         bikedb <- file.path (tempdir (), bikedb)
 
     db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
-    files <- dbGetQuery (db, "SELECT * FROM datafiles")
+    files <- RSQLite::dbGetQuery (db, "SELECT * FROM datafiles")
     cities <- unique (files$city)
     RSQLite::dbDisconnect (db)
 
@@ -273,17 +273,17 @@ bike_summary_stats <- function (bikedb)
         for (ci in cities)
         {
             num_trips <- c (num_trips, bike_db_totals (bikedb, TRUE, city = ci))
-            num_stations <- c (num_stations, bike_db_totals (bikedb, FALSE, 
+            num_stations <- c (num_stations, bike_db_totals (bikedb, FALSE,
                                                              city = ci))
             dates <- rbind (dates, bike_datelimits (bikedb, city = ci))
-            latest <- c (latest, 
+            latest <- c (latest,
                          latest_files [which (names (latest_files) == ci)])
         }
         latest_files <- c (NA, latest)
     }
 
     res <- data.frame (num_trips = num_trips, num_stations = num_stations,
-                       first_trip = dates [,1], last_trip = dates [,2],
+                       first_trip = dates [, 1], last_trip = dates [, 2],
                        latest_files = latest_files)
     rownames (res) <- rnames
     return (res)
@@ -324,7 +324,7 @@ bike_daily_trips <- function (bikedb, city, station)
     {
         if (length (cities) > 1)
             stop ('bikedb contains multiple cities; please specify one')
-        else 
+        else
             city <- cities
     } else
         city <- convert_city_names (city)
@@ -338,13 +338,13 @@ bike_daily_trips <- function (bikedb, city, station)
         if (substring (stn, 1, 2) != city)
             stn <- paste0 (city, stn)
         # Then just check that station is in stations table
-        stns <- dbGetQuery (db, "SELECT stn_id FROM stations")$stn_id
+        stns <- RSQLite::dbGetQuery (db, "SELECT stn_id FROM stations")$stn_id
         if (!stn %in% stns)
             stop ('Station ', stn, ' does not exist in database')
         qry <- paste0 (qry, " AND start_station_id = '", station, "'")
     }
     qry <- paste0 (qry, " GROUP BY STRFTIME('%Y-%m-%d', date);")
-    ret <- dbGetQuery (db, qry)
+    ret <- RSQLite::dbGetQuery (db, qry)
     RSQLite::dbDisconnect (db)
 
     ret$date <- as.Date (ret$date)

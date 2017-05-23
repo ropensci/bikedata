@@ -1,4 +1,6 @@
 library(testthat)
 library(bikedata)
 
-test_check("bikedata")
+is_cran <- identical (Sys.getenv ('NOT_CRAN'), 'false')
+if (!is_cran)
+    test_check("bikedata")

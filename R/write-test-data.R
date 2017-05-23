@@ -27,9 +27,9 @@ bike_write_test_data <- function (data_dir = tempdir ())
     # http://tolstoy.newcastle.edu.au/R/e17/devel/12/04/0876.html
     # This works but brings bike_test_data into the global env; 2nd option
     # doesn't
-    #bike_test_data <- get ("bike_test_data", envir = .GlobalEnv) 
+    #bike_test_data <- get ("bike_test_data", envir = .GlobalEnv)
     env <- new.env ()
-    data ('bike_test_data', envir=env)
+    data ('bike_test_data', envir = env)
 
     # chicago has to be done separately
     fdir <- file.path (data_dir, 'Divvy_Trips_sample')

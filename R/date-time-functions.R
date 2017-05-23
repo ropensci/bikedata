@@ -39,7 +39,7 @@ convert_hms <- function (x)
             warning ('only first 3 numeric components used to convert to hms')
     } else
         stop ('hms values must be either numeric or character')
-    
+
     return (res)
 }
 
@@ -56,7 +56,7 @@ convert_weekday <- function (wd)
     {
         if (!is.character (wd))
             stop ("don't know how to convert weekdays of class ", class (wd))
-        wdlist <- c ("sunday", "monday", "tuesday", "wednesday", 
+        wdlist <- c ("sunday", "monday", "tuesday", "wednesday",
                      "thursday", "friday", "saturday")
         wd <- vapply (tolower (wd), function (i)
                       {
@@ -64,7 +64,8 @@ convert_weekday <- function (wd)
                           if (length (res) != 1)
                               res <- NA
                           return (res)
-                      }, numeric (1))
+                      },
+                      numeric (1))
         if (any (is.na (wd)))
             stop ('weekday specification is ambiguous')
     } else if (any (!wd %in% 1:7))

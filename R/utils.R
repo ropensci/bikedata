@@ -24,8 +24,8 @@ convert_city_names <- function (city)
                      'ch', 'di', # chicago divvy bike
                      'wa', 'dc', 'ca', # washington dc capital bike share
                      'la', 'me') # los angeles metro
-    city_code <- c ('ny', 'ny', 'ny', 'bo', 'bo', 'ch', 'ch', 
-                    'dc', 'dc', 'dc', 'la', 'la') 
+    city_code <- c ('ny', 'ny', 'ny', 'bo', 'bo', 'ch', 'ch',
+                    'dc', 'dc', 'dc', 'la', 'la')
     city_code <- city_code [pmatch (city, city_names)]
 
     if (length (indx_lo) > 0)

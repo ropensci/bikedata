@@ -48,8 +48,8 @@ filter_bike_tripmat <- function (bikedb, ...)
     if ('weekday' %in% names (x))
     {
         qry_wd <- "strftime('%w', start_time) IN "
-        qry_wd <- paste0(qry_wd, " (", 
-                         paste (rep("?", times = length(x$weekday)), 
+        qry_wd <- paste0(qry_wd, " (",
+                         paste (rep("?", times = length(x$weekday)),
                                 collapse = ", "), ")")
         qry_dt <- c (qry_dt, qry_wd)
         qryargs <- c (qryargs, x$weekday)
@@ -202,7 +202,7 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
     if (!missing (weekday))
         x <- c (x, 'weekday' = list (convert_weekday (weekday)))
 
-    if ((!missing (member) | !missing (birth_year) | !missing (gender)) &
+    if ( (!missing (member) | !missing (birth_year) | !missing (gender)) &
         (!any (c ('bo', 'ch', 'ny') %in% db_cities)))
         stop ('Only Boston, Chicago, and New York provide demographic data')
     if (!missing (member))
@@ -266,7 +266,7 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
         wts <- bike_tripmat_standardisation (bikedb, city)
         wts_start <- wts [match (trips$start_station_id, names (wts))]
         wts_end <- wts [match (trips$end_station_id, names (wts))]
-        trips$numtrips <- trips$numtrips * 
+        trips$numtrips <- trips$numtrips *
             do.call (pmin, data.frame (wts_start, wts_end) [-1])
         # Then round to 3 places
         trips$numtrips <- round (trips$numtrips, digits = 3)

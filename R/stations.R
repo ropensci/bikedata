@@ -29,10 +29,10 @@ bike_get_london_stations <- function ()
     if (resp$status_code == 200)
     {
         doc <- httr::content (resp, encoding  =  'UTF-8')
-        id <- unlist (lapply (doc, function (i) 
+        id <- unlist (lapply (doc, function (i)
                               strsplit (i$id, "BikePoints_") [[1]] [2]))
-        name <- unlist (lapply (doc, function (i) 
-                                gsub ("'", "", i$commonName)))
+        name <- unlist (lapply (doc, function (i)
+                                gsub ("'", "", i$commonName))) #nolint
         lon <- unlist (lapply (doc, function (i) i$lon))
         lat <- unlist (lapply (doc, function (i) i$lat))
         res <- data.frame (id = id, name = name, lon = lon, lat = lat)
@@ -83,7 +83,8 @@ bike_get_chicago_stations <- function (flists)
 bike_get_dc_stations <- function ()
 {
     # rm apostrophes from names (only "L'Enfant Plaza"):
-    name <- noquote (gsub ("'", "", stations_dc$address))
+    # stations_dc is lazy loaded from R/sysdata.rda
+    name <- noquote (gsub ("'", "", stations_dc$address)) #nolint
     name <- trimws (name, which = 'right') # trim terminal white space
     res <- data.frame (id = stations_dc$terminal_number,
                        name = name,
@@ -92,5 +93,3 @@ bike_get_dc_stations <- function ()
 
     return (res)
 }
-
-
