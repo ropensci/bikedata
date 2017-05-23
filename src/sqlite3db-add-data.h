@@ -23,6 +23,7 @@
 #include "read-city-files.h"
 #include "read-station-files.h"
 #include "sqlite3db-utils.h"
+#include "sqlite3/sqlite3.h"
 
 int rcpp_import_to_trip_table (const char* bikedb, 
         Rcpp::CharacterVector datafiles, std::string city, bool quiet);

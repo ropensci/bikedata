@@ -14,8 +14,6 @@
 
 #define BUFFER_SIZE 512
 
-#include <sqlite3.h>
-
 int get_max_stn_id (sqlite3 * dbcon);
 int get_stn_table_size (sqlite3 * dbcon);
 

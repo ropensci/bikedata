@@ -1,0 +1,2 @@
+PKG_CPPFLAGS=-I -frounding-math -fprofile-arcs -ftest-coverage
+PKG_LIBS=-lgcov -lsqlite3
