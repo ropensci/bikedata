@@ -9,6 +9,9 @@
 #'          use. If it doesn't already exist, it will be created, otherwise data
 #'          will be appended to existing database.  If no directory specified,
 #'          it is presumed to be in \code{tempdir()}.
+#' @param dates If specified and no \code{data_dir} is given, data are
+#' downloaded and stored only for these dates specified as vector of YYYYMM
+#' values.
 #' @param quiet If FALSE, progress is displayed on screen
 #' @param create_index If TRUE, creates an index on the start and end station
 #'          IDs and start and stop times.
@@ -38,7 +41,7 @@
 #' 
 #' @export
 store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
-                            quiet = FALSE)
+                            dates = NULL, quiet = FALSE)
 {
     if (missing (city) & missing (data_dir))
     {
@@ -57,7 +60,7 @@ store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
         if (!quiet)
             message ('Downloading data for ', city)
         for (ci in city)
-            dl_bikedata (city = ci, quiet = quiet)
+            dl_bikedata (city = ci, dates = dates, quiet = quiet)
         data_dir <- tempdir ()
     } else if (missing (city))
     {

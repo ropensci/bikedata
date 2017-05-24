@@ -141,7 +141,7 @@ bike_tripmat_standardisation <- function (bikedb, city)
 #' weekdays. This can be a vector of numeric, starting with Sunday=1, or
 #' unambiguous characters, so "sa" and "tu" for Saturday and Tuesday.
 #' @param member If given, extract only trips by registered members
-#' (\code{member = 1} or \code{TRUE}) or not (\code{member = 0} or \code{FASE}).
+#' (\code{member = 1} or \code{TRUE}) or not (\code{member = 0} or \code{FALSE}).
 #' @param birth_year If given, extract only records for trips by registered
 #' using giving birth_years within stated values (either single value or
 #' continuous range).
@@ -177,20 +177,21 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
         bikedb <- file.path (tempdir (), bikedb)
 
     db_cities <- bike_cities_in_db (bikedb)
-    if (missing (city) & length (db_cities) > 1)
+    if (missing (city))
     {
-        db_cities <- paste (db_cities, collapse = ' ')
-        message ('Calls to tripmat should specify city; cities in current ',
-                 'database are [', db_cities, ']')
+        if (length (db_cities) > 1)
+        {
+            stop ('Calls to tripmat must specify city; cities in current ',
+                  'database are [', paste (db_cities, collapse = ' '), ']')
+        } else
+            city = db_cities [1]
     } else if (!missing (city))
         if (!city %in% bike_cities_in_db (bikedb))
             stop ('city ', city, ' not represented in database')
 
     db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
 
-    x <- NULL
-    if (!missing (city))
-        x <- c (x, 'city' = city)
+    x <- c (NULL, 'city' = city)
     if (!missing (start_date))
         x <- c (x, 'start_date' = paste (lubridate::ymd (start_date)))
     if (!missing (end_date))
@@ -207,7 +208,7 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
         stop ('Only Boston, Chicago, and New York provide demographic data')
     if (!missing (member))
     {
-        if (!is.logical (member) | !(member %in% 0:1))
+        if (!(is.logical (member) | member %in% 0:1))
             stop ('member must be TRUE/FALSE or 1/0')
         if (!member)
             member <- 0
@@ -219,7 +220,7 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
     {
         if (!is.numeric (birth_year))
             stop ('birth_year must be numeric')
-        x <- c (x, 'birth_year' = birth_year)
+        x <- c (x, 'birth_year' = list (birth_year))
     }
     if (!missing (gender))
     {
@@ -232,7 +233,7 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
                 gender <- 2
             else if (gender == 'm')
                 gender <- 1
-            else if (is.numeric (gender))
+            else
                 gender <- 0
         }
         x <- c (x, 'gender' = gender)

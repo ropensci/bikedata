@@ -31,7 +31,7 @@ weekdays. This can be a vector of numeric, starting with Sunday=1, or
 unambiguous characters, so "sa" and "tu" for Saturday and Tuesday.}
 
 \item{member}{If given, extract only trips by registered members
-(\code{member = 1} or \code{TRUE}) or not (\code{member = 0} or \code{FASE}).}
+(\code{member = 1} or \code{TRUE}) or not (\code{member = 0} or \code{FALSE}).}
 
 \item{birth_year}{If given, extract only records for trips by registered
 using giving birth_years within stated values (either single value or

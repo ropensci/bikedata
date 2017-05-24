@@ -4,7 +4,8 @@
 \alias{store_bikedata}
 \title{Store hire bicycle data in SQLite3 database}
 \usage{
-store_bikedata(city, data_dir, bikedb, create_index = TRUE, quiet = FALSE)
+store_bikedata(city, data_dir, bikedb, create_index = TRUE, dates = NULL,
+  quiet = FALSE)
 }
 \arguments{
 \item{city}{One or more cities for which to download and store bike data, or
@@ -21,6 +22,10 @@ it is presumed to be in \code{tempdir()}.}
 
 \item{create_index}{If TRUE, creates an index on the start and end station
 IDs and start and stop times.}
+
+\item{dates}{If specified and no \code{data_dir} is given, data are
+downloaded and stored only for these dates specified as vector of YYYYMM
+values.}
 
 \item{quiet}{If FALSE, progress is displayed on screen}
 }

@@ -32,7 +32,7 @@
 #' declaring that 'All data files already exist'
 #'
 #' @export
-dl_bikedata <- function (city = 'nyc', data_dir = tempdir(), dates,
+dl_bikedata <- function (city = 'nyc', data_dir = tempdir(), dates = NULL,
                          quiet = FALSE)
 {
     city <- convert_city_names (city)
@@ -40,7 +40,7 @@ dl_bikedata <- function (city = 'nyc', data_dir = tempdir(), dates,
     dl_files <- get_bike_files (city)
     files <- file.path (data_dir, basename (dl_files))
 
-    if (missing (dates))
+    if (is.null (dates))
       indx <- which (!file.exists (files))
     else
       indx <- which (!file.exists (files) &
