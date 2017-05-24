@@ -66,7 +66,8 @@ bike_summary_stats (bikedb = 'bikedb')
 
 The final field, `latest_files`, indicates whether the files in the database are up to date with the latest published files.
 
-###<a name="dates-times"></a>2.1 Filtering trips by dates, times, and weekdays
+<a name="dates-times"></a>2.1 Filtering trips by dates, times, and weekdays
+--------------
 
 Trip matrices can be constructed for trips filtered by dates, days of the week, times of day, or any combination of these. The temporal extent of a `bikedata` database is given in the above `bike_summary_stats()` function, or can be directly viewed with
 
@@ -91,7 +92,8 @@ tm <- bike_tripmat ('bikedb', weekday=2:6,
                     start_time="6:30", end_time="10:15:25")
 ```
 
-###<a name="demography"></a>2.2 Filtering trips by demographic characteristics
+<a name="demography"></a>2.2 Filtering trips by demographic characteristics
+--------------
 
 Trip matrices can also be filtered by demographic characteristics through specifying the three additional arguments of `member`, `gender`, and `birth_year`. `member = 0` is equivalent to `member = FALSE`, and `1` equivalent to `TRUE`. `gender` is specified numerically such that values of `2`, `1`, and `0` respectively translate to female, male, and unspecified. The following lines demonstrate this functionality
 
