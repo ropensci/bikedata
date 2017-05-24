@@ -4,7 +4,7 @@
 \alias{bike_daily_trips}
 \title{Extract daily trip counts for all stations}
 \usage{
-bike_daily_trips(bikedb, city, station)
+bike_daily_trips(bikedb, city, station, member, birth_year, gender)
 }
 \arguments{
 \item{bikedb}{A string containing the path to the SQLite3 database.
@@ -15,6 +15,15 @@ contains data for more than one city}
 
 \item{station}{Optional argument specifying bike station for which trips are
 to be counted}
+
+\item{member}{If given, extract only trips by registered members
+(\code{member = 1} or \code{TRUE}) or not (\code{member = 0} or \code{FALSE}).}
+
+\item{birth_year}{If given, extract only trips by registered members whose
+declared birth years equal or lie within the specified value or values.}
+
+\item{gender}{If given, extract only records for trips by registered
+users declaring the specified genders (\code{f/m/.} or \code{2/1/0}).}
 }
 \value{
 A \code{data.frame} containing daily dates and total numbers of trips

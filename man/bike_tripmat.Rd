@@ -33,12 +33,11 @@ unambiguous characters, so "sa" and "tu" for Saturday and Tuesday.}
 \item{member}{If given, extract only trips by registered members
 (\code{member = 1} or \code{TRUE}) or not (\code{member = 0} or \code{FALSE}).}
 
-\item{birth_year}{If given, extract only records for trips by registered
-using giving birth_years within stated values (either single value or
-continuous range).}
+\item{birth_year}{If given, extract only trips by registered members whose
+declared birth years equal or lie within the specified value or values.}
 
 \item{gender}{If given, extract only records for trips by registered
-using giving the specified genders (\code{f/m/.} or \code{2/1/0}).}
+users declaring the specified genders (\code{f/m/.} or \code{2/1/0}).}
 
 \item{standardise}{If TRUE, numbers of trips are standardised to the
 operating durations of each stations, so trip numbers are increased for

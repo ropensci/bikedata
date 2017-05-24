@@ -297,6 +297,12 @@ bike_summary_stats <- function (bikedb)
 #' contains data for more than one city
 #' @param station Optional argument specifying bike station for which trips are
 #' to be counted
+#' @param member If given, extract only trips by registered members
+#' (\code{member = 1} or \code{TRUE}) or not (\code{member = 0} or \code{FALSE}).
+#' @param birth_year If given, extract only trips by registered members whose
+#' declared birth years equal or lie within the specified value or values.
+#' @param gender If given, extract only records for trips by registered
+#' users declaring the specified genders (\code{f/m/.} or \code{2/1/0}).
 #'
 #' @return A \code{data.frame} containing daily dates and total numbers of trips
 #'
@@ -314,7 +320,7 @@ bike_summary_stats <- function (bikedb)
 #' bike_rm_db (bikedb)
 #' # don't forget to remove real data!
 #' # file.remove (list.files ('.', pattern = '.zip'))
-bike_daily_trips <- function (bikedb, city, station)
+bike_daily_trips <- function (bikedb, city, station, member, birth_year, gender)
 {
     if (!grepl ('/', bikedb) | !grepl ('*//*', bikedb))
         bikedb <- file.path (tempdir (), bikedb)
@@ -329,27 +335,63 @@ bike_daily_trips <- function (bikedb, city, station)
     } else
         city <- convert_city_names (city)
 
+    #qry <- paste0 ("SELECT STRFTIME('%Y-%m-%d', start_time) AS 'date', ",
+    #               "COUNT() AS 'ntrips' FROM trips ",
+    #               "WHERE city = '", city, "'")
     qry <- paste0 ("SELECT STRFTIME('%Y-%m-%d', start_time) AS 'date', ",
-                   "COUNT() AS 'ntrips' FROM trips ",
-                   "WHERE city = '", city, "'")
-    db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
+                   "COUNT() AS 'ntrips' FROM trips ")
+
+    qry_where <- "city = ?"
+    qryargs <- city
+    if (!missing (member))
+    {
+        qry_where <- c (qry_where, "user_type = ?")
+        qryargs <- c (qryargs, bike_transform_member (member))
+    }
+    if (!missing (birth_year))
+    {
+        if (!is.numeric (birth_year))
+            stop ('birth_year must be numeric')
+        if (length (birth_year) == 1)
+        {
+            qry_where <- c (qry_where, "birth_year = ?")
+            qryargs <- c (qryargs, birth_year)
+        } else
+        {
+            qry_where <- c (qry_where, "birth_year >= ?", "birth_year <= ?")
+            qryargs <- c (qryargs, min (birth_year), max (birth_year))
+        }
+    }
+    if (!missing (gender))
+    {
+        qry_where <- c (qry_where, "gender = ?")
+        qryargs <- c (qryargs, bike_transform_gender (gender))
+    }
+
     if (!missing (station))
     {
-        if (substring (stn, 1, 2) != city)
-            stn <- paste0 (city, stn)
+        if (substring (station, 1, 2) != city)
+            station <- paste0 (city, station)
         # Then just check that station is in stations table
         stns <- RSQLite::dbGetQuery (db, "SELECT stn_id FROM stations")$stn_id
-        if (!stn %in% stns)
-            stop ('Station ', stn, ' does not exist in database')
-        qry <- paste0 (qry, " AND start_station_id = '", station, "'")
+        if (!station %in% stns)
+            stop ('Station ', station, ' does not exist in database')
+        qry_where <- c (qry_where, "start_station_id = ?")
+        qryargs <- c (qryargs, station)
     }
+    qry <- paste (qry, "WHERE", paste (qry_where, collapse = " AND "))
     qry <- paste0 (qry, " GROUP BY STRFTIME('%Y-%m-%d', date);")
-    ret <- RSQLite::dbGetQuery (db, qry)
+
+    db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
+    qryres <- RSQLite::dbSendQuery (db, qry)
+    RSQLite::dbBind(qryres, as.list (qryargs))
+    trips <- RSQLite::dbFetch (qryres)
+    RSQLite::dbClearResult (qryres)
     RSQLite::dbDisconnect (db)
 
-    ret$date <- as.Date (ret$date)
+    trips$date <- as.Date (trips$date)
 
-    return (ret)
+    return (trips)
 }
 
 

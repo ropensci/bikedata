@@ -123,6 +123,49 @@ bike_tripmat_standardisation <- function (bikedb, city)
     return (wt)
 }
 
+#' Transform specified membership to standard 0/1 form
+#'
+#' @param member Value as entered
+#'
+#' @return Standardised 0/1 equivalent specification
+#'
+#' @noRd
+bike_transform_member <- function (member)
+{
+    if (!(is.logical (member) | member %in% 0:1))
+        stop ('member must be TRUE/FALSE or 1/0')
+    if (!member)
+        member <- 0
+    else if (member)
+        member <- 1
+
+    return (member)
+}
+
+
+#' Transform specified gender to standard numeric form
+#'
+#' @param gender Value as entered
+#'
+#' @return Standardised 0/1/2 equivalent specification
+#'
+#' @noRd
+bike_transform_gender <- function (gender)
+{
+    if (!(is.numeric (gender) | is.character (gender)))
+        stop ('gender must be numeric or character')
+    if (is.character (gender))
+    {
+        gender <- tolower (substring (gender, 1, 1))
+        if (gender == 'f')
+            gender <- 2
+        else if (gender == 'm')
+            gender <- 1
+        else
+            gender <- 0
+    }
+    return (gender)
+}
 
 #' Extract station-to-station trip matrix or data.frame from SQLite3 database
 #'
@@ -142,11 +185,10 @@ bike_tripmat_standardisation <- function (bikedb, city)
 #' unambiguous characters, so "sa" and "tu" for Saturday and Tuesday.
 #' @param member If given, extract only trips by registered members
 #' (\code{member = 1} or \code{TRUE}) or not (\code{member = 0} or \code{FALSE}).
-#' @param birth_year If given, extract only records for trips by registered
-#' using giving birth_years within stated values (either single value or
-#' continuous range).
+#' @param birth_year If given, extract only trips by registered members whose
+#' declared birth years equal or lie within the specified value or values.
 #' @param gender If given, extract only records for trips by registered
-#' using giving the specified genders (\code{f/m/.} or \code{2/1/0}).
+#' users declaring the specified genders (\code{f/m/.} or \code{2/1/0}).
 #' @param standardise If TRUE, numbers of trips are standardised to the
 #' operating durations of each stations, so trip numbers are increased for
 #' stations that have only operated a short time, and vice versa.
@@ -207,15 +249,7 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
         (!any (c ('bo', 'ch', 'ny') %in% db_cities)))
         stop ('Only Boston, Chicago, and New York provide demographic data')
     if (!missing (member))
-    {
-        if (!(is.logical (member) | member %in% 0:1))
-            stop ('member must be TRUE/FALSE or 1/0')
-        if (!member)
-            member <- 0
-        else if (member)
-            member <- 1
-        x <- c (x, 'member' = member)
-    }
+        x <- c (x, 'member' = bike_transform_member (member))
     if (!missing (birth_year))
     {
         if (!is.numeric (birth_year))
@@ -223,21 +257,7 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
         x <- c (x, 'birth_year' = list (birth_year))
     }
     if (!missing (gender))
-    {
-        if (!(is.numeric (gender) | is.character (gender)))
-            stop ('gender must be numeric or character')
-        if (is.character (gender))
-        {
-            gender <- tolower (substring (gender, 1, 1))
-            if (gender == 'f')
-                gender <- 2
-            else if (gender == 'm')
-                gender <- 1
-            else
-                gender <- 0
-        }
-        x <- c (x, 'gender' = gender)
-    }
+        x <- c (x, 'gender' = bike_transform_gender (gender))
 
     if ( (missing (city) & length (x) > 0) |
         (!missing (city) & length (x) > 1) )
