@@ -5,11 +5,8 @@ require (testthat)
 bikedb <- file.path (getwd (), "testdb")
 
 test_that ('tripmat-full', {
-               expect_message (tm <- bike_tripmat (bikedb, quiet = TRUE),
-                               'Calls to tripmat should specify city')
-               expect_equal (nrow (tm), ncol (tm))
-               expect_true (nrow (tm) >= 2113)
-               expect_true (sum (tm) >= 1190)
+               expect_error (tm <- bike_tripmat (bikedb, quiet = TRUE),
+                               'Calls to tripmat must specify city')
 })
 
 test_that ('tripmat-cities', {
