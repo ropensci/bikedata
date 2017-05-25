@@ -309,14 +309,13 @@ bike_summary_stats <- function (bikedb)
 #' @export
 #'
 #' @examples
-#' data_dir <- tempdir ()
-#' bike_write_test_data (data_dir = data_dir)
+#' bike_write_test_data () # by default in tempdir ()
 #' # dl_bikedata (city = 'la', data_dir = '.') # or download some real data!
-#' bikedb <- file.path (data_dir, 'testdb')
-#' store_bikedata (data_dir = data_dir, bikedb = bikedb)
+#' bikedb <- file.path (tempdir (), 'testdb')
+#' store_bikedata (data_dir = tempdir (), bikedb = bikedb)
 #' bike_daily_trips (bikedb = 'testdb', city = 'ny')
 #' 
-#' bike_rm_test_data (data_dir = data_dir)
+#' bike_rm_test_data ()
 #' bike_rm_db (bikedb)
 #' # don't forget to remove real data!
 #' # file.remove (list.files ('.', pattern = '.zip'))
@@ -325,18 +324,14 @@ bike_daily_trips <- function (bikedb, city, station, member, birth_year, gender)
     if (missing (bikedb))
         stop ("Can't get daily trips if bikedb isn't provided")
 
-    bikedb <- deparse (substitute(bikedb))
-    if (!file.exists (bikedb))
-    {
-        if (!exists (bikedb, env = parent.frame ()))
-            stop ('object ', bikedb, ' does not exist')
-        bikedb <- get (bikedb, env = parent.frame ())
-        if (!file.exists (bikedb))
-            stop ('file ', bikedb, ' does not exist')
-    }
+    if (exists (bikedb, envir = parent.frame ()))
+        bikedb <- get (bikedb, envir = parent.frame ())
 
     if (!grepl ('/', bikedb) | !grepl ('*//*', bikedb))
         bikedb <- file.path (tempdir (), bikedb)
+
+    if (!file.exists (bikedb))
+        stop ('file ', basename (bikedb), ' does not exist')
 
     cities <- bike_cities_in_db (bikedb)
     if (missing (city))
