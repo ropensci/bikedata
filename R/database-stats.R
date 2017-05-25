@@ -322,6 +322,19 @@ bike_summary_stats <- function (bikedb)
 #' # file.remove (list.files ('.', pattern = '.zip'))
 bike_daily_trips <- function (bikedb, city, station, member, birth_year, gender)
 {
+    if (missing (bikedb))
+        stop ("Can't get daily trips if bikedb isn't provided")
+
+    bikedb <- deparse (substitute(bikedb))
+    if (!file.exists (bikedb))
+    {
+        if (!exists (bikedb, env = parent.frame ()))
+            stop ('object ', bikedb, ' does not exist')
+        bikedb <- get (bikedb, env = parent.frame ())
+        if (!file.exists (bikedb))
+            stop ('file ', bikedb, ' does not exist')
+    }
+
     if (!grepl ('/', bikedb) | !grepl ('*//*', bikedb))
         bikedb <- file.path (tempdir (), bikedb)
 
