@@ -314,6 +314,10 @@ bike_summary_stats <- function (bikedb)
 #' bikedb <- file.path (tempdir (), 'testdb')
 #' store_bikedata (data_dir = tempdir (), bikedb = bikedb)
 #' bike_daily_trips (bikedb = 'testdb', city = 'ny')
+#' bike_daily_trips (bikedb = 'testdb', city = 'ny', member = TRUE)
+#' bike_daily_trips (bikedb = 'testdb', city = 'ny', gender = 'f')
+#' bike_daily_trips (bikedb = 'testdb', city = 'ny', station = '173',
+#'                   gender = 1)
 #' 
 #' bike_rm_test_data ()
 #' bike_rm_db (bikedb)
@@ -343,6 +347,7 @@ bike_daily_trips <- function (bikedb, city, station, member, birth_year, gender)
     } else
         city <- convert_city_names (city)
 
+    db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
     qry <- paste0 ("SELECT STRFTIME('%Y-%m-%d', start_time) AS 'date', ",
                    "COUNT() AS 'ntrips' FROM trips ")
 
@@ -379,7 +384,6 @@ bike_daily_trips <- function (bikedb, city, station, member, birth_year, gender)
     qry <- paste (qry, "WHERE", paste (qry_where, collapse = " AND "))
     qry <- paste0 (qry, " GROUP BY STRFTIME('%Y-%m-%d', date);")
 
-    db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
     qryres <- RSQLite::dbSendQuery (db, qry)
     RSQLite::dbBind(qryres, as.list (qryargs))
     trips <- RSQLite::dbFetch (qryres)

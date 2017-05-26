@@ -37,6 +37,10 @@ bike_write_test_data () # by default in tempdir ()
 bikedb <- file.path (tempdir (), 'testdb')
 store_bikedata (data_dir = tempdir (), bikedb = bikedb)
 bike_daily_trips (bikedb = 'testdb', city = 'ny')
+bike_daily_trips (bikedb = 'testdb', city = 'ny', member = TRUE)
+bike_daily_trips (bikedb = 'testdb', city = 'ny', gender = 'f')
+bike_daily_trips (bikedb = 'testdb', city = 'ny', station = '173',
+                  gender = 1)
 
 bike_rm_test_data ()
 bike_rm_db (bikedb)
