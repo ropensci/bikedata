@@ -226,7 +226,7 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
             stop ('Calls to tripmat must specify city; cities in current ',
                   'database are [', paste (db_cities, collapse = ' '), ']')
         } else
-            city = db_cities [1]
+            city <- db_cities [1]
     } else if (!missing (city))
         if (!city %in% bike_cities_in_db (bikedb))
             stop ('city ', city, ' not represented in database')

@@ -109,7 +109,7 @@ bike_rm_test_data <- function (data_dir = tempdir ())
     zips <- file.path (data_dir, zips)
     res <- NULL
     rm1 <- function (f) {
-        tryCatch (file.remove (f), 
+        tryCatch (file.remove (f),
                   warning = function (w) NULL,
                   error = function (e) NULL)
     }

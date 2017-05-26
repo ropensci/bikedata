@@ -138,7 +138,7 @@ store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
                                                       ci, quiet)
 
             if (length (flists$flist_rm) > 0)
-               invisible (tryCatch (file.remove (flists$flist_rm), 
+               invisible (tryCatch (file.remove (flists$flist_rm),
                                 warning = function (w) NULL,
                                 error = function (e) NULL))
             if (!quiet & length (city) > 1)
