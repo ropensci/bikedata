@@ -63,15 +63,9 @@ filter_bike_tripmat <- function (bikedb, ...)
     }
     if ('birth_year' %in% names (x))
     {
-        if (length (x$birth_year) == 1)
-        {
-            qry_demog <- c (qry_demog, "birth_year = ?")
-            qryargs <- c (qryargs, x$birth_year)
-        } else
-        {
-            qry_demog <- c (qry_demog, "birth_year >= ?", "birth_year <= ?")
-            qryargs <- c (qryargs, min (x$birth_year), max (x$birth_year))
-        }
+        qtmp <- add_birth_year_to_qry (qry_demog, qryargs, x$birth_year)
+        qry_demog <- qtmp$qry
+        qryargs <- qtmp$qryargs
     }
     if ('gender' %in% names (x))
     {
@@ -99,6 +93,29 @@ filter_bike_tripmat <- function (bikedb, ...)
     RSQLite::dbClearResult(qryres)
 
     return(trips)
+}
+
+#' add birth year specification to query
+#'
+#' @param qry The query character vector for demographic characteristics
+#' @param qryargs The arguments associated with the query vector
+#' @param birth_year Number vector of desired birth year(s)
+#'
+#' @return List containing modified versions of qry and qryargs
+#'
+#' @noRd
+add_birth_year_to_qry <- function (qry, qryargs, birth_year)
+{
+        if (length (birth_year) == 1)
+        {
+            qry_demog <- c (qry_demog, "birth_year = ?")
+            qryargs <- c (qryargs, birth_year)
+        } else
+        {
+            qry_demog <- c (qry_demog, "birth_year >= ?", "birth_year <= ?")
+            qryargs <- c (qryargs, min (birth_year), max (birth_year))
+        }
+        return (list (qry = qry, qryargs = qryargs))
 }
 
 #' Calculation station weights for standardising trip matrix by operating

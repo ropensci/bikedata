@@ -343,9 +343,6 @@ bike_daily_trips <- function (bikedb, city, station, member, birth_year, gender)
     } else
         city <- convert_city_names (city)
 
-    #qry <- paste0 ("SELECT STRFTIME('%Y-%m-%d', start_time) AS 'date', ",
-    #               "COUNT() AS 'ntrips' FROM trips ",
-    #               "WHERE city = '", city, "'")
     qry <- paste0 ("SELECT STRFTIME('%Y-%m-%d', start_time) AS 'date', ",
                    "COUNT() AS 'ntrips' FROM trips ")
 
@@ -358,17 +355,9 @@ bike_daily_trips <- function (bikedb, city, station, member, birth_year, gender)
     }
     if (!missing (birth_year))
     {
-        if (!is.numeric (birth_year))
-            stop ('birth_year must be numeric')
-        if (length (birth_year) == 1)
-        {
-            qry_where <- c (qry_where, "birth_year = ?")
-            qryargs <- c (qryargs, birth_year)
-        } else
-        {
-            qry_where <- c (qry_where, "birth_year >= ?", "birth_year <= ?")
-            qryargs <- c (qryargs, min (birth_year), max (birth_year))
-        }
+        qtmp <- add_birth_year_to_qry (qry_where, qryargs, birth_year)
+        qry_where <- qtmp$qry
+        qryargs <- qtmp$qryargs
     }
     if (!missing (gender))
     {
