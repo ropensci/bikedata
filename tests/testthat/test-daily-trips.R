@@ -2,7 +2,8 @@ context ("daily trips")
 
 require (testthat)
 
-bikedb <- file.path (getwd (), "testdb")
+#bikedb <- file.path (getwd (), "testdb")
+bikedb <- system.file ('db', 'testdb.sqlite', package = 'bikedata')
 
 test_that ('no db arg', {
                expect_error (bike_daily_trips (),
@@ -23,14 +24,14 @@ test_that ('no city', {
 })
 
 test_that ('daily trips', {
-               expect_equal (bike_daily_trips (bikedb = 'testdb',
+               expect_equal (bike_daily_trips (bikedb = bikedb,
                                                city = 'ny')$ntrips, 200)
-               expect_equal (bike_daily_trips (bikedb = 'testdb',
+               expect_equal (bike_daily_trips (bikedb = bikedb,
                                                city = 'ny',
                                                member = TRUE)$ntrips, 191)
-               expect_equal (bike_daily_trips (bikedb = 'testdb', city = 'ny',
+               expect_equal (bike_daily_trips (bikedb = bikedb, city = 'ny',
                                                gender = 'f')$ntrips, 22)
-               expect_equal (bike_daily_trips (bikedb = 'testdb', city = 'ny',
+               expect_equal (bike_daily_trips (bikedb = bikedb, city = 'ny',
                                                station = '173',
                                                gender = 1)$ntrips, 1)
 })

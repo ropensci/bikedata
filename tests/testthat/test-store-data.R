@@ -2,7 +2,8 @@ context ("store data in db")
 
 require (testthat)
 
-bikedb <- file.path (getwd (), "testdb")
+#bikedb <- file.path (getwd (), "testdb")
+bikedb <- system.file ('db', 'testdb.sqlite', package = 'bikedata')
 
 # NOTE:
 # All files have 200 trips, but LA stations are read from trips, and has 2 trips

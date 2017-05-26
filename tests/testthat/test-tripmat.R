@@ -2,7 +2,8 @@ context ("tripmat")
 
 require (testthat)
 
-bikedb <- file.path (getwd (), "testdb")
+#bikedb <- file.path (getwd (), "testdb")
+bikedb <- system.file ('db', 'testdb.sqlite', package = 'bikedata')
 
 test_that ('tripmat-full', {
                expect_error (tm <- bike_tripmat (bikedb, quiet = TRUE),

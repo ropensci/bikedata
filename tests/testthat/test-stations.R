@@ -2,7 +2,8 @@ context ("stations")
 
 require (testthat)
 
-bikedb <- file.path (getwd (), "testdb")
+#bikedb <- file.path (getwd (), "testdb")
+bikedb <- system.file ('db', 'testdb.sqlite', package = 'bikedata')
 
 test_that ('station db table', {
                db <- dplyr::src_sqlite (bikedb, create = F)
