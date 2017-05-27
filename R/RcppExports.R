@@ -168,18 +168,6 @@ NULL
 #' @noRd
 NULL
 
-#' compare_version_numbers
-#'
-#' Function to compare version numbers
-#' First argument is compared to the second argument
-#' Return value:
-#' -1 = Argument one version lower than Argument two version
-#' 0 = Argument one version equal to Argument two version
-#' 1 = Argument one version higher than Argument two version
-#'
-#' @noRd
-NULL
-
 #' rm_dos_end
 #'
 #' Remove dos line ending from a character string

@@ -131,33 +131,26 @@ int rcpp_create_db_indexes (const char* bikedb, Rcpp::CharacterVector tables,
 
     for (int i = 0; i < cols.length(); ++i) 
     {
-        if (((std::string) cols[i]).find("(") == std::string::npos || 
-                compare_version_numbers (sqliteversion, "3.9.0") >= 0) 
+        std::string idxname = "idx_" + tables[i] + "_" + 
+            (std::string)cols[i];
+        boost::replace_all(idxname, "(", "_");
+        boost::replace_all(idxname, ")", "_");
+        boost::replace_all(idxname, " ", "_");
+
+        std::string idxqry;
+        if (reindex)
+            idxqry = "REINDEX " + idxname;
+        else
+            idxqry = "CREATE INDEX " + idxname + " ON " +
+                (char *)(tables [i]) + "(" + (char *)(cols [i]) + ")";
+
+        rc = sqlite3_exec(dbcon, idxqry.c_str(), NULL, NULL, &zErrMsg);
+        if (rc != SQLITE_OK) 
         {
-            std::string idxname = "idx_" + tables[i] + "_" + 
-                (std::string)cols[i];
-            boost::replace_all(idxname, "(", "_");
-            boost::replace_all(idxname, ")", "_");
-            boost::replace_all(idxname, " ", "_");
-
-            std::string idxqry;
-            if (reindex)
-                idxqry = "REINDEX " + idxname;
-            else
-                idxqry = "CREATE INDEX " + idxname + " ON " +
-                    (char *)(tables [i]) + "(" + (char *)(cols [i]) + ")";
-
-            rc = sqlite3_exec(dbcon, idxqry.c_str(), NULL, NULL, &zErrMsg);
-            if (rc != SQLITE_OK) 
-            {
-                std::string errMsg = "Unable to execute index query: " + 
-                        idxqry;
-                throw std::runtime_error (errMsg);
-            }
+            std::string errMsg = "Unable to execute index query: " + 
+                idxqry;
+            throw std::runtime_error (errMsg);
         }
-        else 
-            Rcpp::warning ("Unable to create index on " + cols[i] + 
-                    ", expression not supported in SQLite version < 3.9.0");
     } 
 
     rc = sqlite3_close_v2(dbcon);
