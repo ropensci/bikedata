@@ -123,3 +123,23 @@ test_that ('weekday', {
                                                  quiet = T),
                              'weekday specification is ambiguous')
 })
+
+test_that ('tripmat-demography', {
+               expect_silent (tm <- bike_tripmat (bikedb = bikedb, city = 'ny',
+                                                  member = 1))
+               expect_equal (sum (tm), 191)
+               expect_silent (tm <- bike_tripmat (bikedb = bikedb, city = 'ny',
+                                                  birth_year = 1976))
+               expect_equal (sum (tm), 4)
+               expect_silent (tm <- bike_tripmat (bikedb = bikedb, city = 'ny',
+                                                  birth_year = 1976:1990))
+               expect_equal (sum (tm), 98)
+               expect_silent (tm <- bike_tripmat (bikedb = bikedb, city = 'ny',
+                                                  gender = 'f'))
+               expect_equal (sum (tm), 22)
+               expect_silent (tm <- bike_tripmat (bikedb = bikedb, city = 'ny',
+                                                  gender = 'm', 
+                                                  birth_year = 1976:1990))
+               expect_equal (sum (tm), 89)
+})
+

@@ -48,3 +48,8 @@ and names of bike hire systems are:
 Ensure you have a fast internet connection and at least 100 Mb space
 }
 
+\examples{
+\dontrun{
+dl_bikedata (city = 'New York City USA', dates = 201601:201613)
+}
+}

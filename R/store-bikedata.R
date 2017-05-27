@@ -40,6 +40,23 @@
 #' corresponding \code{data_dir} passed to this function.
 #' 
 #' @export
+#' 
+#' @examples
+#' \dontrun{
+#' data_dir <- tempdir ()
+#' bike_write_test_data (data_dir = data_dir)
+#' # or download some real data!
+#' # dl_bikedata (city = 'la', data_dir = data_dir)
+#' bikedb <- file.path (data_dir, 'testdb')
+#' store_bikedata (data_dir = data_dir, bikedb = bikedb)
+#' trips <- bike_tripmat (bikedb = bikedb, city = 'LA') # trip matrix
+#' stations <- bike_stations (bikedb = bikedb) # station data
+#' 
+#' bike_rm_test_data (data_dir = data_dir)
+#' bike_rm_db (bikedb)
+#' # don't forget to remove real data!
+#' # file.remove (list.files (data_dir, pattern = '.zip'))
+#' }
 store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
                             dates = NULL, quiet = FALSE)
 {
@@ -193,6 +210,21 @@ store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
 #' @return TRUE if \code{bikedb} successfully removed; otherwise FALSE
 #'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' data_dir <- tempdir ()
+#' bike_write_test_data (data_dir = data_dir)
+#' # or download some real data!
+#' # dl_bikedata (city = 'la', data_dir = data_dir)
+#' bikedb <- file.path (data_dir, 'testdb')
+#' store_bikedata (data_dir = data_dir, bikedb = bikedb)
+#' 
+#' bike_rm_test_data (data_dir = data_dir)
+#' bike_rm_db (bikedb)
+#' # don't forget to remove real data!
+#' # file.remove (list.files (data_dir, pattern = '.zip'))
+#' }
 bike_rm_db <- function (bikedb)
 {
     if (!grepl ('/', bikedb) | !grepl ('*//*', bikedb))

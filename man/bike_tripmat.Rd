@@ -65,3 +65,38 @@ character format, with arbitrary (or no) delimiters between fields. Single
 numeric times are interpreted as hours, with 24 interpreted as day's end at
 23:59:59.
 }
+\examples{
+\dontrun{
+data_dir <- tempdir ()
+bike_write_test_data (data_dir = data_dir)
+# or download some real data!
+# dl_bikedata (city = 'la', data_dir = data_dir)
+bikedb <- file.path (data_dir, 'testdb')
+store_bikedata (data_dir = data_dir, bikedb = bikedb)
+
+tm <- bike_tripmat (bikedb = bikedb, city = 'ny') # full trip matrix
+tm <- bike_tripmat (bikedb = bikedb, city = 'ny',
+                    start_date = 20161201, end_date = 20161201)
+tm <- bike_tripmat (bikedb = bikedb, city = 'ny', start_time = 1)
+tm <- bike_tripmat (bikedb = bikedb, city = 'ny', start_time = "01:00")
+tm <- bike_tripmat (bikedb = bikedb, city = 'ny', end_time = "01:00")
+tm <- bike_tripmat (bikedb = bikedb, city = 'ny', 
+                    start_date = 20161201, start_time = 1)
+tm <- bike_tripmat (bikedb = bikedb, city = 'ny', start_date = 20161201,
+                    end_date = 20161201, start_time = 1, end_time = 2)
+tm <- bike_tripmat (bikedb = bikedb, city = 'ny', weekday = 5)
+tm <- bike_tripmat (bikedb = bikedb, city = 'ny', weekday = c('f', 'sa', 'th'))
+tm <- bike_tripmat (bikedb = bikedb, city = 'ny', weekday = c('f', 'th', 'sa'))
+tm <- bike_tripmat (bikedb = bikedb, city = 'ny', member = 1)
+tm <- bike_tripmat (bikedb = bikedb, city = 'ny', birth_year = 1976)
+tm <- bike_tripmat (bikedb = bikedb, city = 'ny', birth_year = 1976:1990)
+tm <- bike_tripmat (bikedb = bikedb, city = 'ny', gender = 'f')
+tm <- bike_tripmat (bikedb = bikedb, city = 'ny',
+                    gender = 'm', birth_year = 1976:1990)
+
+bike_rm_test_data (data_dir = data_dir)
+bike_rm_db (bikedb)
+# don't forget to remove real data!
+# file.remove (list.files (data_dir, pattern = '.zip'))
+}
+}

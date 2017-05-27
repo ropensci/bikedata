@@ -7,6 +7,7 @@
 #' @noRd
 convert_city_names <- function (city)
 {
+    city <- gsub (' ', '', city)
     city <- substring (gsub ('[[:punct:]]', '', tolower (city)), 1, 3)
     indx_lo <- which (city %in% c ('lon', 'los'))
     indx <- which (!seq (city) %in% indx_lo)
@@ -23,14 +24,15 @@ convert_city_names <- function (city)
                      'bo', 'hu', # boston hubway
                      'ch', 'di', # chicago divvy bike
                      'wa', 'dc', 'ca', # washington dc capital bike share
-                     'la', 'me') # los angeles metro
+                     'la', 'me',
+                     'lo', 'sa' ) # london santander
     city_code <- c ('ny', 'ny', 'ny', 'bo', 'bo', 'ch', 'ch',
-                    'dc', 'dc', 'dc', 'la', 'la')
+                    'dc', 'dc', 'dc', 'la', 'la', 'lo', 'lo')
     city_code <- city_code [pmatch (city, city_names)]
 
     if (length (indx_lo) > 0)
     {
-        city <- rep (NA, length (city))
+        city <- rep (NA, min (1, length (city)))
         city [indx_lo] <- city_lo
         city [indx] <- city_code
     }

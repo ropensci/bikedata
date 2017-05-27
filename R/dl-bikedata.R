@@ -32,6 +32,11 @@
 #' declaring that 'All data files already exist'
 #'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' dl_bikedata (city = 'New York City USA', dates = 201601:201613)
+#' }
 dl_bikedata <- function (city = 'nyc', data_dir = tempdir(), dates = NULL,
                          quiet = FALSE)
 {
