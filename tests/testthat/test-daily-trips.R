@@ -2,7 +2,6 @@ context ("daily trips")
 
 require (testthat)
 
-#bikedb <- file.path (getwd (), "testdb")
 bikedb <- system.file ('db', 'testdb.sqlite', package = 'bikedata')
 
 test_that ('no db arg', {

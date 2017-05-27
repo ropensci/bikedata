@@ -1,11 +1,15 @@
-context ("store data in db")
+context ("write and store data in db")
 
 require (testthat)
 
-#bikedb <- file.path (getwd (), "testdb")
-bikedb <- system.file ('db', 'testdb.sqlite', package = 'bikedata')
-
-# NOTE:
+# NOTE: The direct routines used to create the database are not guaranteed to
+# give identical results each time, particularly because stations for some
+# cities are downloaded from API servers which may give variable numbers of
+# stations, and even lead to variable numbers of trips. This function therefore
+# tests the entire "live" API interface, while the remainder test the
+# pre-generated database stored in /inst/db, which always generates reliable
+# results.
+#
 # All files have 200 trips, but LA stations are read from trips, and has 2 trips
 # that end at station#3000 which has no lat-lon, so there are only 198 trips and
 # 50 stations, rather than 200 and 51.
@@ -27,33 +31,26 @@ bikedb <- system.file ('db', 'testdb.sqlite', package = 'bikedata')
 # London in particlar expands rapidly and so tests are all for values >= these.
 # To ensure this is failsafe, tests for numbers of stations are simply
 # >= 93 + 581 + 456 + 5 + 233 + 700 = 2113
-test_that ('read data', {
-               db <- dplyr::src_sqlite (bikedb, create = F)
 
-               trips <- dplyr::collect (dplyr::tbl (db, 'trips'))
-               #expect_equal (dim (trips), c (1198, 11))
-               expect_true (nrow (trips) >= 1198)
-               nms <- c ("id", "city", "trip_duration", "start_time",
-                         "stop_time", "start_station_id", "end_station_id",
-                         "bike_id", "user_type", "birth_year", "gender")
-               expect_equal (names (trips), nms)
+bikedb <- file.path (tempdir (), "testdb")
+
+test_that ('write and store data', {
+               expect_silent (bike_write_test_data (data_dir = tempdir ()))
+               expect_silent (n <- store_bikedata (data_dir = tempdir (), 
+                                                   bikedb = bikedb, 
+                                                   quiet = TRUE))
+               expect_equal (n, 1198)
 })
 
-test_that ('date limits', {
-               x <- bike_datelimits (bikedb)
-               expect_is (x, 'character')
-               expect_length (x, 2)
+test_that ('stations from downloaded data', {
+               st <- bike_stations (bikedb)
+               expect_true (nrow (st) > 2113)
 })
 
-test_that ('db stats', {
-               db_stats <- bike_summary_stats (bikedb)
-               expect_is (db_stats, 'data.frame')
-               expect_equal (names (db_stats), c ('num_trips', 'num_stations',
-                                                  'first_trip', 'last_trip',
-                                                  'latest_files'))
-               expect_equal (dim (db_stats), c (7, 5))
-               expect_equal (rownames (db_stats), c ('all', 'bo', 'ch', 'dc',
-                                                     'la', 'lo', 'ny'))
-               expect_true (sum (db_stats$num_trips) >= 2396)
-               expect_true (sum (db_stats$num_stations) >= (2 * 2113))
+test_that ('remove data', {
+               expect_equal (bike_rm_test_data (data_dir = tempdir ()), 6)
 })
+
+chk <- tryCatch (file.remove (bikedb), 
+                 warning = function (w) NULL,
+                 error = function (e) NULL)
