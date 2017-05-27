@@ -69,7 +69,7 @@ devtools::load_all (".")
 ```
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, error=FALSE}
-options(width=120)
+options(width = 120)
 ```
 
 
@@ -91,7 +91,7 @@ numbers of trips between each pair of stations. These are extracted from the
 database with:
 ```{r, eval=FALSE}
 tm <- bike_tripmat (bikedb = 'bikedb')
-dim (tm); format (sum (tm), big.mark=',')
+dim (tm); format (sum (tm), big.mark = ',')
 ```
 ```{r, echo=FALSE}
 c (518, 518)
@@ -132,15 +132,15 @@ units must always precede smaller units (so years before months before days;
 hours before minutes before seconds). The following examples illustrate the
 variety of acceptable formats for these arguments.
 ```{r, eval=FALSE}
-tm <- bike_tripmat ('bikedb', start_date="20160102")
-tm <- bike_tripmat ('bikedb', start_date=20160102, end_date="16/02/28")
-tm <- bike_tripmat ('bikedb', start_time=0, end_time=1) # 00:00 - 01:00
-tm <- bike_tripmat ('bikedb', start_date=20160101, end_date="16,02,28",
-                 start_time=6, end_time=24) # 06:00 - 23:59
-tm <- bike_tripmat ('bikedb', weekday=1) # 1 = Sunday
-tm <- bike_tripmat ('bikedb', weekday=c('m', 'Th'))
-tm <- bike_tripmat ('bikedb', weekday=2:6, 
-                    start_time="6:30", end_time="10:15:25")
+tm <- bike_tripmat ('bikedb', start_date = "20160102")
+tm <- bike_tripmat ('bikedb', start_date = 20160102, end_date = "16/02/28")
+tm <- bike_tripmat ('bikedb', start_time = 0, end_time = 1) # 00:00 - 01:00
+tm <- bike_tripmat ('bikedb', start_date = 20160101, end_date = "16,02,28",
+                 start_time = 6, end_time = 24) # 06:00 - 23:59
+tm <- bike_tripmat ('bikedb', weekday = 1) # 1 = Sunday
+tm <- bike_tripmat ('bikedb', weekday = c('m', 'Th'))
+tm <- bike_tripmat ('bikedb', weekday = 2:6,
+                    start_time = "6:30", end_time = "10:15:25")
 ```
 
 ### 2.2 Filtering trips by demographic characteristics

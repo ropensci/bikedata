@@ -81,15 +81,15 @@ bike_datelimits (bikedb = 'bikedb')
 Additional temporal arguments which may be passed to the `bike_tripmat` function include `start_date`, `end_date`, `start_time`, `end_time`, and `weekday`. Dates and times may be specified in almost any format, but larger units must always precede smaller units (so years before months before days; hours before minutes before seconds). The following examples illustrate the variety of acceptable formats for these arguments.
 
 ``` r
-tm <- bike_tripmat ('bikedb', start_date="20160102")
-tm <- bike_tripmat ('bikedb', start_date=20160102, end_date="16/02/28")
-tm <- bike_tripmat ('bikedb', start_time=0, end_time=1) # 00:00 - 01:00
-tm <- bike_tripmat ('bikedb', start_date=20160101, end_date="16,02,28",
-                 start_time=6, end_time=24) # 06:00 - 23:59
-tm <- bike_tripmat ('bikedb', weekday=1) # 1 = Sunday
-tm <- bike_tripmat ('bikedb', weekday=c('m', 'Th'))
-tm <- bike_tripmat ('bikedb', weekday=2:6, 
-                    start_time="6:30", end_time="10:15:25")
+tm <- bike_tripmat ('bikedb', start_date = "20160102")
+tm <- bike_tripmat ('bikedb', start_date = 20160102, end_date = "16/02/28")
+tm <- bike_tripmat ('bikedb', start_time = 0, end_time = 1) # 00:00 - 01:00
+tm <- bike_tripmat ('bikedb', start_date = 20160101, end_date = "16,02,28",
+                 start_time = 6, end_time = 24) # 06:00 - 23:59
+tm <- bike_tripmat ('bikedb', weekday = 1) # 1 = Sunday
+tm <- bike_tripmat ('bikedb', weekday = c('m', 'Th'))
+tm <- bike_tripmat ('bikedb', weekday = 2:6, 
+                    start_time = "6:30", end_time = "10:15:25")
 ```
 
 <a name="demography"></a>2.2 Filtering trips by demographic characteristics

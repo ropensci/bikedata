@@ -36,10 +36,14 @@ bikedb <- file.path (tempdir (), "testdb")
 
 test_that ('write and store data', {
                expect_silent (bike_write_test_data (data_dir = tempdir ()))
-               expect_silent (n <- store_bikedata (data_dir = tempdir (), 
-                                                   bikedb = bikedb, 
+               expect_silent (n <- store_bikedata (data_dir = tempdir (),
+                                                   bikedb = bikedb,
                                                    quiet = TRUE))
-               expect_equal (n, 1198)
+               # some windows test machines do not allow file deletion, so
+               # numbers of lines are incremented with each appveyor/CRAN matrix
+               # test. The following is therefore >= rather than just ==
+               #expect_equal (n, 1198)
+               expect_true (n >= 1198)
 })
 
 test_that ('stations from downloaded data', {
@@ -51,6 +55,6 @@ test_that ('remove data', {
                expect_equal (bike_rm_test_data (data_dir = tempdir ()), 6)
 })
 
-chk <- tryCatch (file.remove (bikedb), 
+chk <- tryCatch (file.remove (bikedb),
                  warning = function (w) NULL,
                  error = function (e) NULL)

@@ -10,17 +10,17 @@ test_that ('tripmat-full', {
 })
 
 test_that ('tripmat-cities', {
-               expect_equal (sum (bike_tripmat (bikedb = bikedb, 
+               expect_equal (sum (bike_tripmat (bikedb = bikedb,
                                                 city = 'bo')), 200)
                expect_equal (sum (bike_tripmat (bikedb = bikedb,
                                                 city = 'ch')), 200)
-               expect_equal (sum (bike_tripmat (bikedb = bikedb, 
+               expect_equal (sum (bike_tripmat (bikedb = bikedb,
                                                 city = 'dc')), 200)
-               expect_equal (sum (bike_tripmat (bikedb = bikedb, 
+               expect_equal (sum (bike_tripmat (bikedb = bikedb,
                                                 city = 'la')), 198)
-               expect_equal (sum (bike_tripmat (bikedb = bikedb, 
+               expect_equal (sum (bike_tripmat (bikedb = bikedb,
                                                 city = 'lo')), 193)
-               expect_equal (sum (bike_tripmat (bikedb = bikedb, 
+               expect_equal (sum (bike_tripmat (bikedb = bikedb,
                                                 city = 'ny')), 200)
 })
 
