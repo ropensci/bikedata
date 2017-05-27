@@ -22,7 +22,7 @@ knitr::opts_chunk$set(
 [![Build Status](https://travis-ci.org/mpadge/bikedata.svg)](https://travis-ci.org/mpadge/bikedata) 
 [![Build status](https://ci.appveyor.com/api/projects/status/github/mpadge/bikedata?svg=true)](https://ci.appveyor.com/project/mpadge/bikedata)
 [![codecov](https://codecov.io/gh/mpadge/bikedata/branch/master/graph/badge.svg)](https://codecov.io/gh/mpadge/bikedata)
-[![Project Status: WIP](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip)
+[![Project Status: Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/bikedata)](http://cran.r-project.org/web/packages/bikedata) 
 
 # bikedata
