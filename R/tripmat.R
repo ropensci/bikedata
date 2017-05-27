@@ -132,7 +132,7 @@ add_birth_year_to_qry <- function (qry, qryargs, birth_year)
 #' @noRd
 bike_tripmat_standardisation <- function (bikedb, city)
 {
-    dates <- bike_station_dates (bikedb, city = 'ch')
+    dates <- bike_station_dates (bikedb, city = city)
     wt <- 1 / dates$ndays # shorter durations are weighted higher
     wt <- wt * nrow (dates) / sum (wt)
     names (wt) <- dates$station
