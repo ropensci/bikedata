@@ -2,6 +2,10 @@ context ("download data")
 
 require (testthat)
 
+test_that ('no city', {
+               expect_error (dl_bikedata (), 'city must be specified')
+})
+
 # download can't really be tested, so this just tests that it does **NOT**
 # download if all files already exist
 

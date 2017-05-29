@@ -37,9 +37,12 @@
 #' \dontrun{
 #' dl_bikedata (city = 'New York City USA', dates = 201601:201613)
 #' }
-dl_bikedata <- function (city = 'nyc', data_dir = tempdir(), dates = NULL,
+dl_bikedata <- function (city, data_dir = tempdir(), dates = NULL,
                          quiet = FALSE)
 {
+    if (missing (city))
+        stop ('city must be specified for dl_bikedata()')
+
     city <- convert_city_names (city)
 
     dl_files <- get_bike_files (city)
