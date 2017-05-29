@@ -23,14 +23,23 @@ test_that ('no city', {
 })
 
 test_that ('daily trips', {
+               nt <- bike_daily_trips (bikedb = bikedb, city = 'ny')
+               expect_equal (nrow (nt), 1) # only one day of trips
+               expect_equal (nt$numtrips, 200)
+               nts <- bike_daily_trips (bikedb = bikedb, city = 'ny',
+                                       standardise = TRUE)
+               expect_false (identical (nt, nts)) 
+               # nts$numtrips is numeric not int
+               expect_equal (nt, nts)
+
                expect_equal (bike_daily_trips (bikedb = bikedb,
-                                               city = 'ny')$ntrips, 200)
+                                               city = 'ny')$numtrips, 200)
                expect_equal (bike_daily_trips (bikedb = bikedb,
                                                city = 'ny',
-                                               member = TRUE)$ntrips, 191)
+                                               member = TRUE)$numtrips, 191)
                expect_equal (bike_daily_trips (bikedb = bikedb, city = 'ny',
-                                               gender = 'f')$ntrips, 22)
+                                               gender = 'f')$numtrips, 22)
                expect_equal (bike_daily_trips (bikedb = bikedb, city = 'ny',
                                                station = '173',
-                                               gender = 1)$ntrips, 1)
+                                               gender = 1)$numtrips, 1)
 })

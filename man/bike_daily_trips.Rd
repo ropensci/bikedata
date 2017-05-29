@@ -4,7 +4,8 @@
 \alias{bike_daily_trips}
 \title{Extract daily trip counts for all stations}
 \usage{
-bike_daily_trips(bikedb, city, station, member, birth_year, gender)
+bike_daily_trips(bikedb, city, station, member, birth_year, gender,
+  standardise = FALSE)
 }
 \arguments{
 \item{bikedb}{A string containing the path to the SQLite3 database.
@@ -24,6 +25,11 @@ declared birth years equal or lie within the specified value or values.}
 
 \item{gender}{If given, extract only records for trips by registered
 users declaring the specified genders (\code{f/m/.} or \code{2/1/0}).}
+
+\item{standardise}{If TRUE, daily trip counts are standardised to the
+relative numbers of bike stations in operation for each day, so daily trip
+counts are increased during (generally early) periods with relatively fewer
+stations, and decreased during (generally later) periods with more stations.}
 }
 \value{
 A \code{data.frame} containing daily dates and total numbers of trips

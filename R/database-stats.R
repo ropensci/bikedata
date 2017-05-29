@@ -38,9 +38,9 @@ bike_db_totals <- function (bikedb, trips = TRUE, city)
         qry <- "SELECT Count(*) FROM stations"
     if (!missing (city))
         qry <- paste0 (qry, " WHERE city = '", city, "'")
-    ntrips <- RSQLite::dbGetQuery (db, qry)
+    numtrips <- RSQLite::dbGetQuery (db, qry)
     RSQLite::dbDisconnect (db)
-    return (as.numeric (ntrips))
+    return (as.numeric (numtrips))
 }
 
 #' Count number of datafiles in sqlite3 database
@@ -51,9 +51,9 @@ bike_db_totals <- function (bikedb, trips = TRUE, city)
 num_datafiles_in_db <- function (bikedb)
 {
     db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
-    ntrips <- RSQLite::dbGetQuery (db, "SELECT Count(*) FROM datafiles")
+    numtrips <- RSQLite::dbGetQuery (db, "SELECT Count(*) FROM datafiles")
     RSQLite::dbDisconnect (db)
-    return (as.numeric (ntrips))
+    return (as.numeric (numtrips))
 }
 
 #' List the cities with data containined in SQLite3 database
@@ -118,6 +118,9 @@ bike_station_dates <- function (bikedb, city)
                          ndays = ndays + 1, # start = end -> 1 day
                          station = dates$station)
     rownames (dates) <- NULL
+
+    dates$first <- as.Date (dates$first)
+    dates$last <- as.Date (dates$last)
 
     return (dates)
 }
@@ -303,6 +306,10 @@ bike_summary_stats <- function (bikedb)
 #' declared birth years equal or lie within the specified value or values.
 #' @param gender If given, extract only records for trips by registered
 #' users declaring the specified genders (\code{f/m/.} or \code{2/1/0}).
+#' @param standardise If TRUE, daily trip counts are standardised to the
+#' relative numbers of bike stations in operation for each day, so daily trip
+#' counts are increased during (generally early) periods with relatively fewer
+#' stations, and decreased during (generally later) periods with more stations.
 #'
 #' @return A \code{data.frame} containing daily dates and total numbers of trips
 #'
@@ -323,7 +330,8 @@ bike_summary_stats <- function (bikedb)
 #' bike_rm_db (bikedb)
 #' # don't forget to remove real data!
 #' # file.remove (list.files ('.', pattern = '.zip'))
-bike_daily_trips <- function (bikedb, city, station, member, birth_year, gender)
+bike_daily_trips <- function (bikedb, city, station, member, birth_year, gender,
+                              standardise = FALSE)
 {
     if (missing (bikedb))
         stop ("Can't get daily trips if bikedb isn't provided")
@@ -349,7 +357,7 @@ bike_daily_trips <- function (bikedb, city, station, member, birth_year, gender)
 
     db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
     qry <- paste0 ("SELECT STRFTIME('%Y-%m-%d', start_time) AS 'date', ",
-                   "COUNT() AS 'ntrips' FROM trips ")
+                   "COUNT() AS 'numtrips' FROM trips ")
 
     qry_where <- "city = ?"
     qryargs <- city
@@ -391,6 +399,26 @@ bike_daily_trips <- function (bikedb, city, station, member, birth_year, gender)
     RSQLite::dbDisconnect (db)
 
     trips$date <- as.Date (trips$date)
+
+    if (standardise)
+    {
+        dates <- bike_station_dates (bikedb = bikedb, city = city)
+        all_days <- seq (min (dates$first), max (dates$last), by = 'days')
+        daily_stns <- rep (0, length (all_days))
+        for (i in seq (daily_stns))
+            daily_stns [i] <- length (which (dates$first <= all_days [i]))
+        daily_stns <- 1 / daily_stns # convert to multiplicative factor
+
+        # Entire systems can also have gaps, so dates have to be matched
+        if (!all (trips$date %in% all_days))
+            stop ('sequence of dates generated dates not present in db')
+        daily_stns <- daily_stns [which (trips$date %in% all_days)]
+        daily_stns <- daily_stns / mean (daily_stns)
+        trips$numtrips <- trips$numtrips * daily_stns
+        
+        # Then round to 3 places
+        trips$numtrips <- round (trips$numtrips * daily_stns, digits = 3)
+    }
 
     return (trips)
 }
