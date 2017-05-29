@@ -35,7 +35,8 @@ convert_city_names <- function (city)
         city <- rep (NA, min (1, length (city)))
         city [indx_lo] <- city_lo
         city [indx] <- city_code
-    }
+    } else
+        city <- city_code
 
     return (city)
 }

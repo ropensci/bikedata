@@ -50,10 +50,10 @@ Hangzhou, China | 78,000 | 2,965
 Paris, France | 14,500 | 1,229
 Barcelona, Spain | 6,000 | 424
 
-The development version of the `bikedata` R package can be installed with the
-`devtools` package using the following command:
+The current version of the `bikedata` R package can be installed with the
+following command:
 ```{r install, eval = FALSE}
-devtools::install_github('mpadge/bikedata')
+install.packages ('bikedata')
 ```
 
 ```{r, echo = FALSE, message = FALSE, results = 'hide'}
@@ -70,10 +70,13 @@ library(bikedata)
 
 The `bikedata` function `store_bikedata()` downloads individual trip data from
 any or all or the above listed systems and stores them in an `SQLite3` database.
-For example, the following line will download and store all data from the Metro
-system of Los Angeles CA, U.S.A., and stores them in a database named 'bikedb',
-```{r, eval=FALSE}
-store_bikedata (city = 'la', bikedb = 'bikedb')
+For example, the following line will download all data from the Metro
+system of Los Angeles CA, U.S.A., and store them in a database named 'bikedb',
+```{r store-la-data, eval=FALSE}
+store_bikedata (city = 'la', bikedb = 'bikedb', quiet = TRUE)
+```
+```{r}
+# 131336
 ```
 The function returns the number of trips added to the database.  Both the
 downloaded data and the `SQLite3` database are stored by default in the
