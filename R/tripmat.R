@@ -282,6 +282,8 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
     } else if (!missing (city))
     {
         city <- convert_city_names (city)
+        if (is.na (city))
+            stop ('city not recognised')
         if (!city %in% bike_cities_in_db (bikedb))
             stop ('city ', city, ' not represented in database')
     }

@@ -8,7 +8,7 @@ test_that ('can not read all data', {
                expect_error (trips <- bike_tripmat (bikedb),
                              'Calls to tripmat must specify city')
                expect_error (trips <- bike_tripmat (bikedb, city = 'aa'),
-                             'city aa not represented in database')
+                             'city not recognised')
 })
 
 test_that ('dplyr read db', {
