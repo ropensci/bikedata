@@ -4,8 +4,7 @@
 \alias{dl_bikedata}
 \title{Download hire bicycle data}
 \usage{
-dl_bikedata(city = "nyc", data_dir = tempdir(), dates = NULL,
-  quiet = FALSE)
+dl_bikedata(city, data_dir = tempdir(), dates = NULL, quiet = FALSE)
 }
 \arguments{
 \item{city}{City for which to download bike data, or name of corresponding
