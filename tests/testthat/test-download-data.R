@@ -28,11 +28,19 @@ get_fake_trip_files <- function (bucket)
     return (files)
 }
 
+dates <- c (16, 201604:201608, "2016/04:2016/08", 
+            "201604:201608", "16 apr:aug", "2016-04:2016-08")
+
 test_that ('dl_bikedata nyc', {
                files <- get_fake_trip_files (bucket = 'tripdata')
                expect_message (dl_bikedata (city = 'nyc',
                                             data_dir = tempdir ()),
                                'All data files already exist')
+               for (d in dates)
+                   expect_message (dl_bikedata (city = 'nyc',
+                                                data_dir = tempdir (),
+                                                dates = d),
+                                   'All data files already exist')
                chk <- tryCatch (file.remove (files),
                                 warning = function (w) NULL,
                                 error = function (e) NULL)
@@ -43,6 +51,11 @@ test_that ('dl_bikedata dc', {
                expect_message (dl_bikedata (city = 'dc',
                                             data_dir = tempdir ()),
                                'All data files already exist')
+               for (d in dates)
+                   expect_message (dl_bikedata (city = 'dc',
+                                                data_dir = tempdir (),
+                                                dates = d),
+                                   'All data files already exist')
                chk <- tryCatch (file.remove (files),
                                 warning = function (w) NULL,
                                 error = function (e) NULL)
@@ -53,6 +66,11 @@ test_that ('dl_bikedata boston', {
                expect_message (dl_bikedata (city = 'boston',
                                             data_dir = tempdir ()),
                                'All data files already exist')
+               for (d in dates)
+                   expect_message (dl_bikedata (city = 'boston',
+                                                data_dir = tempdir (),
+                                                dates = d),
+                                   'All data files already exist')
                chk <- tryCatch (file.remove (files),
                                 warning = function (w) NULL,
                                 error = function (e) NULL)
@@ -67,6 +85,11 @@ test_that ('dl_bikedata la', {
                expect_message (dl_bikedata (city = 'la',
                                             data_dir = tempdir ()),
                                'All data files already exist')
+               for (d in dates)
+                   expect_message (dl_bikedata (city = 'la',
+                                                data_dir = tempdir (),
+                                                dates = d),
+                                   'All data files already exist')
                chk <- tryCatch (file.remove (files),
                                 warning = function (w) NULL,
                                 error = function (e) NULL)
@@ -84,6 +107,14 @@ test_that ('dl_bikedata chicago', {
                expect_message (dl_bikedata (city = 'chicago',
                                             data_dir = tempdir ()),
                                'All data files already exist')
+               for (d in dates)
+               {
+                   expect_message (dl_bikedata (city = 'chicago',
+                                                data_dir = tempdir (),
+                                                dates = d),
+                                   'All data files already exist')
+                   message (d)
+               }
                chk <- tryCatch (file.remove (files),
                                 warning = function (w) NULL,
                                 error = function (e) NULL)

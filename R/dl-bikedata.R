@@ -46,13 +46,14 @@ dl_bikedata <- function (city = 'nyc', data_dir = tempdir(), dates = NULL,
     files <- file.path (data_dir, basename (dl_files))
 
     if (is.null (dates))
-      indx <- which (!file.exists (files))
+        indx <- which (!file.exists (files))
     else
     {
-      indx <- which (!file.exists (files) &
-                     grepl (paste (dates, collapse = "|"), files))
-    if (length (indx) == 0)
-        stop ('There are no data files for those dates')
+        dates <- bike_convert_dates (dates) %>%
+            expand_dates_to_range %>%
+            convert_dates_to_filenames (city = city)
+        indx <- which (!file.exists (files) &
+                       grepl (paste (dates, collapse = "|"), files))
     }
 
     if (length (indx) > 0)
@@ -78,6 +79,7 @@ dl_bikedata <- function (city = 'nyc', data_dir = tempdir(), dates = NULL,
         }
     } else
         message ('All data files already exist')
+
     ptn <- '.zip'
     if (city == 'lo')
     {
@@ -92,5 +94,6 @@ dl_bikedata <- function (city = 'nyc', data_dir = tempdir(), dates = NULL,
                              error = function (e) NULL))
         ptn <- paste0 (ptn, '|.csv')
     }
+
     invisible (list.files (data_dir, pattern = ptn, full.names = TRUE))
 }

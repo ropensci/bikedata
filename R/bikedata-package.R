@@ -11,7 +11,7 @@
 #' @importFrom RSQLite dbBind dbClearResult dbConnect dbDisconnect
 #' @importFrom RSQLite dbGetQuery dbSendQuery SQLite
 #' @importFrom reshape2 dcast
-#' @importFrom utils data menu read.csv unzip write.csv zip
+#' @importFrom utils data menu read.csv tail type.convert unzip write.csv zip
 #' @importFrom xml2 xml_children xml_find_all
 #' @useDynLib bikedata
 NULL
