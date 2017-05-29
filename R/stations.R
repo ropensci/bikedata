@@ -2,6 +2,8 @@
 #'
 #' @param bikedb A string containing the path to the SQLite3 database.
 #' If no directory specified, it is presumed to be in \code{tempdir()}.
+#' @param city Optional city (or vector of cities) for which stations are to be
+#' extracted
 #'
 #' @return Matrix containing data for each station
 #'
@@ -23,13 +25,18 @@
 #' # don't forget to remove real data!
 #' # file.remove (list.files (data_dir, pattern = '.zip'))
 #' }
-bike_stations <- function (bikedb)
+bike_stations <- function (bikedb, city)
 {
     if (!grepl ('/', bikedb) | !grepl ('*//*', bikedb))
         bikedb <- file.path (tempdir (), bikedb)
 
     db <- dplyr::src_sqlite (bikedb, create = FALSE)
-    dplyr::collect (dplyr::tbl (db, 'stations'))
+    st <- dplyr::collect (dplyr::tbl (db, 'stations'))
+
+    if (!missing (city))
+        st <- st [which (st$city %in% convert_city_names (city)), ]
+
+    return (st)
 }
 
 #' Get London station data from Transport for London (TfL)

@@ -4,11 +4,14 @@
 \alias{bike_stations}
 \title{Extract station matrix from SQLite3 database}
 \usage{
-bike_stations(bikedb)
+bike_stations(bikedb, city)
 }
 \arguments{
 \item{bikedb}{A string containing the path to the SQLite3 database.
 If no directory specified, it is presumed to be in \code{tempdir()}.}
+
+\item{city}{Optional city (or vector of cities) for which stations are to be
+extracted}
 }
 \value{
 Matrix containing data for each station

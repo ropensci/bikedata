@@ -21,28 +21,6 @@ indexes_exist <- function (bikedb)
     nrow (idx_list) > 2 # 2 because city index is automatically created
 }
 
-#' Count number of entries in sqlite3 database tables
-#'
-#' @param bikedb A string containing the path to the SQLite3 database.
-#' @param trips If true, numbers of trips are counted; otherwise numbers of
-#' stations
-#' @param city Optional city for which numbers of trips are to be counted
-#'
-#' @noRd
-bike_db_totals <- function (bikedb, trips = TRUE, city)
-{
-    db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
-    if (trips)
-        qry <- "SELECT Count(*) FROM trips"
-    else
-        qry <- "SELECT Count(*) FROM stations"
-    if (!missing (city))
-        qry <- paste0 (qry, " WHERE city = '", city, "'")
-    numtrips <- RSQLite::dbGetQuery (db, qry)
-    RSQLite::dbDisconnect (db)
-    return (as.numeric (numtrips))
-}
-
 #' Count number of datafiles in sqlite3 database
 #'
 #' @param bikedb A string containing the path to the SQLite3 database.
@@ -132,6 +110,29 @@ bike_station_dates <- function (bikedb, city)
 # ***                                               ***
 # *****************************************************
 # *****************************************************
+
+
+#' Count number of entries in sqlite3 database tables
+#'
+#' @param bikedb A string containing the path to the SQLite3 database.
+#' @param trips If true, numbers of trips are counted; otherwise numbers of
+#' stations
+#' @param city Optional city for which numbers of trips are to be counted
+#'
+#' @export
+bike_db_totals <- function (bikedb, trips = TRUE, city)
+{
+    db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
+    if (trips)
+        qry <- "SELECT Count(*) FROM trips"
+    else
+        qry <- "SELECT Count(*) FROM stations"
+    if (!missing (city))
+        qry <- paste0 (qry, " WHERE city = '", city, "'")
+    numtrips <- RSQLite::dbGetQuery (db, qry)
+    RSQLite::dbDisconnect (db)
+    return (as.numeric (numtrips))
+}
 
 
 #' Check whether files in database are the latest published files

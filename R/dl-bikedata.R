@@ -50,6 +50,8 @@ dl_bikedata <- function (city = 'nyc', data_dir = tempdir(), dates = NULL,
     else
       indx <- which (!file.exists (files) &
                      grepl (paste (dates, collapse = "|"), files))
+    if (length (indx) == 0)
+        stop ('There are no data files for those dates')
 
     if (length (indx) > 0)
     {
