@@ -290,7 +290,7 @@ bike_summary_stats <- function (bikedb)
                        first_trip = dates [, 1], last_trip = dates [, 2],
                        latest_files = latest_files)
     rownames (res) <- rnames
-    return (res)
+    return (tibble::as_tibble (res))
 }
 
 #' Extract daily trip counts for all stations
@@ -421,7 +421,7 @@ bike_daily_trips <- function (bikedb, city, station, member, birth_year, gender,
         trips$numtrips <- round (trips$numtrips * daily_stns, digits = 3)
     }
 
-    return (trips)
+    return (tibble::as_tibble (trips))
 }
 
 

@@ -365,6 +365,7 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
     {
         trips$numtrips <- ifelse (is.na (trips$numtrips) == TRUE, 0,
                                   trips$numtrips)
+        trips <- tibble::as_tibble (trips)
     }
 
     return (trips)
