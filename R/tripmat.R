@@ -354,7 +354,7 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
 
     if (!long)
     {
-        trips <- reshape2::dcast (tr, start_station_id ~ end_station_id,
+        trips <- reshape2::dcast (trips, start_station_id ~ end_station_id,
                                   value.var = 'numtrips', fill = 0,
                                   fun.aggregate = sum)
         row.names (trips) <- trips$start_station_id
