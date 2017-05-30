@@ -7,14 +7,26 @@
 #' @noRd
 convert_hms <- function (x)
 {
-    if (is.numeric (x)) # presume it's HH
+    if (is.numeric (x))
     {
-        if (x < 0 | x > 24)
-            stop ('hms values must be between 0 and 24')
-        if (x < 24)
-            res <- paste0 (sprintf ('%02d', x), ':00:00')
-        else
-            res <- paste0 (23, ':59:59')
+        if (nchar (x) <= 2) # presume it's HH
+        {
+            if (x < 0 | x > 24)
+                stop ('hms values must be between 0 and 24')
+            if (x < 24)
+                res <- paste0 (sprintf ('%02d', x), ':00:00')
+            else
+                res <- paste0 (23, ':59:59')
+        } else if (nchar (x) == 4)
+        {
+            res <- paste0 (substring (x, 1, 2), ':', substring (x, 3, 4),
+                           ':00')
+        } else if (nchar (x) == 6)
+        {
+            res <- paste0 (substring (x, 1, 2), ':', substring (x, 3, 4),
+                           ':', substring (x, 5, 6))
+        } else
+            stop ('Unable to convert time value')
     } else if (is.character (x))
     {
         # split at all non-numeric characters

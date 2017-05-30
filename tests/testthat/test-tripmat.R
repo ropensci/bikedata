@@ -3,12 +3,16 @@ context ("tripmat")
 require (testthat)
 
 bikedb <- system.file ('db', 'testdb.sqlite', package = 'bikedata')
+is_cran <- identical (Sys.getenv ("_R_CHECK_CRAN_INCOMING_"), 'true')
 
 test_that ('no db', {
                errtxt <- paste0 ('bikedb ',
                                  file.path (tempdir (), 'junk'),
                                  ' does not exist')
-               expect_error (tm <- bike_tripmat (bikedb = 'junk'), errtxt)
+               # The file.path construction does not give identical results on
+               # windows machines
+               if (!is_cran)
+                   expect_error (tm <- bike_tripmat (bikedb = 'junk'), errtxt)
 })
 
 test_that ('tripmat-full', {
