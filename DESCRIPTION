@@ -7,14 +7,14 @@ Authors@R: c(
 Description: Load data from public hire bicycle systems.
 License: GPL-3
 Depends:
-    R (>= 2.10),
-    RSQLite
+    R (>= 3.0)
 Imports:
     dplyr,
     httr,
     lubridate,
     methods,
     Rcpp,
+    RSQLite,
     reshape2,
     tibble,
     xml2
