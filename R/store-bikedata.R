@@ -57,7 +57,7 @@
 #' # don't forget to remove real data!
 #' # file.remove (list.files (data_dir, pattern = '.zip'))
 #' }
-store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
+store_bikedata <- function (bikedb, city, data_dir, create_index = TRUE,
                             dates = NULL, quiet = FALSE)
 {
     if (missing (city) & missing (data_dir))
@@ -86,9 +86,8 @@ store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
         city <- get_bike_cities (data_dir)
     }
 
-    # Finally, stored bikedb in tempdir if not otherwise specified, noting that
-    # dirname (bikedb) == '.' can not be used because that prevents
-    # bikedb = "./bikedb", so grepl must be used instead.
+    if (missing (bikedb))
+        stop ("Can't store bikedata if bikedb isn't provided")
     if (!(grepl ('/', bikedb) | grepl ('*//*', bikedb)))
         bikedb <- file.path (tempdir (), bikedb)
 
@@ -227,13 +226,14 @@ store_bikedata <- function (city, data_dir, bikedb, create_index = TRUE,
 #' }
 bike_rm_db <- function (bikedb)
 {
-    if (!grepl ('/', bikedb) | !grepl ('*//*', bikedb))
-        bikedb <- file.path (tempdir (), bikedb)
-    ret <- FALSE
-    if (file.exists (bikedb))
-        ret <- tryCatch (file.remove (bikedb),
-                         warning = function (w) NULL,
-                         error = function (e) NULL)
+    if (missing (bikedb))
+        stop ("Can'remove database if bikedb isn't provided")
+
+    bikedb <- check_db_arg (bikedb)
+
+    ret <- tryCatch (file.remove (bikedb),
+                     warning = function (w) NULL,
+                     error = function (e) NULL)
 
     return (ret)
 }

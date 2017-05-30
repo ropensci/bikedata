@@ -6,7 +6,7 @@ bikedb <- system.file ('db', 'testdb.sqlite', package = 'bikedata')
 
 test_that ('can not read all data', {
                expect_error (trips <- bike_tripmat (bikedb),
-                             'Calls to tripmat must specify city')
+                             'Calls to bike_tripmat must specify city')
                expect_error (trips <- bike_tripmat (bikedb, city = 'aa'),
                              'city not recognised')
 })

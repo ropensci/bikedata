@@ -17,7 +17,7 @@ test_that ('no db', {
 
 test_that ('tripmat-full', {
                expect_error (tm <- bike_tripmat (bikedb = bikedb, quiet = TRUE),
-                               'Calls to tripmat must specify city')
+                               'Calls to bike_tripmat must specify city')
 })
 
 test_that ('tripmat-cities', {

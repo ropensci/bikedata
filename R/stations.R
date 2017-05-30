@@ -27,8 +27,10 @@
 #' }
 bike_stations <- function (bikedb, city)
 {
-    if (!grepl ('/', bikedb) | !grepl ('*//*', bikedb))
-        bikedb <- file.path (tempdir (), bikedb)
+    if (missing (bikedb))
+        stop ("Can't get station data if bikedb isn't provided")
+
+    bikedb <- check_db_arg (bikedb)
 
     db <- dplyr::src_sqlite (bikedb, create = FALSE)
     st <- dplyr::collect (dplyr::tbl (db, 'stations'))

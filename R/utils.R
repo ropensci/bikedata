@@ -40,3 +40,35 @@ convert_city_names <- function (city)
 
     return (city)
 }
+
+#' Perform checks for name, existance, and structure of bikedb
+#'
+#' @param bikedb A string containing the path to the SQLite3 database.
+#' If no directory specified, it is presumed to be in \code{tempdir()}.
+#'
+#' @return Potentially modified string containing full path
+#'
+#' @noRd
+check_db_arg <- function (bikedb)
+{
+    if (exists (bikedb, envir = parent.frame ()))
+        bikedb <- get (bikedb, envir = parent.frame ())
+
+    # Note that dirname (bikedb) == '.' can not be used because that prevents
+    # bikedb = "./bikedb", so grepl must be used instead.
+    if (!grepl ('/', bikedb) | !grepl ('*//*', bikedb))
+        bikedb <- file.path (tempdir (), bikedb)
+
+    if (!file.exists (bikedb))
+        stop ('file ', basename (bikedb), ' does not exist')
+
+    db <- RSQLite::dbConnect(SQLite(), bikedb, create = FALSE)
+    qry <- 'SELECT name FROM sqlite_master WHERE type = "table"'
+    tbls <- RSQLite::dbGetQuery(db, qry) [, 1]
+    RSQLite::dbDisconnect(db)
+    if (!identical (tbls, c ('trips', 'stations', 'datafiles')))
+        stop ('bikedb does not appear to be a bikedata database')
+
+    return (bikedb)
+}
+

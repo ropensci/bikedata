@@ -122,6 +122,11 @@ bike_station_dates <- function (bikedb, city)
 #' @export
 bike_db_totals <- function (bikedb, trips = TRUE, city)
 {
+    if (missing (bikedb))
+        stop ("Can't get daily trips if bikedb isn't provided")
+
+    bikedb <- check_db_arg (bikedb)
+
     db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
     if (trips)
         qry <- "SELECT Count(*) FROM trips"
@@ -162,8 +167,10 @@ bike_db_totals <- function (bikedb, trips = TRUE, city)
 #' # file.remove (list.files (data_dir, pattern = '.zip'))
 bike_latest_files <- function (bikedb)
 {
-    if (!grepl ('/', bikedb) | !grepl ('*//*', bikedb))
-        bikedb <- file.path (tempdir (), bikedb)
+    if (missing (bikedb))
+        stop ("Can't get latest files if bikedb isn't provided")
+
+    bikedb <- check_db_arg (bikedb)
 
     db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
     files <- RSQLite::dbGetQuery (db, "SELECT * FROM datafiles")
@@ -211,8 +218,10 @@ bike_latest_files <- function (bikedb)
 #' # file.remove (list.files ('.', pattern = '.zip'))
 bike_datelimits <- function (bikedb, city)
 {
-    if (!grepl ('/', bikedb) | !grepl ('*//*', bikedb))
-        bikedb <- file.path (tempdir (), bikedb)
+    if (missing (bikedb))
+        stop ("Can't get date limits if bikedb isn't provided")
+
+    bikedb <- check_db_arg (bikedb)
 
     qry_min <- "SELECT MIN(start_time) FROM trips"
     qry_max <- "SELECT MAX(start_time) FROM trips"
@@ -259,8 +268,10 @@ bike_datelimits <- function (bikedb, city)
 #' # file.remove (list.files ('.', pattern = '.zip'))
 bike_summary_stats <- function (bikedb)
 {
-    if (!grepl ('/', bikedb) | !grepl ('*//*', bikedb))
-        bikedb <- file.path (tempdir (), bikedb)
+    if (missing (bikedb))
+        stop ("Can't get summary statistics if bikedb isn't provided")
+
+    bikedb <- check_db_arg (bikedb)
 
     cities <- bike_cities_in_db (bikedb)
 
@@ -337,14 +348,7 @@ bike_daily_trips <- function (bikedb, city, station, member, birth_year, gender,
     if (missing (bikedb))
         stop ("Can't get daily trips if bikedb isn't provided")
 
-    if (exists (bikedb, envir = parent.frame ()))
-        bikedb <- get (bikedb, envir = parent.frame ())
-
-    if (!grepl ('/', bikedb) | !grepl ('*//*', bikedb))
-        bikedb <- file.path (tempdir (), bikedb)
-
-    if (!file.exists (bikedb))
-        stop ('file ', basename (bikedb), ' does not exist')
+    bikedb <- check_db_arg (bikedb)
 
     cities <- bike_cities_in_db (bikedb)
     if (missing (city))

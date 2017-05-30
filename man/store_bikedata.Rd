@@ -4,21 +4,21 @@
 \alias{store_bikedata}
 \title{Store hire bicycle data in SQLite3 database}
 \usage{
-store_bikedata(city, data_dir, bikedb, create_index = TRUE, dates = NULL,
+store_bikedata(bikedb, city, data_dir, create_index = TRUE, dates = NULL,
   quiet = FALSE)
 }
 \arguments{
+\item{bikedb}{A string containing the path to the SQLite3 database to 
+use. If it doesn't already exist, it will be created, otherwise data
+will be appended to existing database.  If no directory specified,
+it is presumed to be in \code{tempdir()}.}
+
 \item{city}{One or more cities for which to download and store bike data, or
 names of corresponding bike systems (see Details below).}
 
 \item{data_dir}{A character vector giving the directory containing the
 data files downloaded with \code{dl_bikedata} for one or more
 cities. Only if this parameter is missing will data be downloaded.}
-
-\item{bikedb}{A string containing the path to the SQLite3 database to 
-use. If it doesn't already exist, it will be created, otherwise data
-will be appended to existing database.  If no directory specified,
-it is presumed to be in \code{tempdir()}.}
 
 \item{create_index}{If TRUE, creates an index on the start and end station
 IDs and start and stop times.}

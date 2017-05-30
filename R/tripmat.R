@@ -267,17 +267,17 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
                           standardise = FALSE,
                           long = FALSE, quiet = FALSE)
 {
-    if (dirname (bikedb) == '.')
-        bikedb <- file.path (tempdir (), bikedb)
-    if (!file.exists (bikedb))
-        stop ('bikedb ', bikedb, ' does not exist')
+    if (missing (bikedb))
+        stop ("Can't get trip matrix if bikedb isn't provided")
+
+    bikedb <- check_db_arg (bikedb)
 
     db_cities <- bike_cities_in_db (bikedb)
     if (missing (city))
     {
         if (length (db_cities) > 1)
         {
-            stop ('Calls to tripmat must specify city; cities in current ',
+            stop ('Calls to bike_tripmat must specify city; cities in current ',
                   'database are [', paste (db_cities, collapse = ' '), ']')
         } else
             city <- db_cities [1]
