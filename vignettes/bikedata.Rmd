@@ -1,5 +1,5 @@
 ---
-title: "1. bikedata"
+title: "bikedata"
 author: 
   - "Mark Padgham"
 date: "`r Sys.Date()`"
@@ -9,7 +9,7 @@ output:
         toc_float: true
         theme: flatly
 vignette: >
-  %\VignetteIndexEntry{1. osmdata}
+  %\VignetteIndexEntry{bikedata}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -56,14 +56,14 @@ following command:
 install.packages ('bikedata')
 ```
 
-```{r, echo = FALSE, message = FALSE, results = 'hide'}
+```{r, echo = FALSE, message = FALSE, results = 'hide', eval = TRUE}
 devtools::load_all('..', export_all = FALSE)
 ```
 
 Once installed, it can be loaded in the usual way:
 
 ```{r, eval = FALSE}
-library(bikedata)
+library (bikedata)
 ```
 
 ## 2. Main Functions
