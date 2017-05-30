@@ -43,6 +43,42 @@ convert_hms <- function (x)
     return (res)
 }
 
+#' convert ymd to 'YYYY-MM-DD'
+#'
+#' @param x A numeric or character object to to be converted
+#'
+#' @return A string formatted to 'YYYY-MM-DD'
+#'
+#' lubridate::ymd requires a day to be specified. This function just appends
+#' days (and months where necessary) where they don't exist.
+#'
+#' @noRd
+convert_ymd <- function (x)
+{
+    if (is.numeric (x)) # presume it's HH
+    {
+        if (nchar (x) == 2) # can only be YY
+            x <- as.numeric (paste0 ('20', x, '0101'))
+        else if (nchar (x) == 4) # Either YYYY or YYMM
+        {
+            if (substring (x, 1, 2) == '20')
+                x <- as.numeric (paste0 (x, '0101'))
+            else
+                x <- as.numeric (paste0 ('20', x, '01'))
+        } else if (nchar (x) == 6 & substring (x, 1, 2) == '20')
+            x <- as.numeric (paste0 (x, '01'))
+    } else
+    {
+        xsp <- strsplit (x, "[[:space:]]|[[:punct:]]") [[1]]
+        if (length (xsp) == 1)
+            x <- paste (c (xsp, '01', '01'), collapse = ' ')
+        if (length (xsp) == 2)
+            x <- paste (c (xsp, '01'), collapse = ' ')
+    }
+
+    paste0 (lubridate::ymd (x))
+}
+
 #' convert weekday vector to numbered weekdays
 #'
 #' @param wd Vector of numeric or character denoting weekdays

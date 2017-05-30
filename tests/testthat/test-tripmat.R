@@ -4,6 +4,13 @@ require (testthat)
 
 bikedb <- system.file ('db', 'testdb.sqlite', package = 'bikedata')
 
+test_that ('no db', {
+               errtxt <- paste0 ('bikedb ',
+                                 file.path (tempdir (), 'junk'),
+                                 ' does not exist')
+               expect_error (tm <- bike_tripmat (bikedb = 'junk'), errtxt)
+})
+
 test_that ('tripmat-full', {
                expect_error (tm <- bike_tripmat (bikedb = bikedb, quiet = TRUE),
                                'Calls to tripmat must specify city')

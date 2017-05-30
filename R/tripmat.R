@@ -269,6 +269,8 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
 {
     if (dirname (bikedb) == '.')
         bikedb <- file.path (tempdir (), bikedb)
+    if (!file.exists (bikedb))
+        stop ('bikedb ', bikedb, ' does not exist')
 
     db_cities <- bike_cities_in_db (bikedb)
     if (missing (city))
@@ -292,9 +294,9 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
 
     x <- c (NULL, 'city' = city)
     if (!missing (start_date))
-        x <- c (x, 'start_date' = paste (lubridate::ymd (start_date)))
+        x <- c (x, 'start_date' = convert_ymd (start_date))
     if (!missing (end_date))
-        x <- c (x, 'end_date' = paste (lubridate::ymd (end_date)))
+        x <- c (x, 'end_date' = convert_ymd (end_date))
     if (!missing (start_time))
         x <- c (x, 'start_time' = convert_hms (start_time))
     if (!missing (end_time))
@@ -352,11 +354,13 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
 
     if (!long)
     {
-        trips <- reshape2::dcast (trips, start_station_id ~ end_station_id,
-                                  value.var = "numtrips", fill = 0)
+        trips <- reshape2::dcast (tr, start_station_id ~ end_station_id,
+                                  value.var = 'numtrips', fill = 0,
+                                  fun.aggregate = sum)
         row.names (trips) <- trips$start_station_id
         trips$start_station_id <- NULL
         trips <- as.matrix (trips)
+        trips [is.na (trips)] <- 0
     } else
     {
         trips$numtrips <- ifelse (is.na (trips$numtrips) == TRUE, 0,

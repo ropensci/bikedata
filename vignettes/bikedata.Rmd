@@ -119,8 +119,25 @@ class (tm); dim (tm); sum (tm)
 # [1] 131336
 ```
 The Los Angeles Metro system has 66 docking stations, and there were a total of
-131,336 individual trips up to April 2017.  Details of the docking stations
-associated with these trip matrices can be obtained with
+131,336 individual trips up to April 2017.  Trip matrices can also be extracted
+in long form using
+```{r, eval = FALSE}
+tm <- bike_tripmat (bikedb = 'bikedb', city = 'la', long = TRUE)
+head (tm); class (tm); sum (tm$numtrips)
+```
+```{r}
+#   start_station_id end_station_id numtrips
+# 1           la3005         la3005      324
+# 2           la3005         la3006      105
+# 3           la3005         la3007       31
+# 4           la3005         la3008      173
+# 5           la3005         la3009        1
+# 6           la3005         la3010        9
+# [1] "data.frame"
+# [1] 131336
+```
+Details of the docking stations associated with these trip matrices can be
+obtained with
 ```{r, eval=FALSE}
 bike_stations (bikedb = 'bikedb')
 ```
@@ -143,22 +160,6 @@ bike_stations (bikedb = 'bikedb')
 Stations can also be extracted for particular cities:
 ```{r, eval=FALSE}
 st <- bike_stations (bikedb = 'bikedb', city = 'ch')
-```
-Trip matrices can also be extracted in long form using
-```{r, eval = FALSE}
-tm <- bike_tripmat (bikedb = 'bikedb', city = 'la', long = TRUE)
-head (tm); class (tm); sum (tm$numtrips)
-```
-```{r}
-#   start_station_id end_station_id numtrips
-# 1           la3005         la3005      324
-# 2           la3005         la3006      105
-# 3           la3005         la3007       31
-# 4           la3005         la3008      173
-# 5           la3005         la3009        1
-# 6           la3005         la3010        9
-# [1] "data.frame"
-# [1] 131336
 ```
 For consistency and to avoid potential confusion of function names, most
 functions in the `bikedata` package begin with the prefix `bike_` (except for
@@ -219,13 +220,28 @@ dl_bikedata (city = 'new york', dates = '201604:201608')
 dl_bikedata (city = 'n.y.c.', dates = '2016-04:2016-08')
 dl_bikedata (city = 'new', dates = '2016 Apr-Aug')
 ```
-The arguments `city = 'new'` and `city = 'CI'` in the final call are sufficient
-to uniquely identify New York City's citibike system.
+The only strict requirement for the format of `dates` is that years must be
+specified before months, and that some kind of separator must be used between
+the two except when formatted as single six-digit numbers or character strings
+(YYYYMM).  The arguments `city = 'new'` and `city = 'CI'` in the final call are
+sufficient to uniquely identify New York City's citibike system.
 
 If files have been previously downloaded to a nominated directory, then calling
 the `dl_bikedata()` function will only download those data files that do not
 already exist. This function may thus be used to periodically refresh the
 contents of a nominated directory as new data files become available.
+
+Some systems disseminate data on quarterly (Washington DC and Los Angeles) or
+bi-annual (Chicago) bases. The `dates` argument in these cases is translated to
+the appropriate quarterly or bi-annual files. These are then downloaded as
+single files, and thus the following call
+```{r, eval = FALSE}
+dl_bikedata (city = 'dc', dates = '2016.03-2016.05')
+```
+will actually download data for the entire first and second quarters of 2016.
+Even though the database constructed with `store_bikedata()` will then contain
+data beyond the specified date ranges, it is nevertheless possible to obtain a
+trip matrix corresponding to specific dates and/or times, as described below.
 
 ## 4. Storing Data
 
@@ -250,19 +266,10 @@ ought to be downloaded and/or stored.  Intended general usage of the
 ntrips <- store_bikedata (bikedb = 'bikedb', city = 'ny',
                           dates = '2014 aug - 2015 Dec')
 ```
-
-### 4.1 Storing and loading enduring copies of trip data files
-
-The `store_bikedata()` function will automatically download files if a
-`data_dir` is not specified, in which case files will be downloaded to
-`tempdir()`, and will consequently be deleted upon termination of the current
-`R` session.  Enduring copies of trip files may be created with the
-`dl_bikedata()` function described above. These pre-downloaded files may also be
-passed directly to `store_bikedata()` by simply specifying the data directory in
-the `data_dir` argument. The following call will load all previously downloaded
-files in the specified directly in the nominated database.
+Or to load data which have been previously downloaded using `dl_bikedata()`:
 ```{r, eval = FALSE}
-store_bikedata (bikedb = 'bikedb', data_dir = '/data/bikedata/')
+ntrips <- store_bikedata (bikedb = 'bikedb', city = 'ny',
+                          data_dir = '/data/stored/here')
 ```
 As described above, the function `dl_bikedata()` may be used to periodically
 refresh downloaded files when new data become available. The `store_bikedata()`
@@ -270,7 +277,7 @@ function provides a similar capability. When called without specifying
 `data_dir`, the function will download only those files which have not been
 previously stored in the database, whereas when called with a specific
 `data_dir`, the function will download any files not present in the nominated
-directly and load them in to the database.
+directory and load them in to the database.
 
 In short, the `store_bikedata()` function may be repeatedly called to load only
 those data published since the last time the function was called, while
@@ -279,7 +286,7 @@ refreshed with `dl_bikedata()`, and the associated directory specified in the
 call to `store_bikedata()` to load only recently added files.
 
 
-### 4.2 Database Indexes
+### 4.1 Database Indexes
 
 The `store_bikedata()` function also has a default option to create indexes for
 more efficient data extraction. Indexes are always created for cities, with the
@@ -302,27 +309,31 @@ with both rows and columns named after the bicycle docking stations and matrix
 entries tallying numbers of rides between each pair of stations, or in long form
 by requesting `bike_tripmat (..., long = TRUE)`. The latter case will return a
 [`tibble`](https://cran.r-project.org/package=tibble) with the three columns of
-`station_station_id`, `end_station_id`, and `number_trips`.
+`station_station_id`, `end_station_id`, and `number_trips`, as demonstrated
+above.
+
+The data for the individual stations associated with the trip matrix can be
+extracted with `bike_stations()`, which returns a `tibble` containing the 6
+columns of city, station code, station name, longitude, and latitude. Station
+codes are specified by the operators of each system, and pre-pended with a
+2-character city identifier (so, for example, the first of the stations shown
+above is `la3005`). The `bike_stations()` function will generally return all
+operational stations within a given system, which `bike_tripmat()` will return
+only those stations in operation during the requested time period. The previous
+call stored all data from Chicago's Divvybikes system for the year 2016 only, so
+the trip matrix has less entries than the full stations table, which includes
+stations added since then.
 ```{r, eval=FALSE}
-tm <- bike_tripmat (bikedb = 'bikedb', city = 'la')
-head (tm)
+dim (bike_tripmat (bikedb = 'bikedb', city = 'ch'))
 ```
-It is possible to extract a square matrix aggregating trips between all
-stations from all cities within the database, yet doing so prompts a message
-explaining that it is better to extract trip matrices for particular cities. 
-```{r, eval=FALSE}
-tm <- bike_tripmat (bikedb = 'bikedb', long = FALSE)
+```{r}
+# [1] 581 581
 ```
-Absent city specification, the resultant trip matrix will include trips between
-bike stations in different cities, for which there will obviously never be any
-recorded trips (even if only because of incompatible docking stations). For two
-cities, for example, maximally one half of the resultant matrix can contain
-non-zero entries; for three cities, one ninth, and so on. In contrast, single
-long-form trip matrices may be aggregated for all cities without generating
-such a message, because in this case the matrix includes only those pairs of
-stations with one or more trips between them., 
 ```{r, eval=FALSE}
-tm <- bike_tripmat (bikedb = 'bikedb', long = TRUE)
+dim (bike_stations (bikedb = 'bikedb', city = 'ch'))
+```
+```{r}
+# [1] 596 6
 ```
 
 
