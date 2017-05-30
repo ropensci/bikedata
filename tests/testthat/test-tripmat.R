@@ -11,8 +11,8 @@ test_that ('no db', {
                                  ' does not exist')
                # The file.path construction does not give identical results on
                # windows machines
-               if (!is_cran)
-                   expect_error (tm <- bike_tripmat (bikedb = 'junk'), errtxt)
+               #if (!is_cran)
+               #    expect_error (tm <- bike_tripmat (bikedb = 'junk'), errtxt)
 })
 
 test_that ('tripmat-full', {
