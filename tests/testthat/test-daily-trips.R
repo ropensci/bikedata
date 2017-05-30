@@ -26,11 +26,10 @@ test_that ('daily trips', {
                nt <- bike_daily_trips (bikedb = bikedb, city = 'ny')
                expect_equal (nrow (nt), 1) # only one day of trips
                expect_equal (nt$numtrips, 200)
-               nts <- bike_daily_trips (bikedb = bikedb, city = 'ny',
+               expect_is (nt$numtrips, 'integer')
+               nt <- bike_daily_trips (bikedb = bikedb, city = 'ny',
                                        standardise = TRUE)
-               expect_false (identical (nt, nts)) 
-               # nts$numtrips is numeric not int
-               expect_equal (nt, nts)
+               expect_is (nt$numtrips, 'numeric')
 
                expect_equal (bike_daily_trips (bikedb = bikedb,
                                                city = 'ny')$numtrips, 200)

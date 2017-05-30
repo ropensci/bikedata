@@ -72,11 +72,8 @@ The `bikedata` function `store_bikedata()` downloads individual trip data from
 any or all or the above listed systems and stores them in an `SQLite3` database.
 For example, the following line will download all data from the Metro
 system of Los Angeles CA, U.S.A., and store them in a database named 'bikedb',
-```{r store-la-data, eval=FALSE}
+```{r store-la-data, eval = TRUE}
 store_bikedata (city = 'la', bikedb = 'bikedb', quiet = TRUE)
-```
-```{r}
-# [1] 131336
 ```
 The function returns the number of trips added to the database.  Both the
 downloaded data and the `SQLite3` database are stored by default in the
@@ -92,16 +89,16 @@ call above.
 ```{r, eval = FALSE}
 store_bikedata (bikedb = 'bikedb', city = 'divvy', dates = 2016, quiet = TRUE)
 ```
-```{r}
-# [1] 3595383
+```{r, echo = FALSE}
+3595383
 ```
 The function again returns the number of trips *added* to the database, which
 is now less than the total number of trips stored of:
-```{r, eval=FALSE}
+```{r, eval = FALSE}
 bike_db_totals (bikedb = 'bikedb')
 ```
-```{r}
-# [1] 3726719
+```{r, echo = FALSE}
+3726719
 ```
 
 Having stored individual trip data in a database, the primary function of the
@@ -114,51 +111,48 @@ tm <- bike_tripmat (bikedb = 'bikedb', city = 'la')
 class (tm); dim (tm); sum (tm)
 ```
 ```{r}
-# [1] "matrix"
-# [1] 66 66
-# [1] 131336
+```{r, echo = FALSE}
+x <- "matrix"; y <- c (66, 66); z <- 131336
+x; y; z
 ```
 The Los Angeles Metro system has 66 docking stations, and there were a total of
 131,336 individual trips up to April 2017.  Trip matrices can also be extracted
 in long form using
 ```{r, eval = FALSE}
-tm <- bike_tripmat (bikedb = 'bikedb', city = 'la', long = TRUE)
-head (tm); class (tm); sum (tm$numtrips)
+bike_tripmat (bikedb = 'bikedb', city = 'la', long = TRUE)
 ```
-```{r}
-#   start_station_id end_station_id numtrips
-# 1           la3005         la3005      324
-# 2           la3005         la3006      105
-# 3           la3005         la3007       31
-# 4           la3005         la3008      173
-# 5           la3005         la3009        1
-# 6           la3005         la3010        9
-# [1] "data.frame"
-# [1] 131336
+```{r, echo = FALSE}
+n <- 4356
+ss <- c (rep ('la3005', 10), rep (NA, n - 10))
+es <- c ('la3005', 'la3006', 'la3007', 'la3008', 'la3009',
+         'la3010', 'la3011', 'la3014', 'la3016', 'la3018', rep (NA, n - 10))
+nt <- c (324, 105, 31, 173, 1, 9, 86, 49, 12, 39, rep (NA, n - 10))
+
+tm <- tibble::tibble (start_station_id = ss,
+                      end_station_id = es, numtrips = nt)
+tm
 ```
 Details of the docking stations associated with these trip matrices can be
 obtained with
-```{r, eval=FALSE}
+```{r, eval = FALSE}
 bike_stations (bikedb = 'bikedb')
 ```
-```{r}
-# # A tibble: 662 x 6
-#       id  city stn_id  name longitude latitude
-#    <int> <chr>  <chr> <chr>     <dbl>    <dbl>
-#     1     1    la la3005       -118.2590 34.04855
-#     2     2    la la3006       -118.2567 34.04554
-#     3     3    la la3007       -118.2546 34.05048
-#     4     4    la la3008       -118.2627 34.04661
-#     5     5    la la3009       -118.4728 33.98738
-#     6     6    la la3010       -118.2549 34.03705
-#     7     7    la la3011       -118.2680 34.04113
-#     8     8    la la3014       -118.2372 34.05661
-#     9     9    la la3016       -118.2416 34.05290
-#     10    10    la la3018       -118.2601 34.04373
-#     # ... with 652 more rows
+```{r, echo = FALSE}
+n <- 662
+id <- seq (n)
+city <- rep ('la', n)
+ids <- c ('la3005', 'la3006', 'la3007', 'la3008', 'la3009',
+          'la3010', 'la3011', 'la3014', 'la3016', 'la3018', rep (NA, n - 10))
+x <- c (-118.2590, -118.2567, -118.2546, -118.2627, -118.4728,
+        -118.2549, -118.2680, -118.2372, -118.2416, -118.2601, rep (NA, n - 10))
+y <- c (34.04855, 34.04554, 34.05048, 34.04661, 33.98738,
+        34.03705, 34.04113, 34.05661, 34.05290, 34.04373, rep (NA, n - 10))
+stations1 <- tibble::tibble (id = id, city = city, stn_id = ids,
+                             name = rep ('', n), longitude = x, latitude = y)
+stations1
 ```
 Stations can also be extracted for particular cities:
-```{r, eval=FALSE}
+```{r, eval = FALSE}
 st <- bike_stations (bikedb = 'bikedb', city = 'ch')
 ```
 For consistency and to avoid potential confusion of function names, most
@@ -173,7 +167,7 @@ function uses the `bike_dat` data set provided with the package, which contains
 details of 200 representative trips for each of the cities listed above. The
 function writes these data to disk as `.zip` files which can then be read by the
 `store_bikedata()` function.
-```{r, eval=FALSE}
+```{r, eval = FALSE}
 bike_write_test_data ()
 store_bikedata (bikedb = 'testdb')
 bike_summary_stats (bikedb = 'testdb')
@@ -192,7 +186,7 @@ The `store_bikedata()` function demonstrated above automatically downloads data
 and deletes the downloaded files once the data has been loaded into the
 `SQLite3` database. Enduring copies of the raw data files may be created with
 the function `dl_bikedata()`, and specifying a (non-default) location, such as,
-```{r, eval=FALSE}
+```{r, eval = FALSE}
 dl_bikedata (city = 'chicago', data_dir = '/data/bikedata/')
 ```
 
@@ -296,6 +290,11 @@ yet is likely to lead to slower aggregation of data based on dates and times
 (see below). It is therefore recommended to set this option to `FALSE` only when
 subsequent data aggregation will **not** be based on dates or times.
 
+If data are to be stored for multiple cities, then database construction will be
+speed up by using `store_bikedata (..., create_index = FALSE)` to read all but
+the last city. Setting `create_index = TRUE` when reading the final city will
+then create the necessary indexes just one time.
+
 ## 5. Accessing Aggregate Data
 
 ### 5.1 Origin-Destination Matrices
@@ -323,21 +322,21 @@ only those stations in operation during the requested time period. The previous
 call stored all data from Chicago's Divvybikes system for the year 2016 only, so
 the trip matrix has less entries than the full stations table, which includes
 stations added since then.
-```{r, eval=FALSE}
+```{r, eval = FALSE}
 dim (bike_tripmat (bikedb = 'bikedb', city = 'ch'))
 ```
-```{r}
-# [1] 581 581
+```{r, echo = FALSE}
+c (581, 581)
 ```
-```{r, eval=FALSE}
+```{r, eval = FALSE}
 dim (bike_stations (bikedb = 'bikedb', city = 'ch'))
 ```
-```{r}
-# [1] 596 6
+```{r, echo = FALSE}
+c (596, 6)
 ```
 
 
-### 5.1.1. Temporal filtering of trip matrices
+#### 5.1.1. Temporal filtering of trip matrices
 
 Trip matrices can also be extracted for particular dates, times, and days of
 the week, through specifying one or more of the optional arguments:
@@ -352,20 +351,23 @@ Arguments may in all cases be specified in a range of possible formats as long
 as they are unambiguous, and as long as 'larger' units precede 'smaller' units
 (so years before months before days, and hours before minutes before seconds).
 Acceptable formats may be illustrated through specifying a list of arguments to
-be passed to `bike_tripmat()`:
-```{r, eval=FALSE}
-args <- list (start_date = 16, end_time = 12, weekday = 1)
-tm <- bike_tripmat (bikedb = 'bikedb', city = 'ny', args)
+be passed to `bike_tripmat()`. This is done here through passing two lists to
+`bike_tripmat()` via `do.call()`, enabling the second list (`args1`) to be
+subsequently modified.
+```{r, eval = FALSE}
+args0 <- list (bikedb = 'bikedb', city = 'ny', args)
+args1 <- list (start_date = 16, end_time = 12, weekday = 1)
+tm <- do.call (bike_tripmat, c (args0, args1))
 ```
-where a two-digit `start_date` (or `end_date`) is interpreted to represent a
-year, while a one- or two-digit `_time` is interpreted to represent an hour.  A
-value of `end_time = 24` is interpreted as `end_time = '23:59:59'`, while a
+In `args1`, a two-digit `start_date` (or `end_date`) is interpreted to represent
+a year, while a one- or two-digit `_time` is interpreted to represent an hour.
+A value of `end_time = 24` is interpreted as `end_time = '23:59:59'`, while a
 value of `_time = 0` is interpreted as `00:00:00`.  The following further
 illustrate the variety of acceptable formats,
-```{r, eval=FALSE}
-args <- list (start_date = '2016 May', end_time = '12:39', weekday = 2:6)
-args <- list (end_date = 20160720, end_time = 123915, weekday = c ('mo', 'we'))
-args <- list (end_date = '2016-07-20', end_time = '12:39:15', weekday = 2:6)
+```{r, eval = FALSE}
+args1 <- list (start_date = '2016 May', end_time = '12:39', weekday = 2:6)
+args1 <- list (end_date = 20160720, end_time = 123915, weekday = c ('mo', 'we'))
+args1 <- list (end_date = '2016-07-20', end_time = '12:39:15', weekday = 2:6)
 ```
 Both `_date` and `_time` arguments may be specified in either `character` or
 `numeric` forms; in the former case with arbitrary (or no) separators.
@@ -380,66 +382,37 @@ English names. Minimal character specifications are thus `'so', 'm', 'tu', 'w',
 be denoted with `weekdays = c ('sa', 'so')` or `weekdays = c (1, 7)`.
 
 
-### 5.2. Standardising trip counts by durations of operation
-
-Most bicycle hire systems have progressively expanded over time through ongoing
-addition of new docking stations. Total numbers of counts within a trip matrix
-will thus be generally less for more recently installed stations, and more for
-older stations. The `bike_tripmat()` function has an option, `standardise =
-FALSE`. Setting `standardise = TRUE` (or `standardize`, if you'd rather spell it
-that way) allows trip matrices to be standardised for durations of station
-operation, so that numbers of trips between any pair of stations reflect what
-they would be if all stations had been in operation for the same duration.
-
-Standardisation implements a linear scaling of total numbers of trips to and
-from each station according to total durations of operation, with counts in
-the final trip matrix scaled to have the same total number of trips as the
-original matrix.  This standardisation has two immediate consequences:
-
-1. Numbers of trips will not necessarily be integer values, but are rounded for
-the sake of sanity to three digits, corresponding to the maximal likely
-precision attainable for daily differences in operating durations;
-2. Trip numbers will generally not equal actual observed numbers. Counts for
-the longest operating durations will be lower than actually recorded, while
-counts for more recent stations will be greater than observed values.
-
-The `standardise` option nevertheless enables travel patterns between different
-(groups of) stations to be statistically compared in a way that is free of the
-potentially confounding influence of differing durations of operation.
-
-
-### 5.4. Demographic filtering of trip matrices
+#### 5.1.2. Demographic filtering of trip matrices
 
 As described at the outset, the bicycle hire systems of several cities provide
 additional demographic information including whether or not cyclists are
 registered with the system, and if so, additional information including birth
-years, genders, and postal (zip) codes. Note that the provision of such
-information is voluntary, and that no providers can or do guarantee the accuracy
-of their data.
+years and genders. Note that the provision of such information is voluntary, and
+that no providers can or do guarantee the accuracy of their data.
 
 Those systems which provide demographic information are listed with the
 function `bike_demographic_data()`, which also lists the nominal kinds of
-demographic data provided by the different systems. Data can then be filtered
-by demographic parameters with additional optional arguments to
-`bike_tripmat()` of,
+demographic data provided by the different systems.
+```{r}
+bike_demographic_data ()
+```
+Data can then be filtered by demographic parameters with additional optional
+arguments to `bike_tripmat()` of,
 
 1. `registered` (`TRUE/FALSE`, `'yes'/'no'`, 0/1)
 2. `birth_year` (as one or more four-digit numbers or character strings)
 3. `gender` ('m/f/.', 'male/female/other')
-4. `post_code` (as five-digit number or character string)
 
-Many systems allow users to specify alternative genders, and any values not
-beginning with either `'m'` or `'f'` (case-insensitive) are interpreted as
-requests for alternative genders. Because there is no systematic way to specify
-alternative genders, additional filtering beyond these three classes of gender
-is currently not possible.  Note further that, although the only systems to
-date which provide postal addresses are from the U.S., this parameter is not
-called `zip` to avoid potential association with the `.zip`-format files
-generally provided by the hire bicycle systems and accessed by `bikedata`.
+Users are not required to specify genders, and any values of `gender` other than
+character strings beginning with either `f` or `m` (case-insensitive) will be
+interpreted to request non-specified or alternative values of gender.  Note
+further than many systems offer a range of potential birth years starting from a
+default value of 1900, and there are consequently a significant number of
+cyclists who declare this as their birth year.
 
 It is of course possible to combine all of these optional parameters in a
 single query. For example,
-```{r, eval=FALSE}
+```{r, eval = FALSE}
 tm <- bike_tripmat (bikedb = 'bikedb', city = 'ny', start_date = 2016,
         start_time = 9, end_time = 24, weekday = 2:6, gender = 'xx', 
         birth_year = 1900:1950)
@@ -447,49 +420,206 @@ tm <- bike_tripmat (bikedb = 'bikedb', city = 'ny', start_date = 2016,
 The value of `gender = 'xx'` will be interpreted to request data from all
 members with nominal alternative genders.  As demographic data are only given
 for registered users, the `registered` parameter is redundant in this query.
-Note further than many systems offer a range of potential birth years starting
-from a default value of 1900, and there are consequently a significant number of
-cyclists who declare this as their birth year.
+
+#### 5.1.3. Standardising trip matrices by durations of operation
+
+Most bicycle hire systems have progressively expanded over time through ongoing
+addition of new docking stations. Total numbers of counts within a trip matrix
+will thus be generally less for more recently installed stations, and more for
+older stations. The `bike_tripmat()` function has an option, `standardise =
+FALSE`. Setting `standardise = TRUE` allows trip matrices to be standardised for
+durations of station operation, so that numbers of trips between any pair of
+stations reflect what they would be if all stations had been in operation for
+the same duration.
+
+Standardisation implements a linear scaling of total numbers of trips to and
+from each station according to total durations of operation, with counts in
+the final trip matrix scaled to have the same total number of trips as the
+original matrix.  This standardisation has two immediate consequences:
+
+1. Numbers of trips between any pair of stations will not necessarily be integer
+   values, but are rounded for the sake of sanity to three digits, corresponding
+   to the maximal likely precision attainable for daily differences in operating
+   durations;
+2. Trip numbers will generally not equal actual observed numbers. Counts for the
+   longest operating durations will be lower than actually recorded, while
+   counts for more recent stations will be greater than observed values.
+
+The `standardise` option nevertheless enables travel patterns between different
+(groups of) stations to be statistically compared in a way that is free of the
+potentially confounding influence of differing durations of operation.
 
 
-### 5.5. Station Data
+
+### 5.2. Station Data
 
 Data on docking stations may be accessed with the function `bike_stations()`
+as demonstrated above:
 ```{r, eval = FALSE}
 bike_stations (bikedb = 'bikedb')
 ```
-This function returns a `tibble` detailing the names and locations of all
-bicycle stations present in the database. Station data for specific cities may
-be extracted through specifying an additional `city` argument.
+```{r, echo = FALSE}
+stations1
+```
+This function returns a [`tibble`](https://cran.r-project.org/package=tibble)
+detailing the names and locations of all bicycle stations present in the
+database. Station data for specific cities may be extracted through specifying
+an additional `city` argument.
 ```{r, eval = FALSE}
-bike_stations (bikedb = 'bikedb', city = 'ny')
+bike_stations (bikedb = 'bikedb', city = 'ch')
+```
+```{r, echo = FALSE}
+n <- 596
+id <- 66 + seq (n)
+city <- rep ('ch', n)
+ids <- c ('ch456', 'ch101', 'ch109', 'ch21', 'ch80',
+          'ch346', 'ch341', 'ch444', 'ch511', 'ch376', rep (NA, n - 10))
+nms <- c ('2112 W Peterson Ave', '63rd St Beach', '900 W Harrison St',
+            'Aberdeen St & Jackson Blvd', 'Aberdeen St & Monroe St', 
+            'Ada St & Washington Blvd', 'Adler Planetarium', 
+            'Albany Ave & 26th St', 'Albany Ave & Bloomingdale Ave', 
+            'Artesian Ave & Hubbard St', rep (NA, n - 10))
+x <- c (-87.68359, -87.57612, -87.65002, -87.65479, -87.65393,
+        -87.66121, -87.60727, -87.70201, -87.70513, -87.68822, rep (NA, n - 10))
+y <- c (41.99118, 41.78102, 41.87468, 41.87773, 41.88046,
+        41.88283, 41.86610, 41.84448, 41.91403, 41.88949, rep (NA, n - 10))
+stations2 <- tibble::tibble (id = id, city = city, stn_id = ids,
+                             name = nms, longitude = x, latitude = y)
+stations2
 ```
 
 
-### 5.6. Summary Statistics
+
+### 5.3. Summary Statistics
 
 `bikedata` provides a number of helper functions for extracting summary
 statistics from the `SQLite3` database. The function `bike_summary_stats
 (bikedb)` generates an overview table. (This function may take some time to
 execute on large databases.)
 
-```{r, eval=FALSE}
+```{r, eval = FALSE}
 bike_summary_stats ('bikedb')
-# Total of --- trips from 5 cities
-# 
-# city  |   first trip  |   last trip   | number of trips
-# ------|---------------|---------------|-----------------
-# 
-#  ...
 ```
+```{r, echo = FALSE}
+ntr <- c (3726719, 3595383, 131336)
+nst <- c (662, 596, 66)
+startd <- c ('2016-01-01 00:07:00', '2016-01-01 00:07:00', 
+             '2016-07-07 04:17:00')
+endd <- c ('2017-03-31 23:45:00', '2016-12-31 23:57:52',
+           '2017-03-31 23:45:00')
+fls <- c (NA, TRUE, TRUE)
+tbl <- tibble::tibble (num_trips = ntr, num_stations = nst,
+                       first_trip = as.factor (startd), 
+                       last_trip = as.factor (endd), latest_files = fls)
+tbl
+```
+Additional helper functions provide individual components from this summary
+data, and will generally do so notably faster for large databases than the above
+function. The primary individual function is `bike_db_totals()`, which can be
+used to extract total numbers of either trips (the default) or stations (by
+specifying `trips = FALSE`) from the entire database or from specific cities. 
+```{r, eval = FALSE}
+bike_db_totals (bikedb = 'bikedb')
+```
+```{r, echo = FALSE}
+3726719
+```
+```{r, eval = FALSE}
+bike_db_totals (bikedb = 'bikedb', city = "ch")
+```
+```{r, echo = FALSE}
+3595383
+```
+```{r, eval = FALSE}
+bike_db_totals (bikedb = 'bikedb', city = "la")
+```
+```{r, echo = FALSE}
+131336
+```
+```{r, eval = FALSE}
+bike_db_totals (bikedb = 'bikedb', trips = FALSE)
+```
+```{r, echo = FALSE}
+662
+```
+```{r, eval = FALSE}
+bike_db_totals (bikedb = 'bikedb', trips = FALSE, city = "ch")
+```
+```{r, echo = FALSE}
+596
+```
+```{r, eval = FALSE}
+bike_db_totals (bikedb = 'bikedb', trips = FALSE, city = "la")
+```
+```{r, echo = FALSE}
+66
+```
+The other primary components of `bike_summary_stats()` are the dates of first
+and last trips for the entire database and for individual cities. These dates
+can be obtained directly with the function `bike_datelimits()`:
+```{r, eval = FALSE}
+bike_datelimits (bikedb = 'bikedb')
+```
+```{r, echo = FALSE}
+c ('first' = "2016-01-01 00:07:00", 'last' = "2017-03-31 23:45:00")
+```
+```{r, eval = FALSE}
+bike_datelimits (bikedb = 'bikedb', city = 'ch')
+```
+```{r}
+c ('first' = "2016-01-01 00:07:00", 'last' = "2016-12-31 23:57:52")
+```
+A helper function is also provided to determine whether the files stored in the
+database represent the latest available files.
+```{r, eval = FALSE}
+bike_latest_files (bikedb = 'bikedb')
+```
+```{r}
+c ('la' = TRUE, 'ch' = TRUE)
+```
+(At the time of this vignette, Chicago data for the first quarter of 2017 have
+not been released, and thus 2016 data are the latest.)
 
-Additional helper functions which provide individual components from this
-summary data (and which will generally do so notably faster for large databases
-than the above function) include:
-```{r, eval=FALSE}
-bike_num_trips (bikedb = 'bikedb', city = 'ny')
-bike_date_range (bikedb = 'bikedb', city = 'ny')
+
+### 5.4. Time Series of Daily Trips
+
+The `bike_tripmat()` function provides a *spatial* aggregation of data. An
+equivalent *temporal* aggregation is provided by the function
+`bike_daily_trips()`, which aggregates trips for individual days.
+
+```{r, eval = FALSE}
+bike_daily_trips (bikedb = 'bikedb', city = 'ch')
 ```
+```{r, echo = FALSE}
+n <- 366
+dates <- c ('2016-01-01', '2016-01-02', '2016-01-03', '2016-01-04',
+            '2016-01-05', '2016-01-06', '2016-01-07', '2016-01-08',
+            '2016-01-09', '2016-01-10', rep (NA, n - 10))
+nt <- c (935, 1421, 1399, 3833, 4189, 4608, 5028, 3425, 1733, 993,
+         rep (NA, n - 10))
+tibble::tibble (date = dates, numtrips = nt)
+```
+Daily trip counts can also be standardised to account for differences in numbers
+of stations within a system as for trip matrix standardisation described above.
+Such standardisation is helpful because daily numbers of trips will generally
+increase with increasing numbers of stations. Standardisation returns a time
+series of daily trips reflecting what they would be if all system stations had
+been in operation throughout the entire time.
+```{r, eval = FALSE}
+bike_daily_trips (bikedb = 'bikedb', city = 'ch', standardise = TRUE)
+```
+```{r, echo = FALSE}
+nt <- c (2468.925, 2481.939, 2200.766, 5509.787, 5884.207, 6298.229, 6630.111,
+         4476.455, 2265.021, 1297.845, rep (NA, n - 10))
+tibble::tibble (date = dates, numtrips = nt)
+```
+This [`tibble`](https://cran.r-project.org/package=tibble) reveals two points of
+immediate note:
+
+1. Trip numbers are no longer integer values, but are rounded to three decimal
+   places to reflect the highest plausible numerical accuracy; and
+2. Standardised trip numbers are considerably higher for the initial values,
+   because of expansion of the Chicago Divvy system throughout the year 2016.
 
 
 ## 6. Direct database access
@@ -501,9 +631,76 @@ analytical or visualisation needs, direct access may be achieved either using
 the convenient `dplyr` functions, or the more powerful functionality provided
 by the `RSQLite` package.
 
-```{r, eval=FALSE}
-# demo list of tables and contents of both trips and stations tables
+The following code illustrates access using the `dplyr` package:
+```{r, eval = FALSE}
+db <- dplyr::src_sqlite (bikedb, create=F)
+dplyr::src_tbls (db)
 ```
+```{r}
+c ("datafiles", "stations", "trips")
+```
+```{r, eval = FALSE}
+dplyr::collect (dplyr::tbl (db, 'datafiles'))
+```
+```{r, echo = FALSE}
+city <- c ('la', 'la', 'la', 'ch', 'ch')
+nms <- c ('la_metro_gbfs_trips_Q1_2017.zip', 'MetroBikeShare_2016_Q3_trips.zip',
+          'Metro_trips_Q4_2016.zip', 'Divvy_Trips_2016_Q1Q2.zip',
+          'Divvy_Trips_2016_Q3Q4.zip')
+tibble::tibble (id = 0:4, city = city, name = nms)
+```
+```{r, eval = FALSE}
+dplyr::collect (dplyr::tbl (db, 'stations'))
+```
+```{r, echo = FALSE}
+stations1
+```
+```{r, eval = FALSE}
+dplyr::collect (dplyr::tbl (db, 'trips'))
+```
+```{r, echo = FALSE}
+n <- 100000
+id <- seq (n)
+city <- rep ('la', n)
+dur <- c (480, 720, 1020, 300, 300, 1200, 720, 2880, 2820, 1500, 
+          rep (NA, n - 10))
+st <- c ('2017-01-01 00:15:00', '2017-01-01 00:24:00', '2017-01-01 00:28:00',
+         '2017-01-01 00:38:00', '2017-01-01 00:38:00', '2017-01-01 00:39:00',
+         '2017-01-01 00:43:00', '2017-01-01 00:56:00', '2017-01-01 00:57:00',
+         '2017-01-01 01:54:00', rep (NA, n - 10))
+et <- c ('2017-01-01 00:23:00', '2017-01-01 00:36:00', '2017-01-01 00:45:00',
+         '2017-01-01 00:43:00', '2017-01-01 00:43:00', '2017-01-01 00:59:00',
+         '2017-01-01 00:55:00', '2017-01-01 01:44:00', '2017-01-01 01:44:00',
+         '2017-01-01 02:19:00', rep (NA, n - 10))
+nachr <- rep ('a', n)
+naint <- rep (1L, n)
+tibble::tibble (id = id, city = city, trip_duration = dur,
+                start_time = st, stop_time = et,
+                start_station_id = nachr, end_station_id = nachr,
+                bike_id = nachr, user_type = nachr, birth_year = naint,
+                gender = naint)
+warning ('Only first 100,000 results retrieved. Use n = Inf to retrieve all.',
+         call. = FALSE)
+```
+The [`RSQLite`](https://cran.r-project.org/package=RSQLite) package enables more
+complex queries to be constructed. The names of stations, for example, could be
+extracted using the following code
+```{r, eval = FALSE}
+db <- RSQLite::dbConnect(SQLite(), bikedb, create = FALSE)
+qry <- "SELECT stn_id, name FROM stations WHERE city = 'ch'"
+stns <- RSQLite::dbGetQuery(db, qry)
+RSQLite::dbDisconnect(db)
+head (stns)
+```
+```{r, echo = FALSE}
+data.frame (stn_id = c ('ch456', 'ch101', 'ch109', 'ch21', 'ch80', 'ch346'),
+            name = c ('2112 W Peterson Ave', '63rd St Beach', 
+                      '900 W Harrison St', 'Aberdeen St & Jackson Blvd', 
+                      'Aberdeen St & Monroe St', 'Ada St & Washington Blvd'))
+```
+Many of the queries used in the `bikedata` package are constructed in this way
+using the `RSQLite` interface.
+
 
 ## 7. Visualisation of bicycle trips
 
@@ -514,20 +711,110 @@ different ways users of the package are likely to want to visualise the data.
 This section therefore relies on other packages to illustrate some of the ways
 in which trip matrices may be visualised.
 
+### 7.1 Visualisation using R Base functions
+
 The simplest spatial visualisation involves connecting the geographical
 coordinates of stations with straight lines, with numbers of trips represented
 by some characteristics of the lines connecting pairs of stations, such as
 thickness or colours.  This can be achieved with the following code, which also
 illustrates that it is generally more useful for visualisation purposes to
 extract trip matrices in long rather than square form.
-```{r, eval=FALSE}
-stns <- bike_stations (bikedb = 'bikedb', city = 'nyc')
-ntrips <- bike_tripmat (bikedb = 'bikedb', city = 'nyc', long = TRUE)
-x1 <- stns$longitude [match (stns$longitude, ntrips$start_station)]
-y1 <- stns$latitude [match (stns$longitude, ntrips$start_station)]
-x2 <- stns$longitude [match (stns$longitude, ntrips$end_station)]
-y2 <- stns$latitude [match (stns$longitude, ntrips$end_station)]
-plot (stations$longitude, stations$latitude)
-lines (cbind (x1, y1), cbind (x2, y2), 
-        lwd = ntrips$num_trips * 10 / max (ntrips$num_trips))
+```{r plot-la-out, echo = TRUE, eval = FALSE}
+stns <- bike_stations (bikedb = 'bikedb', city = 'la')
+ntrips <- bike_tripmat (bikedb = 'bikedb', city = 'la', long = TRUE)
+x1 <- stns$longitude [match (ntrips$start_station_id, stns$stn_id)]
+y1 <- stns$latitude [match (ntrips$start_station_id, stns$stn_id)]
+x2 <- stns$longitude [match (ntrips$end_station_id, stns$stn_id)]
+y2 <- stns$latitude [match (ntrips$end_station_id, stns$stn_id)]
+# Set plot area to central region of bike system
+xlims <- c (-118.27, max (stns$longitude))
+ylims <- c (34.02, max (stns$latitude))
+plot (stns$longitude, stns$latitude, xlim = xlims, ylim = ylims)
+cols <- rainbow (100)
+nt <- ceiling (ntrips$numtrips * 100 / max (ntrips$numtrips))
+for (i in seq (x1))
+    lines (c (x1 [i], x2 [i]), c (y1 [i], y2 [i]), col = cols [nt [i]],
+        lwd = ntrips$numtrips [i] * 10 / max (ntrips$numtrips))
 ```
+```{r plot-la, echo = FALSE, eval = TRUE}
+# For some reason the R CMD build version loses one longitude in stns which
+# mucks up the plot
+stns <- bike_stations (bikedb = 'bikedb', city = 'la')
+ntrips <- bike_tripmat (bikedb = 'bikedb', city = 'la', long = TRUE)
+x1 <- stns$longitude [match (ntrips$start_station_id, stns$stn_id)]
+y1 <- stns$latitude [match (ntrips$start_station_id, stns$stn_id)]
+x2 <- stns$longitude [match (ntrips$end_station_id, stns$stn_id)]
+y2 <- stns$latitude [match (ntrips$end_station_id, stns$stn_id)]
+# Set plot area to central region of bike system
+xlims <- c (-118.27, max (stns$longitude [stns$longitude < 0]))
+ylims <- c (34.02, max (stns$latitude))
+plot (stns$longitude, stns$latitude, xlim = xlims, ylim = ylims)
+cols <- rainbow (100)
+nt <- ceiling (ntrips$numtrips * 100 / max (ntrips$numtrips))
+for (i in seq (x1))
+    lines (c (x1 [i], x2 [i]), c (y1 [i], y2 [i]), col = cols [nt [i]],
+        lwd = ntrips$numtrips [i] * 10 / max (ntrips$numtrips))
+```
+
+### 7.2 A More Sophisticated Visualisation
+
+The following code illustrates a more sophisticated approach to plotting such
+data, using routines from the packages `osmdata`, `stplanr`, and `tmap`. Begin
+by extracting the street network for Los Angeles using the `osmdata` package.
+Current `stplanr` routines require spatial objects of class
+[`sp`](https://cran.r-project.org/package=sp) rather than
+[`sf`](https://cran.r-project.org/package=sf).
+```{r get-la-highways, eval = FALSE}
+library (magrittr)
+xlims_la <- range (stns$longitude)
+ylims_la <- range (stns$latitude)
+# expand those limits slightly
+ex <- 0.1
+xlims_la <- xlims_la + c (-ex, ex) * diff (xlims_la)
+ylims_la <- ylims_la + c (-ex, ex) * diff (ylims_la)
+bbox <- c (xlims_la [1], ylims_la [1], xlims_la [2], ylims_la [2])
+# Then the actual osmdata query to extract all OpenStreetMap highways
+highways <- osmdata::opq (bbox = bbox) %>%
+    osmdata::add_feature (key = 'highway') %>% osmdata::osmdata_sp ()
+```
+For compatibility with current `stplanr` code, the `stns` table also needs to be
+converted to a `SpatialPointsDataFrame` and re-projected.
+```{r convert-stns-to-spdf, eval = FALSE}
+stns_tbl <- bike_stations (bikedb = 'bikedb')
+stns <- sp::SpatialPointsDataFrame (coords = stns_tbl[,c('longitude','latitude')],
+                                    proj4string = sp::CRS("+init=epsg:4326"), 
+                                    data = stns_tbl)
+stns <- sp::spTransform (stns, highways$osm_lines@proj4string)
+```
+These data can then be used to create an `stplanr::SpatialLinesNetwork` which
+can be used to trace the routes between bicycle stations along the street
+network.  This first requires mapping the bicycle station locations to the
+nearest nodes in the street network, and converting the start and end stations
+of the `ntrips` table to corresponding rows in the street network data frame.
+```{r map-stns-to-streetnet, eval = FALSE}
+la_net <- stplanr::SpatialLinesNetwork (sl = highways$osm_lines)
+# Find the closest node to each station
+nodeid <- stplanr::find_network_nodes (la_net, stns$longitude, stns$latitude)
+# Convert start and end station IDs in trips table to node IDs in `la_net`
+startid <- nodeid [match (ntrips$start_station_id, stns$stn_id)]
+endid <- nodeid [match (ntrips$end_station_id, stns$stn_id)]
+ntrips$start_station_id <- startid
+ntrips$end_station_id <- endid
+```
+The aggregate trips on each part of the network using the `sum_network_lines()`
+function which is part of the current development version of `stplanr`.
+```{r, eval = FALSE}
+bike_usage <- sum_network_links (la_net, data.frame (ntrips))
+```
+Then finally plot it with `tmap`, again trimming the plot using the previous
+limits to exclude a very few isolated stations
+```{r plot-tmat, eval = FALSE}
+tmap::tm_shape (bike_usage, xlim = xlims, ylim = ylims, is.master=TRUE) + 
+    tmap::tm_lines (col="numtrips", lwd="numtrips", title.col = "Number of trips",
+                    breaks = c(0, 200, 400, 600, 800, 1000, Inf),
+                    legend.lwd.show = FALSE, scale = 5) + 
+    tmap::tm_layout (bg.color="gray95", legend.position = c ("right", "bottom"),
+                     legend.bg.color = "white", legend.bg.alpha = 0.5)
+#tmap::save_tmap (filename = "la_map.png")
+```
+![](../inst/fig/la_map.png)
