@@ -6,13 +6,14 @@
 * Windows Visual Studio 2015 (on `appveyor`; `x64`): R-release, R-devel
 * win-builder (R-release, R-devel, R-oldrelease)
 
-Note that checking package with valgrind identifies numerous memory leaks, all
-of which arise during data construction via the bundled `sqlite3.c` code from
-http://www.sqlite.org (similar memory leads arise with a valgrind check of the R
-package `RSQLite`). All database disconnections are nevertheless checked and
-successful tests therefore indicate that the code successfully constructs and
-disconnects from the resultant database. Successful tests accordingly indicate
-that these memory leaks do not affect package functionality.
+Note that checking package with `valgrind` identifies numerous memory leaks, all
+of which arise during database construction via the bundled `sqlite3.c` code
+from http://www.sqlite.org, and that similar memory leads arise with a valgrind
+check of the R package `RSQLite` which also relies on this bundle. All database
+disconnections are nevertheless checked and successful tests therefore indicate
+that the code successfully constructs and disconnects from the resultant
+database. Successful tests accordingly indicate that these memory leaks do not
+affect package functionality.
 
 # R CMD check results
 
@@ -23,4 +24,5 @@ checking installed package size ... NOTE
         doc    2.6Mb
         libs   3.1Mb
             
-Large size primarily due to bundled C++ SQLite3 libs.
+Large size primarily due to bundled C++ SQLite3 libs, along with extensive
+internal C++ routines.
