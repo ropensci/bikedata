@@ -1,0 +1,53 @@
+title: bikedata
+
+templates:
+  params:
+    bootswatch: cerulean
+
+reference:
+  - title: Package Overview
+    contents:
+    - bikedata
+  - title: Functions to Download and Store Data
+    contents:
+    - dl_bikedata
+    - store_bikedata
+  - title: Sample Data for Testing Package
+    contents:
+    - bike_test_data
+    - bike_write_test_data
+    - bike_rm_test_data
+  - title: Functions to Aggregate Trip Data
+    contents:
+    - bike_daily_trips
+    - bike_stations
+    - bike_tripmat
+  - title: Summary Statistics
+    contents:
+    - bike_summary_stats
+    - bike_db_totals
+    - bike_datelimits
+    - bike_demographic_data
+    - bike_latest_files
+  - title: Database Removal
+    contents:
+    - bike_rm_db
+
+articles:
+  - title: The bikedata package
+    contents:
+    - bikedata
+
+navbar:
+  title: bikedata
+  type: default
+  left:
+  - text: Home
+    href: index.html
+  - text: Vignettes
+    href: articles/index.html
+  - text: Functions
+    href: reference/index.html
+  right:
+  - icon: fa-github fa-lg
+    href: https://github.com/mpadge/bikedata
