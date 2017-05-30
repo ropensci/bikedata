@@ -16,6 +16,7 @@ Imports:
     methods,
     Rcpp,
     reshape2,
+    tibble,
     xml2
 Suggests:
     knitr,
