@@ -1,10 +1,10 @@
 Package: bikedata
-Title: Load Data from Public Hire Bicycle Systems
+Title: Download and Aggregate Data from Public Hire Bicycle Systems
 Version: 0.0.0
 Authors@R: c(
     person("Mark", "Padgham", email="mark.padgham@email.com", role=c("aut", "cre")),
     person("Richard", "Ellison", role="aut"))
-Description: Load data from public hire bicycle systems.
+Description: Download and aggregate data from public hire bicycle systems.
 License: GPL-3
 Depends:
     R (>= 3.0)

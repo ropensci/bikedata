@@ -817,4 +817,4 @@ tmap::tm_shape (bike_usage, xlim = xlims, ylim = ylims, is.master=TRUE) +
                      legend.bg.color = "white", legend.bg.alpha = 0.5)
 #tmap::save_tmap (filename = "la_map.png")
 ```
-![](../inst/fig/la_map.png)
+![](la_map.png)

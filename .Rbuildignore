@@ -3,8 +3,9 @@
 ^README\.html$
 ^\.travis\.yml$
 ^appveyor\.yml$
+^_pkgdown\.yml$
 ^makefile$
 ^vignettes/makefile$
 ^.*\.Rproj$
 ^aaa\.Rmd$
-^tic\.R$
+^docs$
