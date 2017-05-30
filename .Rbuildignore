@@ -1,6 +1,7 @@
 [.]md$
 ^README\.Rmd$
-^README\.html$
+^README\.md$
+^\.gitignore$
 ^\.travis\.yml$
 ^appveyor\.yml$
 ^_pkgdown\.yml$
