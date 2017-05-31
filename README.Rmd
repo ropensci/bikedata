@@ -3,10 +3,10 @@ title: "bikedata"
 output:
   github_document:
     toc: true
-  #html_document:
-  #  toc: true
-  #  toc_float: true
-  #  theme: flatly
+  html_document:
+    toc: true
+    toc_float: true
+    theme: flatly
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -47,14 +47,17 @@ These data include the places and times at which all trips start and end. Some
 systems provide additional demographic data including years of birth and genders
 of cyclists.
 
+The following provides a brief overview of package functionality. For more
+detail, see the
+[vignette](https://mpadge.github.io/bikedata/articles/bikedata.html).
+
 ------
 
 
 ## 1 Installation
 
 Currently a development version only which can be installed with the following
-command.
-
+command,
 ```{r, eval=FALSE}
 devtools::install_github("mpadge/bikedata")
 ```
@@ -67,18 +70,27 @@ devtools::load_all (".")
 #testthat::test_dir ("./tests/")
 #Rcpp::compileAttributes()
 ```
+and then loaded the usual way
+```{r, eval = FALSE}
+library (bikedata)
+```
+
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, error=FALSE}
 options(width = 120)
 ```
 
 
-
 ## 2 Usage
 
 Data may downloaded for a particular city and stored in an `SQLite3` database
 with the simple command,
-```{r, eval=FALSE}
+```{r, echo = FALSE, eval = FALSE}
+dl_bikedata (city = 'ny', data_dir = '/data/data/bikes/nyc-temp/',
+             dates = 201601:201603)
+store_bikedata (bikedb = 'bikedb', data_dir = '/data/data/bikes/nyc-temp/')
+```
+```{r, eval = FALSE}
 store_bikedata (city = 'nyc', bikedb = 'bikedb', dates = 201601:201603)
 # [1] 2019513
 ```
@@ -89,11 +101,11 @@ total number of trips added to the specified database. The primary objects
 returned by the `bikedata` packages are 'trip matrices' which contain aggregate
 numbers of trips between each pair of stations. These are extracted from the
 database with:
-```{r, eval=FALSE}
+```{r, eval = FALSE}
 tm <- bike_tripmat (bikedb = 'bikedb')
 dim (tm); format (sum (tm), big.mark = ',')
 ```
-```{r, echo=FALSE}
+```{r, echo = FALSE}
 c (518, 518)
 "2,019,513"
 ```
@@ -102,8 +114,22 @@ During the specified time period there were just over 2 million trips between
 large, particularly in the absence of `dates` restrictions, and extracting these
 data can take quite some time.
 
+Data can also be aggregated as daily time series with
+```{r, eval = FALSE}
+bike_daily_trips (bikedb = 'bikedb')
+```
+```{r, echo = FALSE}
+n <- 87
+dates <- c ('2016-01-01', '2016-01-02', '2016-01-03', '2016-01-04',
+            '2016-01-05', '2016-01-06', '2016-01-07', '2016-01-08',
+            '2016-01-08', '2016-01-10', rep (NA, n - 10))
+nt <- c (11172, 14794, 15775, 19879, 18326, 24922, 28215, 29131, 21140, 14481,
+         rep (NA, n - 10))
+tibble::tibble (date = dates, numtrips = nt)
+```
+
 A summary of all data contained in a given database can be produced as
-```{r, eval=FALSE}
+```{r, eval = FALSE}
 bike_summary_stats (bikedb = 'bikedb')
 #>    num_trips num_stations          first_trip       last_trip latest_files
 #> ny  2019513          518 2016-01-01 00:00    2016-03-31 23:59        FALSE
@@ -117,10 +143,10 @@ Trip matrices can be constructed for trips filtered by dates, days of the week,
 times of day, or any combination of these.  The temporal extent of a `bikedata`
 database is given in the above `bike_summary_stats()` function, or can be
 directly viewed with
-```{r, eval=FALSE}
+```{r, eval = FALSE}
 bike_datelimits (bikedb = 'bikedb')
 ```
-```{r, echo=FALSE}
+```{r, echo = FALSE}
 res <- c ("2016-01-01 00:00", "2016-03-31 23:59")
 names (res) <- c ("first", "last")
 res
@@ -131,7 +157,7 @@ function include `start_date`, `end_date`, `start_time`, `end_time`, and
 units must always precede smaller units (so years before months before days;
 hours before minutes before seconds). The following examples illustrate the
 variety of acceptable formats for these arguments.
-```{r, eval=FALSE}
+```{r, eval = FALSE}
 tm <- bike_tripmat ('bikedb', start_date = "20160102")
 tm <- bike_tripmat ('bikedb', start_date = 20160102, end_date = "16/02/28")
 tm <- bike_tripmat ('bikedb', start_time = 0, end_time = 1) # 00:00 - 01:00
@@ -151,7 +177,7 @@ specifying the three additional arguments of `member`, `gender`, and
 to `TRUE`. `gender` is specified numerically such that values of `2`, `1`, and
 `0` respectively translate to female, male, and unspecified. The following lines
 demonstrate this functionality
-```{r, eval=FALSE}
+```{r, eval = FALSE}
 sum (bike_tripmat ('bikedb', member = 0))
 sum (bike_tripmat ('bikedb', gender = 'female'))
 sum (bike_tripmat ('bikedb', weekday = 'sat', birth_year = 1980:1990,
