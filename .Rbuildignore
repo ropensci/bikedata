@@ -10,3 +10,4 @@
 ^.*\.Rproj$
 ^aaa\.Rmd$
 ^docs$
+^paper\.md$
