@@ -1,10 +1,16 @@
 Package: bikedata
 Title: Download and Aggregate Data from Public Hire Bicycle Systems
-Version: 0.0.0
+Version: 0.0.1
 Authors@R: c(
-    person("Mark", "Padgham", email="mark.padgham@email.com", role=c("aut", "cre")),
-    person("Richard", "Ellison", role="aut"))
-Description: Download and aggregate data from public hire bicycle systems.
+    person("Mark", "Padgham", email = "mark.padgham@email.com", role = c("aut", "cre")),
+    person("Richard", "Ellison", role = "aut"),
+    person(family = "SQLite Consortium", role = "ctb", 
+        comment = "Authors of included SQLite code"))
+Description: Download and aggregate data from all public hire bicycle systems
+    which provide open data, currently including Santander Cycles in London,
+    U.K., and from the U.S.A., citibike in New York City NY, Divvy in Chicago
+    IL, Capital Bikeshare in Washington DC, Hubway in Boston MA, and Metro in
+    Los Angeles LA.
 License: GPL-3
 Depends:
     R (>= 3.0)
