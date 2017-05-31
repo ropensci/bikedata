@@ -104,6 +104,30 @@ get_london_bike_files <- function ()
 }
 
 
+#' get_philly_bike_files
+#'
+#' Returns list of URLs for each trip data file from Philadelphia's Indego
+#' system.
+#'
+#' @return List of URLs used to download data
+#'
+#' @noRd
+get_philly_bike_files <- function ()
+{
+    host <- paste0 ("https://u626n26h74f16ig1p3pt0f2g-wpengine.netdna-ssl.com/",
+                    "wp-content/uploads/")
+    files <- c ('2017/04/indego_gbfs_trips_Q1_2017.zip',
+                '2017/01/Indego_trips_Q4_2016.zip',
+                '2016/10/Q3_2016_trips.zip',
+                '2016/07/Indego_Trips_2016Q2.zip',
+                '2016/07/Indego_Trips_2016Q1.zip',
+                '2016/01/Indego_Trips_2015Q4.zip',
+                '2016/01/Indego_Trips_2015Q3.zip',
+                '2016/01/Indego_Trips_2015Q2.zip',
+                '2017/01/indego_stations.zip')
+    paste0 (host, files)
+}
+
 
 #' get_bike_files
 #'

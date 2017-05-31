@@ -24,10 +24,11 @@ convert_city_names <- function (city)
                      'bo', 'hu', # boston hubway
                      'ch', 'di', # chicago divvy bike
                      'wa', 'dc', 'ca', # washington dc capital bike share
-                     'la', 'me',
-                     'lo', 'sa' ) # london santander
+                     'la', 'me', # LA metro
+                     'lo', 'sa', # london santander
+                     'ph', 'in') # philly indego
     city_code <- c ('ny', 'ny', 'ny', 'bo', 'bo', 'ch', 'ch',
-                    'dc', 'dc', 'dc', 'la', 'la', 'lo', 'lo')
+                    'dc', 'dc', 'dc', 'la', 'la', 'lo', 'lo', 'ph', 'ph')
     city_code <- city_code [pmatch (city, city_names)]
 
     if (length (indx_lo) > 0)

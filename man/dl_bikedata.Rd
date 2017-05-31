@@ -42,6 +42,7 @@ and names of bike hire systems are:
  Los Angeles (la)\tab Metro Bike Share\cr
  Boston (bo)\tab Hubway\cr
  London (lo)\tab Santander Cycles\cr
+ Philadelphia (ph)\tab Indego\cr
 }
 
 Ensure you have a fast internet connection and at least 100 Mb space

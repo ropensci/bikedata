@@ -31,8 +31,8 @@ unsigned read_one_line_dc (sqlite3_stmt * stmt, char * line,
 std::string convert_dc_stn_name (std::string &station_name, bool id,
         std::map <std::string, std::string> &stn_map);
 unsigned read_one_line_london (sqlite3_stmt * stmt, char * line);
-std::string add_0_to_la_time (std::string time);
-unsigned read_one_line_la (sqlite3_stmt * stmt, char * line,
+std::string add_0_to_time (std::string time);
+unsigned read_one_line_la_ph (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry);
 
 
@@ -213,7 +213,7 @@ unsigned read_one_line_boston (sqlite3_stmt * stmt, char * line,
 //' read_one_line_chicago
 //'
 //' @param stmt An sqlit3 statement to be assembled by reading the line of data
-//' @param line Line of data read from citibike file
+//' @param line Line of data read from divvy bike file
 //'
 //' @noRd
 unsigned read_one_line_chicago (sqlite3_stmt * stmt, char * line,
@@ -276,7 +276,7 @@ unsigned read_one_line_chicago (sqlite3_stmt * stmt, char * line,
 //' read_one_line_dc
 //'
 //' @param stmt An sqlit3 statement to be assembled by reading the line of data
-//' @param line Line of data read from citibike file
+//' @param line Line of data read from capital bikeshare file
 //' @param dur_ms True if duration is single number (in ms); otherwise duration
 //' has to be explicitly parsed
 //' @param id True if file contains station ID columns
@@ -433,7 +433,7 @@ std::string convert_dc_stn_name (std::string &station_name, bool id,
 //' read_one_line_london
 //'
 //' @param stmt An sqlit3 statement to be assembled by reading the line of data
-//' @param line Line of data read from citibike file
+//' @param line Line of data read from Santander cycles file
 //'
 //' @noRd
 unsigned read_one_line_london (sqlite3_stmt * stmt, char * line)
@@ -480,17 +480,17 @@ unsigned read_one_line_london (sqlite3_stmt * stmt, char * line)
 }
 
 
-//' add_0_to_la_time
+//' add_0_to_time
 //'
-//' The hours part of LA times are single digit for HH < 10. SQLite requires
-//' strict HH, so this function inserts an extra zero where needed.
+//' The hours part of LA and Philly times are single digit for HH < 10. SQLite
+//' requires ' strict HH, so this function inserts an extra zero where needed.
 //'
-//' @param time A datetime column from the LA data
+//' @param time A datetime column from the LA or Philly data
 //'
 //' @return datetime with two-digit hour field
 //'
 //' @noRd
-std::string add_0_to_la_time (std::string time)
+std::string add_0_to_time (std::string time)
 {
     unsigned gap_pos = time.find (" ");
     unsigned time_div_pos = time.find (":");
@@ -502,15 +502,17 @@ std::string add_0_to_la_time (std::string time)
 }
 
 
-//' read_one_line_la
+//' read_one_line_la_ph
+//'
+//' LA and Philadelpia have identical file formats
 //'
 //' @param stmt An sqlit3 statement to be assembled by reading the line of data
-//' @param line Line of data read from citibike file
+//' @param line Line of data read from LA metro or Philadelphia Indego file
 //' @param stationqry Sqlite3 query for station data table to be subsequently
 //'        passed to 'import_to_station_table()'
 //'
 //' @noRd
-unsigned read_one_line_la (sqlite3_stmt * stmt, char * line,
+unsigned read_one_line_la_ph (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry)
 {
     std::string in_line = line;
@@ -528,11 +530,11 @@ unsigned read_one_line_la (sqlite3_stmt * stmt, char * line,
 
     std::string trip_duration = std::strtok (NULL, delim);
     std::string start_date = std::strtok (NULL, delim);
-    start_date = add_0_to_la_time (start_date);
-    start_date = convert_datetime_la (start_date);
+    start_date = add_0_to_time (start_date);
+    start_date = convert_datetime_la_ph (start_date);
     std::string end_date = std::strtok (NULL, delim);
-    end_date = add_0_to_la_time (end_date);
-    end_date = convert_datetime_la (end_date);
+    end_date = add_0_to_time (end_date);
+    end_date = convert_datetime_la_ph (end_date);
     std::string start_station_id = std::strtok (NULL, delim);
     if (start_station_id == " ")
         ret = 1;

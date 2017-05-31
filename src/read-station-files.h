@@ -31,7 +31,7 @@ int rcpp_import_stn_df (const char * bikedb, Rcpp::DataFrame stn_data,
 //'
 //' Inserts data into the table of stations in the database. Applies to those
 //' cities for which station data are included and read as part of the actual
-//' raw trips data: ny, boston, la.
+//' raw trips data: ny, boston, la, philly.
 //'
 //' @param dbcon Active connection to sqlite3 database
 //' @param stationqry Station query constructed during reading of data with

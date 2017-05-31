@@ -29,6 +29,7 @@
 #'  Chicago (ch)\tab Divvy Bikes\cr
 #'  Los Angeles (la)\tab Metro Bike Share\cr
 #'  Boston (bo)\tab Hubway\cr
+#'  Philadelphia (ph)\tab Indego\cr
 #' }
 #'
 #' @note Data for different cities are all stored in the same database, with
@@ -252,12 +253,10 @@ get_bike_cities <- function (data_dir)
              grepl ('JourneyDataExtract', flist, ignore.case = TRUE)))
         ptn <- paste0 (ptn, '|.csv') # London has raw csv files too
     flist <- list.files (data_dir, pattern = ptn)
-    cities <- list ('ny' = FALSE,
-                    'bo' = FALSE,
-                    'ch' = FALSE,
-                    'dc' = FALSE,
-                    'la' = FALSE,
-                    'lo' = FALSE)
+
+    n <- nrow (bike_demographic_data ())
+    cities <- as.list (rep (FALSE, n))
+    names (cities) <- bike_demographic_data ()$city
 
     if (any (grepl ('citibike', flist, ignore.case = TRUE)))
         cities$ny <- TRUE
@@ -272,6 +271,8 @@ get_bike_cities <- function (data_dir)
         cities$lo <- TRUE
     if (any (grepl ('metro', flist, ignore.case = TRUE)))
         cities$la <- TRUE
+    if (any (grepl ('indego', flist, ignore.case = TRUE)))
+        cities$ph <- TRUE
 
     cities <- which (unlist (cities))
     names (cities)
@@ -280,7 +281,7 @@ get_bike_cities <- function (data_dir)
 #' Get list of data files for a particular city in specified directory 
 #'
 #' @param data_dir Directory containing data files
-#' @param city One of (nyc, boston, chicago, dc, la)
+#' @param city One of (nyc, boston, chicago, dc, la, philly)
 #'
 #' @return Only those members of flist corresponding to nominated city
 #'
@@ -305,6 +306,8 @@ get_flist_city <- function (data_dir, city)
     else if (any (city == 'lo'))
         index <- which (grepl ('Journey', flist, ignore.case = TRUE) |
                         grepl ('cyclehireusage', flist, ignore.case = TRUE))
+    else if (any (city == 'ph'))
+        index <- which (grepl ('indego', flist, ignore.case = TRUE))
 
     ret <- NULL
     if (length (index) > 0)

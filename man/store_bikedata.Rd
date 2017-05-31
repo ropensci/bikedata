@@ -56,6 +56,7 @@ parentheses) and names of bike hire systems are:
  Chicago (ch)\tab Divvy Bikes\cr
  Los Angeles (la)\tab Metro Bike Share\cr
  Boston (bo)\tab Hubway\cr
+ Philadelphia (ph)\tab Indego\cr
 }
 }
 

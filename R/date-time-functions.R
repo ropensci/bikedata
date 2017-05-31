@@ -205,9 +205,9 @@ expand_dates_to_range <- function (x)
 #' appropriate character format matching file names for designed city
 #'
 #' Different cities use different date formats for their data files. While
-#' NY and Boston use simple "YYYYMM" formats, other cities (DC, LA, Chicago)
-#' disseminate data quarterly or with corresponding file names. London is
-#' it's own unique case.
+#' NY and Boston use simple "YYYYMM" formats, other cities (DC, LA, Chicago,
+#' Philly) disseminate data quarterly or with corresponding file names. London
+#' is it's own unique case.
 #'
 #' @param x Vector of dates in YYYYMM format
 #' @param city City for which dates to be matched
@@ -236,7 +236,7 @@ convert_dates_to_filenames <- function (x, city = 'ny')
     {
         mm <- month.abb [as.numeric (substring (x, 5, 6))]
         x <- paste0 (mm, yy)
-    } else if (city %in% c ('dc', 'la'))
+    } else if (city %in% c ('dc', 'la', 'ph'))
     {
         # LA uses both "YYYY_QX" and "QX_YYYY"
         qq <- paste0 ('Q', ceiling (as.numeric (substring (x, 5, 6)) / 3))
