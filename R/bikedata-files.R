@@ -123,8 +123,7 @@ get_philly_bike_files <- function ()
                 '2016/07/Indego_Trips_2016Q1.zip',
                 '2016/01/Indego_Trips_2015Q4.zip',
                 '2016/01/Indego_Trips_2015Q3.zip',
-                '2016/01/Indego_Trips_2015Q2.zip',
-                '2017/01/indego_stations.zip')
+                '2016/01/Indego_Trips_2015Q2.zip')
     paste0 (host, files)
 }
 
@@ -153,6 +152,8 @@ get_bike_files <- function (city)
         files <- get_chicago_bike_files ()
     else if (city == 'lo')
         files <- get_london_bike_files ()
+    else if (city == 'ph')
+        files <- get_philly_bike_files ()
 
     return (files)
 }
