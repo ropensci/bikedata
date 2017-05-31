@@ -116,19 +116,6 @@ int rcpp_create_db_indexes (const char* bikedb, Rcpp::CharacterVector tables,
     if (rc != SQLITE_OK)
         throw std::runtime_error ("Can't establish sqlite3 connection");
 
-    sqlite3_stmt *versionstmt;
-    char *sqliteversion = (char *)"0.1";
-
-    rc = sqlite3_prepare_v2(dbcon, "SELECT sqlite_version()", -1, 
-            &versionstmt, 0);
-    if (rc != SQLITE_OK) 
-        throw std::runtime_error ("Unable to retrieve sqlite version");
-    rc = sqlite3_step(versionstmt);
-
-    if (rc == SQLITE_ROW) 
-        sqliteversion = (char *)sqlite3_column_text(versionstmt, 0);
-    rc = sqlite3_reset(versionstmt);
-
     for (int i = 0; i < cols.length(); ++i) 
     {
         std::string idxname = "idx_" + tables[i] + "_" + 

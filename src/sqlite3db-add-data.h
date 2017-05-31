@@ -159,7 +159,7 @@ int rcpp_import_to_trip_table (const char* bikedb,
                             id_in_dc_file, dc_end_date_first);
                 else if (city == "lo")
                     rc = read_one_line_london (stmt, in_line);
-                else if (city == "la" | city == "ph")
+                else if ((city == "la") | (city == "ph"))
                     rc = read_one_line_la_ph (stmt, in_line, &stationqry);
 
                 if (rc == 0) // only != 0 for LA and London
