@@ -59,7 +59,8 @@ NULL
 #'
 #' @noRd
 rcpp_import_stn_df <- function(bikedb, stn_data, city) {
-    .Call('bikedata_rcpp_import_stn_df', PACKAGE = 'bikedata', bikedb, stn_data, city)
+    .Call('bikedata_rcpp_import_stn_df', PACKAGE = 'bikedata',
+          bikedb, stn_data, city)
 }
 
 #' rcpp_import_to_trip_table
@@ -78,7 +79,8 @@ rcpp_import_stn_df <- function(bikedb, stn_data, city) {
 #'
 #' @noRd
 rcpp_import_to_trip_table <- function(bikedb, datafiles, city, quiet) {
-    .Call('bikedata_rcpp_import_to_trip_table', PACKAGE = 'bikedata', bikedb, datafiles, city, quiet)
+    .Call('bikedata_rcpp_import_to_trip_table', PACKAGE = 'bikedata',
+          bikedb, datafiles, city, quiet)
 }
 
 #' rcpp_import_to_file_table
@@ -95,7 +97,8 @@ rcpp_import_to_trip_table <- function(bikedb, datafiles, city, quiet) {
 #'
 #' @noRd
 rcpp_import_to_file_table <- function(bikedb, datafiles, city, nfiles) {
-    .Call('bikedata_rcpp_import_to_file_table', PACKAGE = 'bikedata', bikedb, datafiles, city, nfiles)
+    .Call('bikedata_rcpp_import_to_file_table', PACKAGE = 'bikedata',
+          bikedb, datafiles, city, nfiles)
 }
 
 #' rcpp_create_sqlite3_db
@@ -128,7 +131,8 @@ rcpp_create_sqlite3_db <- function(bikedb) {
 #'
 #' @noRd
 rcpp_create_db_indexes <- function(bikedb, tables, cols, reindex) {
-    .Call('bikedata_rcpp_create_db_indexes', PACKAGE = 'bikedata', bikedb, tables, cols, reindex)
+    .Call('bikedata_rcpp_create_db_indexes', PACKAGE = 'bikedata',
+          bikedb, tables, cols, reindex)
 }
 
 #' rcpp_create_city_index
@@ -144,7 +148,8 @@ rcpp_create_db_indexes <- function(bikedb, tables, cols, reindex) {
 #'
 #' @noRd
 rcpp_create_city_index <- function(bikedb, reindex) {
-    .Call('bikedata_rcpp_create_city_index', PACKAGE = 'bikedata', bikedb, reindex)
+    .Call('bikedata_rcpp_create_city_index', PACKAGE = 'bikedata',
+          bikedb, reindex)
 }
 
 #' strtokm
