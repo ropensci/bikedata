@@ -432,7 +432,7 @@ bike_daily_trips <- function (bikedb, city, station, member, birth_year, gender,
 
 #' Static summary of which systems provide demographic data
 #'
-#' @return A \code{data.frame} detailing the kinds of demographc data provided
+#' @return A \code{data.frame} detailing the kinds of demographic data provided
 #' by the different systems
 #'
 #' @export

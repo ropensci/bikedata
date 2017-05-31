@@ -7,7 +7,7 @@
 bike_demographic_data()
 }
 \value{
-A \code{data.frame} detailing the kinds of demographc data provided
+A \code{data.frame} detailing the kinds of demographic data provided
 by the different systems
 }
 \description{
