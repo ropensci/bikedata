@@ -188,12 +188,13 @@ std::string convert_datetime_ch (std::string str)
     return str;
 }
 
-//' convert_datetime_la_ph
+//' convert_datetime_nabsa
 //'
-//' LA and Philadelphia have identical formats
+//' North American Bike Share Association (LA and Philadelphia) have identical
+//' formats
 //'
 //' @noRd
-std::string convert_datetime_la_ph (std::string str)
+std::string convert_datetime_nabsa (std::string str)
 {
     std::string mon = str_token (&str, "/");
     if (mon.length () == 1)

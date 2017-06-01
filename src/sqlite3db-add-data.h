@@ -98,8 +98,8 @@ int rcpp_import_to_trip_table (const char* bikedb,
                 datafiles.size() << ": " <<
                 datafiles [filenum] << std::endl;
 
-        pFile = fopen(datafiles[filenum], "r");
-        char * junk = fgets(in_line, BUFFER_SIZE, pFile);
+        pFile = fopen (datafiles [filenum], "r");
+        char * junk = fgets (in_line, BUFFER_SIZE, pFile);
         (void) junk; // suppress unused variable warning
         rm_dos_end (in_line);
 
@@ -159,8 +159,8 @@ int rcpp_import_to_trip_table (const char* bikedb,
                             id_in_dc_file, dc_end_date_first);
                 else if (city == "lo")
                     rc = read_one_line_london (stmt, in_line);
-                else if ((city == "la") | (city == "ph"))
-                    rc = read_one_line_la_ph (stmt, in_line, &stationqry);
+                else if (city == "la" || city == "ph")
+                    rc = read_one_line_nabsa (stmt, in_line, &stationqry, city);
 
                 if (rc == 0) // only != 0 for LA and London
                 {
@@ -174,7 +174,7 @@ int rcpp_import_to_trip_table (const char* bikedb,
 
     sqlite3_exec(dbcon, "END TRANSACTION", NULL, NULL, &zErrMsg);
 
-    if (city == "ny" || city == "bo" || city == "la")
+    if (city == "ny" || city == "bo" || city == "la" || city == "ph")
         import_to_station_table (dbcon, stationqry);
 
     rc = sqlite3_close_v2 (dbcon);

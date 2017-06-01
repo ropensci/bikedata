@@ -32,8 +32,9 @@ std::string convert_dc_stn_name (std::string &station_name, bool id,
         std::map <std::string, std::string> &stn_map);
 unsigned read_one_line_london (sqlite3_stmt * stmt, char * line);
 std::string add_0_to_time (std::string time);
-unsigned read_one_line_la_ph (sqlite3_stmt * stmt, char * line,
-        std::map <std::string, std::string> * stationqry);
+unsigned read_one_line_nabsa (sqlite3_stmt * stmt, char * line,
+        std::map <std::string, std::string> * stationqry,
+        std::string city);
 
 
 //' read_one_line_nyc
@@ -502,9 +503,10 @@ std::string add_0_to_time (std::string time)
 }
 
 
-//' read_one_line_la_ph
+//' read_one_line_nabsa
 //'
-//' LA and Philadelpia have identical file formats
+//' North American Bike Share Association open data standard (LA and
+//' Philadelpia) have identical file formats
 //'
 //' @param stmt An sqlit3 statement to be assembled by reading the line of data
 //' @param line Line of data read from LA metro or Philadelphia Indego file
@@ -512,10 +514,11 @@ std::string add_0_to_time (std::string time)
 //'        passed to 'import_to_station_table()'
 //'
 //' @noRd
-unsigned read_one_line_la_ph (sqlite3_stmt * stmt, char * line,
-        std::map <std::string, std::string> * stationqry)
+unsigned read_one_line_nabsa (sqlite3_stmt * stmt, char * line,
+        std::map <std::string, std::string> * stationqry, std::string city)
 {
     std::string in_line = line;
+    std::string in_line2 = line; // TODO: Delete that!
     boost::replace_all (in_line, "\\N"," "); 
     // replace_all only works with the following two lines, NOT with a single
     // attempt to replace all ",,"!
@@ -531,41 +534,43 @@ unsigned read_one_line_la_ph (sqlite3_stmt * stmt, char * line,
     std::string trip_duration = std::strtok (NULL, delim);
     std::string start_date = std::strtok (NULL, delim);
     start_date = add_0_to_time (start_date);
-    start_date = convert_datetime_la_ph (start_date);
+    start_date = convert_datetime_nabsa (start_date);
     std::string end_date = std::strtok (NULL, delim);
     end_date = add_0_to_time (end_date);
-    end_date = convert_datetime_la_ph (end_date);
+    end_date = convert_datetime_nabsa (end_date);
     std::string start_station_id = std::strtok (NULL, delim);
-    if (start_station_id == " ")
+    if (start_station_id == " " || start_station_id == "#N/A")
         ret = 1;
-    start_station_id = "la" + start_station_id;
+    start_station_id = city + start_station_id;
     std::string start_station_lat = std::strtok (NULL, delim);
     std::string start_station_lon = std::strtok (NULL, delim);
     // lat and lons are sometimes empty, which is useless 
-    if (stationqry->count(start_station_id) == 0 &&
-            start_station_lat != " " && start_station_lon != " ") 
+    if (stationqry->count(start_station_id) == 0 && ret == 0 &&
+            start_station_lat != " " && start_station_lon != " " &&
+            start_station_lat != "0" && start_station_lon != "0")
     {
         std::string start_station_name = "";
-        (*stationqry)[start_station_id] = "(\'la\',\'" + 
-            start_station_id + "\',\'\'," + // no start_station_name
+        (*stationqry)[start_station_id] = "(\'" + city + "\',\'" +
+            start_station_id + "\',\'\'," + 
             start_station_lat + delim + start_station_lon + ")";
     }
 
     std::string end_station_id = std::strtok (NULL, delim);
-    if (end_station_id == " ")
+    if (end_station_id == " " || end_station_id == "#N/A")
         ret = 1;
-    end_station_id = "la" + end_station_id;
+    end_station_id = city + end_station_id;
     std::string end_station_lat = std::strtok (NULL, delim);
     std::string end_station_lon = std::strtok (NULL, delim);
-    if (stationqry->count(end_station_id) == 0 &&
-            end_station_lat != " " && end_station_lon != " ")
+    if (stationqry->count(end_station_id) == 0 && ret == 0 &&
+            end_station_lat != " " && end_station_lon != " " &&
+            end_station_lat != "0" && end_station_lon != "0")
     {
         std::string end_station_name = "";
-        (*stationqry)[end_station_id] = "(\'la\',\'" + 
-            end_station_id + "\',\'\'," +
+        (*stationqry)[end_station_id] = "(\'" + city + "\',\'" +
+            end_station_id + "\',\'\'," + 
             end_station_lat + "," + end_station_lon + ")";
     }
-    // LA only has duration of membership as (30 = monthly, etc)
+    // NABSA systems only have duration of membership as (30 = monthly, etc)
     std::string user_type = std::strtok (NULL, delim);
     if (user_type == "")
         user_type = "0";

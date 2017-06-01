@@ -206,9 +206,10 @@ NULL
 #' @noRd
 NULL
 
-#' convert_datetime_la_ph
+#' convert_datetime_nabsa
 #'
-#' LA and Philadelphia have identical formats
+#' North American Bike Share Association (LA and Philadelphia) have identical
+#' formats
 #'
 #' @noRd
 NULL
