@@ -1,5 +1,5 @@
 PKG_CPPFLAGS=-I. -DRSQLITE_USE_BUNDLED_SQLITE
 
-PKG_LIBS = sqlite3/sqlite3.o
+PKG_LIBS = vendor/sqlite3/sqlite3.o
 
 $(SHLIB): $(PKG_LIBS)

@@ -14,7 +14,7 @@
 #pragma once
 
 #include <unordered_set>
-#include "sqlite3/sqlite3.h"
+#include "vendor/sqlite3/sqlite3.h"
 
 // NOTE: Return values are only used for LA
 

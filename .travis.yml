@@ -39,7 +39,7 @@ notifications:
 
 #after_success
 after_success:
-    - Rscript -e "covr::codecov(line_exclusions = 'src/sqlite3/sqlite3.c')"
+    - Rscript -e "covr::codecov(line_exclusions = 'src/vendor/sqlite3/sqlite3.c')"
     #- R -q -e 'tic::after_success()'
       #- Rscript -e "source ('https://install-github.me/MangoTheCat/goodpractice')"
       #- Rscript -e 'library(goodpractice);gp(checks=all_checks()[grepl("(rcmdcheck|covr)",all_checks())])'

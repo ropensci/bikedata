@@ -20,7 +20,7 @@
 #include <Rcpp.h>
 #include "utils.h"
 #include "sqlite3db-add-data.h"
-#include "sqlite3/sqlite3.h"
+#include "vendor/sqlite3/sqlite3.h"
 
 
 //' rcpp_create_sqlite3_db
