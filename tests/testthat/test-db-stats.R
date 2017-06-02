@@ -36,12 +36,15 @@ test_that ('date limits', {
 test_that ('db stats', {
                db_stats <- bike_summary_stats (bikedb)
                expect_is (db_stats, 'data.frame')
-               expect_equal (names (db_stats), c ('num_trips', 'num_stations',
+               expect_is (db_stats, 'tbl')
+               expect_is (db_stats, 'tbl_df')
+               expect_equal (names (db_stats), c ('city', 'num_trips',
+                                                  'num_stations',
                                                   'first_trip', 'last_trip',
                                                   'latest_files'))
-               expect_equal (dim (db_stats), c (7, 5))
-               expect_equal (rownames (db_stats), c ('all', 'bo', 'ch', 'dc',
-                                                     'la', 'lo', 'ny'))
+               expect_equal (dim (db_stats), c (7, 6))
+               expect_true (all (db_stats$city == c ('total', 'bo', 'ch', 'dc',
+                                                     'la', 'lo', 'ny')))
                expect_true (sum (db_stats$num_trips) == 2396)
                expect_true (sum (db_stats$num_stations) == (2 * 2186))
 })
