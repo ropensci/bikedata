@@ -9,13 +9,12 @@ The `bikedata` package aims to enable ready importing of historical trip data fr
 | City                     | Hire Bicycle System                                                   | Number of Bicycles | Number of Docking Stations |
 |--------------------------|-----------------------------------------------------------------------|--------------------|----------------------------|
 | London, U.K.             | [Santander Cycles](https://tfl.gov.uk/modes/cycling/santander-cycles) | 13,600             | 839                        |
-| New York City NY, U.S.A. | [citibike](https://www.citibikenyc.com/)                              | 7,000              | 458                        |
-| Chicago IL, U.S.A.       | [Divvy](https://www.divvybikes.com/)                                  | 5,837              | 576                        |
-| Washingon DC, U.S.A.     | [Capital BikeShare](https://www.capitalbikeshare.com/)                | 4,457              | 406                        |
-| Boston MA, U.S.A.        | [Hubway](https://www.thehubway.com/)                                  | 1,461              | 158                        |
-| Los Angeles CA, U.S.A.   | [Metro](https://bikeshare.metro.net/)                                 | 1,000              | 65                         |
-| Philadelphia PA, U.S.A.   | [Indego](https://www.rideindego.com)  | 600   | 60
-|
+| New York City NY, U.S.A. | [citibike](https://www.citibikenyc.com/)                              |  7,000             | 458                        |
+| Chicago IL, U.S.A.       | [Divvy](https://www.divvybikes.com/)                                  |  5,837             | 576                        |
+| Washingon DC, U.S.A.     | [Capital BikeShare](https://www.capitalbikeshare.com/)                |  4,457             | 406                        |
+| Boston MA, U.S.A.        | [Hubway](https://www.thehubway.com/)                                  |  1,461             | 158                        |
+| Los Angeles CA, U.S.A.   | [Metro](https://bikeshare.metro.net/)                                 |  1,000             |  65                        |
+| Philadelphia PA, U.S.A.  | [Indego](https://www.rideindego.com)                                  |    600             |  60                        |
 
 These data include the places and times at which all trips start and end. Some systems provide additional demographic data including years of birth and genders of cyclists.
 
