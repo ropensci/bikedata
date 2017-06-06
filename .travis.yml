@@ -2,6 +2,7 @@ language: R
 warnings_are_errors: true
 sudo: true
 cache: packages
+latex: false # TODO: Enable after https://github.com/travis-ci/travis-build/pull/1072
 
 matrix:
     allow_failures: # temporarily enabled. TODO: disable
