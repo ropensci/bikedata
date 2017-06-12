@@ -10,12 +10,6 @@
 
 #include <boost/algorithm/string/replace.hpp>
 
-// https://github.com/RcppCore/Rcpp/issues/636
-void R_init_bikedata(DllInfo* info) {
-    R_registerRoutines(info, NULL, NULL, NULL, NULL);
-    R_useDynamicSymbols(info, TRUE);
-}
-
 //' strtokm
 //'
 //' A string delimiter function based on strtok
