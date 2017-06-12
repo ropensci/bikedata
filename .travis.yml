@@ -21,10 +21,10 @@ matrix:
         - os: linux
           r: devel
           dist: precise
-        - os: osx
-          r: release
-          before_install: ''
-          disable_homebrew: true
+          #- os: osx # currently lacks dbplyr - reactivate soon (12Jun17)?
+          #r: release
+          #before_install: ''
+          #disable_homebrew: true
           #- os: osx
           #r: devel
           #before_install: ''
