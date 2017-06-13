@@ -32,7 +32,7 @@ get_fake_trip_files <- function (bucket)
     return (files)
 }
 
-dates <- c (16, 201604:201608, "2016/04:2016/08", 
+dates <- c (16, 201604:201608, "2016/04:2016/08",
             "201604:201608", "16 apr:aug", "2016-04:2016-08")
 
 test_that ('dl_bikedata nyc', {

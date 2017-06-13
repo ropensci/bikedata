@@ -72,4 +72,3 @@ check_db_arg <- function (bikedb)
 
     return (bikedb)
 }
-

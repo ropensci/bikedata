@@ -3,7 +3,6 @@ context ("tripmat")
 require (testthat)
 
 bikedb <- system.file ('db', 'testdb.sqlite', package = 'bikedata')
-is_cran <- identical (Sys.getenv ("_R_CHECK_CRAN_INCOMING_"), 'true')
 
 test_that ('no db', {
                errtxt <- paste0 ('bikedb ',
@@ -11,8 +10,8 @@ test_that ('no db', {
                                  ' does not exist')
                # The file.path construction does not give identical results on
                # windows machines
-               #if (!is_cran)
-               #    expect_error (tm <- bike_tripmat (bikedb = 'junk'), errtxt)
+               # expect_error (tm <- bike_tripmat (bikedb = 'junk'), errtxt)
+               expect_error (tm <- bike_tripmat (bikedb = 'junk'))
 })
 
 test_that ('tripmat-full', {
@@ -149,8 +148,7 @@ test_that ('tripmat-demography', {
                                                   gender = 'f'))
                expect_equal (sum (tm), 22)
                expect_silent (tm <- bike_tripmat (bikedb = bikedb, city = 'ny',
-                                                  gender = 'm', 
+                                                  gender = 'm',
                                                   birth_year = 1976:1990))
                expect_equal (sum (tm), 89)
 })
-

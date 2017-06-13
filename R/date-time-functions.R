@@ -246,7 +246,7 @@ convert_dates_to_filenames <- function (x, city = 'ny')
             x <- unique (c (paste0 (yy, '_', qq), paste0 (qq, '_', yy)))
     } else
         x <- paste0 (x)
-    
+
     return (x)
 }
 
@@ -293,7 +293,7 @@ bike_convert_dates <- function (dates)
             } else if (all (nchar (dates) == 4)) # presume year-year
                 dates <- add_month_range (dates)
             else if (!all (nchar (dates) == 6)) # presume year + month
-                dates <- paste0 (prepend_year (dates [1]), 
+                dates <- paste0 (prepend_year (dates [1]),
                                  convert_month (dates [2]))
         } else if (length (dates) == 3)
         {

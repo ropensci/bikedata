@@ -278,13 +278,11 @@ bike_summary_stats <- function (bikedb)
     num_trips <- bike_db_totals (bikedb, TRUE)
     num_stations <- bike_db_totals (bikedb, FALSE)
     dates <- rbind (c (NULL, NULL), bike_datelimits (bikedb)) # so [,1] works
-    rnames <- cities
 
     latest_files <- bike_latest_files (bikedb)
     if (length (cities) > 1)
     {
         latest <- NULL # latest_files aren't necessarily in db order
-        rnames <- c ('all', cities)
         for (ci in cities)
         {
             num_trips <- c (num_trips, bike_db_totals (bikedb, TRUE, city = ci))
@@ -420,7 +418,7 @@ bike_daily_trips <- function (bikedb, city, station, member, birth_year, gender,
         daily_stns <- daily_stns [which (trips$date %in% all_days)]
         daily_stns <- daily_stns / mean (daily_stns)
         trips$numtrips <- trips$numtrips * daily_stns
-        
+
         # Then round to 3 places
         trips$numtrips <- round (trips$numtrips * daily_stns, digits = 3)
     }
