@@ -1,6 +1,7 @@
 #' get_awsbike_files
 #'
-#' Returns list of URLs for each trip data file from nominated system
+#' Returns list of URLs for each trip data file from nominated Amazon Web
+#' Services system
 #'
 #' @param name Name of the AWS bucket in which data are stored
 #'
@@ -16,7 +17,7 @@ get_aws_bike_files <- function (bucket)
     host <- "https://s3.amazonaws.com"
     aws_url <- sprintf ("https://%s.s3.amazonaws.com", bucket)
 
-    doc <- httr::content (httr::GET (aws_url), encoding  =  'UTF-8')
+    doc <- httr::content (httr::GET (aws_url), encoding = 'UTF-8')
     nodes <- xml2::xml_children (doc)
     # NOTE: xml2::xml_find_all (doc, ".//Key") should work here but doesn't, so
     # this manually does what that would do
@@ -31,26 +32,6 @@ get_aws_bike_files <- function (bucket)
     paste0 (host, "/", bucket, "/", files)
 }
 
-#' get_la_bike_files
-#'
-#' Returns list of URLs for each trip data file from LA's Metro system
-#'
-#' @return List of URLs used to download data
-#'
-#' @note This system is brand new, and the data URLs will likely resolve to some
-#' more systematic form very soon. This is just a temporary function providing
-#' explicit URLs until that time.
-#'
-#' @noRd
-get_la_bike_files <- function ()
-{
-    host <- paste0 ("https://11ka1d3b35pv1aah0c3m9ced-wpengine.netdna-ssl.com/",
-                    "wp-content/uploads/")
-    files <- c ("2016/10/MetroBikeShare_2016_Q3_trips.zip",
-                "2017/01/Metro_trips_Q4_2016.zip",
-                "2017/04/la_metro_gbfs_trips_Q1_2017.zip")
-    paste0 (host, files)
-}
 
 #' get_chicago_bike_files
 #'
@@ -104,27 +85,26 @@ get_london_bike_files <- function ()
 }
 
 
-#' get_philly_bike_files
+
+#' get_nabsa_files
 #'
-#' Returns list of URLs for each trip data file from Philadelphia's Indego
-#' system.
-#'
-#' @return List of URLs used to download data
+#' Get list of URL for trip data from North American Bike Share Association
+#' systems (currently LA and Philly).
 #'
 #' @noRd
-get_philly_bike_files <- function ()
+get_nabsa_files <- function (city)
 {
-    host <- paste0 ("https://u626n26h74f16ig1p3pt0f2g-wpengine.netdna-ssl.com/",
-                    "wp-content/uploads/")
-    files <- c ('2017/04/indego_gbfs_trips_Q1_2017.zip',
-                '2017/01/Indego_trips_Q4_2016.zip',
-                '2016/10/Q3_2016_trips.zip',
-                '2016/07/Indego_Trips_2016Q2.zip',
-                '2016/07/Indego_Trips_2016Q1.zip',
-                '2016/01/Indego_Trips_2015Q4.zip',
-                '2016/01/Indego_Trips_2015Q3.zip',
-                '2016/01/Indego_Trips_2015Q2.zip')
-    paste0 (host, files)
+    if (city == 'ph')
+        the_url <- "https://www.rideindego.com/about/data/"
+    else if (city == 'la')
+        the_url <- "https://bikeshare.metro.net/about/data/"
+    else
+        stop ('nabsa cities must be ph or la')
+
+    doc <- httr::content (httr::GET (the_url), encoding = 'UTF-8',
+                          as = 'parsed')
+    hrefs <- xml2::xml_attr (xml2::xml_find_all (doc, ".//a"), "href")
+    hrefs [which (grepl ("\\.zip", hrefs) & !grepl ("[Ss]tation", hrefs))]
 }
 
 
@@ -141,19 +121,18 @@ get_bike_files <- function (city)
 {
     aws_cities <- c ('ny', 'dc', 'bo')
     buckets <- c ('tripdata', 'capitalbikeshare-data', 'hubway-data')
+    nabsa_cities <- c ('la', 'ph')
 
     if (city %in% aws_cities)
     {
         bucket <- buckets [match (city, aws_cities)]
         files <- get_aws_bike_files (bucket)
-    } else if (city == 'la')
-        files <- get_la_bike_files ()
+    } else if (city %in% nabsa_cities)
+        files <- get_nabsa_files (city = city)
     else if (city == 'ch')
         files <- get_chicago_bike_files ()
     else if (city == 'lo')
         files <- get_london_bike_files ()
-    else if (city == 'ph')
-        files <- get_philly_bike_files ()
 
     return (files)
 }
