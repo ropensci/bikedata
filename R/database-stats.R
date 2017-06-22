@@ -61,8 +61,9 @@ bike_cities_in_db <- function (bikedb)
 #' @noRd
 get_new_datafiles <- function (bikedb, flist_zip)
 {
-    db <- dplyr::src_sqlite (bikedb, create = FALSE)
+    db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
     old_files <- dplyr::collect (dplyr::tbl (db, 'datafiles'))$name
+    RSQLite::dbDisconnect (db)
     flist_zip [which (!basename (flist_zip) %in% old_files)]
 }
 
