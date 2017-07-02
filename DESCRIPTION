@@ -7,10 +7,10 @@ Authors@R: c(
     person(family = "SQLite Consortium", role = "ctb", 
         comment = "Authors of included SQLite code"))
 Description: Download and aggregate data from all public hire bicycle systems
-    which provide open data, currently including Santander Cycles in London,
-    U.K., and from the U.S.A., citibike in New York City NY, Divvy in Chicago
-    IL, Capital Bikeshare in Washington DC, Hubway in Boston MA, and Metro in
-    Los Angeles LA.
+    which provide open data, currently including 'Santander' Cycles in London,
+    U.K., and from the U.S.A., 'citibike' in New York City NY, 'Divvy' in
+    Chicago IL, 'Capital Bikeshare' in Washington DC, 'Hubway' in Boston MA, and
+    'Metro' in Los Angeles LA.
 License: GPL-3
 Depends:
     R (>= 3.0)
@@ -42,4 +42,3 @@ BugReports: https://github.com/mpadge/bikedata/issues
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
-Remotes: jimhester/covr
