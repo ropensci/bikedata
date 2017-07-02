@@ -27,19 +27,23 @@ filter_bike_tripmat <- function (bikedb, ...)
                  "COUNT(*) as numtrips FROM trips")
 
     qry_dt <- NULL
-    if ('start_date' %in% names (x)) {
+    if ('start_date' %in% names (x))
+    {
       qry_dt <- c (qry_dt, "stop_time >= ?")
       qryargs <- c (qryargs, paste(x$start_date, '00:00:00'))
     }
-    if ('end_date' %in% names (x)) {
+    if ('end_date' %in% names (x))
+    {
       qry_dt <- c (qry_dt, "start_time <= ?")
       qryargs <- c (qryargs, paste(x$end_date, '23:59:59'))
     }
-    if ('start_time' %in% names (x)) {
+    if ('start_time' %in% names (x))
+    {
       qry_dt <- c (qry_dt, "time(stop_time) >= ?")
       qryargs <- c (qryargs, x$start_time)
     }
-    if ('end_time' %in% names (x)) {
+    if ('end_time' %in% names (x))
+    {
       qry_dt <- c (qry_dt, "time(start_time) <= ?")
       qryargs <- c (qryargs, x$end_time)
     }
@@ -87,10 +91,12 @@ filter_bike_tripmat <- function (bikedb, ...)
 
     qry <- paste (qry, "ORDER BY s1.stn_id, s2.stn_id")
 
-    qryres <- RSQLite::dbSendQuery (bikedb, qry)
+    db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
+    qryres <- RSQLite::dbSendQuery (db, qry)
     RSQLite::dbBind(qryres, as.list(qryargs))
     trips <- RSQLite::dbFetch(qryres)
     RSQLite::dbClearResult(qryres)
+    RSQLite::dbDisconnect (db)
 
     return(trips)
 }
@@ -290,8 +296,6 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
             stop ('city ', city, ' not represented in database')
     }
 
-    db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
-
     x <- c (NULL, 'city' = city)
     if (!missing (start_date))
         x <- c (x, 'start_date' = convert_ymd (start_date))
@@ -321,7 +325,7 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
     if ( (missing (city) & length (x) > 0) |
         (!missing (city) & length (x) > 1) )
     {
-        trips <- filter_bike_tripmat (db, x)
+        trips <- filter_bike_tripmat (bikedb, x)
     } else
     {
         qry <- paste("SELECT s1.stn_id AS start_station_id,",
@@ -336,10 +340,12 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
             qry <- paste0 (qry, " WHERE s1.city = '", city,
                            "' AND s2.city = '", city, "'")
         qry <- paste (qry, "ORDER BY s1.stn_id, s2.stn_id")
+
+        db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
         trips <- RSQLite::dbGetQuery (db, qry)
+        RSQLite::dbDisconnect(db)
     }
 
-    RSQLite::dbDisconnect(db)
 
     if (standardise)
     {

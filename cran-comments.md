@@ -17,12 +17,5 @@ affect package functionality.
 
 # R CMD check results
 
-0 errors | 0 warnings | 1 note
-checking installed package size ... NOTE
-* installed size is  6.7Mb
-    sub-directories of 1Mb or more:
-        doc    2.6Mb
-        libs   3.1Mb
-            
-Large size primarily due to bundled C++ SQLite3 libs, along with extensive
-internal C++ routines.
+Only NOTE concerns large installed package size, which is primarily due to
+bundled C++ SQLite3 libs, along with extensive internal C++ routines.

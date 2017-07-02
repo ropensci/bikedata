@@ -33,7 +33,7 @@ bike_stations <- function (bikedb, city)
     bikedb <- check_db_arg (bikedb)
 
     db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
-    st <- dplyr::collect (dplyr::tbl (db, 'stations'))
+    st <- tibble::as.tibble (RSQLite::dbReadTable (db, 'stations'))
     RSQLite::dbDisconnect (db)
 
     if (!missing (city))

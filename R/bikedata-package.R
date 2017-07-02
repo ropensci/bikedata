@@ -53,9 +53,9 @@
 #' @name bikedata
 #' @docType package
 #' @author Mark Padgham
-#' @importFrom dplyr %>% collect src_sqlite tbl
 #' @importFrom httr content GET
 #' @importFrom lubridate ddays interval ymd
+#' @importFrom magrittr %>%
 #' @importFrom methods as
 #' @importFrom Rcpp evalCpp
 #' @importFrom RSQLite dbBind dbClearResult dbConnect dbDisconnect
