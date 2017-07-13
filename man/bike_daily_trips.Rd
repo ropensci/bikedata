@@ -40,8 +40,7 @@ Extract daily trip counts for all stations
 \examples{
 bike_write_test_data () # by default in tempdir ()
 # dl_bikedata (city = 'la', data_dir = '.') # or download some real data!
-bikedb <- file.path (tempdir (), 'testdb')
-store_bikedata (data_dir = tempdir (), bikedb = bikedb)
+store_bikedata (data_dir = tempdir (), bikedb = 'testdb')
 bike_daily_trips (bikedb = 'testdb', city = 'ny')
 bike_daily_trips (bikedb = 'testdb', city = 'ny', member = TRUE)
 bike_daily_trips (bikedb = 'testdb', city = 'ny', gender = 'f')
@@ -49,7 +48,7 @@ bike_daily_trips (bikedb = 'testdb', city = 'ny', station = '173',
                   gender = 1)
 
 bike_rm_test_data ()
-bike_rm_db (bikedb)
+bike_rm_db ('testdb')
 # don't forget to remove real data!
 # file.remove (list.files ('.', pattern = '.zip'))
 }

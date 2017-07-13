@@ -12,8 +12,12 @@ test_that ('can not read all data', {
 })
 
 test_that ('dplyr read db', {
-               db <- dplyr::src_sqlite (bikedb, create = F)
-               trips <- dplyr::collect (dplyr::tbl (db, 'trips'))
+               db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb,
+                                         create = FALSE)
+               qry <- "SELECT * FROM trips"
+               trips <- RSQLite::dbGetQuery (db, qry)
+               RSQLite::dbDisconnect (db)
+
                expect_equal (dim (trips), c (1198, 11))
                nms <- c ("id", "city", "trip_duration", "start_time",
                          "stop_time", "start_station_id", "end_station_id",
@@ -46,5 +50,5 @@ test_that ('db stats', {
                expect_true (all (db_stats$city == c ('total', 'bo', 'ch', 'dc',
                                                      'la', 'lo', 'ny')))
                expect_true (sum (db_stats$num_trips) == 2396)
-               expect_true (sum (db_stats$num_stations) == (2 * 2186))
+               expect_true (sum (db_stats$num_stations) == (2 * 2192))
 })

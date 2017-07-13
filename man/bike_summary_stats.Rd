@@ -20,6 +20,7 @@ versions.
 Extract summary statistics of database
 }
 \examples{
+\dontrun{
 data_dir <- tempdir ()
 bike_write_test_data (data_dir = data_dir)
 # dl_bikedata (city = 'la', data_dir = '.') # or download some real data!
@@ -31,4 +32,5 @@ bike_rm_test_data (data_dir = data_dir)
 bike_rm_db (bikedb)
 # don't forget to remove real data!
 # file.remove (list.files ('.', pattern = '.zip'))
+}
 }

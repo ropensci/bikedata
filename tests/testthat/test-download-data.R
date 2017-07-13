@@ -82,18 +82,13 @@ test_that ('dl_bikedata boston', {
 
 test_that ('dl_bikedata la', {
                files <- c ("MetroBikeShare_2016_Q3_trips.zip",
-                           "Metro_trips_Q4_2016.zip",
-                           "la_metro_gbfs_trips_Q1_2017.zip")
+                           "Metro_trips_Q4_2016.zip")
                files <- file.path (tempdir (), files)
                for (f in files) write ('a', file = f)
                expect_message (dl_bikedata (city = 'la',
-                                            data_dir = tempdir ()),
+                                            data_dir = tempdir (),
+                                            dates = 2016),
                                'All data files already exist')
-               for (d in dates)
-                   expect_message (dl_bikedata (city = 'la',
-                                                data_dir = tempdir (),
-                                                dates = d),
-                                   'All data files already exist')
                chk <- tryCatch (file.remove (files),
                                 warning = function (w) NULL,
                                 error = function (e) NULL)
@@ -112,13 +107,10 @@ test_that ('dl_bikedata chicago', {
                                             data_dir = tempdir ()),
                                'All data files already exist')
                for (d in dates)
-               {
                    expect_message (dl_bikedata (city = 'chicago',
                                                 data_dir = tempdir (),
                                                 dates = d),
                                    'All data files already exist')
-                   message (d)
-               }
                chk <- tryCatch (file.remove (files),
                                 warning = function (w) NULL,
                                 error = function (e) NULL)

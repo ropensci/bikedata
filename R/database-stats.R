@@ -256,6 +256,7 @@ bike_datelimits <- function (bikedb, city)
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' data_dir <- tempdir ()
 #' bike_write_test_data (data_dir = data_dir)
 #' # dl_bikedata (city = 'la', data_dir = '.') # or download some real data!
@@ -267,6 +268,7 @@ bike_datelimits <- function (bikedb, city)
 #' bike_rm_db (bikedb)
 #' # don't forget to remove real data!
 #' # file.remove (list.files ('.', pattern = '.zip'))
+#' }
 bike_summary_stats <- function (bikedb)
 {
     if (missing (bikedb))
@@ -329,8 +331,7 @@ bike_summary_stats <- function (bikedb)
 #' @examples
 #' bike_write_test_data () # by default in tempdir ()
 #' # dl_bikedata (city = 'la', data_dir = '.') # or download some real data!
-#' bikedb <- file.path (tempdir (), 'testdb')
-#' store_bikedata (data_dir = tempdir (), bikedb = bikedb)
+#' store_bikedata (data_dir = tempdir (), bikedb = 'testdb')
 #' bike_daily_trips (bikedb = 'testdb', city = 'ny')
 #' bike_daily_trips (bikedb = 'testdb', city = 'ny', member = TRUE)
 #' bike_daily_trips (bikedb = 'testdb', city = 'ny', gender = 'f')
@@ -338,7 +339,7 @@ bike_summary_stats <- function (bikedb)
 #'                   gender = 1)
 #' 
 #' bike_rm_test_data ()
-#' bike_rm_db (bikedb)
+#' bike_rm_db ('testdb')
 #' # don't forget to remove real data!
 #' # file.remove (list.files ('.', pattern = '.zip'))
 bike_daily_trips <- function (bikedb, city, station, member, birth_year, gender,

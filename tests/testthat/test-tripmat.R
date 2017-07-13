@@ -29,7 +29,7 @@ test_that ('tripmat-cities', {
                expect_equal (sum (bike_tripmat (bikedb = bikedb,
                                                 city = 'la')), 198)
                expect_equal (sum (bike_tripmat (bikedb = bikedb,
-                                                city = 'lo')), 193)
+                                                city = 'lo')), 199)
                expect_equal (sum (bike_tripmat (bikedb = bikedb,
                                                 city = 'ny')), 200)
 })

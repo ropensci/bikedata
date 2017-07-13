@@ -53,13 +53,21 @@ Barcelona, Spain | 6,000 | 424
 
 The current version of the `bikedata` R package can be installed with the
 following command:
-```{r install, eval = FALSE}
+```{r install1, eval = FALSE}
 install.packages ('bikedata')
+```
+Or the development version with
+```{r install2, eval = FALSE}
+devtools::install_github ("mpadge/bikedata")
 ```
 Once installed, it can be loaded in the usual way:
 ```{r, eval = TRUE}
 library (bikedata)
 ```
+```{r, eval = FALSE, echo = FALSE, message = FALSE}
+devtools::load_all ()
+```
+
 
 ## 2. Main Functions
 
@@ -68,7 +76,8 @@ any or all or the above listed systems and stores them in an `SQLite3` database.
 For example, the following line will download all data from the Metro
 system of Los Angeles CA, U.S.A., and store them in a database named 'bikedb',
 ```{r store-la-data, eval = TRUE}
-store_bikedata (city = 'la', bikedb = 'bikedb', quiet = TRUE)
+bikedb <- file.path (tempdir (), "bikedb.sqlite") # or whatever
+store_bikedata (city = 'la', bikedb = bikedb, quiet = TRUE)
 ```
 The function returns the number of trips added to the database.  Both the
 downloaded data and the `SQLite3` database are stored by default in the
@@ -82,7 +91,7 @@ database. For example, the following line will append all data from Chicago's
 Divvy bike system from the year 2017 to the database created with the first
 call above. 
 ```{r, eval = FALSE}
-store_bikedata (bikedb = 'bikedb', city = 'divvy', dates = 2016, quiet = TRUE)
+store_bikedata (bikedb = bikedb, city = 'divvy', dates = 2016, quiet = TRUE)
 ```
 ```{r, echo = FALSE}
 3595383
@@ -90,7 +99,7 @@ store_bikedata (bikedb = 'bikedb', city = 'divvy', dates = 2016, quiet = TRUE)
 The function again returns the number of trips *added* to the database, which
 is now less than the total number of trips stored of:
 ```{r, eval = FALSE}
-bike_db_totals (bikedb = 'bikedb')
+bike_db_totals (bikedb = bikedb)
 ```
 ```{r, echo = FALSE}
 3726719
@@ -102,7 +111,7 @@ trips between all pairs of stations. The minimal arguments to this function are
 the name of the database, and the name of a city for databases holding data from
 multiple cities.
 ```{r, eval = FALSE}
-tm <- bike_tripmat (bikedb = 'bikedb', city = 'la')
+tm <- bike_tripmat (bikedb = bikedb, city = 'la')
 class (tm); dim (tm); sum (tm)
 ```
 ```{r}
@@ -114,7 +123,7 @@ The Los Angeles Metro system has 66 docking stations, and there were a total of
 131,336 individual trips up to April 2017.  Trip matrices can also be extracted
 in long form using
 ```{r, eval = FALSE}
-bike_tripmat (bikedb = 'bikedb', city = 'la', long = TRUE)
+bike_tripmat (bikedb = bikedb, city = 'la', long = TRUE)
 ```
 ```{r, echo = FALSE}
 n <- 4356
@@ -130,7 +139,7 @@ tm
 Details of the docking stations associated with these trip matrices can be
 obtained with
 ```{r, eval = FALSE}
-bike_stations (bikedb = 'bikedb')
+bike_stations (bikedb = bikedb)
 ```
 ```{r, echo = FALSE}
 n <- 662
@@ -148,7 +157,7 @@ stations1
 ```
 Stations can also be extracted for particular cities:
 ```{r, eval = FALSE}
-st <- bike_stations (bikedb = 'bikedb', city = 'ch')
+st <- bike_stations (bikedb = bikedb, city = 'ch')
 ```
 For consistency and to avoid potential confusion of function names, most
 functions in the `bikedata` package begin with the prefix `bike_` (except for
@@ -247,17 +256,17 @@ same `dates` argument can be passed to both `dl_bikedata()` and
 
 Both `dl_bikedata()` and `store_bikedata()` are primarily intended to be used to
 download data for specified cities. It is possible to use the latter to store
-all data for all cities simply by calling `store_bikedata (bikedb = 'bikedb')`,
+all data for all cities simply by calling `store_bikedata (bikedb = bikedb)`,
 however doing so will request confirmation that data from *all* cities really
 ought to be downloaded and/or stored.  Intended general usage of the
 `store_bikedata()` function is illustrated in the following line:
 ```{r, eval = FALSE}
-ntrips <- store_bikedata (bikedb = 'bikedb', city = 'ny',
+ntrips <- store_bikedata (bikedb = bikedb, city = 'ny',
                           dates = '2014 aug - 2015 Dec')
 ```
 Or to load data which have been previously downloaded using `dl_bikedata()`:
 ```{r, eval = FALSE}
-ntrips <- store_bikedata (bikedb = 'bikedb', city = 'ny',
+ntrips <- store_bikedata (bikedb = bikedb, city = 'ny',
                           data_dir = '/data/stored/here')
 ```
 As described above, the function `dl_bikedata()` may be used to periodically
@@ -318,13 +327,13 @@ call stored all data from Chicago's Divvybikes system for the year 2016 only, so
 the trip matrix has less entries than the full stations table, which includes
 stations added since then.
 ```{r, eval = FALSE}
-dim (bike_tripmat (bikedb = 'bikedb', city = 'ch'))
+dim (bike_tripmat (bikedb = bikedb, city = 'ch'))
 ```
 ```{r, echo = FALSE}
 c (581, 581)
 ```
 ```{r, eval = FALSE}
-dim (bike_stations (bikedb = 'bikedb', city = 'ch'))
+dim (bike_stations (bikedb = bikedb, city = 'ch'))
 ```
 ```{r, echo = FALSE}
 c (596, 6)
@@ -350,7 +359,7 @@ be passed to `bike_tripmat()`. This is done here through passing two lists to
 `bike_tripmat()` via `do.call()`, enabling the second list (`args1`) to be
 subsequently modified.
 ```{r, eval = FALSE}
-args0 <- list (bikedb = 'bikedb', city = 'ny', args)
+args0 <- list (bikedb = bikedb, city = 'ny', args)
 args1 <- list (start_date = 16, end_time = 12, weekday = 1)
 tm <- do.call (bike_tripmat, c (args0, args1))
 ```
@@ -408,7 +417,7 @@ cyclists who declare this as their birth year.
 It is of course possible to combine all of these optional parameters in a
 single query. For example,
 ```{r, eval = FALSE}
-tm <- bike_tripmat (bikedb = 'bikedb', city = 'ny', start_date = 2016,
+tm <- bike_tripmat (bikedb = bikedb, city = 'ny', start_date = 2016,
         start_time = 9, end_time = 24, weekday = 2:6, gender = 'xx', 
         birth_year = 1900:1950)
 ```
@@ -451,7 +460,7 @@ potentially confounding influence of differing durations of operation.
 Data on docking stations may be accessed with the function `bike_stations()`
 as demonstrated above:
 ```{r, eval = FALSE}
-bike_stations (bikedb = 'bikedb')
+bike_stations (bikedb = bikedb)
 ```
 ```{r, echo = FALSE}
 stations1
@@ -461,7 +470,7 @@ detailing the names and locations of all bicycle stations present in the
 database. Station data for specific cities may be extracted through specifying
 an additional `city` argument.
 ```{r, eval = FALSE}
-bike_stations (bikedb = 'bikedb', city = 'ch')
+bike_stations (bikedb = bikedb, city = 'ch')
 ```
 ```{r, echo = FALSE}
 n <- 596
@@ -514,37 +523,37 @@ function. The primary individual function is `bike_db_totals()`, which can be
 used to extract total numbers of either trips (the default) or stations (by
 specifying `trips = FALSE`) from the entire database or from specific cities. 
 ```{r, eval = FALSE}
-bike_db_totals (bikedb = 'bikedb')
+bike_db_totals (bikedb = bikedb)
 ```
 ```{r, echo = FALSE}
 3726719
 ```
 ```{r, eval = FALSE}
-bike_db_totals (bikedb = 'bikedb', city = "ch")
+bike_db_totals (bikedb = bikedb, city = "ch")
 ```
 ```{r, echo = FALSE}
 3595383
 ```
 ```{r, eval = FALSE}
-bike_db_totals (bikedb = 'bikedb', city = "la")
+bike_db_totals (bikedb = bikedb, city = "la")
 ```
 ```{r, echo = FALSE}
 131336
 ```
 ```{r, eval = FALSE}
-bike_db_totals (bikedb = 'bikedb', trips = FALSE)
+bike_db_totals (bikedb = bikedb, trips = FALSE)
 ```
 ```{r, echo = FALSE}
 662
 ```
 ```{r, eval = FALSE}
-bike_db_totals (bikedb = 'bikedb', trips = FALSE, city = "ch")
+bike_db_totals (bikedb = bikedb, trips = FALSE, city = "ch")
 ```
 ```{r, echo = FALSE}
 596
 ```
 ```{r, eval = FALSE}
-bike_db_totals (bikedb = 'bikedb', trips = FALSE, city = "la")
+bike_db_totals (bikedb = bikedb, trips = FALSE, city = "la")
 ```
 ```{r, echo = FALSE}
 66
@@ -553,13 +562,13 @@ The other primary components of `bike_summary_stats()` are the dates of first
 and last trips for the entire database and for individual cities. These dates
 can be obtained directly with the function `bike_datelimits()`:
 ```{r, eval = FALSE}
-bike_datelimits (bikedb = 'bikedb')
+bike_datelimits (bikedb = bikedb)
 ```
 ```{r, echo = FALSE}
 c ('first' = "2016-01-01 00:07:00", 'last' = "2017-03-31 23:45:00")
 ```
 ```{r, eval = FALSE}
-bike_datelimits (bikedb = 'bikedb', city = 'ch')
+bike_datelimits (bikedb = bikedb, city = 'ch')
 ```
 ```{r}
 c ('first' = "2016-01-01 00:07:00", 'last' = "2016-12-31 23:57:52")
@@ -567,7 +576,7 @@ c ('first' = "2016-01-01 00:07:00", 'last' = "2016-12-31 23:57:52")
 A helper function is also provided to determine whether the files stored in the
 database represent the latest available files.
 ```{r, eval = FALSE}
-bike_latest_files (bikedb = 'bikedb')
+bike_latest_files (bikedb = bikedb)
 ```
 ```{r}
 c ('la' = TRUE, 'ch' = TRUE)
@@ -583,7 +592,7 @@ equivalent *temporal* aggregation is provided by the function
 `bike_daily_trips()`, which aggregates trips for individual days.
 
 ```{r, eval = FALSE}
-bike_daily_trips (bikedb = 'bikedb', city = 'ch')
+bike_daily_trips (bikedb = bikedb, city = 'ch')
 ```
 ```{r, echo = FALSE}
 n <- 366
@@ -601,7 +610,7 @@ increase with increasing numbers of stations. Standardisation returns a time
 series of daily trips reflecting what they would be if all system stations had
 been in operation throughout the entire time.
 ```{r, eval = FALSE}
-bike_daily_trips (bikedb = 'bikedb', city = 'ch', standardise = TRUE)
+bike_daily_trips (bikedb = bikedb, city = 'ch', standardise = TRUE)
 ```
 ```{r, echo = FALSE}
 nt <- c (2468.925, 2481.939, 2200.766, 5509.787, 5884.207, 6298.229, 6630.111,
@@ -715,15 +724,15 @@ thickness or colours.  This can be achieved with the following code, which also
 illustrates that it is generally more useful for visualisation purposes to
 extract trip matrices in long rather than square form.
 ```{r plot-la-out, echo = TRUE, eval = FALSE}
-stns <- bike_stations (bikedb = 'bikedb', city = 'la')
-ntrips <- bike_tripmat (bikedb = 'bikedb', city = 'la', long = TRUE)
+stns <- bike_stations (bikedb = bikedb, city = 'la')
+ntrips <- bike_tripmat (bikedb = bikedb, city = 'la', long = TRUE)
 x1 <- stns$longitude [match (ntrips$start_station_id, stns$stn_id)]
 y1 <- stns$latitude [match (ntrips$start_station_id, stns$stn_id)]
 x2 <- stns$longitude [match (ntrips$end_station_id, stns$stn_id)]
 y2 <- stns$latitude [match (ntrips$end_station_id, stns$stn_id)]
 # Set plot area to central region of bike system
-xlims <- c (-118.27, max (stns$longitude))
-ylims <- c (34.02, max (stns$latitude))
+xlims <- c (-118.27, -118.23)
+ylims <- c (34.02, 34.07)
 plot (stns$longitude, stns$latitude, xlim = xlims, ylim = ylims)
 cols <- rainbow (100)
 nt <- ceiling (ntrips$numtrips * 100 / max (ntrips$numtrips))
@@ -734,15 +743,15 @@ for (i in seq (x1))
 ```{r plot-la, echo = FALSE, eval = TRUE}
 # For some reason the R CMD build version loses one longitude in stns which
 # mucks up the plot
-stns <- bike_stations (bikedb = 'bikedb', city = 'la')
-ntrips <- bike_tripmat (bikedb = 'bikedb', city = 'la', long = TRUE)
+stns <- bike_stations (bikedb = bikedb, city = 'la')
+ntrips <- bike_tripmat (bikedb = bikedb, city = 'la', long = TRUE)
 x1 <- stns$longitude [match (ntrips$start_station_id, stns$stn_id)]
 y1 <- stns$latitude [match (ntrips$start_station_id, stns$stn_id)]
 x2 <- stns$longitude [match (ntrips$end_station_id, stns$stn_id)]
 y2 <- stns$latitude [match (ntrips$end_station_id, stns$stn_id)]
 # Set plot area to central region of bike system
-xlims <- c (-118.27, max (stns$longitude [stns$longitude < 0]))
-ylims <- c (34.02, max (stns$latitude))
+xlims <- c (-118.27, -118.23)
+ylims <- c (34.02, 34.07)
 plot (stns$longitude, stns$latitude, xlim = xlims, ylim = ylims)
 cols <- rainbow (100)
 nt <- ceiling (ntrips$numtrips * 100 / max (ntrips$numtrips))
@@ -761,21 +770,23 @@ Current `stplanr` routines require spatial objects of class
 [`sf`](https://cran.r-project.org/package=sf).
 ```{r get-la-highways, eval = FALSE}
 library (magrittr)
-xlims_la <- range (stns$longitude)
-ylims_la <- range (stns$latitude)
+xlims_la <- range (stns$longitude, na.rm = TRUE)
+ylims_la <- range (stns$latitude, na.rm = TRUE)
 # expand those limits slightly
 ex <- 0.1
 xlims_la <- xlims_la + c (-ex, ex) * diff (xlims_la)
 ylims_la <- ylims_la + c (-ex, ex) * diff (ylims_la)
 bbox <- c (xlims_la [1], ylims_la [1], xlims_la [2], ylims_la [2])
+bbox <- c (xlims [1], ylims [1], xlims [2], ylims [2])
 # Then the actual osmdata query to extract all OpenStreetMap highways
 highways <- osmdata::opq (bbox = bbox) %>%
-    osmdata::add_feature (key = 'highway') %>% osmdata::osmdata_sp ()
+    osmdata::add_osm_feature (key = 'highway') %>%
+    osmdata::osmdata_sp (quiet = FALSE)
 ```
 For compatibility with current `stplanr` code, the `stns` table also needs to be
 converted to a `SpatialPointsDataFrame` and re-projected.
 ```{r convert-stns-to-spdf, eval = FALSE}
-stns_tbl <- bike_stations (bikedb = 'bikedb')
+stns_tbl <- bike_stations (bikedb = bikedb)
 stns <- sp::SpatialPointsDataFrame (coords = stns_tbl[,c('longitude','latitude')],
                                     proj4string = sp::CRS("+init=epsg:4326"), 
                                     data = stns_tbl)
@@ -799,7 +810,7 @@ ntrips$end_station_id <- endid
 The aggregate trips on each part of the network using the `sum_network_lines()`
 function which is part of the current development version of `stplanr`.
 ```{r, eval = FALSE}
-bike_usage <- sum_network_links (la_net, data.frame (ntrips))
+bike_usage <- stplanr::sum_network_links (la_net, data.frame (ntrips))
 ```
 Then finally plot it with `tmap`, again trimming the plot using the previous
 limits to exclude a very few isolated stations

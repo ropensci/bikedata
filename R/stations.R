@@ -39,6 +39,12 @@ bike_stations <- function (bikedb, city)
     if (!missing (city))
         st <- st [which (st$city %in% convert_city_names (city)), ]
 
+    st$longitude <- as.numeric (st$longitude)
+    st$latitude <- as.numeric (st$latitude)
+    # some token/test stns don't have lat-lons, and these become NAs
+    indx <- which (!is.na (st$longitude) & !is.na (st$latitude))
+    st <- st [indx, ]
+
     return (st)
 }
 
