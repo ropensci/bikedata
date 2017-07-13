@@ -76,7 +76,7 @@ store_bikedata <- function (bikedb, city, data_dir, create_index = TRUE,
     if (missing (data_dir))
     {
         if (!quiet)
-            message ('Downloading data for ', city)
+            message ('Checking data for ', city)
         for (ci in city)
             dl_bikedata (city = ci, dates = dates, quiet = quiet)
         data_dir <- tempdir ()

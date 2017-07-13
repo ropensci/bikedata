@@ -49,6 +49,7 @@ dl_bikedata <- function (city, data_dir = tempdir(), dates = NULL,
     dl_files <- get_bike_files (city)
     files <- file.path (data_dir, basename (dl_files))
 
+    dates_exist <- TRUE # set to F is requested dates do not exist
     if (is.null (dates))
         indx <- which (!file.exists (files))
     else
@@ -56,7 +57,6 @@ dl_bikedata <- function (city, data_dir = tempdir(), dates = NULL,
         dates <- bike_convert_dates (dates) %>%
             expand_dates_to_range %>%
             convert_dates_to_filenames (city = city)
-        dates_exist <- TRUE
         indx <- which (grepl (paste (dates, collapse = "|"), files))
         if (length (indx) == 0)
             dates_exist <- FALSE

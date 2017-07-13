@@ -1,5 +1,7 @@
 0.0.3
 ===================
+- Minor changes only
+- More informative messages when data for specified dates not available
 
 0.0.2
 ===================
