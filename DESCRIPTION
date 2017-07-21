@@ -25,7 +25,6 @@ Imports:
     tibble,
     xml2
 Suggests:
-    dbplyr,
     knitr,
     rmarkdown,
     roxygen2,
