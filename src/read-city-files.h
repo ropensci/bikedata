@@ -193,7 +193,10 @@ unsigned read_one_line_boston (sqlite3_stmt * stmt, char * line,
     {
         birth_year = strtokm (NULL, delim);
         gender = strtokm (NULL, delim);
-        boost::replace_all (gender, "\"", ""); // Remove terminal quote
+        boost::replace_all (gender, "\n","");
+        boost::replace_all (gender, "\"", "");
+        boost::replace_all (birth_year, "\n","");
+        boost::replace_all (birth_year, "\"", "");
         user_type = "1";
     } else
         user_type = "0";
@@ -256,6 +259,7 @@ unsigned read_one_line_chicago (sqlite3_stmt * stmt, char * line,
         else
             gender = "0";
         birth_year = strtokm (NULL, delim);
+        boost::replace_all (birth_year, "\n","");
         boost::replace_all (birth_year, "\"", ""); // Remove terminal quote
         user_type = "1";
     } else

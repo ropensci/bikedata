@@ -177,7 +177,11 @@ bike_transform_gender <- function (gender)
 {
     if (!(is.numeric (gender) | is.character (gender)))
         stop ('gender must be numeric or character')
-    if (is.character (gender))
+    if (is.numeric (gender) & (gender < 0 | gender > 2))
+    {
+        message ('gender only filtered for values of 0, 1, or 2')
+        gender <- NULL
+    } else if (is.character (gender))
     {
         gender <- tolower (substring (gender, 1, 1))
         if (gender == 'f')
@@ -309,7 +313,7 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
         x <- c (x, 'weekday' = list (convert_weekday (weekday)))
 
     if ( (!missing (member) | !missing (birth_year) | !missing (gender)) &
-        (!any (c ('bo', 'ch', 'ny') %in% db_cities)))
+        !city %in% (c ('bo', 'ch', 'ny')))
         stop ('Only Boston, Chicago, and New York provide demographic data')
     if (!missing (member))
         x <- c (x, 'member' = bike_transform_member (member))
@@ -320,7 +324,8 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
         x <- c (x, 'birth_year' = list (birth_year))
     }
     if (!missing (gender))
-        x <- c (x, 'gender' = bike_transform_gender (gender))
+        if (!is.null (bike_transform_gender (gender)))
+            x <- c (x, 'gender' = bike_transform_gender (gender))
 
     if ( (missing (city) & length (x) > 0) |
         (!missing (city) & length (x) > 1) )

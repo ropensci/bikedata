@@ -121,6 +121,26 @@ bike_station_dates <- function (bikedb, city)
 #' @param city Optional city for which numbers of trips are to be counted
 #'
 #' @export
+#'
+#' @examples
+#' data_dir <- tempdir ()
+#' bike_write_test_data (data_dir = data_dir)
+#' bikedb <- file.path (data_dir, 'testdb')
+#' store_bikedata (data_dir = data_dir, bikedb = bikedb)
+#' bike_db_totals (bikedb = bikedb, trips = TRUE) # total trips
+#' bike_db_totals (bikedb = bikedb, trips = TRUE, city = 'ch')
+#' bike_db_totals (bikedb = bikedb, trips = TRUE, city = 'ny')
+#' bike_db_totals (bikedb = bikedb, trips = FALSE) # total stations
+#' bike_db_totals (bikedb = bikedb, trips = FALSE, city = 'ch')
+#' bike_db_totals (bikedb = bikedb, trips = FALSE, city = 'ny')
+#' # numbers of stations can also be extracted with
+#' nrow (bike_stations (bikedb = bikedb))
+#' nrow (bike_stations (bikedb = bikedb, city = 'ch'))
+#' 
+#' bike_rm_test_data (data_dir = data_dir)
+#' bike_rm_db (bikedb)
+#' # don't forget to remove real data!
+#' # file.remove (list.files ('.', pattern = '.zip'))
 bike_db_totals <- function (bikedb, trips = TRUE, city)
 {
     if (missing (bikedb))
@@ -439,6 +459,26 @@ bike_daily_trips <- function (bikedb, city, station, member, birth_year, gender,
 #'
 #' @examples
 #' bike_demographic_data ()
+#' # Examples of filtering data by demographic parameters:
+#' data_dir <- tempdir ()
+#' bike_write_test_data (data_dir = data_dir)
+#' bikedb <- file.path (data_dir, 'testdb')
+#' store_bikedata (data_dir = data_dir, bikedb = bikedb)
+#' sum (bike_tripmat (bikedb = bikedb, city = 'bo')) # 200 trips
+#' sum (bike_tripmat (bikedb = bikedb, city = 'bo', birth_year = 1990)) # 9
+#' sum (bike_tripmat (bikedb = bikedb, city = 'bo', gender = 'f')) # 22
+#' sum (bike_tripmat (bikedb = bikedb, city = 'bo', gender = 2)) # 22
+#' sum (bike_tripmat (bikedb = bikedb, city = 'bo', gender = 1)) # = m; 68
+#' sum (bike_tripmat (bikedb = bikedb, city = 'bo', gender = 0)) # = n; 9
+#' # Sum of gender-filtered trips is less than total because \code{gender = 0}
+#' # extracts all registered users with unspecified genders, while without gender
+#' # filtering extracts all trips for registered and non-registered users.
+#' 
+#' # The following generates an error because Washinton DC's DivvyBike system does
+#' # not provide demographic data
+#' sum (bike_tripmat (bikedb = bikedb, city = 'dc', birth_year = 1990))
+#' bike_rm_test_data (data_dir = data_dir)
+#' bike_rm_db (bikedb)
 bike_demographic_data <- function ()
 {
     dat <- data.frame (city = c ('bo', 'ch', 'dc', 'la', 'lo', 'ny', 'ph'),
