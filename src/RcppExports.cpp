@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // rcpp_import_stn_df
 int rcpp_import_stn_df(const char * bikedb, Rcpp::DataFrame stn_data, std::string city);
-RcppExport SEXP bikedata_rcpp_import_stn_df(SEXP bikedbSEXP, SEXP stn_dataSEXP, SEXP citySEXP) {
+RcppExport SEXP _bikedata_rcpp_import_stn_df(SEXP bikedbSEXP, SEXP stn_dataSEXP, SEXP citySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -20,7 +20,7 @@ END_RCPP
 }
 // rcpp_import_to_trip_table
 int rcpp_import_to_trip_table(const char* bikedb, Rcpp::CharacterVector datafiles, std::string city, bool quiet);
-RcppExport SEXP bikedata_rcpp_import_to_trip_table(SEXP bikedbSEXP, SEXP datafilesSEXP, SEXP citySEXP, SEXP quietSEXP) {
+RcppExport SEXP _bikedata_rcpp_import_to_trip_table(SEXP bikedbSEXP, SEXP datafilesSEXP, SEXP citySEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -34,7 +34,7 @@ END_RCPP
 }
 // rcpp_import_to_file_table
 int rcpp_import_to_file_table(const char * bikedb, Rcpp::CharacterVector datafiles, std::string city, int nfiles);
-RcppExport SEXP bikedata_rcpp_import_to_file_table(SEXP bikedbSEXP, SEXP datafilesSEXP, SEXP citySEXP, SEXP nfilesSEXP) {
+RcppExport SEXP _bikedata_rcpp_import_to_file_table(SEXP bikedbSEXP, SEXP datafilesSEXP, SEXP citySEXP, SEXP nfilesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -48,7 +48,7 @@ END_RCPP
 }
 // rcpp_create_sqlite3_db
 int rcpp_create_sqlite3_db(const char * bikedb);
-RcppExport SEXP bikedata_rcpp_create_sqlite3_db(SEXP bikedbSEXP) {
+RcppExport SEXP _bikedata_rcpp_create_sqlite3_db(SEXP bikedbSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -59,7 +59,7 @@ END_RCPP
 }
 // rcpp_create_db_indexes
 int rcpp_create_db_indexes(const char* bikedb, Rcpp::CharacterVector tables, Rcpp::CharacterVector cols, bool reindex);
-RcppExport SEXP bikedata_rcpp_create_db_indexes(SEXP bikedbSEXP, SEXP tablesSEXP, SEXP colsSEXP, SEXP reindexSEXP) {
+RcppExport SEXP _bikedata_rcpp_create_db_indexes(SEXP bikedbSEXP, SEXP tablesSEXP, SEXP colsSEXP, SEXP reindexSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -73,7 +73,7 @@ END_RCPP
 }
 // rcpp_create_city_index
 int rcpp_create_city_index(const char* bikedb, bool reindex);
-RcppExport SEXP bikedata_rcpp_create_city_index(SEXP bikedbSEXP, SEXP reindexSEXP) {
+RcppExport SEXP _bikedata_rcpp_create_city_index(SEXP bikedbSEXP, SEXP reindexSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
