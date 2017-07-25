@@ -460,7 +460,7 @@ bike_daily_trips <- function (bikedb, city, station, member, birth_year, gender,
 #' @examples
 #' bike_demographic_data ()
 #' # Examples of filtering data by demographic parameters:
-#' /dontrun{
+#' \dontrun{
 #' data_dir <- tempdir ()
 #' bike_write_test_data (data_dir = data_dir)
 #' bikedb <- file.path (data_dir, 'testdb')
