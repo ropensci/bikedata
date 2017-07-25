@@ -24,6 +24,7 @@ knitr::opts_chunk$set(
 [![codecov](https://codecov.io/gh/mpadge/bikedata/branch/master/graph/badge.svg)](https://codecov.io/gh/mpadge/bikedata)
 [![Project Status: Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/bikedata)](http://cran.r-project.org/web/packages/bikedata) 
+[![](http://badges.ropensci.org/116_status.svg)](https://github.com/ropensci/onboarding/issues/116)
 
 # bikedata
 
