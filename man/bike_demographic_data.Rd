@@ -16,6 +16,7 @@ Static summary of which systems provide demographic data
 \examples{
 bike_demographic_data ()
 # Examples of filtering data by demographic parameters:
+/dontrun{
 data_dir <- tempdir ()
 bike_write_test_data (data_dir = data_dir)
 bikedb <- file.path (data_dir, 'testdb')
@@ -35,4 +36,5 @@ sum (bike_tripmat (bikedb = bikedb, city = 'bo', gender = 0)) # = n; 9
 sum (bike_tripmat (bikedb = bikedb, city = 'dc', birth_year = 1990))
 bike_rm_test_data (data_dir = data_dir)
 bike_rm_db (bikedb)
+}
 }
