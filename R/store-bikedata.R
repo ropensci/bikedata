@@ -178,23 +178,45 @@ store_bikedata <- function (bikedb, city, data_dir, create_index = TRUE,
         } else
             message ('All data already in database; no new data added')
 
-    if (ntrips > 0)
-    {
-        rcpp_create_city_index (bikedb, er_idx - 1)
-        if (create_index) # additional indexes for stations and times
-        {
-            if (!quiet)
-                message (c ('Creating', 'Re-creating') [er_idx], ' indexes')
-            rcpp_create_db_indexes (bikedb,
-                                    tables = rep("trips", times = 4),
-                                    cols = c("start_station_id",
-                                             "end_station_id",
-                                             "start_time", "stop_time"),
-                                    indexes_exist (bikedb))
-        }
-    }
-
     return (ntrips)
+}
+
+#' Add indexes to database created with store_bikedata
+#'
+#' @param bikedb A string containing the path to the SQLite3 database to 
+#'          use.  If no directory specified, it is presumed to be in
+#'          \code{tempdir()}.
+#'
+#' @export
+#' 
+#' @examples
+#' \dontrun{
+#' data_dir <- tempdir ()
+#' bike_write_test_data (data_dir = data_dir)
+#' # or download some real data!
+#' # dl_bikedata (city = 'la', data_dir = data_dir)
+#' bikedb <- file.path (data_dir, 'testdb')
+#' store_bikedata (data_dir = data_dir, bikedb = bikedb)
+#' trips <- bike_tripmat (bikedb = bikedb, city = 'LA') # trip matrix
+#' stations <- bike_stations (bikedb = bikedb) # station data
+#' 
+#' bike_rm_test_data (data_dir = data_dir)
+#' bike_rm_db (bikedb)
+#' # don't forget to remove real data!
+#' # file.remove (list.files (data_dir, pattern = '.zip'))
+#' }
+index_bikedata_db <- function (bikedb)
+{
+    if (!file.exists (bikedb))
+        stop ("bikedb does not exist")
+
+    chk <- rcpp_create_city_index (bikedb, indexes_exist (bikedb))
+    chk <- rcpp_create_db_indexes (bikedb,
+                                   tables = rep("trips", times = 4),
+                                   cols = c("start_station_id",
+                                            "end_station_id",
+                                            "start_time", "stop_time"),
+                                   indexes_exist (bikedb))
 }
 
 #' Remove SQLite3 database generated with 'store_bikedat()'
