@@ -4,8 +4,7 @@
 \alias{store_bikedata}
 \title{Store hire bicycle data in SQLite3 database}
 \usage{
-store_bikedata(bikedb, city, data_dir, create_index = TRUE, dates = NULL,
-  quiet = FALSE)
+store_bikedata(bikedb, city, data_dir, dates = NULL, quiet = FALSE)
 }
 \arguments{
 \item{bikedb}{A string containing the path to the SQLite3 database to 
@@ -19,9 +18,6 @@ names of corresponding bike systems (see Details below).}
 \item{data_dir}{A character vector giving the directory containing the
 data files downloaded with \code{dl_bikedata} for one or more
 cities. Only if this parameter is missing will data be downloaded.}
-
-\item{create_index}{If TRUE, creates an index on the start and end station
-IDs and start and stop times.}
 
 \item{dates}{If specified and no \code{data_dir} is given, data are
 downloaded and stored only for these dates specified as vector of YYYYMM
@@ -68,6 +64,9 @@ bike_write_test_data (data_dir = data_dir)
 # dl_bikedata (city = 'la', data_dir = data_dir)
 bikedb <- file.path (data_dir, 'testdb')
 store_bikedata (data_dir = data_dir, bikedb = bikedb)
+# create database indexes for quicker access:
+index_bikedata_db (bikedb = bikedb)
+
 trips <- bike_tripmat (bikedb = bikedb, city = 'LA') # trip matrix
 stations <- bike_stations (bikedb = bikedb) # station data
 

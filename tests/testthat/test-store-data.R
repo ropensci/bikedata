@@ -32,13 +32,15 @@ require (testthat)
 # To ensure this is failsafe, tests for numbers of stations are simply
 # >= 93 + 581 + 456 + 5 + 233 + 700 = 2113
 
-bikedb <- file.path (tempdir (), "testdb")
 
 test_that ('write and store data', {
+               bikedb <- file.path (tempdir (), "testdb")
                expect_silent (bike_write_test_data (data_dir = tempdir ()))
                expect_silent (n <- store_bikedata (data_dir = tempdir (),
                                                    bikedb = bikedb,
                                                    quiet = TRUE))
+               expect_true (file.exists (bikedb))
+               expect_silent (index_bikedata_db (bikedb = bikedb))
                # some windows test machines do not allow file deletion, so
                # numbers of lines are incremented with each appveyor/CRAN matrix
                # test. The following is therefore >= rather than just ==
@@ -47,6 +49,7 @@ test_that ('write and store data', {
 })
 
 test_that ('stations from downloaded data', {
+               bikedb <- file.path (tempdir (), "testdb")
                st <- bike_stations (bikedb)
                expect_true (nrow (st) > 2113)
 })
@@ -55,6 +58,7 @@ test_that ('remove data', {
                expect_equal (bike_rm_test_data (data_dir = tempdir ()), 6)
 })
 
+bikedb <- file.path (tempdir (), "testdb")
 chk <- tryCatch (file.remove (bikedb),
                  warning = function (w) NULL,
                  error = function (e) NULL)

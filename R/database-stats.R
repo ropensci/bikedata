@@ -127,6 +127,9 @@ bike_station_dates <- function (bikedb, city)
 #' bike_write_test_data (data_dir = data_dir)
 #' bikedb <- file.path (data_dir, 'testdb')
 #' store_bikedata (data_dir = data_dir, bikedb = bikedb)
+#' # create database indexes for quicker access:
+#' index_bikedata_db (bikedb = bikedb)
+#'
 #' bike_db_totals (bikedb = bikedb, trips = TRUE) # total trips
 #' bike_db_totals (bikedb = bikedb, trips = TRUE, city = 'ch')
 #' bike_db_totals (bikedb = bikedb, trips = TRUE, city = 'ny')
@@ -229,6 +232,9 @@ bike_latest_files <- function (bikedb)
 #' # dl_bikedata (city = 'la', data_dir = '.') # or download some real data!
 #' bikedb <- file.path (data_dir, 'testdb')
 #' store_bikedata (data_dir = data_dir, bikedb = bikedb)
+#' # create database indexes for quicker access:
+#' index_bikedata_db (bikedb = bikedb)
+#'
 #' bike_datelimits ('testdb') # overall limits for all cities
 #' bike_datelimits ('testdb', city = 'NYC') 
 #' bike_datelimits ('testdb', city = 'los angeles') 
@@ -282,6 +288,9 @@ bike_datelimits <- function (bikedb, city)
 #' # dl_bikedata (city = 'la', data_dir = '.') # or download some real data!
 #' bikedb <- file.path (data_dir, 'testdb')
 #' store_bikedata (data_dir = data_dir, bikedb = bikedb)
+#' # create database indexes for quicker access:
+#' index_bikedata_db (bikedb = bikedb)
+#'
 #' bike_summary_stats ('testdb')
 #' 
 #' bike_rm_test_data (data_dir = data_dir)
@@ -349,9 +358,13 @@ bike_summary_stats <- function (bikedb)
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' bike_write_test_data () # by default in tempdir ()
 #' # dl_bikedata (city = 'la', data_dir = '.') # or download some real data!
 #' store_bikedata (data_dir = tempdir (), bikedb = 'testdb')
+#' # create database indexes for quicker access:
+#' index_bikedata_db (bikedb = 'testdb')
+#'
 #' bike_daily_trips (bikedb = 'testdb', city = 'ny')
 #' bike_daily_trips (bikedb = 'testdb', city = 'ny', member = TRUE)
 #' bike_daily_trips (bikedb = 'testdb', city = 'ny', gender = 'f')
@@ -362,6 +375,7 @@ bike_summary_stats <- function (bikedb)
 #' bike_rm_db ('testdb')
 #' # don't forget to remove real data!
 #' # file.remove (list.files ('.', pattern = '.zip'))
+#' }
 bike_daily_trips <- function (bikedb, city, station, member, birth_year, gender,
                               standardise = FALSE)
 {
@@ -465,6 +479,9 @@ bike_daily_trips <- function (bikedb, city, station, member, birth_year, gender,
 #' bike_write_test_data (data_dir = data_dir)
 #' bikedb <- file.path (data_dir, 'testdb')
 #' store_bikedata (data_dir = data_dir, bikedb = bikedb)
+#' # create database indexes for quicker access:
+#' index_bikedata_db (bikedb = bikedb)
+#'
 #' sum (bike_tripmat (bikedb = bikedb, city = 'bo')) # 200 trips
 #' sum (bike_tripmat (bikedb = bikedb, city = 'bo', birth_year = 1990)) # 9
 #' sum (bike_tripmat (bikedb = bikedb, city = 'bo', gender = 'f')) # 22

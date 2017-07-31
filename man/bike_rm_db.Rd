@@ -7,8 +7,7 @@
 bike_rm_db(bikedb)
 }
 \arguments{
-\item{bikedb}{A string containing the path to the SQLite3 database.
-If no directory specified, it is presumed to be in \code{tempdir()}.}
+\item{bikedb}{The SQLite3 database containing the bikedata.}
 }
 \value{
 TRUE if \code{bikedb} successfully removed; otherwise FALSE

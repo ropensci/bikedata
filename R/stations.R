@@ -17,6 +17,9 @@
 #' # dl_bikedata (city = 'la', data_dir = data_dir)
 #' bikedb <- file.path (data_dir, 'testdb')
 #' store_bikedata (data_dir = data_dir, bikedb = bikedb)
+#' # create database indexes for quicker access:
+#' index_bikedata_db (bikedb = bikedb)
+#'
 #' stations <- bike_stations (bikedb)
 #' head (stations)
 #' 

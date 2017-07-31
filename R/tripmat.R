@@ -245,6 +245,9 @@ bike_transform_gender <- function (gender)
 #' # dl_bikedata (city = 'la', data_dir = data_dir)
 #' bikedb <- file.path (data_dir, 'testdb')
 #' store_bikedata (data_dir = data_dir, bikedb = bikedb)
+#' # create database indexes for quicker access:
+#' index_bikedata_db (bikedb = bikedb)
+#'
 #' 
 #' tm <- bike_tripmat (bikedb = bikedb, city = 'ny') # full trip matrix
 #' tm <- bike_tripmat (bikedb = bikedb, city = 'ny',

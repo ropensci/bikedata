@@ -21,6 +21,9 @@ data_dir <- tempdir ()
 bike_write_test_data (data_dir = data_dir)
 bikedb <- file.path (data_dir, 'testdb')
 store_bikedata (data_dir = data_dir, bikedb = bikedb)
+# create database indexes for quicker access:
+index_bikedata_db (bikedb = bikedb)
+
 sum (bike_tripmat (bikedb = bikedb, city = 'bo')) # 200 trips
 sum (bike_tripmat (bikedb = bikedb, city = 'bo', birth_year = 1990)) # 9
 sum (bike_tripmat (bikedb = bikedb, city = 'bo', gender = 'f')) # 22

@@ -7,9 +7,7 @@
 index_bikedata_db(bikedb)
 }
 \arguments{
-\item{bikedb}{A string containing the path to the SQLite3 database to 
-use.  If no directory specified, it is presumed to be in
-\code{tempdir()}.}
+\item{bikedb}{The SQLite3 database containing the bikedata.}
 }
 \description{
 Add indexes to database created with store_bikedata
@@ -22,6 +20,9 @@ bike_write_test_data (data_dir = data_dir)
 # dl_bikedata (city = 'la', data_dir = data_dir)
 bikedb <- file.path (data_dir, 'testdb')
 store_bikedata (data_dir = data_dir, bikedb = bikedb)
+# create database indexes for quicker access:
+index_bikedata_db (bikedb = bikedb)
+
 trips <- bike_tripmat (bikedb = bikedb, city = 'LA') # trip matrix
 stations <- bike_stations (bikedb = bikedb) # station data
 

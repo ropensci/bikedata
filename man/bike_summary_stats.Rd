@@ -26,6 +26,9 @@ bike_write_test_data (data_dir = data_dir)
 # dl_bikedata (city = 'la', data_dir = '.') # or download some real data!
 bikedb <- file.path (data_dir, 'testdb')
 store_bikedata (data_dir = data_dir, bikedb = bikedb)
+# create database indexes for quicker access:
+index_bikedata_db (bikedb = bikedb)
+
 bike_summary_stats ('testdb')
 
 bike_rm_test_data (data_dir = data_dir)

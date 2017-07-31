@@ -105,6 +105,13 @@ bike_db_totals (bikedb = bikedb)
 3726719
 ```
 
+Prior to accessing any data from the `SQLite3` database, it is recommended to
+create database indexes using the function `index_bikedata_db()`:
+```{r, eval = FALSE}
+index_bikedata_db (bikedb = bikedb)
+```
+This will speed up subsequent extraction of aggregated data.
+
 Having stored individual trip data in a database, the primary function of the
 `bikedata` package is `bike_tripmat()`, which extracts aggregate numbers of
 trips between all pairs of stations. The minimal arguments to this function are
@@ -284,20 +291,6 @@ refreshed with `dl_bikedata()`, and the associated directory specified in the
 call to `store_bikedata()` to load only recently added files.
 
 
-### 4.1 Database Indexes
-
-The `store_bikedata()` function also has a default option to create indexes for
-more efficient data extraction. Indexes are always created for cities, with the
-`create_index = TRUE` option creating additional indexes for dates and times.
-Setting this parameter to `FALSE` will enable faster initial storage of data,
-yet is likely to lead to slower aggregation of data based on dates and times
-(see below). It is therefore recommended to set this option to `FALSE` only when
-subsequent data aggregation will **not** be based on dates or times.
-
-If data are to be stored for multiple cities, then database construction will be
-speed up by using `store_bikedata (..., create_index = FALSE)` to read all but
-the last city. Setting `create_index = TRUE` when reading the final city will
-then create the necessary indexes just one time.
 
 ## 5. Accessing Aggregate Data
 

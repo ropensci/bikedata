@@ -13,8 +13,6 @@
 #' downloaded and stored only for these dates specified as vector of YYYYMM
 #' values.
 #' @param quiet If FALSE, progress is displayed on screen
-#' @param create_index If TRUE, creates an index on the start and end station
-#'          IDs and start and stop times.
 #'
 #' @return Number of trips added to database
 #'
@@ -50,6 +48,9 @@
 #' # dl_bikedata (city = 'la', data_dir = data_dir)
 #' bikedb <- file.path (data_dir, 'testdb')
 #' store_bikedata (data_dir = data_dir, bikedb = bikedb)
+#' # create database indexes for quicker access:
+#' index_bikedata_db (bikedb = bikedb)
+#'
 #' trips <- bike_tripmat (bikedb = bikedb, city = 'LA') # trip matrix
 #' stations <- bike_stations (bikedb = bikedb) # station data
 #' 
@@ -58,8 +59,7 @@
 #' # don't forget to remove real data!
 #' # file.remove (list.files (data_dir, pattern = '.zip'))
 #' }
-store_bikedata <- function (bikedb, city, data_dir, create_index = TRUE,
-                            dates = NULL, quiet = FALSE)
+store_bikedata <- function (bikedb, city, data_dir, dates = NULL, quiet = FALSE)
 {
     if (missing (city) & missing (data_dir))
     {
@@ -183,9 +183,7 @@ store_bikedata <- function (bikedb, city, data_dir, create_index = TRUE,
 
 #' Add indexes to database created with store_bikedata
 #'
-#' @param bikedb A string containing the path to the SQLite3 database to 
-#'          use.  If no directory specified, it is presumed to be in
-#'          \code{tempdir()}.
+#' @param bikedb The SQLite3 database containing the bikedata.
 #'
 #' @export
 #' 
@@ -197,6 +195,9 @@ store_bikedata <- function (bikedb, city, data_dir, create_index = TRUE,
 #' # dl_bikedata (city = 'la', data_dir = data_dir)
 #' bikedb <- file.path (data_dir, 'testdb')
 #' store_bikedata (data_dir = data_dir, bikedb = bikedb)
+#' # create database indexes for quicker access:
+#' index_bikedata_db (bikedb = bikedb)
+#'
 #' trips <- bike_tripmat (bikedb = bikedb, city = 'LA') # trip matrix
 #' stations <- bike_stations (bikedb = bikedb) # station data
 #' 
@@ -207,16 +208,25 @@ store_bikedata <- function (bikedb, city, data_dir, create_index = TRUE,
 #' }
 index_bikedata_db <- function (bikedb)
 {
-    if (!file.exists (bikedb))
-        stop ("bikedb does not exist")
+    if (missing (bikedb))
+        stop ("bikedb must be provided in order to create indexes")
 
-    chk <- rcpp_create_city_index (bikedb, indexes_exist (bikedb))
+    bikedb <- check_db_arg (bikedb)
+
+    db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
+    idx_list <- RSQLite::dbGetQuery (db, "PRAGMA index_list (trips)")
+    RSQLite::dbDisconnect (db)
+
+    reindex <- 'idx_trips_city' %in% idx_list$name
+    chk <- rcpp_create_city_index (bikedb, reindex)
+
+    reindex <- (nrow (idx_list) > 2)
     chk <- rcpp_create_db_indexes (bikedb,
                                    tables = rep("trips", times = 4),
                                    cols = c("start_station_id",
                                             "end_station_id",
                                             "start_time", "stop_time"),
-                                   indexes_exist (bikedb))
+                                   reindex)
 }
 
 #' Remove SQLite3 database generated with 'store_bikedat()'
@@ -226,8 +236,7 @@ index_bikedata_db <- function (bikedb)
 #' function provides a convenient way to remove the database in such cases by
 #' simply passing the name.
 #'
-#' @param bikedb A string containing the path to the SQLite3 database.
-#' If no directory specified, it is presumed to be in \code{tempdir()}.
+#' @param bikedb The SQLite3 database containing the bikedata.
 #'
 #' @return TRUE if \code{bikedb} successfully removed; otherwise FALSE
 #'
