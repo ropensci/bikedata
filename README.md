@@ -1,5 +1,5 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-[![Build Status](https://travis-ci.org/mpadge/bikedata.svg)](https://travis-ci.org/mpadge/bikedata) [![Build status](https://ci.appveyor.com/api/projects/status/github/mpadge/bikedata?svg=true)](https://ci.appveyor.com/project/mpadge/bikedata) [![codecov](https://codecov.io/gh/mpadge/bikedata/branch/master/graph/badge.svg)](https://codecov.io/gh/mpadge/bikedata) [![Project Status: Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/bikedata)](http://cran.r-project.org/web/packages/bikedata)[![CRAN Downloads](http://cranlogs.r-pkg.org/badges/grand-total/bikedata?color=orange)](http://cran.r-project.org/package=bikedata)[![](http://badges.ropensci.org/116_status.svg)](https://github.com/ropensci/onboarding/issues/116)
+[![Build Status](https://travis-ci.org/ropensci/bikedata.svg)](https://travis-ci.org/ropensci/bikedata) [![Build status](https://ci.appveyor.com/api/projects/status/github/ropensci/bikedata?svg=true)](https://ci.appveyor.com/project/ropensci/bikedata) [![codecov](https://codecov.io/gh/ropensci/bikedata/branch/master/graph/badge.svg)](https://codecov.io/gh/ropensci/bikedata) [![Project Status: Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/bikedata)](http://cran.r-project.org/web/packages/bikedata)[![CRAN Downloads](http://cranlogs.r-pkg.org/badges/grand-total/bikedata?color=orange)](http://cran.r-project.org/package=bikedata)[![](http://badges.ropensci.org/116_status.svg)](https://github.com/ropensci/onboarding/issues/116)
 
 bikedata
 ========
@@ -33,7 +33,7 @@ The following provides a brief overview of package functionality. For more detai
 Currently a development version only which can be installed with the following command.
 
 ``` r
-devtools::install_github("mpadge/bikedata")
+devtools::install_github("ropensci/bikedata")
 ```
 
 and then loaded the usual way

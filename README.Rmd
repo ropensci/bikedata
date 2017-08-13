@@ -19,9 +19,9 @@ knitr::opts_chunk$set(
 )
 ```
 
-[![Build Status](https://travis-ci.org/mpadge/bikedata.svg)](https://travis-ci.org/mpadge/bikedata) 
-[![Build status](https://ci.appveyor.com/api/projects/status/github/mpadge/bikedata?svg=true)](https://ci.appveyor.com/project/mpadge/bikedata)
-[![codecov](https://codecov.io/gh/mpadge/bikedata/branch/master/graph/badge.svg)](https://codecov.io/gh/mpadge/bikedata)
+[![Build Status](https://travis-ci.org/ropensci/bikedata.svg)](https://travis-ci.org/ropensci/bikedata) 
+[![Build status](https://ci.appveyor.com/api/projects/status/github/ropensci/bikedata?svg=true)](https://ci.appveyor.com/project/ropensci/bikedata)
+[![codecov](https://codecov.io/gh/ropensci/bikedata/branch/master/graph/badge.svg)](https://codecov.io/gh/ropensci/bikedata)
 [![Project Status: Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/bikedata)](http://cran.r-project.org/web/packages/bikedata) 
 [![CRAN Downloads](http://cranlogs.r-pkg.org/badges/grand-total/bikedata?color=orange)](http://cran.r-project.org/package=bikedata)
@@ -62,7 +62,7 @@ detail, see the
 Currently a development version only which can be installed with the following
 command,
 ```{r, eval=FALSE}
-devtools::install_github("mpadge/bikedata")
+devtools::install_github("ropensci/bikedata")
 ```
 ```{r usage2, echo=FALSE, message=FALSE}
 devtools::load_all (".")
