@@ -97,7 +97,7 @@ store_bikedata <- function (bikedb, city, data_dir, dates = NULL, quiet = FALSE)
     er_idx <- file.exists (bikedb) + 1 # = (1, 2) if (!exists, exists)
     if (!quiet)
         message (c ('Creating', 'Adding data to') [er_idx], ' sqlite3 database')
-    if (!file.exists (bikedb))
+    (!file.exists (bikedb))
     {
         chk <- rcpp_create_sqlite3_db (bikedb)
         if (chk != 0)
@@ -218,7 +218,7 @@ index_bikedata_db <- function (bikedb)
     RSQLite::dbDisconnect (db)
 
     reindex <- 'idx_trips_city' %in% idx_list$name
-    chk <- rcpp_create_city_index (bikedb, reindex)
+    chk <- rcpp_create_city_index (bikedb, reindex) # nolint
 
     reindex <- (nrow (idx_list) > 2)
     chk <- rcpp_create_db_indexes (bikedb,
@@ -226,7 +226,7 @@ index_bikedata_db <- function (bikedb)
                                    cols = c("start_station_id",
                                             "end_station_id",
                                             "start_time", "stop_time"),
-                                   reindex)
+                                   reindex) # nolint
 }
 
 #' Remove SQLite3 database generated with 'store_bikedat()'
@@ -309,15 +309,17 @@ get_bike_cities <- function (data_dir)
     names (cities)
 }
 
-#' Get list of data files for a particular city in specified directory 
+#' Get list of data files for a particular city in specified directory and not
+#' in database
 #'
 #' @param data_dir Directory containing data files
+#' @param bikedb name of bikedata database
 #' @param city One of (nyc, boston, chicago, dc, la, philly)
 #'
 #' @return Only those members of flist corresponding to nominated city
 #'
 #' @noRd
-get_flist_city <- function (data_dir, city)
+get_flist_city <- function (data_dir, bikedb, city)
 {
     city <- convert_city_names (city)
 
@@ -344,7 +346,13 @@ get_flist_city <- function (data_dir, city)
     if (length (index) > 0)
         ret <- paste0 (data_dir, '/', flist [index])
 
-    return (ret)
+    db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
+    db_files <- RSQLite::dbGetQuery (db, "SELECT * FROM datafiles")
+    RSQLite::dbDisconnect (db)
+
+    db_files <- db_files$name [db_files$city == city]
+
+    return (ret [!ret %in% db_files])
 }
 
 #' Get list of files to be unzipped and added to database
@@ -369,7 +377,8 @@ get_flist_city <- function (data_dir, city)
 #' @noRd
 bike_unzip_files <- function (data_dir, bikedb, city)
 {
-    flist_zip <- get_flist_city (data_dir, city)
+    flist_zip <- get_flist_city (data_dir = data_dir, bikedb = bikedb,
+                                 city = city)
     existing_csv_files <- list.files (data_dir, pattern = '\\.csv$')
     flist_csv <- flist_rm <- NULL
 
@@ -430,7 +439,8 @@ bike_unzip_files <- function (data_dir, bikedb, city)
 #' @noRd
 bike_unzip_files_chicago <- function (data_dir, bikedb)
 {
-    flist_zip <- get_flist_city (data_dir, city = 'ch')
+    flist_zip <- get_flist_city (data_dir = data_dir, bikedb = bikedb,
+                                 city = 'ch')
     flist_zip <- get_new_datafiles (bikedb, flist_zip)
     existing_csv_files <- list.files (data_dir, pattern = "Divvy.*\\.csv")
     if (length (existing_csv_files) == 0)
