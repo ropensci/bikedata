@@ -53,13 +53,14 @@
 #' @name bikedata
 #' @docType package
 #' @author Mark Padgham
+#' @importFrom DBI dbBind dbClearResult dbConnect dbDisconnect
+#' @importFrom DBI dbGetQuery dbSendQuery
 #' @importFrom httr content GET
 #' @importFrom lubridate ddays interval ymd
 #' @importFrom magrittr %>%
 #' @importFrom methods as
 #' @importFrom Rcpp evalCpp
-#' @importFrom RSQLite dbBind dbClearResult dbConnect dbDisconnect
-#' @importFrom RSQLite dbGetQuery dbSendQuery SQLite
+#' @importFrom RSQLite SQLite
 #' @importFrom reshape2 dcast
 #' @importFrom tibble as_tibble tibble
 #' @importFrom utils data menu read.csv tail type.convert unzip write.csv zip

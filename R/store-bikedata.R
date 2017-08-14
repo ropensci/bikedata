@@ -213,9 +213,9 @@ index_bikedata_db <- function (bikedb)
 
     bikedb <- check_db_arg (bikedb)
 
-    db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
-    idx_list <- RSQLite::dbGetQuery (db, "PRAGMA index_list (trips)")
-    RSQLite::dbDisconnect (db)
+    db <- DBI::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
+    idx_list <- DBI::dbGetQuery (db, "PRAGMA index_list (trips)")
+    DBI::dbDisconnect (db)
 
     reindex <- 'idx_trips_city' %in% idx_list$name
     chk <- rcpp_create_city_index (bikedb, reindex) # nolint
@@ -346,9 +346,9 @@ get_flist_city <- function (data_dir, bikedb, city)
     if (length (index) > 0)
         ret <- paste0 (data_dir, '/', flist [index])
 
-    db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
-    db_files <- RSQLite::dbGetQuery (db, "SELECT * FROM datafiles")
-    RSQLite::dbDisconnect (db)
+    db <- DBI::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
+    db_files <- DBI::dbGetQuery (db, "SELECT * FROM datafiles")
+    DBI::dbDisconnect (db)
 
     db_files <- db_files$name [db_files$city == city]
 

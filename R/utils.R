@@ -63,10 +63,10 @@ check_db_arg <- function (bikedb)
     if (!file.exists (bikedb))
         stop ('file ', basename (bikedb), ' does not exist')
 
-    db <- RSQLite::dbConnect(SQLite(), bikedb, create = FALSE)
+    db <- DBI::dbConnect(RSQLite::SQLite(), bikedb, create = FALSE)
     qry <- 'SELECT name FROM sqlite_master WHERE type = "table"'
-    tbls <- RSQLite::dbGetQuery(db, qry) [, 1]
-    RSQLite::dbDisconnect(db)
+    tbls <- DBI::dbGetQuery(db, qry) [, 1]
+    DBI::dbDisconnect(db)
     if (!identical (tbls, c ('trips', 'stations', 'datafiles')))
         stop ('bikedb does not appear to be a bikedata database')
 

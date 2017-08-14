@@ -91,12 +91,12 @@ filter_bike_tripmat <- function (bikedb, ...)
 
     qry <- paste (qry, "ORDER BY s1.stn_id, s2.stn_id")
 
-    db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
-    qryres <- RSQLite::dbSendQuery (db, qry)
-    RSQLite::dbBind(qryres, as.list(qryargs))
-    trips <- RSQLite::dbFetch(qryres)
-    RSQLite::dbClearResult(qryres)
-    RSQLite::dbDisconnect (db)
+    db <- DBI::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
+    qryres <- DBI::dbSendQuery (db, qry)
+    DBI::dbBind(qryres, as.list(qryargs))
+    trips <- DBI::dbFetch(qryres)
+    DBI::dbClearResult(qryres)
+    DBI::dbDisconnect (db)
 
     return(trips)
 }
@@ -349,9 +349,9 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
                            "' AND s2.city = '", city, "'")
         qry <- paste (qry, "ORDER BY s1.stn_id, s2.stn_id")
 
-        db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
-        trips <- RSQLite::dbGetQuery (db, qry)
-        RSQLite::dbDisconnect(db)
+        db <- DBI::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
+        trips <- DBI::dbGetQuery (db, qry)
+        DBI::dbDisconnect(db)
     }
 
 

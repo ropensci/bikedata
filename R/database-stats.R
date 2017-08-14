@@ -15,9 +15,9 @@
 #' @noRd
 indexes_exist <- function (bikedb)
 {
-    db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
-    idx_list <- RSQLite::dbGetQuery (db, "PRAGMA index_list (trips)")
-    RSQLite::dbDisconnect (db)
+    db <- DBI::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
+    idx_list <- DBI::dbGetQuery (db, "PRAGMA index_list (trips)")
+    DBI::dbDisconnect (db)
     nrow (idx_list) > 2 # 2 because city index is automatically created
 }
 
@@ -28,9 +28,9 @@ indexes_exist <- function (bikedb)
 #' @noRd
 num_datafiles_in_db <- function (bikedb)
 {
-    db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
-    numtrips <- RSQLite::dbGetQuery (db, "SELECT Count(*) FROM datafiles")
-    RSQLite::dbDisconnect (db)
+    db <- DBI::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
+    numtrips <- DBI::dbGetQuery (db, "SELECT Count(*) FROM datafiles")
+    DBI::dbDisconnect (db)
     return (as.numeric (numtrips))
 }
 
@@ -41,9 +41,9 @@ num_datafiles_in_db <- function (bikedb)
 #' @noRd
 bike_cities_in_db <- function (bikedb)
 {
-    db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
-    cities <- RSQLite::dbGetQuery (db, "SELECT city FROM stations")
-    RSQLite::dbDisconnect (db)
+    db <- DBI::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
+    cities <- DBI::dbGetQuery (db, "SELECT city FROM stations")
+    DBI::dbDisconnect (db)
     cities <- unique (cities)
     rownames (table (cities)) # TODO: Find a better way to do that
 }
@@ -63,9 +63,9 @@ get_new_datafiles <- function (bikedb, flist_zip)
 {
     if (!is.null (flist_zip))
     {
-        db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
-        old_files <- RSQLite::dbReadTable (db, 'datafiles')$name
-        RSQLite::dbDisconnect (db)
+        db <- DBI::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
+        old_files <- DBI::dbReadTable (db, 'datafiles')$name
+        DBI::dbDisconnect (db)
         flist_zip [which (!basename (flist_zip) %in% old_files)]
     }
 
@@ -84,13 +84,13 @@ get_new_datafiles <- function (bikedb, flist_zip)
 #' @noRd
 bike_station_dates <- function (bikedb, city)
 {
-    db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
+    db <- DBI::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
     qry <- paste0 ("SELECT MIN (STRFTIME('%Y-%m-%d', start_time)) AS 'first',",
                    "MAX (STRFTIME('%Y-%m-%d', start_time)) AS 'last',",
                    "start_station_id AS 'station' FROM trips WHERE city = '",
                    city, "' GROUP BY start_station_id")
-    dates <- RSQLite::dbGetQuery (db, qry)
-    RSQLite::dbDisconnect (db)
+    dates <- DBI::dbGetQuery (db, qry)
+    DBI::dbDisconnect (db)
     # re-order stations to numeric order
     stn <- as.numeric (substr (dates$station, 3, 10)) # 10 = arbitrarily length
     dates <- dates [order (stn), c (3, 1, 2)] # station ID in 1st column
@@ -156,15 +156,15 @@ bike_db_totals <- function (bikedb, trips = TRUE, city)
 
     bikedb <- check_db_arg (bikedb)
 
-    db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
+    db <- DBI::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
     if (trips)
         qry <- "SELECT Count(*) FROM trips"
     else
         qry <- "SELECT Count(*) FROM stations"
     if (!missing (city))
         qry <- paste0 (qry, " WHERE city = '", city, "'")
-    numtrips <- RSQLite::dbGetQuery (db, qry)
-    RSQLite::dbDisconnect (db)
+    numtrips <- DBI::dbGetQuery (db, qry)
+    DBI::dbDisconnect (db)
     return (as.numeric (numtrips))
 }
 
@@ -201,10 +201,10 @@ bike_latest_files <- function (bikedb)
 
     bikedb <- check_db_arg (bikedb)
 
-    db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
-    files <- RSQLite::dbGetQuery (db, "SELECT * FROM datafiles")
+    db <- DBI::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
+    files <- DBI::dbGetQuery (db, "SELECT * FROM datafiles")
     cities <- unique (files$city)
-    RSQLite::dbDisconnect (db)
+    DBI::dbDisconnect (db)
 
     latest_files <- rep (TRUE, length (cities))
     names (latest_files) <- cities
@@ -264,10 +264,10 @@ bike_datelimits <- function (bikedb, city)
         qry_max <- paste0 (qry_max, " WHERE city = '", city, "'")
     }
 
-    db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
-    first_trip <- RSQLite::dbGetQuery (db, qry_min) [1, 1]
-    last_trip <- RSQLite::dbGetQuery (db, qry_max) [1, 1]
-    RSQLite::dbDisconnect(db)
+    db <- DBI::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
+    first_trip <- DBI::dbGetQuery (db, qry_min) [1, 1]
+    last_trip <- DBI::dbGetQuery (db, qry_max) [1, 1]
+    DBI::dbDisconnect(db)
 
     res <- c (first_trip, last_trip)
     names (res) <- c ('first', 'last')
@@ -399,7 +399,7 @@ bike_daily_trips <- function (bikedb, city, station, member, birth_year, gender,
     } else
         city <- convert_city_names (city)
 
-    db <- RSQLite::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
+    db <- DBI::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
     qry <- paste0 ("SELECT STRFTIME('%Y-%m-%d', start_time) AS 'date', ",
                    "COUNT() AS 'numtrips' FROM trips ")
 
@@ -427,7 +427,7 @@ bike_daily_trips <- function (bikedb, city, station, member, birth_year, gender,
         if (substring (station, 1, 2) != city)
             station <- paste0 (city, station)
         # Then just check that station is in stations table
-        stns <- RSQLite::dbGetQuery (db, "SELECT stn_id FROM stations")$stn_id
+        stns <- DBI::dbGetQuery (db, "SELECT stn_id FROM stations")$stn_id
         if (!station %in% stns)
             stop ('Station ', station, ' does not exist in database')
         qry_where <- c (qry_where, "start_station_id = ?")
@@ -436,11 +436,11 @@ bike_daily_trips <- function (bikedb, city, station, member, birth_year, gender,
     qry <- paste (qry, "WHERE", paste (qry_where, collapse = " AND "))
     qry <- paste0 (qry, " GROUP BY STRFTIME('%Y-%m-%d', date);")
 
-    qryres <- RSQLite::dbSendQuery (db, qry)
-    RSQLite::dbBind(qryres, as.list (qryargs))
-    trips <- RSQLite::dbFetch (qryres)
-    RSQLite::dbClearResult (qryres)
-    RSQLite::dbDisconnect (db)
+    qryres <- DBI::dbSendQuery (db, qry)
+    DBI::dbBind(qryres, as.list (qryargs))
+    trips <- DBI::dbFetch (qryres)
+    DBI::dbClearResult (qryres)
+    DBI::dbDisconnect (db)
 
     trips$date <- as.Date (trips$date)
 
