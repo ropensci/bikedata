@@ -4,8 +4,10 @@ Version: 0.0.4
 Authors@R: c(
     person("Mark", "Padgham", email = "mark.padgham@email.com", role = c("aut", "cre")),
     person("Richard", "Ellison", role = "aut"),
-    person("Bea", "Hernández", role = "rev", comment = "Bea reviewed the package for ropensci, see https://github.com/ropensci/onboarding/issues/116")
-    person("Elaine", "McVey", role = "rev", comment = "Elaine reviewed the package for ropensci, see https://github.com/ropensci/onboarding/issues/116")
+    person("Bea", "Hernández", role = "rev",
+        comment = "Bea reviewed the package for ropensci, see https://github.com/ropensci/onboarding/issues/116"),
+    person("Elaine", "McVey", role = "rev",
+        comment = "Elaine reviewed the package for ropensci, see https://github.com/ropensci/onboarding/issues/116"),
     person(family = "SQLite Consortium", role = "ctb", 
         comment = "Authors of included SQLite code"))
 Description: Download and aggregate data from all public hire bicycle systems
