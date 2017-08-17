@@ -1,3 +1,14 @@
+0.0.4
+===================
+- Database no longer automatically indexed; rather indexes must be actively
+  generated with `index_bikedata_db()`. This makes multiple usages of
+  `store_bikedata()` faster and easier.
+- `store_bikedata()` fixed so it only unzips files not already in database (it
+  used to unzip them all)
+- Internal changes to improve consistency (mostly through using the DBI
+  package).
+
+
 0.0.3
 ===================
 - Minor changes only
