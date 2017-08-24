@@ -39,7 +39,7 @@ convert_city_names <- function (city)
     } else
         city <- city_code
 
-    if (is.na (city))
+    if (any (is.na (city)))
         stop ("city not recognised")
 
     return (city)
