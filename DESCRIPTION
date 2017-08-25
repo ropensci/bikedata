@@ -13,8 +13,8 @@ Authors@R: c(
 Description: Download and aggregate data from all public hire bicycle systems
     which provide open data, currently including 'Santander' Cycles in London,
     U.K., and from the U.S.A., 'citibike' in New York City NY, 'Divvy' in
-    Chicago IL, 'Capital Bikeshare' in Washington DC, 'Hubway' in Boston MA, and
-    'Metro' in Los Angeles LA.
+    Chicago IL, 'Capital Bikeshare' in Washington DC, 'Hubway' in Boston MA, 
+    'Metro' in Los Angeles LA, and Indego in Philadelphia PA.
 License: GPL-3
 Depends:
     R (>= 3.0)
