@@ -22,9 +22,9 @@ date: 31 May 2017
 
 The R package `bikedata` collates and facilitates access to arguably the world's
 largest open ongoing dataset on human mobility. All other comparable sources of
-data (such public transit data; mobile phone data) are either not publicly
-available, or have been released only at single distinct times for a single
-distinct purpose. Many public hire bicycle systems in the U.S.A., along with
+data (such public transit data, or mobile phone data) are either not publicly
+available, or have been released only at single distinct times for single
+distinct purposes. Many public hire bicycle systems in the U.S.A., along with
 Santander Cycles in London, U.K., issue ongoing releases of their usage data,
 providing a unique source of data for analysing, visualising, and understanding
 human movement and urban environments. Such data provide an invaluable resource
