@@ -71,7 +71,8 @@ bike_get_london_stations <- function ()
                                 gsub ("'", "", i$commonName))) #nolint
         lon <- unlist (lapply (doc, function (i) i$lon))
         lat <- unlist (lapply (doc, function (i) i$lat))
-        res <- data.frame (id = id, name = name, lon = lon, lat = lat)
+        res <- data.frame (id = id, name = name, lon = lon, lat = lat,
+                           stringsAsFactors = FALSE)
     }
     return (res)
 }
@@ -96,7 +97,8 @@ bike_get_chicago_stations <- function (flists)
         lon <- c (lon, paste0 (fi$longitude))
         lat <- c (lat, paste0 (fi$latitude))
     }
-    res <- data.frame (id = id, name = name, lon = lon, lat = lat)
+    res <- data.frame (id = id, name = name, lon = lon, lat = lat,
+                       stringsAsFactors = FALSE)
     res <- res [which (!duplicated (res)), ]
 
     return (res)
@@ -125,7 +127,8 @@ bike_get_dc_stations <- function ()
     res <- data.frame (id = stations_dc$terminal_number,
                        name = name,
                        lon = stations_dc$longitude,
-                       lat = stations_dc$latitude)
+                       lat = stations_dc$latitude,
+                       stringsAsFactors = FALSE)
 
     return (res)
 }

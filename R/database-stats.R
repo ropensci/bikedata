@@ -335,7 +335,8 @@ bike_summary_stats <- function (bikedb)
     res <- data.frame (city = as.character (c ('total', cities)),
                        num_trips = num_trips, num_stations = num_stations,
                        first_trip = dates [, 1], last_trip = dates [, 2],
-                       latest_files = latest_files)
+                       latest_files = latest_files,
+                       stringsAsFactors = FALSE)
     return (tibble::as_tibble (res))
 }
 
@@ -513,7 +514,8 @@ bike_demographic_data <- function ()
                                         'Metro', 'Santander', 'Citibike',
                                         'Indego'),
                        demographic_data = c (TRUE, TRUE, FALSE, FALSE,
-                                             FALSE, TRUE, FALSE))
+                                             FALSE, TRUE, FALSE),
+                       stringsAsFactors = FALSE)
 
     return (dat)
 }
