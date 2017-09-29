@@ -18,7 +18,7 @@ The `bikedata` package aims to enable ready importing of historical trip data fr
 
 These data include the places and times at which all trips start and end. Some systems provide additional demographic data including years of birth and genders of cyclists.
 
-The following provides a brief overview of package functionality. For more detail, see the [vignette](https://mpadge.github.io/bikedata/articles/bikedata.html).
+The following provides a brief overview of package functionality. For more detail, see the [vignette](https://ropensci.github.io/bikedata/articles/bikedata.html).
 
 -   [1 Installation](#installation)
 -   [2 Usage](#usage)
