@@ -1,3 +1,10 @@
+0.0.4.99
+===================
+- North American Bike Share Association (NABSA) systems (currently LA and
+  Philly) now distinguish member versus non-member based on whether usage is
+  30-day pass or "Walk-up".
+
+
 0.0.4
 ===================
 - Database no longer automatically indexed; rather indexes must be actively
