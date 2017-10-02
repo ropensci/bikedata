@@ -315,9 +315,12 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
     if (!missing (weekday))
         x <- c (x, 'weekday' = list (convert_weekday (weekday)))
 
-    if ( (!missing (member) | !missing (birth_year) | !missing (gender)) &
+    if ( !missing (birth_year) | !missing (gender) &
         !city %in% (c ('bo', 'ch', 'ny')))
         stop ('Only Boston, Chicago, and New York provide demographic data')
+    if ( !missing (member) & !city %in% c ('bo', 'ch', 'ny', 'la', 'ph'))
+        stop (paste0 ('Only Boston, Chicago, New York, LA, and ',
+                      'Philly provide member/non-member data'))
     if (!missing (member))
         x <- c (x, 'member' = bike_transform_member (member))
     if (!missing (birth_year))

@@ -575,11 +575,14 @@ unsigned read_one_line_nabsa (sqlite3_stmt * stmt, char * line,
             end_station_lat + "," + end_station_lon + ")";
     }
     // NABSA systems only have duration of membership as (30 = monthly, etc)
-    std::string user_type = std::strtok (NULL, delim);
-    if (user_type == "")
-        user_type = "0";
+    std::string user_type = std::strtok (NULL, delim); // bike_id
+    user_type = std::strtok (NULL, delim); // plan_duration
+    user_type = std::strtok (NULL, delim); // trip_route_category
+    user_type = std::strtok (NULL, delim); // finally, "passholder_type"
+    if (user_type == "" || user_type == "Walk-up")
+        user_type = "0"; // casual
     else
-        user_type = "1";
+        user_type = "1"; // subscriber
 
     sqlite3_bind_text(stmt, 2, trip_duration.c_str(), -1, SQLITE_TRANSIENT); 
     sqlite3_bind_text(stmt, 3, start_date.c_str(), -1, SQLITE_TRANSIENT); 
