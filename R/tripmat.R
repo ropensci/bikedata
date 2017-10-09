@@ -225,8 +225,8 @@ bike_transform_gender <- function (gender)
 #' @param quiet If FALSE, progress is displayed on screen
 #'
 #' @return If \code{long = FALSE}, a square matrix of numbers of trips between
-#' each station, otherwise a long-form data.frame with three columns of of
-#' (start_station, end_station, num_trips)
+#' each station, otherwise a long-form \pkg{tibble} with three columns of of
+#' (\code{start_station_id, end_station_id, numtrips}).
 #'
 #' @note The \code{city} parameter should be given for databases containing data
 #' from multiple cities, otherwise most of the resultant trip matrix is likely
@@ -354,13 +354,9 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
 
     if (!long)
     {
-        trips <- reshape2::dcast (trips, start_station_id ~ end_station_id,
-                                  value.var = 'numtrips', fill = 0,
-                                  fun.aggregate = sum)
-        row.names (trips) <- trips$start_station_id
-        trips$start_station_id <- NULL
-        trips <- as.matrix (trips)
+        trips <- long2wide (trips)
         trips [is.na (trips)] <- 0
+        attr (trips, "variable") <- "numtrips" # used in match_matrices
     } else
     {
         trips$numtrips <- ifelse (is.na (trips$numtrips) == TRUE, 0,
@@ -369,4 +365,51 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
     }
 
     return (trips)
+}
+
+#' convert long-form trip or distance tibble to square matrix
+#'
+#' @param mat Long-form trip or distance matrix
+#' @return Equivalent square matrix
+#'
+#' @noRd
+long2wide <- function (mat)
+{
+    variable <- "numtrips"
+    if ("numtrips" %in% names (mat))
+        mat <- reshape2::dcast (mat, start_station_id ~ end_station_id,
+                                value.var = "numtrips", fill = 0,
+                                fun.aggregate = sum)
+    else
+    {
+        mat <- reshape2::dcast (mat, start_station_id ~ end_station_id,
+                                value.var = "distance")
+        variable <- "distance"
+    }
+
+    row.names (mat) <- mat$start_station_id
+    mat$start_station_id <- NULL
+    mat <- as.matrix (mat)
+    attr (mat, "variable") <- variable
+
+    return (mat)
+}
+
+#' convert wide-form trip or distance matrix to long form
+#'
+#' @param mat Wide-form trip or distance matrix
+#' @return Equivalent long-form tibble
+#'
+#' @note This is only used in \code{match_dmat_tmat}
+#'
+#' @noRd
+wide2long <- function (mat)
+{
+    zvar <- attr (mat, "variable") # "numtrips" or "distance"
+
+    mat <- reshape2::melt (mat,
+                           id.vars = c (rownames (mat), colnames (mat),))
+    names (mat) <- c ("start_station_id", "end_station_id", zvar)
+
+    return (mat)
 }

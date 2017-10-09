@@ -51,8 +51,8 @@ returned.}
 }
 \value{
 If \code{long = FALSE}, a square matrix of numbers of trips between
-each station, otherwise a long-form data.frame with three columns of of
-(start_station, end_station, num_trips)
+each station, otherwise a long-form \pkg{tibble} with three columns of of
+(\code{start_station_id, end_station_id, numtrips}).
 }
 \description{
 Extract station-to-station trip matrix or data.frame from SQLite3 database

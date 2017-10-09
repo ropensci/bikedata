@@ -12,8 +12,8 @@
 #' @param quiet If FALSE, progress is displayed on screen
 #'
 #' @return If \code{long = FALSE}, a square matrix of numbers of trips between
-#' each station, otherwise a long-form data.frame with three columns of of
-#' (start_station, end_station, num_trips)
+#' each station, otherwise a long-form \pkg{tibble} with three columns of of
+#' (start_station_id, end_station_id, distance)
 #'
 #' @note Distance matrices returned from \code{bike_distamat} use all stations
 #' listed for a given system, while trip matrices extracted with
@@ -34,15 +34,103 @@ bike_distmat <- function (bikedb, city, expand = 0.5,
     stns <- bike_stations (bikedb = bikedb, city = city)
     xy <- stns [, which (names (stns) %in% c ("longitude", "latitude"))]
     dmat <- dodgr_dists (from = xy, to = xy, quiet = quiet)
-    rownames (dmat) <- colnames (dmat) <- 
+    rownames (dmat) <- colnames (dmat) <-
         stns [, which (names (stns) == "stn_id")] [[1]]
 
     if (long)
     {
         dmat <- reshape2::melt (dmat,
                                 id.vars = c (rownames (dmat), colnames (dmat)))
-        colnames (dmat) <- c ("from", "to", "distance")
+        colnames (dmat) <- c ("start_station_id", "end_station_id", "distance")
+        dmat <- tibble::as.tibble (dmat)
+    } else
+    {
+        attr (dmat, "variable") <- "distance" # used in match_matrices
     }
 
     return (dmat)
+}
+
+
+#' Match rows and columns of distance and trip matrices
+#'
+#' @param mat1 A wide- or long-form trip or distance matrix returned from
+#' \code{\link{bike_tripmat}} or \code{\link{bike_distmat}}.
+#' @param mat2 The corresponding distance or trip matrix.
+#'
+#' @return A list of the same matrices with matching start and end stations, and
+#' in the same order passed to the routine (that is, \code{mat1} then
+#' \code{mat2}). Each kind of matrix will be identified and named accordingly as
+#' either "trip" or "dist". Matrices are returned in same format (long or wide)
+#' as submitted.
+#'
+#' @note Distance matrices returned from \code{bike_distamat} use all stations
+#' listed for a given system, while trip matrices extracted with
+#' \link{bike_tripmat} will often have fewer stations because operational
+#' station numbers commonly vary over time. This function reconciles the two
+#' matrices through matching all row and column names (or just station IDs for
+#' long-form matrices), enabling then to be directly compared.
+#'
+#' @export
+match_matrices <- function (mat1, mat2)
+{
+    # convert both to wide form first
+    long <- FALSE
+    if (!nrow (mat1) == ncol (mat1))
+    {
+        mat1 <- long2wide (mat1)
+        if (nrow (mat2) == ncol (mat2))
+            message ("One matrix is long-form, the other is wide; ",
+                     "will return both matrices in wide form")
+        else
+            long <- TRUE
+    }
+    if (!nrow (mat2) == ncol (mat2))
+        mat2 <- long2wide (mat2)
+
+    nms <- intersect (rownames (mat1), rownames (mat2))
+    mat1 <- match_one_mat (mat1, nms, long = long)
+    mat2 <- match_one_mat (mat2, nms, long = long)
+
+    ret <- list (mat1, mat2)
+    names (ret) <- c (is_trip_or_dist (mat1), is_trip_or_dist (mat2))
+    return (ret)
+}
+
+#' match one trip or distance matrix to the \code{nms} common to both
+#' The \code{long} param determines the return form, not the input form.
+#' @noRd
+match_one_mat <- function (mat, nms, long = FALSE)
+{
+    variable <- attr (mat, "variable")
+    indx <- match (nms, rownames (mat))
+    mat <- mat [indx, indx]
+    if (!is.null (variable))
+        attr (mat, "variable") <- variable
+
+    if (long)
+        mat <- wide2long (mat) %>% tibble::as_tibble ()
+
+    return (mat)
+}
+
+#' Determine whether matrix is trip or distance matrix
+#' @noRd
+is_trip_or_dist <- function (mat)
+{
+    variable <- "numtrips"
+    if (nrow (mat) == ncol (mat))
+    {
+        variable <- attr (mat, "variable")
+    } else
+    {
+        if ("distance" %in% names (mat))
+            variable <- "distance"
+    }
+    if (variable == "distance")
+        variable <- "dist"
+    else
+        variable <- "trip"
+
+    return (variable)
 }
