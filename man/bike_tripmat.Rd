@@ -44,7 +44,7 @@ operating durations of each stations, so trip numbers are increased for
 stations that have only operated a short time, and vice versa.}
 
 \item{long}{If FALSE, a square tripmat of (num-stations, num_stations) is
-returns; if TRUE, a long-format matrix of (stn-from, stn-to, ntrips) is
+returned; if TRUE, a long-format matrix of (stn-from, stn-to, ntrips) is
 returned.}
 
 \item{quiet}{If FALSE, progress is displayed on screen}
