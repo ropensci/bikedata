@@ -15,8 +15,8 @@ test_that ('no db', {
 })
 
 test_that ('tripmat-full', {
-               expect_error (tm <- bike_tripmat (bikedb = bikedb, quiet = TRUE),
-                               'Calls to bike_tripmat must specify city')
+           expect_error (tm <- bike_tripmat (bikedb = bikedb, quiet = TRUE),
+                       'bikedb contains multiple cities; please specify one')
 })
 
 test_that ('tripmat-cities', {

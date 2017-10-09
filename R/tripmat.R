@@ -284,24 +284,7 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
         stop ("Can't get trip matrix if bikedb isn't provided")
 
     bikedb <- check_db_arg (bikedb)
-
-    db_cities <- bike_cities_in_db (bikedb)
-    if (missing (city))
-    {
-        if (length (db_cities) > 1)
-        {
-            stop ('Calls to bike_tripmat must specify city; cities in current ',
-                  'database are [', paste (db_cities, collapse = ' '), ']')
-        } else
-            city <- db_cities [1]
-    } else if (!missing (city))
-    {
-        city <- convert_city_names (city)
-        if (is.na (city))
-            stop ('city not recognised')
-        if (!city %in% bike_cities_in_db (bikedb))
-            stop ('city ', city, ' not represented in database')
-    }
+    city <- check_city_arg (bikedb, city)
 
     x <- c (NULL, 'city' = city)
     if (!missing (start_date))

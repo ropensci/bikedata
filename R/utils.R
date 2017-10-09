@@ -45,6 +45,36 @@ convert_city_names <- function (city)
     return (city)
 }
 
+#' check city arg
+#'
+#' @param bikedb Name of database holding bike trip data
+#' @param city Name of city as passed to functions such as \code{bike_tripmat},
+#' \code{bike_stations}, or \code{bike_distmat}
+#' @return Standardised version of \code{city} parameter
+#' @noRd
+check_city_arg <- function (bikedb, city)
+{
+    db_cities <- bike_cities_in_db (bikedb)
+    if (missing (city))
+    {
+        if (length (db_cities) > 1)
+        {
+            stop ('bikedb contains multiple cities; please specify one.',
+                  'cities in current database are [',
+                  paste (db_cities, collapse = ' '), ']')
+        } else
+            city <- db_cities [1]
+    } else if (!missing (city))
+    {
+        city <- convert_city_names (city)
+        if (is.na (city))
+            stop ('city not recognised')
+        if (!city %in% bike_cities_in_db (bikedb))
+            stop ('city ', city, ' not represented in database')
+    }
+    return (city)
+}
+
 #' Perform checks for name, existance, and structure of bikedb
 #'
 #' @param bikedb A string containing the path to the SQLite3 database.

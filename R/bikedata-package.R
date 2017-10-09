@@ -55,13 +55,14 @@
 #' @author Mark Padgham
 #' @importFrom DBI dbBind dbClearResult dbConnect dbDisconnect
 #' @importFrom DBI dbGetQuery dbSendQuery
+#' @importFrom dodgr dodgr_dists
 #' @importFrom httr content GET
 #' @importFrom lubridate ddays interval ymd
 #' @importFrom magrittr %>%
 #' @importFrom methods as
 #' @importFrom Rcpp evalCpp
 #' @importFrom RSQLite SQLite
-#' @importFrom reshape2 dcast
+#' @importFrom reshape2 dcast melt
 #' @importFrom tibble as_tibble tibble
 #' @importFrom utils data menu read.csv tail type.convert unzip write.csv zip
 #' @importFrom xml2 xml_children xml_find_all

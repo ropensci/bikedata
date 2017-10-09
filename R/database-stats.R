@@ -389,16 +389,7 @@ bike_daily_trips <- function (bikedb, city, station, member, birth_year, gender,
         stop ("Can't get daily trips if bikedb isn't provided")
 
     bikedb <- check_db_arg (bikedb)
-
-    cities <- bike_cities_in_db (bikedb)
-    if (missing (city))
-    {
-        if (length (cities) > 1)
-            stop ('bikedb contains multiple cities; please specify one')
-        else
-            city <- cities
-    } else
-        city <- convert_city_names (city)
+    city <- check_city_arg (bikedb, city)
 
     db <- DBI::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
     qry <- paste0 ("SELECT STRFTIME('%Y-%m-%d', start_time) AS 'date', ",
