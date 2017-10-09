@@ -15,18 +15,12 @@ matrix:
         - os: linux
           r: devel
           dist: trusty
-        - os: linux
+        - os: osx # currently lacks dbplyr - reactivate soon (12Jun17)?
           r: release
-          dist: precise
-        - os: linux
-          r: devel
-          dist: precise
-          #- os: osx # currently lacks dbplyr - reactivate soon (12Jun17)?
-          #r: release
           #before_install: ''
           #disable_homebrew: true
-          #- os: osx
-          #r: devel
+        - os: osx
+          r: devel
           #before_install: ''
           #disable_homebrew: true
 
