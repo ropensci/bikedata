@@ -235,6 +235,12 @@ bike_transform_gender <- function (gender)
 #' numeric times are interpreted as hours, with 24 interpreted as day's end at
 #' 23:59:59.
 #'
+#' @note If \code{standardise = TRUE}, the trip matrix will have the same number
+#' of trips, but they will be re-distributed as described, with more recent
+#' stations having more trips than older stations. Trip number are also
+#' non-integer in this case, whereas they are always integer-valued for
+#' \code{standardise = FALSE}.
+#'
 #' @export
 #' 
 #' @examples
@@ -277,7 +283,7 @@ bike_transform_gender <- function (gender)
 bike_tripmat <- function (bikedb, city, start_date, end_date,
                           start_time, end_time, weekday,
                           member, birth_year, gender,
-                          standardise = FALSE,
+                          standardise = TRUE,
                           long = FALSE, quiet = FALSE)
 {
     if (missing (bikedb))

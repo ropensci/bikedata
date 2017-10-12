@@ -5,7 +5,7 @@
 \title{Extract station-to-station trip matrix or data.frame from SQLite3 database}
 \usage{
 bike_tripmat(bikedb, city, start_date, end_date, start_time, end_time, weekday,
-  member, birth_year, gender, standardise = FALSE, long = FALSE,
+  member, birth_year, gender, standardise = TRUE, long = FALSE,
   quiet = FALSE)
 }
 \arguments{
@@ -64,6 +64,12 @@ to be empty.  Both dates and times may be given either in numeric or
 character format, with arbitrary (or no) delimiters between fields. Single
 numeric times are interpreted as hours, with 24 interpreted as day's end at
 23:59:59.
+
+If \code{standardise = TRUE}, the trip matrix will have the same number
+of trips, but they will be re-distributed as described, with more recent
+stations having more trips than older stations. Trip number are also
+non-integer in this case, whereas they are always integer-valued for
+\code{standardise = FALSE}.
 }
 \examples{
 \dontrun{
