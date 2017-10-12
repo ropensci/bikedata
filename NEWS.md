@@ -12,6 +12,9 @@
 minor changes
 - `dl_bikedata()` function also aliased to `download_bikedata()`, so both do the
   same job.
+- Repeated runs of `store_bikedata()` on pre-existing databases sometimes
+  re-added old data. This has now been fixed so only new data are added with
+  each repeated call.
 
 
 0.0.4

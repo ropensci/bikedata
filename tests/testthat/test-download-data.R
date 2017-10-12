@@ -59,7 +59,7 @@ test_that ('dl_bikedata dc', {
                    expect_message (dl_bikedata (city = 'dc',
                                                 data_dir = tempdir (),
                                                 dates = d),
-                                   'There are no dc files for those dates')
+                                   'All data files already exist')
                chk <- tryCatch (file.remove (files),
                                 warning = function (w) NULL,
                                 error = function (e) NULL)
