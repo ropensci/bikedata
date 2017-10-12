@@ -243,7 +243,8 @@ convert_dates_to_filenames <- function (x, city = 'ny')
         if (city == 'dc')
             x <- unique (paste0 (yy, '_', qq))
         else
-            x <- unique (c (paste0 (yy, '_', qq), paste0 (qq, '_', yy)))
+            x <- unique (c (paste0 (yy, '_', qq), paste0 (qq, '_', yy),
+                            paste0 (yy, qq)))
     } else
         x <- paste0 (x)
 
