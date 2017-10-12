@@ -229,7 +229,8 @@ convert_dates_to_filenames <- function (x, city = 'ny')
         hh <- ceiling (as.numeric (substring (x, 5, 6)) / 6)
         hh [hh == 1] <- 'Q1Q2'
         hh [hh == 2] <- 'Q3Q4'
-        x <- unique (paste0 (yy [indx], '_', hh))
+        x <- unique (c (paste0 (yy [indx], '_', hh),
+                        paste0 (yy [indx], '-', hh)))
         if (length (indx13) > 0)
             x <- c ('2013', x)
     } else if (city == 'lo')
