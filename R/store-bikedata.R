@@ -120,7 +120,7 @@ store_bikedata <- function (bikedb, city, data_dir, dates = NULL, quiet = FALSE)
         if (ci == 'ch')
             flists <- bike_unzip_files_chicago (data_dir, bikedb)
         else
-            flists <- bike_unzip_files (data_dir, bikedb, ci)
+            flists <- bike_unzip_files (data_dir, bikedb, ci, dates)
 
         if (!quiet & length (city) > 1)
             message ('Reading files for ', ci, ' ...')
@@ -387,6 +387,14 @@ bike_unzip_files <- function (data_dir, bikedb, city, dates)
                                  city = city)
     # These are only those files in data_dir but **not** in bikedb. Remove any
     # not in dates:
+    if (!missing (dates))
+    {
+        dates <- bike_convert_dates (dates) %>%
+            expand_dates_to_range %>%
+            convert_dates_to_filenames (city = city)
+        indx <- which (grepl (paste (dates, collapse = "|"), flist_zip))
+        flist_zip <- flist_zip [indx]
+    }
     existing_csv_files <- list.files (data_dir, pattern = '\\.csv$')
     flist_csv <- flist_rm <- NULL
 
