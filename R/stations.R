@@ -47,6 +47,10 @@ bike_stations <- function (bikedb, city)
     # some token/test stns don't have lat-lons, and these become NAs
     indx <- which (!is.na (st$longitude) & !is.na (st$latitude))
     st <- st [indx, ]
+    # and some have lat-lons of zero, so remove these too
+    indx <- which (abs (st$longitude) > 1e-6 &
+                   abs (st$latitude) > 1e-6)
+    st <- st [indx, ]
 
     return (st)
 }
