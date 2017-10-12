@@ -209,7 +209,8 @@ NULL
 #' convert_datetime_nabsa
 #'
 #' North American Bike Share Association (LA and Philadelphia) have identical
-#' formats
+#' formats, but they still change from M/D/YYYY H:MM to a more regular
+#' YYYY-MM-DD HH:MM:SS.
 #'
 #' @noRd
 NULL

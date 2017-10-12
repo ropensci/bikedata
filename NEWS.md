@@ -15,6 +15,8 @@ minor changes
 - Repeated runs of `store_bikedata()` on pre-existing databases sometimes
   re-added old data. This has now been fixed so only new data are added with
   each repeated call.
+- Dates for NABSA cities (LA and Philadelphia) are given in different formats,
+  all of which are now appropriately handled.
 
 
 0.0.4

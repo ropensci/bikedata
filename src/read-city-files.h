@@ -522,7 +522,6 @@ unsigned read_one_line_nabsa (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry, std::string city)
 {
     std::string in_line = line;
-    std::string in_line2 = line; // TODO: Delete that!
     boost::replace_all (in_line, "\\N"," "); 
     // replace_all only works with the following two lines, NOT with a single
     // attempt to replace all ",,"!

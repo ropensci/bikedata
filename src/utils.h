@@ -185,23 +185,42 @@ std::string convert_datetime_ch (std::string str)
 //' convert_datetime_nabsa
 //'
 //' North American Bike Share Association (LA and Philadelphia) have identical
-//' formats
+//' formats, but they still change from M/D/YYYY H:MM to a more regular
+//' YYYY-MM-DD HH:MM:SS.
 //'
 //' @noRd
 std::string convert_datetime_nabsa (std::string str)
 {
-    std::string mon = str_token (&str, "/");
-    if (mon.length () == 1)
-        mon = "0" + mon;
-    std::string dd = str_token (&str, "/");
-    if (dd.length () == 1)
-        dd = "0" + dd;
-    std::string yy = str_token (&str, " ");
-    std::string hh = str_token (&str, ":");
-    if (hh.length () == 1)
-        hh = "0" + hh;
-    std::string mm = str;
-    str = yy + "-" + mon + "-" + dd + " " + hh + ":" + mm + ":00";
+    if (str.find ("-") != std::string::npos)
+    {
+        std::string yy = str_token (&str, "-");
+        std::string mon = str_token (&str, "-");
+        std::string dd = str_token (&str, " ");
+        std::string hh = str_token (&str, ":");
+        std::string mm = str_token (&str, ":");
+        str = yy + "-" + mon + "-" + dd + " " + hh + ":" + mm + ":" + str;
+    } else if (str.find ("/") != std::string::npos)
+    {
+        std::string mon = str_token (&str, "/");
+        if (mon.length () == 1)
+            mon = "0" + mon;
+        std::string dd = str_token (&str, "/");
+        if (dd.length () == 1)
+            dd = "0" + dd;
+        std::string yy = str_token (&str, " ");
+        std::string hh = str_token (&str, ":");
+        if (hh.length () == 1)
+            hh = "0" + hh;
+        std::string mm = str;
+        str = yy + "-" + mon + "-" + dd + " " + hh + ":" + mm + ":00";
+    }
+
+    // Later format YYYY-MM-DD ... are double-quoted, so remove these:
+    if (str.front () == '"')
+    {
+        str.erase (0, 1);
+        str.erase (str.size () - 1);
+    }
 
     return str;
 }
