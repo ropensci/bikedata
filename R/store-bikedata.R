@@ -347,13 +347,14 @@ get_flist_city <- function (data_dir, bikedb, city)
 
     ret <- NULL
     if (length (index) > 0)
-        ret <- paste0 (data_dir, '/', flist [index])
+        ret <- file.path (data_dir, flist [index])
 
     db <- DBI::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
     db_files <- DBI::dbGetQuery (db, "SELECT * FROM datafiles")
     DBI::dbDisconnect (db)
 
     db_files <- db_files$name [db_files$city == city]
+    db_files <- file.path (data_dir, db_files)
 
     return (ret [!ret %in% db_files])
 }
@@ -364,6 +365,8 @@ get_flist_city <- function (data_dir, bikedb, city)
 #' @param bikedb A string containing the path to the SQLite3 database.
 #' If no directory specified, it is presumed to be in \code{tempdir()}.
 #' @param city City for which files are to be added to database
+#' @param dates If specified, data will be unzipped only for these dates
+#' specified
 #'
 #' @return List of three vectors of file names:
 #' \itemize{
@@ -378,10 +381,12 @@ get_flist_city <- function (data_dir, bikedb, city)
 #' multi-file zip archives (Chicago) have their own equivalent routines.
 #'
 #' @noRd
-bike_unzip_files <- function (data_dir, bikedb, city)
+bike_unzip_files <- function (data_dir, bikedb, city, dates)
 {
     flist_zip <- get_flist_city (data_dir = data_dir, bikedb = bikedb,
                                  city = city)
+    # These are only those files in data_dir but **not** in bikedb. Remove any
+    # not in dates:
     existing_csv_files <- list.files (data_dir, pattern = '\\.csv$')
     flist_csv <- flist_rm <- NULL
 
