@@ -77,7 +77,7 @@ For example, the following line will download all data from the Metro
 system of Los Angeles CA, U.S.A., and store them in a database named 'bikedb',
 ```{r store-la-data, eval = TRUE}
 bikedb <- file.path (tempdir (), "bikedb.sqlite") # or whatever
-store_bikedata (city = 'la', bikedb = bikedb, quiet = TRUE)
+store_bikedata (city = 'la', bikedb = bikedb, dates = 2017, quiet = TRUE)
 ```
 The function returns the number of trips added to the database.  Both the
 downloaded data and the `SQLite3` database are stored by default in the

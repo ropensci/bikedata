@@ -317,20 +317,17 @@ bike_summary_stats <- function (bikedb)
     dates <- rbind (c (NULL, NULL), bike_datelimits (bikedb)) # so [,1] works
 
     latest_files <- bike_latest_files (bikedb)
-    if (length (cities) > 1)
+    latest <- NULL # latest_files aren't necessarily in db order
+    for (ci in cities)
     {
-        latest <- NULL # latest_files aren't necessarily in db order
-        for (ci in cities)
-        {
-            num_trips <- c (num_trips, bike_db_totals (bikedb, TRUE, city = ci))
-            num_stations <- c (num_stations, bike_db_totals (bikedb, FALSE,
-                                                             city = ci))
-            dates <- rbind (dates, bike_datelimits (bikedb, city = ci))
-            latest <- c (latest,
-                         latest_files [which (names (latest_files) == ci)])
-        }
-        latest_files <- c (NA, latest)
+        num_trips <- c (num_trips, bike_db_totals (bikedb, TRUE, city = ci))
+        num_stations <- c (num_stations, bike_db_totals (bikedb, FALSE,
+                                                         city = ci))
+        dates <- rbind (dates, bike_datelimits (bikedb, city = ci))
+        latest <- c (latest,
+                     latest_files [which (names (latest_files) == ci)])
     }
+    latest_files <- c (NA, as.logical (latest))
 
     res <- data.frame (city = as.character (c ('total', cities)),
                        num_trips = num_trips, num_stations = num_stations,

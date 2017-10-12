@@ -462,7 +462,7 @@ bike_unzip_files_chicago <- function (data_dir, bikedb, dates)
     {
         dates <- bike_convert_dates (dates) %>%
             expand_dates_to_range %>%
-            convert_dates_to_filenames (city = city)
+            convert_dates_to_filenames (city = "ch")
         indx <- which (grepl (paste (dates, collapse = "|"), flist_zip))
         flist_zip <- flist_zip [indx]
     }
