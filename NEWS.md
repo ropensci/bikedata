@@ -9,6 +9,10 @@
   Philly) now distinguish member versus non-member based on whether usage is
   30-day pass or "Walk-up".
 
+minor changes
+- `dl_bikedata()` function also aliased to `download_bikedata()`, so both do the
+  same job.
+
 
 0.0.4
 ===================

@@ -111,3 +111,11 @@ dl_bikedata <- function (city, data_dir = tempdir(), dates = NULL,
 
     invisible (list.files (data_dir, pattern = ptn, full.names = TRUE))
 }
+
+#' @rdname dl_bikedata
+#' @export
+download_bikedata <- function (city, data_dir = tempdir(), dates = NULL,
+                               quiet = FALSE)
+{
+    dl_bikedata (city = city, data_dir = data_dir, dates = dates, quiet = quiet)
+}
