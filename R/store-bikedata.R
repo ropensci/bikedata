@@ -93,6 +93,8 @@ store_bikedata <- function (bikedb, city, data_dir, dates = NULL, quiet = FALSE)
     if (!(grepl ('/', bikedb) | grepl ('*//*', bikedb)))
         bikedb <- file.path (tempdir (), bikedb)
 
+    bikedb <- expand_home (bikedb)
+
     city <- convert_city_names (city)
 
     er_idx <- file.exists (bikedb) + 1 # = (1, 2) if (!exists, exists)
