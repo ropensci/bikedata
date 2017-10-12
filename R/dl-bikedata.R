@@ -47,6 +47,7 @@ dl_bikedata <- function (city, data_dir = tempdir(), dates = NULL,
     city <- convert_city_names (city)
 
     dl_files <- get_bike_files (city)
+    data_dir <- expand_home (data_dir)
     files <- file.path (data_dir, basename (dl_files))
 
     dates_exist <- TRUE # set to F is requested dates do not exist

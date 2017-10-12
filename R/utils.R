@@ -88,6 +88,8 @@ check_db_arg <- function (bikedb)
     if (exists (bikedb, envir = parent.frame ()))
         bikedb <- get (bikedb, envir = parent.frame ())
 
+    bikedb <- expand_home (bikedb)
+
     # Note that dirname (bikedb) == '.' can not be used because that prevents
     # bikedb = "./bikedb", so grepl must be used instead.
     if (!grepl ('/', bikedb) | !grepl ('*//*', bikedb))
@@ -104,4 +106,12 @@ check_db_arg <- function (bikedb)
         stop ('bikedb does not appear to be a bikedata database')
 
     return (bikedb)
+}
+
+# expand unix-style tidle for home directory
+expand_home <- function (x)
+{
+    if (grepl ("~", x))
+        x <- gsub ("~", Sys.getenv ("HOME"), x)
+    return (x)
 }

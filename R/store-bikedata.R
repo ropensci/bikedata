@@ -84,8 +84,9 @@ store_bikedata <- function (bikedb, city, data_dir, dates = NULL, quiet = FALSE)
     {
         if (length (list.files (data_dir)) == 0)
             stop ('data_dir contains no files')
-        city <- get_bike_cities (data_dir)
+        city <- get_bike_cities (expand_home (data_dir))
     }
+    data_dir <- expand_home (data_dir)
 
     if (missing (bikedb))
         stop ("Can't store bikedata if bikedb isn't provided")
