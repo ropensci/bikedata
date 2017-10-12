@@ -242,7 +242,7 @@ convert_dates_to_filenames <- function (x, city = 'ny')
         # LA uses both "YYYY_QX" and "QX_YYYY"
         qq <- paste0 ('Q', ceiling (as.numeric (substring (x, 5, 6)) / 3))
         if (city == 'dc')
-            x <- unique (paste0 (yy, '_', qq))
+            x <- unique (paste0 (yy, '-', qq))
         else
             x <- unique (c (paste0 (yy, '_', qq), paste0 (qq, '_', yy),
                             paste0 (yy, qq)))
