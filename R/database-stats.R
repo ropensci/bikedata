@@ -66,7 +66,7 @@ get_new_datafiles <- function (bikedb, flist_zip)
         db <- DBI::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
         old_files <- DBI::dbReadTable (db, 'datafiles')$name
         DBI::dbDisconnect (db)
-        flist_zip [which (!basename (flist_zip) %in% old_files)]
+        flist_zip <- flist_zip [which (!basename (flist_zip) %in% old_files)]
     }
 
     return (flist_zip)
