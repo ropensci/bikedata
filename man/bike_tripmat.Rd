@@ -5,7 +5,7 @@
 \title{Extract station-to-station trip matrix or data.frame from SQLite3 database}
 \usage{
 bike_tripmat(bikedb, city, start_date, end_date, start_time, end_time, weekday,
-  member, birth_year, gender, standardise = TRUE, long = FALSE,
+  member, birth_year, gender, standardise = FALSE, long = FALSE,
   quiet = FALSE)
 }
 \arguments{

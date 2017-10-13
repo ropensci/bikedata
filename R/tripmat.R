@@ -283,7 +283,7 @@ bike_transform_gender <- function (gender)
 bike_tripmat <- function (bikedb, city, start_date, end_date,
                           start_time, end_time, weekday,
                           member, birth_year, gender,
-                          standardise = TRUE,
+                          standardise = FALSE,
                           long = FALSE, quiet = FALSE)
 {
     if (missing (bikedb))
