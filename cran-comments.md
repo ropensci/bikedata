@@ -1,3 +1,6 @@
+* Previous occsional errors on CRAN Windows machines now recitified. These were
+  cause by unreliable API calls and have now been switched off for CRAN tests.
+
 # Test environments
 
 * Ubuntu 12.04 (on `travis-ci`): R-release, R-devel
