@@ -101,13 +101,20 @@ dl_bikedata <- function (city, data_dir = tempdir(), dates = NULL,
         # London has raw csv files too, but sometimes the server delivers junk
         # data with default files that are very small. The following suffices to
         # remove these:
-        csvs <- paste0 (data_dir, '/',
-                        list.files (data_dir, pattern = '.csv'))
+        csvs <- file.path (data_dir, list.files (data_dir, pattern = '.csv'))
         indx <- which (file.info (csvs)$size < 1000)
         invisible (tryCatch (file.remove (csvs [indx]),
                              warning = function (w) NULL,
                              error = function (e) NULL))
         ptn <- paste0 (ptn, '|.csv')
+    } else if (city == 'ny')
+    {
+        # ny also has some junk .zip files
+        zips <- file.path (data_dir, list.files (data_dir, pattern = '.zip'))
+        indx <- which (file.info (zips)$size < 1000)
+        invisible (tryCatch (file.remove (zips [indx]),
+                             warning = function (w) NULL,
+                             error = function (e) NULL))
     }
 
     invisible (list.files (data_dir, pattern = ptn, full.names = TRUE))
