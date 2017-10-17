@@ -109,12 +109,13 @@ dl_bikedata <- function (city, data_dir = tempdir(), dates = NULL,
         ptn <- paste0 (ptn, '|.csv')
     } else if (city == 'ny')
     {
-        # ny also has some junk .zip files
-        zips <- file.path (data_dir, list.files (data_dir, pattern = '.zip'))
-        indx <- which (file.info (zips)$size < 1000)
-        invisible (tryCatch (file.remove (zips [indx]),
-                             warning = function (w) NULL,
-                             error = function (e) NULL))
+        # ny also has some junk .zip files, but temporarily disabled because all
+        # seems okay again now? (Oct 17)
+        #zips <- file.path (data_dir, list.files (data_dir, pattern = '.zip'))
+        #indx <- which (file.info (zips)$size < 1000)
+        #invisible (tryCatch (file.remove (zips [indx]),
+        #                     warning = function (w) NULL,
+        #                     error = function (e) NULL))
     }
 
     invisible (list.files (data_dir, pattern = ptn, full.names = TRUE))
