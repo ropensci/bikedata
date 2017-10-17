@@ -85,6 +85,9 @@ dl_bikedata <- function (city, data_dir = tempdir(), dates = NULL,
                 }
                 if (!file.exists (destfile))
                     stop ('Download request failed')
+                # some junk files are also listed on AWS but not downloadable
+                if (resp$status_code != 200 & file.exists (destfile))
+                    chk <- file.remove (destfile)
             }
         }
     } else
