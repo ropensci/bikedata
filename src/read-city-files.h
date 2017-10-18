@@ -20,6 +20,13 @@
 
 unsigned read_one_line_nyc (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry, const char * delim);
+unsigned int read_one_line_nyc_standard (sqlite3_stmt * stmt,
+        std::string &in_line2,
+        std::map <std::string, std::string> * stationqry, const char * delim);
+unsigned int read_one_line_nyc_mixed (sqlite3_stmt * stmt,
+        std::string &in_line2,
+        std::map <std::string, std::string> * stationqry);
+
 unsigned read_one_line_boston (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry);
 unsigned read_one_line_chicago (sqlite3_stmt * stmt, char * line,
@@ -39,6 +46,15 @@ unsigned read_one_line_nabsa (sqlite3_stmt * stmt, char * line,
 
 //' read_one_line_nyc
 //'
+//' NYC has really mixed up formats: sometimes no quotes at all; sometimes all
+//' fields are separated by double-quotes; and then sometimes only some fields
+//' are while others are not (201704 onwards). Quotes can not, however, simply
+//' be stripped off all fields in the latter case, because station names have
+//' commas in them. Cases with all double quotes (2016, for example) seem
+//' **NOT** to have any station names with commas in them, so they are simply
+//' de-quoted. The mixed case requires a separate routine to parse the differing
+//' tokens.
+//'
 //' @param stmt An sqlit3 statement to be assembled by reading the line of data
 //' @param line Line of data read from citibike file
 //' @param stationqry Sqlite3 query for station data table to be subsequently
@@ -47,10 +63,24 @@ unsigned read_one_line_nabsa (sqlite3_stmt * stmt, char * line,
 //'        double-quoted fields to plain comma-separators.
 //'
 //' @noRd
-unsigned read_one_line_nyc (sqlite3_stmt * stmt, char * line,
+unsigned int read_one_line_nyc (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry, const char * delim)
 {
     std::string in_line2 = line;
+    unsigned int ret;
+    if (strncmp (delim, ",", 1) == 0 ||
+            (strncmp (delim, "\",\"", 3) == 0 && in_line2.substr (0, 1) == "\""))
+        ret = read_one_line_nyc_standard (stmt, in_line2, stationqry, delim);
+    else
+        ret = read_one_line_nyc_mixed (stmt, in_line2, stationqry);
+
+    return ret;
+}
+
+unsigned int read_one_line_nyc_standard (sqlite3_stmt * stmt,
+        std::string &in_line2,
+        std::map <std::string, std::string> * stationqry, const char * delim)
+{
     char * duration;
     if (strncmp (delim, "\",\"", 3) == 0)
     {
@@ -98,6 +128,84 @@ unsigned read_one_line_nyc (sqlite3_stmt * stmt, char * line,
 
     std::string bike_id = strtokm (NULL, delim);
     std::string user_type = strtokm (NULL, delim);
+    if (user_type == "Subscriber")
+        user_type = "1";
+    else
+        user_type = "0";
+
+    std::string birthyear = strtokm (NULL, delim);
+    std::string gender = strtokm (NULL, delim);
+    if (gender.length () == 2) // gender still has a terminal quote
+        gender = gender [0];
+    if (birthyear.empty()) {
+        birthyear = "NULL";
+    }
+    if (gender.empty()) {
+        gender = "NULL";
+    }
+
+    sqlite3_bind_text(stmt, 2, duration, -1, SQLITE_TRANSIENT); // Trip duration
+    sqlite3_bind_text(stmt, 3, start_time.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 4, end_time.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 5, start_station_id.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 6, end_station_id.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 7, bike_id.c_str (), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 8, user_type.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 9, birthyear.c_str(), -1, SQLITE_TRANSIENT); // Birth Year
+    sqlite3_bind_text(stmt, 10, gender.c_str(), -1, SQLITE_TRANSIENT); // Gender
+
+    return 0;
+}
+
+unsigned int read_one_line_nyc_mixed (sqlite3_stmt * stmt,
+        std::string &in_line2,
+        std::map <std::string, std::string> * stationqry)
+{
+    const char * delim = ",";
+    const char * delimq_st = ",\"";
+    const char * delimq_end = "\",";
+    const char * delimq_2 = "\",\"";
+
+    boost::replace_all(in_line2, "\\N","\"\"");
+    char * duration = strtokm (&in_line2[0u], delim);
+    std::string start_time = strtokm (NULL, delimq_2);
+    start_time.erase (0, 1);
+    start_time = convert_datetime_ny (start_time);
+    std::string end_time = convert_datetime_ny (strtokm (NULL, delimq_end)); 
+    std::string start_station_id = strtokm (NULL, delimq_st);
+    start_station_id = "ny" + start_station_id;
+    if (stationqry->count(start_station_id) == 0) {
+        std::string start_station_name = strtokm (NULL, delimq_end);
+        std::string start_station_lat = strtokm (NULL, delim);
+        std::string start_station_lon = strtokm (NULL, delim);
+        (*stationqry)[start_station_id] = "(\'ny\',\'" + 
+            start_station_id + "\',\'" + start_station_name + "\'," +
+            start_station_lat + "," + start_station_lon + ")";
+    }
+    else {
+        strtokm (NULL, delimq_end); // station name
+        strtokm (NULL, delim); // lat
+        strtokm (NULL, delim); // lon
+    }
+
+    std::string end_station_id = strtokm (NULL, delimq_st);
+    end_station_id = "ny" + end_station_id;
+    if (stationqry->count(end_station_id) == 0) {
+        std::string end_station_name = strtokm (NULL, delimq_end);
+        std::string end_station_lat = strtokm (NULL, delim);
+        std::string end_station_lon = strtokm (NULL, delim);
+        (*stationqry)[end_station_id] = "(\'ny\',\'" + 
+            end_station_id + "\',\'" + end_station_name + "\'," +
+            end_station_lat + "," + end_station_lon + ")";
+    }
+    else {
+        strtokm (NULL, delimq_end); // station name
+        strtokm (NULL, delim); // lat
+        strtokm (NULL, delim); // lon
+    }
+
+    std::string bike_id = strtokm (NULL, delimq_st);
+    std::string user_type = strtokm (NULL, delimq_end);
     if (user_type == "Subscriber")
         user_type = "1";
     else
