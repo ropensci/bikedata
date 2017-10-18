@@ -100,9 +100,12 @@ unsigned int read_one_line_nyc_standard (sqlite3_stmt * stmt,
         std::string start_station_name = strtokm (NULL, delim);
         std::string start_station_lat = strtokm (NULL, delim);
         std::string start_station_lon = strtokm (NULL, delim);
-        (*stationqry)[start_station_id] = "(\'ny\',\'" + 
-            start_station_id + "\',\'" + start_station_name + "\'," +
-            start_station_lat + "," + start_station_lon + ")";
+        if (start_station_lat != "0.0" && start_station_lon != "0.0")
+        {
+            (*stationqry)[start_station_id] = "(\'ny\',\'" + 
+                start_station_id + "\',\'" + start_station_name + "\'," +
+                start_station_lat + "," + start_station_lon + ")";
+        }
     }
     else {
         strtokm (NULL, delim); // station name
@@ -116,9 +119,12 @@ unsigned int read_one_line_nyc_standard (sqlite3_stmt * stmt,
         std::string end_station_name = strtokm (NULL, delim);
         std::string end_station_lat = strtokm (NULL, delim);
         std::string end_station_lon = strtokm (NULL, delim);
-        (*stationqry)[end_station_id] = "(\'ny\',\'" + 
-            end_station_id + "\',\'" + end_station_name + "\'," +
-            end_station_lat + "," + end_station_lon + ")";
+        if (end_station_lat != "0.0" && end_station_lon != "0.0")
+        {
+            (*stationqry)[end_station_id] = "(\'ny\',\'" + 
+                end_station_id + "\',\'" + end_station_name + "\'," +
+                end_station_lat + "," + end_station_lon + ")";
+        }
     }
     else {
         strtokm (NULL, delim); // station name
@@ -178,9 +184,12 @@ unsigned int read_one_line_nyc_mixed (sqlite3_stmt * stmt,
         std::string start_station_name = strtokm (NULL, delimq_end);
         std::string start_station_lat = strtokm (NULL, delim);
         std::string start_station_lon = strtokm (NULL, delim);
-        (*stationqry)[start_station_id] = "(\'ny\',\'" + 
-            start_station_id + "\',\'" + start_station_name + "\'," +
-            start_station_lat + "," + start_station_lon + ")";
+        if (start_station_lat != "0.0" && start_station_lon != "0.0")
+        {
+            (*stationqry)[start_station_id] = "(\'ny\',\'" + 
+                start_station_id + "\',\'" + start_station_name + "\'," +
+                start_station_lat + "," + start_station_lon + ")";
+        }
     }
     else {
         strtokm (NULL, delimq_end); // station name
@@ -194,9 +203,12 @@ unsigned int read_one_line_nyc_mixed (sqlite3_stmt * stmt,
         std::string end_station_name = strtokm (NULL, delimq_end);
         std::string end_station_lat = strtokm (NULL, delim);
         std::string end_station_lon = strtokm (NULL, delim);
-        (*stationqry)[end_station_id] = "(\'ny\',\'" + 
-            end_station_id + "\',\'" + end_station_name + "\'," +
-            end_station_lat + "," + end_station_lon + ")";
+        if (end_station_lat != "0.0" && end_station_lon != "0.0")
+        {
+            (*stationqry)[end_station_id] = "(\'ny\',\'" + 
+                end_station_id + "\',\'" + end_station_name + "\'," +
+                end_station_lat + "," + end_station_lon + ")";
+        }
     }
     else {
         strtokm (NULL, delimq_end); // station name
