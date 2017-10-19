@@ -32,7 +32,8 @@ bike_distmat <- function (bikedb, city, expand = 0.5,
     bikedb <- check_db_arg (bikedb = bikedb)
     city <- check_city_arg (bikedb = bikedb, city = city)
     stns <- bike_stations (bikedb = bikedb, city = city)
-    xy <- stns [, which (names (stns) %in% c ("longitude", "latitude"))]
+    xy <- stns [, which (names (stns) %in% c ("longitude", "latitude"))] %>%
+        remove_xy_outliers ()
     dmat <- dodgr_dists (from = xy, to = xy, quiet = quiet)
     rownames (dmat) <- colnames (dmat) <-
         stns [, which (names (stns) == "stn_id")] [[1]]
@@ -49,6 +50,23 @@ bike_distmat <- function (bikedb, city, expand = 0.5,
     }
 
     return (dmat)
+}
+
+#' Some systems like Boston have outliers, presunably due to something like
+#' humans mistyping a digit. These completely muck up distmat extraction, so are
+#' removed here.
+#' @noRd
+remove_xy_outliers <- function (xy)
+{
+    xymn <- apply (xy, 2, mean)
+    d <- sqrt ( (xy [, 1] - xymn [1]) ^ 2 + (xy [, 2] - xymn [2]) ^ 2)
+    dsd <- sd (c (-d, d))
+    if (any (d > (10 * dsd)))
+    {
+        indx <- which (d < (10 * dsd))
+        xy <- xy [indx, ]
+    }
+    return (xy)
 }
 
 
