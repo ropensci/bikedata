@@ -32,11 +32,13 @@ bike_distmat <- function (bikedb, city, expand = 0.5,
     bikedb <- check_db_arg (bikedb = bikedb)
     city <- check_city_arg (bikedb = bikedb, city = city)
     stns <- bike_stations (bikedb = bikedb, city = city)
-    xy <- stns [, which (names (stns) %in% c ("longitude", "latitude"))] %>%
+    cols <- c ("longitude", "latitude", "stn_id")
+    xy <- stns [, which (names (stns) %in% cols)] %>%
         remove_xy_outliers ()
+    stn_id <- xy$stn_id # names for matrix
+    xy <- xy [, which (names (xy) %in% cols [1:2])] # remove ID
     dmat <- dodgr_dists (from = xy, to = xy, quiet = quiet)
-    rownames (dmat) <- colnames (dmat) <-
-        stns [, which (names (stns) == "stn_id")] [[1]]
+    rownames (dmat) <- colnames (dmat) <- stn_id
 
     if (long)
     {
@@ -58,8 +60,9 @@ bike_distmat <- function (bikedb, city, expand = 0.5,
 #' @noRd
 remove_xy_outliers <- function (xy)
 {
-    xymn <- apply (xy, 2, mean)
-    d <- sqrt ( (xy [, 1] - xymn [1]) ^ 2 + (xy [, 2] - xymn [2]) ^ 2)
+    xmn <- mean (xy$longitude)
+    ymn <- mean (xy$latitude)
+    d <- sqrt ( (xy$longitude - xmn) ^ 2 + (xy$latitude - ymn) ^ 2)
     dsd <- sd (c (-d, d))
     if (any (d > (10 * dsd)))
     {
