@@ -71,6 +71,7 @@ store_bikedata <- function (bikedb, city, data_dir, dates = NULL, quiet = FALSE)
         val <- menu (c ("yes", "no"), graphics = FALSE, title = mt)
         if (val != 1)
             stop ('Yeah, probably better not to do that')
+        city <- bike_demographic_data ()$city
     }
 
     if (missing (data_dir))
