@@ -93,7 +93,7 @@ remove_xy_outliers <- function (xy)
 #' long-form matrices), enabling then to be directly compared.
 #'
 #' @export
-match_matrices <- function (mat1, mat2)
+bike_match_matrices <- function (mat1, mat2)
 {
     # convert both to wide form first
     long <- FALSE

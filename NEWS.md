@@ -2,9 +2,9 @@
 ===================
 - New function `bike_distmat()` calculates distance matrices between all pairs
   of stations as routed through street networks for each city.
-- Helper function `match_matrices()` matches distance and trip matrices by start
-  and end stations, so they can be directly compared in standard statistical
-  routines.
+- Helper function `bike_match_matrices()` matches distance and trip matrices by
+  start and end stations, so they can be directly compared in standard
+  statistical routines.
 - North American Bike Share Association (NABSA) systems (currently LA and
   Philly) now distinguish member versus non-member based on whether usage is
   30-day pass or "Walk-up".

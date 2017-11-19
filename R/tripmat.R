@@ -362,7 +362,7 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
     {
         trips <- long2wide (trips)
         trips [is.na (trips)] <- 0
-        attr (trips, "variable") <- "numtrips" # used in match_matrices
+        attr (trips, "variable") <- "numtrips" # used in bike_match_matrices
     } else
     {
         trips$numtrips <- ifelse (is.na (trips$numtrips) == TRUE, 0,
