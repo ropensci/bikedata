@@ -1,4 +1,4 @@
-0.0.4.99
+0.0.5
 ===================
 - New function `bike_distmat()` calculates distance matrices between all pairs
   of stations as routed through street networks for each city.
