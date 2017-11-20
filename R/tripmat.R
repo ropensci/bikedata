@@ -414,7 +414,7 @@ bike_wide2long <- function (mat)
     zvar <- attr (mat, "variable") # "numtrips" or "distance"
 
     mat <- reshape2::melt (mat,
-                           id.vars = c (rownames (mat), colnames (mat),))
+                           id.vars = c (rownames (mat), colnames (mat)))
     names (mat) <- c ("start_station_id", "end_station_id", zvar)
 
     return (mat)
