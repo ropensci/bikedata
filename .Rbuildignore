@@ -9,5 +9,6 @@
 ^vignettes/makefile$
 ^.*\.Rproj$
 ^aaa\.Rmd$
+^script\.R$
 ^docs$
 ^paper\.md$
