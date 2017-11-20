@@ -130,7 +130,7 @@ match_one_mat <- function (mat, nms, long = FALSE)
         attr (mat, "variable") <- variable
 
     if (long)
-        mat <- wide2long (mat) %>% tibble::as_tibble ()
+        mat <- bike_wide2long (mat) %>% tibble::as_tibble ()
 
     return (mat)
 }

@@ -409,7 +409,7 @@ long2wide <- function (mat)
 #' @note This is only used in \code{match_dmat_tmat}
 #'
 #' @noRd
-wide2long <- function (mat)
+bike_wide2long <- function (mat)
 {
     zvar <- attr (mat, "variable") # "numtrips" or "distance"
 
