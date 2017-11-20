@@ -17,6 +17,7 @@ minor changes
   each repeated call.
 - Dates for NABSA cities (LA and Philadelphia) are given in different formats,
   all of which are now appropriately handled.
+- Internally bundled sqlite3 upgraded v3.19 -> v3.21
 
 
 0.0.4
