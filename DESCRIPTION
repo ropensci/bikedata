@@ -39,8 +39,6 @@ Suggests:
 LinkingTo: 
     BH,
     Rcpp
-Remotes:
-    gmost/dodgr
 VignetteBuilder: knitr
 SystemRequirements: C++11
 NeedsCompilation: yes
