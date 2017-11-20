@@ -12,8 +12,6 @@
  *  Compiler Options:   -std=c++11
  ***************************************************************************/
 
-#define BUFFER_SIZE 512
-
 #include <stdio.h>
 
 // [[Rcpp::depends(BH)]]
@@ -22,6 +20,10 @@
 #include "sqlite3db-add-data.h"
 #include "vendor/sqlite3/sqlite3.h"
 
+int rcpp_create_sqlite3_db (const char * bikedb);
+int rcpp_create_db_indexes (const char* bikedb, Rcpp::CharacterVector tables,
+        Rcpp::CharacterVector cols, bool reindex);
+int rcpp_create_city_index (const char* bikedb, bool reindex);
 
 //' rcpp_create_sqlite3_db
 //'
@@ -37,14 +39,14 @@
 int rcpp_create_sqlite3_db (const char * bikedb)
 {
     sqlite3 *dbcon;
-    char *zErrMsg = 0;
+    char *zErrMsg = nullptr;
     int rc;
 
-    rc = sqlite3_open_v2(bikedb, &dbcon, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
+    rc = sqlite3_open_v2(bikedb, &dbcon, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, nullptr);
     if (rc != SQLITE_OK)
         throw std::runtime_error ("Can't establish sqlite3 connection");
 
-    rc = sqlite3_exec(dbcon, "SELECT InitSpatialMetadata(1);", NULL, NULL, &zErrMsg);
+    rc = sqlite3_exec(dbcon, "SELECT InitSpatialMetadata(1);", nullptr, nullptr, &zErrMsg);
 
     // NOTE: Database structure is ordered according to the order of the NYC
     // citibike system, so each line of data from that city can be injected
@@ -79,7 +81,7 @@ int rcpp_create_sqlite3_db (const char * bikedb)
         "    name text"
         ");";
 
-    rc = sqlite3_exec(dbcon, createqry.c_str(), NULL, NULL, &zErrMsg);
+    rc = sqlite3_exec(dbcon, createqry.c_str(), nullptr, nullptr, &zErrMsg);
 
     rc = sqlite3_close_v2(dbcon);
     if (rc != SQLITE_OK)
@@ -109,10 +111,10 @@ int rcpp_create_db_indexes (const char* bikedb, Rcpp::CharacterVector tables,
         Rcpp::CharacterVector cols, bool reindex) 
 {
     sqlite3 *dbcon;
-    char *zErrMsg = 0;
+    char *zErrMsg = nullptr;
     int rc;
 
-    rc = sqlite3_open_v2(bikedb, &dbcon, SQLITE_OPEN_READWRITE, NULL);
+    rc = sqlite3_open_v2(bikedb, &dbcon, SQLITE_OPEN_READWRITE, nullptr);
     if (rc != SQLITE_OK)
         throw std::runtime_error ("Can't establish sqlite3 connection");
 
@@ -131,7 +133,7 @@ int rcpp_create_db_indexes (const char* bikedb, Rcpp::CharacterVector tables,
             idxqry = "CREATE INDEX " + idxname + " ON " +
                 (char *)(tables [i]) + "(" + (char *)(cols [i]) + ")";
 
-        rc = sqlite3_exec(dbcon, idxqry.c_str(), NULL, NULL, &zErrMsg);
+        rc = sqlite3_exec(dbcon, idxqry.c_str(), nullptr, nullptr, &zErrMsg);
         if (rc != SQLITE_OK) 
         {
             std::string errMsg = "Unable to execute index query: " + 
@@ -163,10 +165,10 @@ int rcpp_create_db_indexes (const char* bikedb, Rcpp::CharacterVector tables,
 int rcpp_create_city_index (const char* bikedb, bool reindex) 
 {
     sqlite3 *dbcon;
-    char *zErrMsg = 0;
+    char *zErrMsg = nullptr;
     int rc;
 
-    rc = sqlite3_open_v2(bikedb, &dbcon, SQLITE_OPEN_READWRITE, NULL);
+    rc = sqlite3_open_v2(bikedb, &dbcon, SQLITE_OPEN_READWRITE, nullptr);
     if (rc != SQLITE_OK)
         throw std::runtime_error ("Can't establish sqlite3 connection");
 
@@ -177,7 +179,7 @@ int rcpp_create_city_index (const char* bikedb, bool reindex)
     else
         idxqry = "CREATE INDEX " + idxname + " ON trips(city)";
 
-    rc = sqlite3_exec(dbcon, idxqry.c_str(), NULL, NULL, &zErrMsg);
+    rc = sqlite3_exec(dbcon, idxqry.c_str(), nullptr, nullptr, &zErrMsg);
 
     if (rc != SQLITE_OK) 
     {

@@ -43,7 +43,7 @@ int rcpp_import_stn_df (const char * bikedb, Rcpp::DataFrame stn_data,
 int import_to_station_table (sqlite3 * dbcon,
     std::map <std::string, std::string> stationqry)
 {
-    char *zErrMsg = 0;
+    char *zErrMsg = nullptr;
     int rc;
 
     // http://stackoverflow.com/questions/19337029/insert-if-not-exists-statement-in-sqlite
@@ -57,16 +57,16 @@ int import_to_station_table (sqlite3 * dbcon,
     }
     fullstationqry += ";";
 
-    rc = sqlite3_exec(dbcon, fullstationqry.c_str(), NULL, 0, &zErrMsg);
+    rc = sqlite3_exec(dbcon, fullstationqry.c_str(), nullptr, nullptr, &zErrMsg);
     if (rc != SQLITE_OK)
         throw std::runtime_error ("Unable to insert stations into station table");
 
     std::string qry = "SELECT AddGeometryColumn"
                       "('stations', 'geom', 4326, 'POINT', 'XY');";
-    rc = sqlite3_exec(dbcon, qry.c_str (), NULL, 0, &zErrMsg);
+    rc = sqlite3_exec(dbcon, qry.c_str (), nullptr, nullptr, &zErrMsg);
 
     qry = "UPDATE stations SET geom = MakePoint(longitude, latitude, 4326);";
-    rc = sqlite3_exec(dbcon, qry.c_str (), NULL, 0, &zErrMsg);
+    rc = sqlite3_exec(dbcon, qry.c_str (), nullptr, nullptr, &zErrMsg);
 
     return rc;
 }
@@ -87,7 +87,6 @@ int import_to_station_table (sqlite3 * dbcon,
 //' @noRd
 std::map <std::string, std::string> get_dc_stn_table (sqlite3 * dbcon)
 {
-    std::string stn_id, stn_name;
     sqlite3_stmt * stmt;
     std::stringstream ss;
     std::map <std::string, std::string> stn_map;
@@ -96,7 +95,7 @@ std::map <std::string, std::string> get_dc_stn_table (sqlite3 * dbcon)
     sprintf (qry_stns, 
             "SELECT stn_id, name FROM stations WHERE city = 'dc'");
 
-    int rc = sqlite3_prepare_v2 (dbcon, qry_stns, BUFFER_SIZE, &stmt, NULL);
+    int rc = sqlite3_prepare_v2 (dbcon, qry_stns, BUFFER_SIZE, &stmt, nullptr);
 
     while ((rc = sqlite3_step (stmt)) == SQLITE_ROW)
     {
@@ -194,7 +193,6 @@ std::map <std::string, std::string> get_dc_stn_table (sqlite3 * dbcon)
 //' @noRd
 std::unordered_set <std::string> get_dc_stn_ids (sqlite3 * dbcon)
 {
-    std::string stn_id, stn_name;
     sqlite3_stmt * stmt;
     std::stringstream ss;
     std::unordered_set <std::string> stn_ids;
@@ -203,7 +201,7 @@ std::unordered_set <std::string> get_dc_stn_ids (sqlite3 * dbcon)
     sprintf (qry_stns, 
             "SELECT stn_id FROM stations WHERE city = 'dc'");
 
-    int rc = sqlite3_prepare_v2 (dbcon, qry_stns, BUFFER_SIZE, &stmt, NULL);
+    int rc = sqlite3_prepare_v2 (dbcon, qry_stns, BUFFER_SIZE, &stmt, nullptr);
 
     while ((rc = sqlite3_step (stmt)) == SQLITE_ROW)
     {
@@ -238,9 +236,9 @@ int rcpp_import_stn_df (const char * bikedb, Rcpp::DataFrame stn_data,
         std::string city)
 {
     sqlite3 *dbcon;
-    char *zErrMsg = 0;
+    char *zErrMsg = nullptr;
 
-    int rc = sqlite3_open_v2 (bikedb, &dbcon, SQLITE_OPEN_READWRITE, NULL);
+    int rc = sqlite3_open_v2 (bikedb, &dbcon, SQLITE_OPEN_READWRITE, nullptr);
     if (rc != SQLITE_OK)
         throw std::runtime_error ("Can't establish sqlite3 connection");
 
@@ -258,7 +256,7 @@ int rcpp_import_stn_df (const char * bikedb, Rcpp::DataFrame stn_data,
     Rcpp::CharacterVector stn_lat = stn_data ["lat"];
 
     unsigned count = 0;
-    for (int i = 0; i<stn_data.nrow (); i++)
+    for (size_t i = 0; i < static_cast <size_t> (stn_data.nrow ()); i++)
     {
         stationqry += "(\'" + city + "\',\'" + city + stn_id (i) + "\',\'" + 
             stn_name (i) + "\'," + stn_lon (i) + "," + stn_lat (i) + ")";
@@ -267,19 +265,19 @@ int rcpp_import_stn_df (const char * bikedb, Rcpp::DataFrame stn_data,
         if (count == 100)
         {
             stationqry += ";";
-            rc = sqlite3_exec(dbcon, stationqry.c_str(), NULL, 0, &zErrMsg);
+            rc = sqlite3_exec(dbcon, stationqry.c_str(), nullptr, nullptr, &zErrMsg);
             if (rc != SQLITE_OK)
                 throw std::runtime_error (msg);
             stationqry = stationqry_base;
             count = 0;
         }
-        else if (i < (stn_data.nrow () - 1))
+        else if (i < (static_cast <size_t> (stn_data.nrow ()) - 1))
             stationqry += ",";
         count++;
     }
     stationqry += ";";
 
-    rc = sqlite3_exec(dbcon, stationqry.c_str(), NULL, 0, &zErrMsg);
+    rc = sqlite3_exec(dbcon, stationqry.c_str(), nullptr, nullptr, &zErrMsg);
     if (rc != SQLITE_OK)
         throw std::runtime_error (msg);
 
