@@ -1,5 +1,4 @@
-* Previous occsional errors on CRAN Windows machines now recitified. These were
-  cause by unreliable API calls and have now been switched off for CRAN tests.
+* Previous error on CRAN Solaris machine now recitified.
 
 # Test environments
 
@@ -9,10 +8,15 @@
 * Windows Visual Studio 2015 (on `appveyor`; `x64`): R-release, R-devel
 * win-builder (R-release, R-devel, R-oldrelease)
 
+Package also checked using both local memory sanitzer and `rocker/r-devel-san`
+with clean results.
+
 
 # R CMD check results
 
-Two NOTEs are generated: one regarding potential mis-spelling of "Los" and
-"Angeles", about which I can do nothing; the other concerns large installed
-package size, which is primarily due to bundled C++ SQLite3 libs, along with
-extensive internal C++ routines.
+The following NOTEs are generated:
+1. Potential mis-spelling of "Los" and "Angeles" (on R-release, R-oldrelease).
+2. Authors@R field gives persons with no valid roles: "rev" (on R-release,
+   R-oldrelease) - These are accepted roles on R-devel.
+3. Note regarding package size due to necessity of internally bundling SQLite3
+   header library, along with extensive internal C++ routines.
