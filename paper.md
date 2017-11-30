@@ -7,13 +7,13 @@ tags:
 authors:
     - name: Mark Padgham
       affiliation: 1
+      orcid: 0000-0003-2172-5265
     - name: Richard Ellison
-      affiliation: 3
+      affiliation: 2
 affiliations:
     - name: Department of Geoinformatics, University of Salzburg, Austria
       index: 1
-    - name: Institute of Transport and Logistics Studies, The University of
-      Sydney, Australia
+    - name: Institute of Transport and Logistics Studies, The University of Sydney, Australia
       index: 2
 bibliography: paper.bib
 date: 28 Nov 2017
@@ -43,3 +43,5 @@ a single SQLite3 database); (3) extracting aggregate statistics.  The two
 primary aggregate statistics are matrices of numbers of trips between all pairs
 of stations, and daily time series. Both forms of aggregation may be extracted
 for specific dates, times, or demographic characteristics of cyclists.
+
+# References
