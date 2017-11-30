@@ -1,5 +1,6 @@
 ---
 title: "bikedata"
+keywords: "bicycle hire systems, bike hire systems, bike hire, bicycle hire, database, bike data"
 output:
   github_document:
     toc: true
