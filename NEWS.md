@@ -1,3 +1,9 @@
+0.1.0.99
+===================
+- Important bug in `dodgr` package rectified previously bug-ridden
+  `bike_distmat()` calculations (thanks Joris Klingen).
+
+
 0.1.0
 ===================
 - New function `bike_distmat()` calculates distance matrices between all pairs
