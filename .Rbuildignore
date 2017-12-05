@@ -12,5 +12,6 @@
 ^script\.R$
 ^docs$
 ^paper\.md$
+^paper\.bib$
 ^\.Rproj\.user$
 ^codemeta\.json$
