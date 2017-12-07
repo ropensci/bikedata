@@ -120,6 +120,7 @@ int rcpp_create_db_indexes (const char* bikedb, Rcpp::CharacterVector tables,
 
     for (int i = 0; i < cols.length(); ++i) 
     {
+        Rcpp::checkUserInterrupt ();
         std::string idxname = "idx_" + tables[i] + "_" + 
             (std::string)cols[i];
         boost::replace_all(idxname, "(", "_");

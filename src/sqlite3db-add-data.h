@@ -93,6 +93,7 @@ int rcpp_import_to_trip_table (const char* bikedb,
 
     for(int filenum = 0; filenum < datafiles.length(); filenum++) 
     {
+        Rcpp::checkUserInterrupt ();
         if (!quiet)
             Rcpp::Rcout << "reading file " << filenum + 1 << "/" <<
                 datafiles.size() << ": " <<
