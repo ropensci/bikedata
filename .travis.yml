@@ -32,6 +32,11 @@ notifications:
 #before_script
 #- R -q -e 'devtools::install_github("ropenscilabs/tic"); tic::prepare_all_stages()'
 
+r_packages:
+    - devtools
+r_github_packages:
+      - jimhester/covr
+
 #after_success
 after_success:
     - Rscript -e "covr::codecov(line_exclusions = 'src/vendor/sqlite3/sqlite3.c')"
