@@ -70,17 +70,20 @@ dl_bikedata <- function (city, data_dir = tempdir(), dates = NULL,
     {
         for (f in dl_files [indx])
         {
+            # replace whitespace in URLs (see issue#53)
+            furl <- gsub (" ", "%20", f)
+            f <- gsub (" ", "", f)
             destfile <- file.path (data_dir, basename(f))
             if (!quiet)
                 message ('Downloading ', basename (f))
-            resp <- httr::GET (f, httr::write_disk (destfile, overwrite = TRUE))
+            resp <- httr::GET (furl, httr::write_disk (destfile, overwrite = TRUE))
             if (resp$status_code != 200)
             {
                 count <- 0
                 while (!file.exists (destfile) & count < 5)
                 {
-                    resp <- httr::GET (f, httr::write_disk (destfile,
-                                                            overwrite = TRUE))
+                    resp <- httr::GET (furl, httr::write_disk (destfile,
+                                                               overwrite = TRUE))
                     count <- count + 1
                 }
                 if (!file.exists (destfile))
