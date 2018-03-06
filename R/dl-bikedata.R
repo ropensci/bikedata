@@ -76,14 +76,16 @@ dl_bikedata <- function (city, data_dir = tempdir(), dates = NULL,
             destfile <- file.path (data_dir, basename(f))
             if (!quiet)
                 message ('Downloading ', basename (f))
-            resp <- httr::GET (furl, httr::write_disk (destfile, overwrite = TRUE))
+            resp <- httr::GET (furl,
+                               httr::write_disk (destfile, overwrite = TRUE))
             if (resp$status_code != 200)
             {
                 count <- 0
                 while (!file.exists (destfile) & count < 5)
                 {
-                    resp <- httr::GET (furl, httr::write_disk (destfile,
-                                                               overwrite = TRUE))
+                    resp <- httr::GET (furl,
+                                       httr::write_disk (destfile,
+                                                         overwrite = TRUE))
                     count <- count + 1
                 }
                 if (!file.exists (destfile))
@@ -112,6 +114,16 @@ dl_bikedata <- function (city, data_dir = tempdir(), dates = NULL,
         invisible (tryCatch (file.remove (csvs [indx]),
                              warning = function (w) NULL,
                              error = function (e) NULL))
+        # There is also now one .xlxs file (#49, March 2017), which is converted
+        # to .csv here
+        xls <- file.path (data_dir, list.files (data_dir, pattern = '.xlsx'))
+        for (f in xls)
+        {
+            fcsv <- paste0 (tools::file_path_sans_ext (f), ".csv")
+            readxl::read_xlsx (f) %>%
+                write.csv (, file = fcsv, row.names = FALSE)
+            chk <- file.remove (f)
+        }
         ptn <- paste0 (ptn, '|.csv')
     } else if (city == 'ny')
     {

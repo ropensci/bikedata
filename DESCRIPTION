@@ -28,6 +28,7 @@ Imports:
     magrittr,
     methods,
     Rcpp,
+    readxl,
     RSQLite,
     reshape2,
     tibble,

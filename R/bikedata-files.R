@@ -78,10 +78,11 @@ get_london_bike_files <- function ()
     flist_zip <- getflist (nodes, type = 'zip')
     flist_zip <- flist_zip [which (grepl ('usage', flist_zip))]
     flist_csv <- getflist (nodes, type = 'csv')
+    flist_xlsx <- getflist (nodes, type = 'xlsx')
 
     # Then convert to tfl.gov.uk filenames
     addr_base <- "http://cycling.data.tfl.gov.uk/usage-stats/"
-    paste0 (addr_base, c (flist_zip, flist_csv))
+    paste0 (addr_base, sort (c (flist_zip, flist_csv, flist_xlsx)))
 }
 
 
