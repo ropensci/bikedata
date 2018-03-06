@@ -1,7 +1,9 @@
-0.1.0.99
+0.1.1
 ===================
 - Important bug in `dodgr` package rectified previously bug-ridden
   `bike_distmat()` calculations (thanks Joris Klingen).
+- Files for Washington DC Capital Bike Share system changed from quarterly to
+  annual dumps
 
 
 0.1.0
