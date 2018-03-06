@@ -40,7 +40,7 @@ Extract daily trip counts for all stations
 \examples{
 \dontrun{
 bike_write_test_data () # by default in tempdir ()
-# dl_bikedata (city = 'la', data_dir = '.') # or download some real data!
+# dl_bikedata (city = 'la', data_dir = data_dir) # or download some real data!
 store_bikedata (data_dir = tempdir (), bikedb = 'testdb')
 # create database indexes for quicker access:
 index_bikedata_db (bikedb = 'testdb')

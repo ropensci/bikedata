@@ -25,7 +25,9 @@ bike_write_test_data ()
 list.files (tempdir ())
 bike_rm_test_data ()
 
+\dontrun{
 bike_write_test_data (data_dir = getwd ())
 list.files ()
 bike_rm_test_data (data_dir = getwd ())
+}
 }

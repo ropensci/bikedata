@@ -23,7 +23,7 @@ Extract summary statistics of database
 \dontrun{
 data_dir <- tempdir ()
 bike_write_test_data (data_dir = data_dir)
-# dl_bikedata (city = 'la', data_dir = '.') # or download some real data!
+# dl_bikedata (city = 'la', data_dir = data_dir) # or download some real data!
 bikedb <- file.path (data_dir, 'testdb')
 store_bikedata (data_dir = data_dir, bikedb = bikedb)
 # create database indexes for quicker access:
