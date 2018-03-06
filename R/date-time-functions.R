@@ -242,7 +242,7 @@ convert_dates_to_filenames <- function (x, city = 'ny')
         mm <- month.abb [as.numeric (substring (x, 5, 6))]
         x <- c (paste0 (mm, yy), paste0 (mm, substring (yy, 3, 4)))
         x <- unique (c (x, x1))
-    } else if (city %in% c ('dc', 'la', 'ph'))
+    } else if (city %in% c ('la', 'ph'))
     {
         # LA uses both "YYYY_QX" and "QX_YYYY"
         qq <- paste0 ('Q', ceiling (as.numeric (substring (x, 5, 6)) / 3))
@@ -251,6 +251,9 @@ convert_dates_to_filenames <- function (x, city = 'ny')
         else
             x <- unique (c (paste0 (yy, '_', qq), paste0 (qq, '_', yy),
                             paste0 (yy, qq)))
+    } else if (city %in% c ('dc')) # changed to annual file dumps
+    {
+        x <- unique (yy)
     } else
         x <- paste0 (x)
 
