@@ -42,8 +42,6 @@ Suggests:
 LinkingTo: 
     BH,
     Rcpp
-Remotes:
-    ATFutures/dodgr
 VignetteBuilder: knitr
 SystemRequirements: C++11
 NeedsCompilation: yes
