@@ -4,6 +4,8 @@
   `bike_distmat()` calculations (thanks Joris Klingen).
 - Files for Washington DC Capital Bike Share system changed from quarterly to
   annual dumps
+- One rogue .xlsx file from London now processed and read properly (among all
+  other well-behaved .csv files).
 
 
 0.1.0
