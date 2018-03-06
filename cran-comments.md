@@ -1,4 +1,5 @@
 * Previous CRAN errors resulted from changes in directory structure for one Amazon AWS service accessed by the package. Code now updated to successfully manage these recently modified directories.
+* Two function examples inadvertently wrote to getwd; these have been switched off.
 
 # Test environments
 
