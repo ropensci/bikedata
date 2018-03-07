@@ -28,12 +28,12 @@ int get_stn_table_size (sqlite3 * dbcon);
 int get_max_trip_id (sqlite3 * dbcon)
 {
     sqlite3_stmt * stmt;
-    char qry_id [BUFFER_SIZE];
+    char qry_id [BUFFER_SIZE] = "\0";
     int rc = sprintf(qry_id, "SELECT MAX(id) FROM trips");
     rc = sqlite3_prepare_v2(dbcon, qry_id, BUFFER_SIZE, &stmt, nullptr);
     rc = sqlite3_step (stmt);
     int max_trip_id = sqlite3_column_int (stmt, 0);
-    sqlite3_reset (stmt);
+    sqlite3_finalize (stmt);
     (void) rc; // supress unused variable warning;
 
     return max_trip_id;
@@ -49,12 +49,12 @@ int get_max_trip_id (sqlite3 * dbcon)
 int get_max_stn_id (sqlite3 * dbcon)
 {
     sqlite3_stmt * stmt;
-    char qry_id [BUFFER_SIZE];
+    char qry_id [BUFFER_SIZE] = "\0";
     sprintf(qry_id, "SELECT MAX(id) FROM stations");
     int rc = sqlite3_prepare_v2(dbcon, qry_id, BUFFER_SIZE, &stmt, nullptr);
     rc = sqlite3_step (stmt);
     int max_stn_id = sqlite3_column_int (stmt, 0);
-    sqlite3_reset (stmt);
+    sqlite3_finalize (stmt);
     (void) rc; // supress unused variable warning;
 
     return max_stn_id;
@@ -70,12 +70,12 @@ int get_max_stn_id (sqlite3 * dbcon)
 int get_stn_table_size (sqlite3 * dbcon)
 {
     sqlite3_stmt * stmt;
-    char qry_id [BUFFER_SIZE];
+    char qry_id [BUFFER_SIZE] = "\0";
     sprintf(qry_id, "SELECT COUNT(*) FROM stations");
     int rc = sqlite3_prepare_v2(dbcon, qry_id, BUFFER_SIZE, &stmt, nullptr);
     rc = sqlite3_step (stmt);
     int num_stns = sqlite3_column_int (stmt, 0);
-    sqlite3_reset (stmt);
+    sqlite3_finalize (stmt);
     (void) rc; // supress unused variable warning;
 
     return num_stns;

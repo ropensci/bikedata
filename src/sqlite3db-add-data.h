@@ -51,9 +51,11 @@ int rcpp_import_to_trip_table (const char* bikedb,
 {
     sqlite3 *dbcon;
     char *zErrMsg = nullptr;
+    const char *zVfs = nullptr;
     size_t rc;
 
-    rc = static_cast <size_t> (sqlite3_open_v2(bikedb, &dbcon, SQLITE_OPEN_READWRITE, nullptr));
+    rc = static_cast <size_t> (sqlite3_open_v2(bikedb, &dbcon, SQLITE_OPEN_READWRITE, zVfs));
+    //rc = static_cast <size_t> (sqlite3_open(bikedb, &dbcon));
     if (rc != SQLITE_OK)
         throw std::runtime_error ("Can't establish sqlite3 connection");
 
@@ -90,6 +92,7 @@ int rcpp_import_to_trip_table (const char* bikedb,
     sqlite3_prepare_v2(dbcon, sqlqry, BUFFER_SIZE, &stmt, nullptr);
 
     sqlite3_exec(dbcon, "BEGIN TRANSACTION", nullptr, nullptr, &zErrMsg);
+    sqlite3_free (zErrMsg);
 
     for(int filenum = 0; filenum < datafiles.length(); filenum++) 
     {
@@ -172,8 +175,10 @@ int rcpp_import_to_trip_table (const char* bikedb,
             }
         }
     }
+    sqlite3_finalize(stmt);
 
     sqlite3_exec(dbcon, "END TRANSACTION", nullptr, nullptr, &zErrMsg);
+    sqlite3_free (zErrMsg);
 
     if (city == "ny" || city == "bo" || city == "la" || city == "ph")
         import_to_station_table (dbcon, stationqry);
@@ -218,14 +223,19 @@ int rcpp_import_to_file_table (const char * bikedb,
         datafile_qry += std::to_string (nfiles) + ",\"" + city + "\",\"" + 
             i + "\");";
 
-        rc = sqlite3_exec(dbcon, datafile_qry.c_str(), nullptr, nullptr, &zErrMsg);
+        const char *sql = datafile_qry.c_str ();
+        rc = sqlite3_exec(dbcon, sql, nullptr, nullptr, &zErrMsg);
+        sqlite3_free (zErrMsg);
+        //rc = sqlite3_exec(dbcon, datafile_qry.c_str(), nullptr, nullptr, &zErrMsg);
         if (rc == 0)
             nfiles++;
     }
 
     rc = sqlite3_close_v2(dbcon);
+    //rc = sqlite3_close(dbcon);
     if (rc != SQLITE_OK)
         throw std::runtime_error ("Unable to close sqlite database");
+    sqlite3_free (zErrMsg);
 
     return nfiles;
 }
