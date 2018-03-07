@@ -68,6 +68,7 @@ int import_to_station_table (sqlite3 * dbcon,
     qry = "UPDATE stations SET geom = MakePoint(longitude, latitude, 4326);";
     rc = sqlite3_exec(dbcon, qry.c_str (), nullptr, nullptr, &zErrMsg);
 
+    sqlite3_free (zErrMsg);
     return rc;
 }
 
@@ -110,7 +111,7 @@ std::map <std::string, std::string> get_dc_stn_table (sqlite3 * dbcon)
         stn_map [stn_name] = stn_id;
     }
 
-    sqlite3_reset(stmt);
+    sqlite3_finalize(stmt);
 
     // Then add additional stations that have names different to those given in
     // the official DC govt data. Note that it's much easier this way than doing
@@ -212,7 +213,7 @@ std::unordered_set <std::string> get_dc_stn_ids (sqlite3 * dbcon)
         ss.str ("");
     }
 
-    sqlite3_reset(stmt);
+    sqlite3_finalize(stmt);
 
     return stn_ids;
 }
@@ -266,6 +267,8 @@ int rcpp_import_stn_df (const char * bikedb, Rcpp::DataFrame stn_data,
         {
             stationqry += ";";
             rc = sqlite3_exec(dbcon, stationqry.c_str(), nullptr, nullptr, &zErrMsg);
+            sqlite3_free (zErrMsg);
+
             if (rc != SQLITE_OK)
                 throw std::runtime_error (msg);
             stationqry = stationqry_base;
@@ -280,6 +283,7 @@ int rcpp_import_stn_df (const char * bikedb, Rcpp::DataFrame stn_data,
     rc = sqlite3_exec(dbcon, stationqry.c_str(), nullptr, nullptr, &zErrMsg);
     if (rc != SQLITE_OK)
         throw std::runtime_error (msg);
+    sqlite3_free (zErrMsg);
 
     int num_stns_added = get_stn_table_size (dbcon) - num_stns_old;
 
