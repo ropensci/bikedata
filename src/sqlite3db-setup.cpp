@@ -47,6 +47,7 @@ int rcpp_create_sqlite3_db (const char * bikedb)
         throw std::runtime_error ("Can't establish sqlite3 connection");
 
     rc = sqlite3_exec(dbcon, "SELECT InitSpatialMetadata(1);", nullptr, nullptr, &zErrMsg);
+    sqlite3_free (zErrMsg);
 
     // NOTE: Database structure is ordered according to the order of the NYC
     // citibike system, so each line of data from that city can be injected
@@ -81,7 +82,9 @@ int rcpp_create_sqlite3_db (const char * bikedb)
         "    name text"
         ");";
 
-    rc = sqlite3_exec(dbcon, createqry.c_str(), nullptr, nullptr, &zErrMsg);
+    const char *sql = createqry.c_str ();
+    rc = sqlite3_exec(dbcon, sql, nullptr, nullptr, &zErrMsg);
+    sqlite3_free (zErrMsg);
 
     rc = sqlite3_close_v2(dbcon);
     if (rc != SQLITE_OK)
@@ -146,6 +149,7 @@ int rcpp_create_db_indexes (const char* bikedb, Rcpp::CharacterVector tables,
     rc = sqlite3_close_v2(dbcon);
     if (rc != SQLITE_OK) 
         throw std::runtime_error ("Unable to close sqlite database");
+    sqlite3_free (zErrMsg);
   
     return(rc);
 }
@@ -191,6 +195,7 @@ int rcpp_create_city_index (const char* bikedb, bool reindex)
     rc = sqlite3_close_v2(dbcon);
     if (rc != SQLITE_OK) 
         throw std::runtime_error ("Unable to close sqlite database");
+    sqlite3_free (zErrMsg);
   
     return(rc);
 }
