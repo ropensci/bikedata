@@ -63,12 +63,17 @@ int import_to_station_table (sqlite3 * dbcon,
 
     std::string qry = "SELECT AddGeometryColumn"
                       "('stations', 'geom', 4326, 'POINT', 'XY');";
-    rc = sqlite3_exec(dbcon, qry.c_str (), nullptr, nullptr, &zErrMsg);
-
-    qry = "UPDATE stations SET geom = MakePoint(longitude, latitude, 4326);";
-    rc = sqlite3_exec(dbcon, qry.c_str (), nullptr, nullptr, &zErrMsg);
-
+    const char *sql = qry.c_str ();
+    rc = sqlite3_exec(dbcon, sql, nullptr, nullptr, &zErrMsg);
     sqlite3_free (zErrMsg);
+
+    // NOTE: This 2nd query has to be a different variable, otherwise sqlite
+    // produces a memory leak
+    std::string qry2 = "UPDATE stations SET geom = MakePoint(longitude, latitude, 4326);";
+    const char *sql2 = qry2.c_str ();
+    rc = sqlite3_exec(dbcon, sql2, nullptr, nullptr, &zErrMsg);
+    sqlite3_free (zErrMsg);
+
     return rc;
 }
 
