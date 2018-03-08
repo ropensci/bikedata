@@ -6,6 +6,7 @@
   annual dumps
 - One rogue .xlsx file from London now processed and read properly (among all
   other well-behaved .csv files).
+- Update bundled sqlite3: 3.21 -> 3.22
 
 
 0.1.0
