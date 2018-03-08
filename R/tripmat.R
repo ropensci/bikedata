@@ -291,12 +291,21 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
 
     bikedb <- check_db_arg (bikedb)
     city <- check_city_arg (bikedb, city)
+    dl <- vapply (bike_datelimits (bikedb), function (i)
+                  strsplit (i, " ") [[1]] [1], "character") %>%
+                as.character ()
 
     x <- c (NULL, 'city' = city)
     if (!missing (start_date))
-        x <- c (x, 'start_date' = convert_ymd (start_date))
+    {
+        dl [1] <- convert_ymd (start_date)
+        x <- c (x, 'start_date' = dl [1])
+    }
     if (!missing (end_date))
-        x <- c (x, 'end_date' = convert_ymd (end_date))
+    {
+        dl [2] <- convert_ymd (end_date)
+        x <- c (x, 'end_date' = dl [2])
+    }
     if (!missing (start_time))
         x <- c (x, 'start_time' = convert_hms (start_time))
     if (!missing (end_time))
@@ -362,13 +371,16 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
     {
         trips <- long2wide (trips)
         trips [is.na (trips)] <- 0
-        attr (trips, "variable") <- "numtrips" # used in bike_match_matrices
     } else
     {
         trips$numtrips <- ifelse (is.na (trips$numtrips) == TRUE, 0,
                                   trips$numtrips)
         trips <- tibble::as_tibble (trips)
     }
+    attr (trips, "variable") <- "numtrips" # used in bike_match_matrices
+    attr (trips, "bikedata_version") <- packageVersion ("bikedata")
+    attr (trips, "start_date") <- dl [1]
+    attr (trips, "end_date") <- dl [2]
 
     return (trips)
 }
