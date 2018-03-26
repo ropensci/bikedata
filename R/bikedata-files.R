@@ -22,7 +22,7 @@ get_aws_bike_files <- function (bucket)
     # NOTE: xml2::xml_find_all (doc, ".//Key") should work here but doesn't, so
     # this manually does what that would do
     files <- lapply (nodes, function (i)
-                     if (grepl ('zip', i))
+                     if (grepl ('zip|csv', i))
                          strsplit (strsplit (as.character (i),
                                  "<Key>") [[1]] [2], "</Key>") [[1]] [1] )
     # nyc citibike data has a redundamt file as first item
@@ -120,8 +120,8 @@ get_nabsa_files <- function (city)
 #' @noRd
 get_bike_files <- function (city)
 {
-    aws_cities <- c ('ny', 'dc', 'bo')
-    buckets <- c ('tripdata', 'capitalbikeshare-data', 'hubway-data')
+    aws_cities <- c ('ny', 'dc', 'bo', 'sf')
+    buckets <- c ('tripdata', 'capitalbikeshare-data', 'hubway-data','fordgobike-data')
     nabsa_cities <- c ('la', 'ph')
 
     if (city %in% aws_cities)

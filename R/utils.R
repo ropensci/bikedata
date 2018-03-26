@@ -26,9 +26,11 @@ convert_city_names <- function (city)
                      'wa', 'dc', 'ca', # washington dc capital bike share
                      'la', 'me', # LA metro
                      'lo', 'sa', # london santander
-                     'ph', 'in') # philly indego
+                     'ph', 'in', # philly indego
+                     'by', 'fd', 'ok','sf','sj') #sf bay area ford gobike 
     city_code <- c ('ny', 'ny', 'ny', 'bo', 'bo', 'ch', 'ch',
-                    'dc', 'dc', 'dc', 'la', 'la', 'lo', 'lo', 'ph', 'ph')
+                    'dc', 'dc', 'dc', 'la', 'la', 'lo', 'lo', 
+                    'ph', 'ph', 'sf','sf','sf','sf','sf')
     city_code <- city_code [pmatch (city, city_names)]
 
     if (length (indx_lo) > 0)
@@ -108,7 +110,7 @@ check_db_arg <- function (bikedb)
     return (bikedb)
 }
 
-# expand unix-style tidle for home directory
+# expand unix-style tilde for home directory
 expand_home <- function (x)
 {
     if (grepl ("~", x))

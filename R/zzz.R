@@ -7,10 +7,11 @@
                    "Jersey City Bike Share, LLC (\"Bikeshare\")\n",
                    "  see https://www.citibikenyc.com/data-sharing-policy\n",
                    "Data for Washington DC (Captialbikeshare), ",
-                   "Chiago (Divvybikes) and Boston (Hubway)\n",
+                   "Chicago (Divvybikes), San Francisco Bay Area (Ford GoBike) and Boston (Hubway)\n",
                    "  provided and owned by Motivate International Inc.\n",
                    "  see https://www.capitalbikeshare.com/data-license-agreement\n", #nolint
                    "  and https://www.divvybikes.com/data-license-agreement\n",
+                   "  and https://assets.fordgobike.com/data-license-agreement.html\n",
                    "  and https://www.thehubway.com/data-license-agreement")
     packageStartupMessage (msg)
 }
