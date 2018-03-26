@@ -55,6 +55,24 @@ bike_stations <- function (bikedb, city)
     return (st)
 }
 
+#' Get San Francisco Bay Area Stations
+#'
+#' @return \code{data.frame} of (id, name, lon, lat) of all stations in the San Francisco
+#' Bay Area's Ford GoBike System
+#'
+#' @noRd
+bike_get_sf_stations <- function ()
+{
+    library(sf)
+    station_url <- "https://layer.bicyclesharing.net/map/v1/fgb/stations"
+    stations_sf <- st_read(station_url)
+    stations_df <- as.data.frame(stations_sf, stringsAsFactors=FALSE)
+    stations_df[c('lon','lat')] <- st_coordinates(stations_sf)
+    stations_df <- stations_df[,c('station_id','name','lon','lat')]
+    names(stations_df) <- c('id','name','lon','lat')
+    return(stations_df)
+}
+
 #' Get London station data from Transport for London (TfL)
 #'
 #' @return \code{data.frame} of (id, name, lon, lat) of all stations in London's

@@ -28,6 +28,7 @@
 #'  Los Angeles (la)\tab Metro Bike Share\cr
 #'  Boston (bo)\tab Hubway\cr
 #'  Philadelphia (ph)\tab Indego\cr
+#'  San Fran Bay Area (sf)\tab\ Ford GoBike\cr
 #' }
 #'
 #' @note Data for different cities are all stored in the same database, with
@@ -111,11 +112,12 @@ store_bikedata <- function (bikedb, city, data_dir, dates = NULL, quiet = FALSE)
     ntrips <- 0
     for (ci in city)
     {
+        print(city)
         if (!quiet)
         {
-            if (length (city) == 1 & ci != 'lo')
+            if (length (city) == 1 & (ci != 'lo' & ci != 'sf'))
                 message ('Unzipping raw data files ...')
-            else if (ci != 'lo') # mostly csv files that don't need unzipping
+            else if (ci != 'lo' & ci != 'sf') # mostly csv files that don't need unzipping
                 message ('Unzipping raw data files for ', ci, ' ...')
         }
         if (ci == 'ch')
@@ -134,7 +136,7 @@ store_bikedata <- function (bikedb, city, data_dir, dates = NULL, quiet = FALSE)
                 nf <- rcpp_import_to_file_table (bikedb,
                                                  basename (flists$flist_zip),
                                                  ci, nf)
-            if (ci == 'lo' & length (flists$flist_csv) > 0)
+            if ((ci == 'lo' | ci == 'sf') & length (flists$flist_csv) > 0)
                 nf <- rcpp_import_to_file_table (bikedb,
                                                  basename (flists$flist_csv),
                                                  ci, nf)
@@ -149,6 +151,10 @@ store_bikedata <- function (bikedb, city, data_dir, dates = NULL, quiet = FALSE)
             {
                 lo_stns <- bike_get_london_stations ()
                 nstations <- rcpp_import_stn_df (bikedb, lo_stns, 'lo')
+            } else if (ci == 'sf')
+            {
+                sf_stns <- bike_get_sf_stations ()
+                nstations <- rcpp_import_stn_df (bikedb, sf_stns, 'sf')
             } else if (ci == 'dc')
             {
                 dc_stns <- bike_get_dc_stations ()
@@ -309,6 +315,8 @@ get_bike_cities <- function (data_dir)
         cities$la <- TRUE
     if (any (grepl ('indego', flist, ignore.case = TRUE)))
         cities$ph <- TRUE
+    if (any (grepl ('fordgobike', flist, ignore.case = TRUE)))
+        cities$ph <- TRUE
 
     cities <- which (unlist (cities))
     names (cities)
@@ -335,6 +343,8 @@ get_flist_city <- function (data_dir, bikedb, city)
         index <- which (grepl ('citibike', flist, ignore.case = TRUE))
     else if (any (city == 'ch'))
         index <- which (grepl ('divvy', flist, ignore.case = TRUE))
+    else if (any (city == 'sf'))
+        index <- which (grepl ('fordgobike', flist, ignore.case = TRUE))
     else if (any (city == 'bo'))
         index <- which (grepl ('hubway', flist, ignore.case = TRUE))
     else if (any (city == 'dc'))
@@ -400,7 +410,7 @@ bike_unzip_files <- function (data_dir, bikedb, city, dates)
     flist_csv <- flist_rm <- NULL
 
     # Recent London data files are not compressed
-    if (city == 'lo' && length (existing_csv_files) > 0)
+    if ((city == 'lo' | city == 'sf') && length (existing_csv_files) > 0)
     {
         flist_csv <- get_new_datafiles (bikedb, existing_csv_files)
         if (length (flist_csv) > 0)
