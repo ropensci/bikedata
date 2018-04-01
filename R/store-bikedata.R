@@ -413,6 +413,8 @@ bike_unzip_files <- function (data_dir, bikedb, city, dates)
         for (f in flist_zip)
         {
             fi <- unzip (f, list = TRUE)$Name
+            # some files (LA) have junk "MAXOSX" files in the archives
+            fi <- fi [which (!grepl ("MACOSX", fi))]
             flist_csv <- c (flist_csv, basename (fi))
             if (!all (fi %in% existing_csv_files))
             {
