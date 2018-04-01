@@ -58,12 +58,14 @@ dl_bikedata <- function (city, data_dir = tempdir(), dates = NULL,
         dates <- bike_convert_dates (dates) %>%
             expand_dates_to_range %>%
             convert_dates_to_filenames (city = city)
-        indx <- which (grepl (paste (dates, collapse = "|"), files))
+        indx <- which (grepl (paste (dates, collapse = "|"), files,
+                              ignore.case = TRUE))
         if (length (indx) == 0)
             dates_exist <- FALSE
         else
             indx <- which (!file.exists (files) &
-                           grepl (paste (dates, collapse = "|"), files))
+                           grepl (paste (dates, collapse = "|"), files,
+                                  ignore.case = TRUE))
     }
 
     if (length (indx) > 0)

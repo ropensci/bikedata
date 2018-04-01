@@ -250,6 +250,7 @@ convert_dates_to_filenames <- function (x, city = 'ny')
             x <- unique (paste0 (yy, '-', qq))
         else
             x <- unique (c (paste0 (yy, '_', qq), paste0 (qq, '_', yy),
+                            paste0 (yy, '-', qq), paste0 (qq, '-', yy),
                             paste0 (yy, qq)))
     } else if (city %in% c ('dc')) # changed to annual file dumps
     {

@@ -101,7 +101,7 @@ store_bikedata <- function (bikedb, city, data_dir, dates = NULL, quiet = FALSE)
     er_idx <- file.exists (bikedb) + 1 # = (1, 2) if (!exists, exists)
     if (!quiet)
         message (c ('Creating', 'Adding data to') [er_idx], ' sqlite3 database')
-    (!file.exists (bikedb))
+    if (!file.exists (bikedb))
     {
         chk <- rcpp_create_sqlite3_db (bikedb)
         if (chk != 0)
