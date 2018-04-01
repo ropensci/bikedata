@@ -1,3 +1,9 @@
+0.1.1.099
+===================
+- Bug fix for LA data which previously caused error due to invisible mac OSX
+  system files being bundled with the distributed data
+- More accurate date processing for quarterly LA data
+
 0.1.1
 ===================
 - Important bug in `dodgr` package rectified previously bug-ridden
