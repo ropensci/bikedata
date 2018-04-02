@@ -19,7 +19,7 @@ get_fake_trip_files <- function (bucket)
     # NOTE: xml2::xml_find_all (doc, ".//Key") should work here but doesn't, so
     # this manually does what that would do
     files <- lapply (nodes, function (i)
-                     if (grepl ('zip', i))
+                     if (grepl ('zip|csv', i))
                          strsplit (strsplit (as.character (i),
                                              "<Key>") [[1]] [2],
                                    "</Key>") [[1]] [1] )
