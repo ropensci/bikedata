@@ -137,7 +137,9 @@ get_bike_files <- function (city)
     else if (city == 'lo')
         files <- get_london_bike_files ()
     else if (city == 'mn')
-        files <- get_mn_bike_files ()
+        warning ('Data for the Nice Ride MN system must be downloaded ',
+                 'manually from\nhttps://www.niceridemn.org/data/, and ',
+                 'loaded using store_bikedata')
 
     return (files)
 }

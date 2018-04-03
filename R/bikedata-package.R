@@ -67,7 +67,8 @@
 #' @importFrom stats sd
 #' @importFrom tibble as_tibble tibble
 #' @importFrom tools file_path_sans_ext
-#' @importFrom utils data menu read.csv tail type.convert unzip write.csv zip
+#' @importFrom utils data menu packageVersion read.csv tail
+#' @importFrom utils type.convert unzip write.csv zip
 #' @importFrom xml2 xml_children xml_find_all
 #' @useDynLib bikedata, .registration = TRUE
 NULL
