@@ -23,7 +23,8 @@
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-
+  
+  
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -63,7 +64,7 @@
       
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/mpadge/bikedata">
+  <a href="https://github.com/ropensci/bikedata">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -90,7 +91,7 @@
         
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A <code>data.frame</code> detailing the kinds of demographc data provided
+    <p>A <code>data.frame</code> detailing the kinds of demographic data provided
 by the different systems</p>
     
 
@@ -101,7 +102,33 @@ by the different systems</p>
 #&gt; 3   dc Washington DC CapitalBikeShare            FALSE
 #&gt; 4   la   Los Angeles            Metro            FALSE
 #&gt; 5   lo        London        Santander            FALSE
-#&gt; 6   ny      New York         Citibike             TRUE</div></pre>
+#&gt; 6   mn   Minneapolis         NiceRide             TRUE
+#&gt; 7   ny      New York         Citibike             TRUE
+#&gt; 8   ph  Philadelphia           Indego            FALSE</div><div class='input'># Examples of filtering data by demographic parameters:
+</div><span class='co'># NOT RUN {</span>
+<span class='no'>data_dir</span> <span class='kw'>&lt;-</span> <span class='fu'>tempdir</span> ()
+<span class='fu'><a href='bike_write_test_data.html'>bike_write_test_data</a></span> (<span class='kw'>data_dir</span> <span class='kw'>=</span> <span class='no'>data_dir</span>)
+<span class='no'>bikedb</span> <span class='kw'>&lt;-</span> <span class='fu'>file.path</span> (<span class='no'>data_dir</span>, <span class='st'>'testdb'</span>)
+<span class='fu'><a href='store_bikedata.html'>store_bikedata</a></span> (<span class='kw'>data_dir</span> <span class='kw'>=</span> <span class='no'>data_dir</span>, <span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>)
+<span class='co'># create database indexes for quicker access:</span>
+<span class='fu'><a href='index_bikedata_db.html'>index_bikedata_db</a></span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>)
+
+<span class='fu'>sum</span> (<span class='fu'><a href='bike_tripmat.html'>bike_tripmat</a></span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'bo'</span>)) <span class='co'># 200 trips</span>
+<span class='fu'>sum</span> (<span class='fu'><a href='bike_tripmat.html'>bike_tripmat</a></span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'bo'</span>, <span class='kw'>birth_year</span> <span class='kw'>=</span> <span class='fl'>1990</span>)) <span class='co'># 9</span>
+<span class='fu'>sum</span> (<span class='fu'><a href='bike_tripmat.html'>bike_tripmat</a></span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'bo'</span>, <span class='kw'>gender</span> <span class='kw'>=</span> <span class='st'>'f'</span>)) <span class='co'># 22</span>
+<span class='fu'>sum</span> (<span class='fu'><a href='bike_tripmat.html'>bike_tripmat</a></span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'bo'</span>, <span class='kw'>gender</span> <span class='kw'>=</span> <span class='fl'>2</span>)) <span class='co'># 22</span>
+<span class='fu'>sum</span> (<span class='fu'><a href='bike_tripmat.html'>bike_tripmat</a></span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'bo'</span>, <span class='kw'>gender</span> <span class='kw'>=</span> <span class='fl'>1</span>)) <span class='co'># = m; 68</span>
+<span class='fu'>sum</span> (<span class='fu'><a href='bike_tripmat.html'>bike_tripmat</a></span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'bo'</span>, <span class='kw'>gender</span> <span class='kw'>=</span> <span class='fl'>0</span>)) <span class='co'># = n; 9</span>
+<span class='co'># Sum of gender-filtered trips is less than total because \code{gender = 0}</span>
+<span class='co'># extracts all registered users with unspecified genders, while without gender</span>
+<span class='co'># filtering extracts all trips for registered and non-registered users.</span>
+
+<span class='co'># The following generates an error because Washinton DC's DivvyBike system does</span>
+<span class='co'># not provide demographic data</span>
+<span class='fu'>sum</span> (<span class='fu'><a href='bike_tripmat.html'>bike_tripmat</a></span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'dc'</span>, <span class='kw'>birth_year</span> <span class='kw'>=</span> <span class='fl'>1990</span>))
+<span class='fu'><a href='bike_rm_test_data.html'>bike_rm_test_data</a></span> (<span class='kw'>data_dir</span> <span class='kw'>=</span> <span class='no'>data_dir</span>)
+<span class='fu'><a href='bike_rm_db.html'>bike_rm_db</a></span> (<span class='no'>bikedb</span>)
+<span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

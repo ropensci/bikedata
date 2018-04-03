@@ -23,7 +23,8 @@
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-
+  
+  
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -63,7 +64,7 @@
       
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/mpadge/bikedata">
+  <a href="https://github.com/ropensci/bikedata">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -87,7 +88,7 @@
 The entire package works by reading zip-compressed data files provided by the
 various hire bicycle systems. This function generates some equivalent data
 that can be read into an <code>SQLite</code> database by the
-<code>store_bikedata()</code> function, so that all other package functionality can
+<code><a href='store_bikedata.html'>store_bikedata()</a></code> function, so that all other package functionality can
 then be tested from the resultant database. This function is also used in the
 examples of all other functions.</p>
     
@@ -101,51 +102,37 @@ examples of all other functions.</p>
       <th>data_dir</th>
       <td><p>Directory in which data are to be extracted. Defaults to
 <code>tempdir()</code>. If any other directory is specified, files ought to be
-removed with <code>bike_rm_test_data()</code>.</p></td>
+removed with <code><a href='bike_rm_test_data.html'>bike_rm_test_data()</a></code>.</p></td>
     </tr>
     </table>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>bike_write_test_data</span> ()
-<span class='fu'>list.files</span> (<span class='fu'>tempdir</span> ())</div><div class='output co'>#&gt;  [1] "bikedata.Rcheck"                                      
-#&gt;  [2] "file1a414dc88179.error"                               
-#&gt;  [3] "libloc_169_8f48fc7d1db1bb3e.rds"                      
-#&gt;  [4] "libloc_174_173b0d0583319ed2.rds"                      
-#&gt;  [5] "libloc_180_a38f7d5813344af9.rds"                      
-#&gt;  [6] "libloc_197_5b8cfcef8f46583c.rds"                      
-#&gt;  [7] "repos_https%3A%2F%2Fcran.wu.ac.at%2Fsrc%2Fcontrib.rds"
-#&gt;  [8] "Rprofile-devtools"                                    
-#&gt;  [9] "sample-cabi-dc-trips-history-data.zip"                
-#&gt; [10] "sample-citibike-tripdata.zip"                         
-#&gt; [11] "sample-divvy-trips.zip"                               
-#&gt; [12] "sample-hubway-trip-data.zip"                          
-#&gt; [13] "sample-JourneyDataExtract-london.csv.zip"             
-#&gt; [14] "sample-la-metro.zip"                                  
-#&gt; [15] "temp_libpath1a416ef835e2"                             </div><div class='input'><span class='fu'><a href='bike_rm_test_data.html'>bike_rm_test_data</a></span> ()</div><div class='output co'>#&gt; [1] 6</div><div class='input'>
+<span class='fu'>list.files</span> (<span class='fu'>tempdir</span> ())</div><div class='output co'>#&gt;  [1] "bikedb.sqlite"                                                                       
+#&gt;  [2] "Hubway_Stations_2011_2016.csv"                                                       
+#&gt;  [3] "Hubway_Stations_as_of_July_2017.csv"                                                 
+#&gt;  [4] "la_metro_gbfs_trips_Q1_2017.zip"                                                     
+#&gt;  [5] "la_metro_gbfs_trips_Q2_2017.csv.zip"                                                 
+#&gt;  [6] "libloc_169_8f48fc7d1db1bb3e.rds"                                                     
+#&gt;  [7] "libloc_174_173b0d0583319ed2.rds"                                                     
+#&gt;  [8] "libloc_180_a38f7d5813344af9.rds"                                                     
+#&gt;  [9] "libloc_197_5b8cfcef8f46583c.rds"                                                     
+#&gt; [10] "metro-bike-share-trips-2017-q3.csv.zip"                                              
+#&gt; [11] "metro-bike-share-trips-2017-q4-v2.csv.zip"                                           
+#&gt; [12] "repos_https%3A%2F%2Fbioconductor.org%2Fpackages%2Frelease%2Fbioc%2Fsrc%2Fcontrib.rds"
+#&gt; [13] "repos_https%3A%2F%2Fcran.wu.ac.at%2Fsrc%2Fcontrib.rds"                               
+#&gt; [14] "sample-cabi-dc-trips-history-data.zip"                                               
+#&gt; [15] "sample-citibike-tripdata.zip"                                                        
+#&gt; [16] "sample-divvy-trips.zip"                                                              
+#&gt; [17] "sample-hubway-trip-data.zip"                                                         
+#&gt; [18] "sample-JourneyDataExtract-london.csv.zip"                                            
+#&gt; [19] "sample-la-metro.zip"                                                                 </div><div class='input'><span class='fu'><a href='bike_rm_test_data.html'>bike_rm_test_data</a></span> ()</div><div class='output co'>#&gt; [1] 6</div><div class='input'>
+</div><span class='co'># NOT RUN {</span>
 <span class='fu'>bike_write_test_data</span> (<span class='kw'>data_dir</span> <span class='kw'>=</span> <span class='st'>'.'</span>)
-<span class='fu'>list.files</span> ()</div><div class='output co'>#&gt;  [1] "bike_daily_trips.html"                   
-#&gt;  [2] "bikedata.html"                           
-#&gt;  [3] "bike_datelimits.html"                    
-#&gt;  [4] "bike_db_totals.html"                     
-#&gt;  [5] "bike_demographic_data.html"              
-#&gt;  [6] "bike_latest_files.html"                  
-#&gt;  [7] "bike_rm_db.html"                         
-#&gt;  [8] "bike_rm_test_data.html"                  
-#&gt;  [9] "bike_stations.html"                      
-#&gt; [10] "bike_summary_stats.html"                 
-#&gt; [11] "bike_test_data.html"                     
-#&gt; [12] "bike_tripmat.html"                       
-#&gt; [13] "bike_write_test_data.html"               
-#&gt; [14] "dl_bikedata.html"                        
-#&gt; [15] "index.html"                              
-#&gt; [16] "sample-cabi-dc-trips-history-data.zip"   
-#&gt; [17] "sample-citibike-tripdata.zip"            
-#&gt; [18] "sample-divvy-trips.zip"                  
-#&gt; [19] "sample-hubway-trip-data.zip"             
-#&gt; [20] "sample-JourneyDataExtract-london.csv.zip"
-#&gt; [21] "sample-la-metro.zip"                     
-#&gt; [22] "store_bikedata.html"                     </div><div class='input'><span class='fu'><a href='bike_rm_test_data.html'>bike_rm_test_data</a></span> (<span class='kw'>data_dir</span> <span class='kw'>=</span> <span class='st'>'.'</span>)</div><div class='output co'>#&gt; [1] 6</div></pre>
+<span class='fu'>list.files</span> ()
+<span class='fu'><a href='bike_rm_test_data.html'>bike_rm_test_data</a></span> (<span class='kw'>data_dir</span> <span class='kw'>=</span> <span class='st'>'.'</span>)
+<span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

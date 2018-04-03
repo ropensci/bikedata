@@ -23,7 +23,8 @@
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-
+  
+  
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -63,7 +64,7 @@
       
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/mpadge/bikedata">
+  <a href="https://github.com/ropensci/bikedata">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -152,7 +153,7 @@ stations that have only operated a short time, and vice versa.</p></td>
     <tr>
       <th>long</th>
       <td><p>If FALSE, a square tripmat of (num-stations, num_stations) is
-returns; if TRUE, a long-format matrix of (stn-from, stn-to, ntrips) is
+returned; if TRUE, a long-format matrix of (stn-from, stn-to, ntrips) is
 returned.</p></td>
     </tr>
     <tr>
@@ -164,8 +165,8 @@ returned.</p></td>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>If <code>long = FALSE</code>, a square matrix of numbers of trips between
-each station, otherwise a long-form data.frame with three columns of of
-(start_station, end_station, num_trips)</p>
+each station, otherwise a long-form <span class="pkg">tibble</span> with three columns of of
+(<code>start_station_id, end_station_id, numtrips</code>).</p>
     
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
@@ -175,42 +176,50 @@ to be empty.  Both dates and times may be given either in numeric or
 character format, with arbitrary (or no) delimiters between fields. Single
 numeric times are interpreted as hours, with 24 interpreted as day's end at
 23:59:59.</p>
+<p>If <code>standardise = TRUE</code>, the trip matrix will have the same number
+of trips, but they will be re-distributed as described, with more recent
+stations having more trips than older stations. Trip number are also
+non-integer in this case, whereas they are always integer-valued for
+<code>standardise = FALSE</code>.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>not_run</span>({
-  <span class='no'>data_dir</span> <span class='kw'>&lt;-</span> <span class='fu'>tempdir</span> ()
-  <span class='fu'><a href='bike_write_test_data.html'>bike_write_test_data</a></span> (<span class='kw'>data_dir</span> <span class='kw'>=</span> <span class='no'>data_dir</span>)
-  <span class='co'># or download some real data!</span>
-  <span class='co'># dl_bikedata (city = 'la', data_dir = data_dir)</span>
-  <span class='no'>bikedb</span> <span class='kw'>&lt;-</span> <span class='fu'>file.path</span> (<span class='no'>data_dir</span>, <span class='st'>'testdb'</span>)
-  <span class='fu'><a href='store_bikedata.html'>store_bikedata</a></span> (<span class='kw'>data_dir</span> <span class='kw'>=</span> <span class='no'>data_dir</span>, <span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>)
+    <pre class="examples"><span class='co'># NOT RUN {</span>
+<span class='no'>data_dir</span> <span class='kw'>&lt;-</span> <span class='fu'>tempdir</span> ()
+<span class='fu'><a href='bike_write_test_data.html'>bike_write_test_data</a></span> (<span class='kw'>data_dir</span> <span class='kw'>=</span> <span class='no'>data_dir</span>)
+<span class='co'># or download some real data!</span>
+<span class='co'># dl_bikedata (city = 'la', data_dir = data_dir)</span>
+<span class='no'>bikedb</span> <span class='kw'>&lt;-</span> <span class='fu'>file.path</span> (<span class='no'>data_dir</span>, <span class='st'>'testdb'</span>)
+<span class='fu'><a href='store_bikedata.html'>store_bikedata</a></span> (<span class='kw'>data_dir</span> <span class='kw'>=</span> <span class='no'>data_dir</span>, <span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>)
+<span class='co'># create database indexes for quicker access:</span>
+<span class='fu'><a href='index_bikedata_db.html'>index_bikedata_db</a></span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>)
 
-  <span class='no'>tm</span> <span class='kw'>&lt;-</span> <span class='fu'>bike_tripmat</span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'ny'</span>) <span class='co'># full trip matrix</span>
-  <span class='no'>tm</span> <span class='kw'>&lt;-</span> <span class='fu'>bike_tripmat</span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'ny'</span>,
-                      <span class='kw'>start_date</span> <span class='kw'>=</span> <span class='fl'>20161201</span>, <span class='kw'>end_date</span> <span class='kw'>=</span> <span class='fl'>20161201</span>)
-  <span class='no'>tm</span> <span class='kw'>&lt;-</span> <span class='fu'>bike_tripmat</span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'ny'</span>, <span class='kw'>start_time</span> <span class='kw'>=</span> <span class='fl'>1</span>)
-  <span class='no'>tm</span> <span class='kw'>&lt;-</span> <span class='fu'>bike_tripmat</span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'ny'</span>, <span class='kw'>start_time</span> <span class='kw'>=</span> <span class='st'>"01:00"</span>)
-  <span class='no'>tm</span> <span class='kw'>&lt;-</span> <span class='fu'>bike_tripmat</span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'ny'</span>, <span class='kw'>end_time</span> <span class='kw'>=</span> <span class='st'>"01:00"</span>)
-  <span class='no'>tm</span> <span class='kw'>&lt;-</span> <span class='fu'>bike_tripmat</span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'ny'</span>,
-                      <span class='kw'>start_date</span> <span class='kw'>=</span> <span class='fl'>20161201</span>, <span class='kw'>start_time</span> <span class='kw'>=</span> <span class='fl'>1</span>)
-  <span class='no'>tm</span> <span class='kw'>&lt;-</span> <span class='fu'>bike_tripmat</span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'ny'</span>, <span class='kw'>start_date</span> <span class='kw'>=</span> <span class='fl'>20161201</span>,
-                      <span class='kw'>end_date</span> <span class='kw'>=</span> <span class='fl'>20161201</span>, <span class='kw'>start_time</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>end_time</span> <span class='kw'>=</span> <span class='fl'>2</span>)
-  <span class='no'>tm</span> <span class='kw'>&lt;-</span> <span class='fu'>bike_tripmat</span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'ny'</span>, <span class='kw'>weekday</span> <span class='kw'>=</span> <span class='fl'>5</span>)
-  <span class='no'>tm</span> <span class='kw'>&lt;-</span> <span class='fu'>bike_tripmat</span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'ny'</span>, <span class='kw'>weekday</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>'f'</span>, <span class='st'>'sa'</span>, <span class='st'>'th'</span>))
-  <span class='no'>tm</span> <span class='kw'>&lt;-</span> <span class='fu'>bike_tripmat</span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'ny'</span>, <span class='kw'>weekday</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>'f'</span>, <span class='st'>'th'</span>, <span class='st'>'sa'</span>))
-  <span class='no'>tm</span> <span class='kw'>&lt;-</span> <span class='fu'>bike_tripmat</span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'ny'</span>, <span class='kw'>member</span> <span class='kw'>=</span> <span class='fl'>1</span>)
-  <span class='no'>tm</span> <span class='kw'>&lt;-</span> <span class='fu'>bike_tripmat</span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'ny'</span>, <span class='kw'>birth_year</span> <span class='kw'>=</span> <span class='fl'>1976</span>)
-  <span class='no'>tm</span> <span class='kw'>&lt;-</span> <span class='fu'>bike_tripmat</span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'ny'</span>, <span class='kw'>birth_year</span> <span class='kw'>=</span> <span class='fl'>1976</span>:<span class='fl'>1990</span>)
-  <span class='no'>tm</span> <span class='kw'>&lt;-</span> <span class='fu'>bike_tripmat</span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'ny'</span>, <span class='kw'>gender</span> <span class='kw'>=</span> <span class='st'>'f'</span>)
-  <span class='no'>tm</span> <span class='kw'>&lt;-</span> <span class='fu'>bike_tripmat</span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'ny'</span>,
-                      <span class='kw'>gender</span> <span class='kw'>=</span> <span class='st'>'m'</span>, <span class='kw'>birth_year</span> <span class='kw'>=</span> <span class='fl'>1976</span>:<span class='fl'>1990</span>)
 
-  <span class='fu'><a href='bike_rm_test_data.html'>bike_rm_test_data</a></span> (<span class='kw'>data_dir</span> <span class='kw'>=</span> <span class='no'>data_dir</span>)
-  <span class='fu'><a href='bike_rm_db.html'>bike_rm_db</a></span> (<span class='no'>bikedb</span>)
-  <span class='co'># don't forget to remove real data!</span>
-  <span class='co'># file.remove (list.files (data_dir, pattern = '.zip'))</span>
-})</div></pre>
+<span class='no'>tm</span> <span class='kw'>&lt;-</span> <span class='fu'>bike_tripmat</span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'ny'</span>) <span class='co'># full trip matrix</span>
+<span class='no'>tm</span> <span class='kw'>&lt;-</span> <span class='fu'>bike_tripmat</span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'ny'</span>,
+                    <span class='kw'>start_date</span> <span class='kw'>=</span> <span class='fl'>20161201</span>, <span class='kw'>end_date</span> <span class='kw'>=</span> <span class='fl'>20161201</span>)
+<span class='no'>tm</span> <span class='kw'>&lt;-</span> <span class='fu'>bike_tripmat</span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'ny'</span>, <span class='kw'>start_time</span> <span class='kw'>=</span> <span class='fl'>1</span>)
+<span class='no'>tm</span> <span class='kw'>&lt;-</span> <span class='fu'>bike_tripmat</span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'ny'</span>, <span class='kw'>start_time</span> <span class='kw'>=</span> <span class='st'>"01:00"</span>)
+<span class='no'>tm</span> <span class='kw'>&lt;-</span> <span class='fu'>bike_tripmat</span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'ny'</span>, <span class='kw'>end_time</span> <span class='kw'>=</span> <span class='st'>"01:00"</span>)
+<span class='no'>tm</span> <span class='kw'>&lt;-</span> <span class='fu'>bike_tripmat</span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'ny'</span>,
+                    <span class='kw'>start_date</span> <span class='kw'>=</span> <span class='fl'>20161201</span>, <span class='kw'>start_time</span> <span class='kw'>=</span> <span class='fl'>1</span>)
+<span class='no'>tm</span> <span class='kw'>&lt;-</span> <span class='fu'>bike_tripmat</span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'ny'</span>, <span class='kw'>start_date</span> <span class='kw'>=</span> <span class='fl'>20161201</span>,
+                    <span class='kw'>end_date</span> <span class='kw'>=</span> <span class='fl'>20161201</span>, <span class='kw'>start_time</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>end_time</span> <span class='kw'>=</span> <span class='fl'>2</span>)
+<span class='no'>tm</span> <span class='kw'>&lt;-</span> <span class='fu'>bike_tripmat</span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'ny'</span>, <span class='kw'>weekday</span> <span class='kw'>=</span> <span class='fl'>5</span>)
+<span class='no'>tm</span> <span class='kw'>&lt;-</span> <span class='fu'>bike_tripmat</span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'ny'</span>, <span class='kw'>weekday</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>'f'</span>, <span class='st'>'sa'</span>, <span class='st'>'th'</span>))
+<span class='no'>tm</span> <span class='kw'>&lt;-</span> <span class='fu'>bike_tripmat</span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'ny'</span>, <span class='kw'>weekday</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>'f'</span>, <span class='st'>'th'</span>, <span class='st'>'sa'</span>))
+<span class='no'>tm</span> <span class='kw'>&lt;-</span> <span class='fu'>bike_tripmat</span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'ny'</span>, <span class='kw'>member</span> <span class='kw'>=</span> <span class='fl'>1</span>)
+<span class='no'>tm</span> <span class='kw'>&lt;-</span> <span class='fu'>bike_tripmat</span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'ny'</span>, <span class='kw'>birth_year</span> <span class='kw'>=</span> <span class='fl'>1976</span>)
+<span class='no'>tm</span> <span class='kw'>&lt;-</span> <span class='fu'>bike_tripmat</span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'ny'</span>, <span class='kw'>birth_year</span> <span class='kw'>=</span> <span class='fl'>1976</span>:<span class='fl'>1990</span>)
+<span class='no'>tm</span> <span class='kw'>&lt;-</span> <span class='fu'>bike_tripmat</span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'ny'</span>, <span class='kw'>gender</span> <span class='kw'>=</span> <span class='st'>'f'</span>)
+<span class='no'>tm</span> <span class='kw'>&lt;-</span> <span class='fu'>bike_tripmat</span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>, <span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'ny'</span>,
+                    <span class='kw'>gender</span> <span class='kw'>=</span> <span class='st'>'m'</span>, <span class='kw'>birth_year</span> <span class='kw'>=</span> <span class='fl'>1976</span>:<span class='fl'>1990</span>)
+
+<span class='fu'><a href='bike_rm_test_data.html'>bike_rm_test_data</a></span> (<span class='kw'>data_dir</span> <span class='kw'>=</span> <span class='no'>data_dir</span>)
+<span class='fu'><a href='bike_rm_db.html'>bike_rm_db</a></span> (<span class='no'>bikedb</span>)
+<span class='co'># don't forget to remove real data!</span>
+<span class='co'># file.remove (list.files (data_dir, pattern = '.zip'))</span>
+<span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

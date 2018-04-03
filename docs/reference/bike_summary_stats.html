@@ -23,7 +23,8 @@
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-
+  
+  
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -63,7 +64,7 @@
       
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/mpadge/bikedata">
+  <a href="https://github.com/ropensci/bikedata">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -107,22 +108,22 @@ versions.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>data_dir</span> <span class='kw'>&lt;-</span> <span class='fu'>tempdir</span> ()
+    <pre class="examples"><span class='co'># NOT RUN {</span>
+<span class='no'>data_dir</span> <span class='kw'>&lt;-</span> <span class='fu'>tempdir</span> ()
 <span class='fu'><a href='bike_write_test_data.html'>bike_write_test_data</a></span> (<span class='kw'>data_dir</span> <span class='kw'>=</span> <span class='no'>data_dir</span>)
-<span class='co'># dl_bikedata (city = 'la', data_dir = '.') # or download some real data!</span>
+<span class='co'># dl_bikedata (city = 'la', data_dir = data_dir) # or download some real data!</span>
 <span class='no'>bikedb</span> <span class='kw'>&lt;-</span> <span class='fu'>file.path</span> (<span class='no'>data_dir</span>, <span class='st'>'testdb'</span>)
-<span class='fu'><a href='store_bikedata.html'>store_bikedata</a></span> (<span class='kw'>data_dir</span> <span class='kw'>=</span> <span class='no'>data_dir</span>, <span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>)</div><div class='output co'>#&gt; <span class='message'>Creating sqlite3 database</span></div><div class='output co'>#&gt; <span class='message'>Unzipping raw data files for ny ...</span></div><div class='output co'>#&gt; <span class='message'>Reading files for ny ...</span></div><div class='output co'>#&gt; reading file 1/1: /tmp/Rtmp0qGggG/201612-citibike-tripdata.csv</div><div class='output co'>#&gt; <span class='message'>Trips read for ny = 200</span></div><div class='output co'>#&gt; <span class='message'>Unzipping raw data files for bo ...</span></div><div class='output co'>#&gt; <span class='message'>Reading files for bo ...</span></div><div class='output co'>#&gt; reading file 1/1: /tmp/Rtmp0qGggG/201604-hubway-tripdata.csv</div><div class='output co'>#&gt; <span class='message'>Trips read for bo = 200</span></div><div class='output co'>#&gt; <span class='message'>Unzipping raw data files for ch ...</span></div><div class='output co'>#&gt; <span class='message'>Reading files for ch ...</span></div><div class='output co'>#&gt; reading file 1/1: /tmp/Rtmp0qGggG/Divvy_Trips_sample.csv</div><div class='output co'>#&gt; <span class='message'>Trips read for ch = 200</span></div><div class='output co'>#&gt; <span class='message'>Unzipping raw data files for dc ...</span></div><div class='output co'>#&gt; <span class='message'>Reading files for dc ...</span></div><div class='output co'>#&gt; reading file 1/1: /tmp/Rtmp0qGggG/2017-Q1-Trips-History-Data.csv</div><div class='output co'>#&gt; <span class='message'>Trips read for dc = 200</span></div><div class='output co'>#&gt; <span class='message'>Unzipping raw data files for la ...</span></div><div class='output co'>#&gt; <span class='message'>Reading files for la ...</span></div><div class='output co'>#&gt; reading file 1/1: /tmp/Rtmp0qGggG/la_metro_gbfs_trips_Q1_2017.csv</div><div class='output co'>#&gt; <span class='message'>Trips read for la = 198</span></div><div class='output co'>#&gt; <span class='message'>Reading files for lo ...</span></div><div class='output co'>#&gt; reading file 1/1: /tmp/Rtmp0qGggG/01aJourneyDataExtract10Jan16-23Jan16.csv</div><div class='output co'>#&gt; <span class='message'>Trips read for lo = 200</span></div><div class='output co'>#&gt; <span class='message'>Total trips read = 1,198</span></div><div class='output co'>#&gt; <span class='message'>Creating indexes</span></div><div class='output co'>#&gt; [1] 1198</div><div class='input'><span class='fu'>bike_summary_stats</span> (<span class='st'>'testdb'</span>)</div><div class='output co'>#&gt; # A tibble: 7 x 5
-#&gt;   num_trips num_stations          first_trip           last_trip latest_files
-#&gt; *     &lt;dbl&gt;        &lt;dbl&gt;              &lt;fctr&gt;              &lt;fctr&gt;        &lt;lgl&gt;
-#&gt; 1      1198         2187 2016-01-10 00:00:00 2017-03-31 23:59:00           NA
-#&gt; 2       200           93 2016-04-01 00:01:19 2016-04-01 07:49:26        FALSE
-#&gt; 3       200          581 2016-12-31 19:04:56 2016-12-31 23:57:52        FALSE
-#&gt; 4       200          456 2017-03-31 22:09:00 2017-03-31 23:59:00        FALSE
-#&gt; 5       198           50 2017-01-01 00:15:00 2017-01-01 16:55:00        FALSE
-#&gt; 6       200          774 2016-01-10 00:00:00 2016-01-10 01:08:00        FALSE
-#&gt; 7       200          233 2016-12-01 00:00:04 2016-12-01 01:33:37        FALSE</div><div class='input'>
-<span class='fu'><a href='bike_rm_test_data.html'>bike_rm_test_data</a></span> (<span class='kw'>data_dir</span> <span class='kw'>=</span> <span class='no'>data_dir</span>)</div><div class='output co'>#&gt; [1] 6</div><div class='input'><span class='fu'><a href='bike_rm_db.html'>bike_rm_db</a></span> (<span class='no'>bikedb</span>)</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'><span class='co'># don't forget to remove real data!</span>
-<span class='co'># file.remove (list.files ('.', pattern = '.zip'))</span></div></pre>
+<span class='fu'><a href='store_bikedata.html'>store_bikedata</a></span> (<span class='kw'>data_dir</span> <span class='kw'>=</span> <span class='no'>data_dir</span>, <span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>)
+<span class='co'># create database indexes for quicker access:</span>
+<span class='fu'><a href='index_bikedata_db.html'>index_bikedata_db</a></span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>)
+
+<span class='fu'>bike_summary_stats</span> (<span class='st'>'testdb'</span>)
+
+<span class='fu'><a href='bike_rm_test_data.html'>bike_rm_test_data</a></span> (<span class='kw'>data_dir</span> <span class='kw'>=</span> <span class='no'>data_dir</span>)
+<span class='fu'><a href='bike_rm_db.html'>bike_rm_db</a></span> (<span class='no'>bikedb</span>)
+<span class='co'># don't forget to remove real data!</span>
+<span class='co'># file.remove (list.files ('.', pattern = '.zip'))</span>
+<span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

@@ -23,7 +23,8 @@
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-
+  
+  
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -63,7 +64,7 @@
       
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/mpadge/bikedata">
+  <a href="https://github.com/ropensci/bikedata">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -109,21 +110,24 @@ extracted</p></td>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>not_run</span>({
-  <span class='no'>data_dir</span> <span class='kw'>&lt;-</span> <span class='fu'>tempdir</span> ()
-  <span class='fu'><a href='bike_write_test_data.html'>bike_write_test_data</a></span> (<span class='kw'>data_dir</span> <span class='kw'>=</span> <span class='no'>data_dir</span>)
-  <span class='co'># or download some real data!</span>
-  <span class='co'># dl_bikedata (city = 'la', data_dir = data_dir)</span>
-  <span class='no'>bikedb</span> <span class='kw'>&lt;-</span> <span class='fu'>file.path</span> (<span class='no'>data_dir</span>, <span class='st'>'testdb'</span>)
-  <span class='fu'><a href='store_bikedata.html'>store_bikedata</a></span> (<span class='kw'>data_dir</span> <span class='kw'>=</span> <span class='no'>data_dir</span>, <span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>)
-  <span class='no'>stations</span> <span class='kw'>&lt;-</span> <span class='fu'>bike_stations</span> (<span class='no'>bikedb</span>)
-  <span class='fu'>head</span> (<span class='no'>stations</span>)
+    <pre class="examples"><span class='co'># NOT RUN {</span>
+<span class='no'>data_dir</span> <span class='kw'>&lt;-</span> <span class='fu'>tempdir</span> ()
+<span class='fu'><a href='bike_write_test_data.html'>bike_write_test_data</a></span> (<span class='kw'>data_dir</span> <span class='kw'>=</span> <span class='no'>data_dir</span>)
+<span class='co'># or download some real data!</span>
+<span class='co'># dl_bikedata (city = 'la', data_dir = data_dir)</span>
+<span class='no'>bikedb</span> <span class='kw'>&lt;-</span> <span class='fu'>file.path</span> (<span class='no'>data_dir</span>, <span class='st'>'testdb'</span>)
+<span class='fu'><a href='store_bikedata.html'>store_bikedata</a></span> (<span class='kw'>data_dir</span> <span class='kw'>=</span> <span class='no'>data_dir</span>, <span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>)
+<span class='co'># create database indexes for quicker access:</span>
+<span class='fu'><a href='index_bikedata_db.html'>index_bikedata_db</a></span> (<span class='kw'>bikedb</span> <span class='kw'>=</span> <span class='no'>bikedb</span>)
 
-  <span class='fu'><a href='bike_rm_test_data.html'>bike_rm_test_data</a></span> (<span class='kw'>data_dir</span> <span class='kw'>=</span> <span class='no'>data_dir</span>)
-  <span class='fu'><a href='bike_rm_db.html'>bike_rm_db</a></span> (<span class='no'>bikedb</span>)
-  <span class='co'># don't forget to remove real data!</span>
-  <span class='co'># file.remove (list.files (data_dir, pattern = '.zip'))</span>
-})</div></pre>
+<span class='no'>stations</span> <span class='kw'>&lt;-</span> <span class='fu'>bike_stations</span> (<span class='no'>bikedb</span>)
+<span class='fu'>head</span> (<span class='no'>stations</span>)
+
+<span class='fu'><a href='bike_rm_test_data.html'>bike_rm_test_data</a></span> (<span class='kw'>data_dir</span> <span class='kw'>=</span> <span class='no'>data_dir</span>)
+<span class='fu'><a href='bike_rm_db.html'>bike_rm_db</a></span> (<span class='no'>bikedb</span>)
+<span class='co'># don't forget to remove real data!</span>
+<span class='co'># file.remove (list.files (data_dir, pattern = '.zip'))</span>
+<span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

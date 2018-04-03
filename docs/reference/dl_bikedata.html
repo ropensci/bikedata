@@ -23,7 +23,8 @@
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-
+  
+  
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -63,7 +64,7 @@
       
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/mpadge/bikedata">
+  <a href="https://github.com/ropensci/bikedata">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -86,7 +87,9 @@
     <p>Download hire bicycle data</p>
     
 
-    <pre class="usage"><span class='fu'>dl_bikedata</span>(<span class='no'>city</span>, <span class='kw'>data_dir</span> <span class='kw'>=</span> <span class='fu'>tempdir</span>(), <span class='kw'>dates</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+    <pre class="usage"><span class='fu'>dl_bikedata</span>(<span class='no'>city</span>, <span class='kw'>data_dir</span> <span class='kw'>=</span> <span class='fu'>tempdir</span>(), <span class='kw'>dates</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+
+<span class='fu'>download_bikedata</span>(<span class='no'>city</span>, <span class='kw'>data_dir</span> <span class='kw'>=</span> <span class='fu'>tempdir</span>(), <span class='kw'>dates</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -129,30 +132,33 @@ designate the desired city. Names of corresponding bike systems can also be
 given.  Currently possible cities (with minimal designations in parentheses)
 and names of bike hire systems are:</p><table><tr><td>
  New York City (ny)</td>
-</tr><tr><td> Citibike</td>
+<td> Citibike</td>
 </tr><tr><td>
  Washington, D.C. (dc)</td>
-</tr><tr><td> Capital Bike Share</td>
+<td> Capital Bike Share</td>
 </tr><tr><td>
  Chicago (ch)</td>
-</tr><tr><td> Divvy Bikes</td>
+<td> Divvy Bikes</td>
 </tr><tr><td>
  Los Angeles (la)</td>
-</tr><tr><td> Metro Bike Share</td>
+<td> Metro Bike Share</td>
 </tr><tr><td>
  Boston (bo)</td>
-</tr><tr><td> Hubway</td>
+<td> Hubway</td>
 </tr><tr><td>
  London (lo)</td>
-</tr><tr><td> Santander Cycles</td>
+<td> Santander Cycles</td>
+</tr><tr><td>
+ Philadelphia (ph)</td>
+<td> Indego</td>
 </tr></table>
     <p>Ensure you have a fast internet connection and at least 100 Mb space</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>not_run</span>({
-  <span class='fu'>dl_bikedata</span> (<span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'New York City USA'</span>, <span class='kw'>dates</span> <span class='kw'>=</span> <span class='fl'>201601</span>:<span class='fl'>201613</span>)
-})</div></pre>
+    <pre class="examples"><span class='co'># NOT RUN {</span>
+<span class='fu'>dl_bikedata</span> (<span class='kw'>city</span> <span class='kw'>=</span> <span class='st'>'New York City USA'</span>, <span class='kw'>dates</span> <span class='kw'>=</span> <span class='fl'>201601</span>:<span class='fl'>201613</span>)
+<span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
