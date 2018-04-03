@@ -12,18 +12,7 @@
  *  Compiler Options:   -std=c++11
  ***************************************************************************/
 
-#include <stdio.h>
-
-// [[Rcpp::depends(BH)]]
-#include <Rcpp.h>
-#include "utils.h"
-#include "sqlite3db-add-data.h"
-#include "vendor/sqlite3/sqlite3.h"
-
-int rcpp_create_sqlite3_db (const char * bikedb);
-int rcpp_create_db_indexes (const char* bikedb, Rcpp::CharacterVector tables,
-        Rcpp::CharacterVector cols, bool reindex);
-int rcpp_create_city_index (const char* bikedb, bool reindex);
+#include "sqlite3db-setup.h"
 
 //' rcpp_create_sqlite3_db
 //'
