@@ -25,10 +25,16 @@ get_aws_bike_files <- function (bucket)
                      if (grepl ('zip|csv', i))
                          strsplit (strsplit (as.character (i),
                                  "<Key>") [[1]] [2], "</Key>") [[1]] [1] )
-    # nyc citibike data has a redundamt file as first item
     files <- unlist (files)
+
+    # nyc citibike data has a redundamt file as first item
     if (bucket == 'tripdata')
         files <- files [2:length (files)]
+
+    # boston has to "Hubway_Stations" files which are not needed
+    if (bucket == 'hubway-data')
+        files <- files [which (!grepl ('Stations', files))]
+
     paste0 (host, "/", bucket, "/", files)
 }
 

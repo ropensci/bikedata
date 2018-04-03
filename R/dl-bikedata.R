@@ -57,7 +57,8 @@ dl_bikedata <- function (city, data_dir = tempdir(), dates = NULL,
     {
         dates <- bike_convert_dates (dates) %>%
             expand_dates_to_range %>%
-            convert_dates_to_filenames (city = city)
+            convert_dates_to_filenames (city = city) %>%
+            sort ()
         indx <- which (grepl (paste (dates, collapse = "|"), files,
                               ignore.case = TRUE))
         if (length (indx) == 0)

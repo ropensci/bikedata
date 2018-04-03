@@ -233,6 +233,32 @@ convert_dates_to_filenames <- function (x, city = 'ny')
                         paste0 (yy [indx], '-', hh)))
         if (length (indx13) > 0)
             x <- c ('2013', x)
+    } else if (city == 'bo')
+    {
+        # Boston now has 2011-2013 bundled as single files, and 2014 bundled as
+        # two files
+        for (i in paste0 (2011:2013))
+        {
+            indx <- which (grepl (i, paste0 (x)))
+            if (length (indx) > 0)
+            {
+                x <- x [which (!seq (x) %in% indx)]
+                x <- c (i, x)
+            }
+        }
+        indx14 <- which (grepl ('2014', paste0 (x)))
+        x14 <- x [indx14]
+        x <- x [which (!seq (x) %in% indx14)]
+
+        x14a <- vapply (paste0 (201401:201406), function (i)
+                        any (grepl (i, x14)), logical (1))
+        if (any (x14a))
+            x <- c ('2014_1', x)
+        x14b <- vapply (paste0 (201407:201412), function (i)
+                        any (grepl (i, x14)), logical (1))
+        if (any (x14b))
+            x <- c ('2014_2', x)
+
     } else if (city == 'lo')
     {
         indx1 <- which (yy < 2015)
