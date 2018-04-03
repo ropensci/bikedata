@@ -16,8 +16,6 @@
 #include "sqlite3db-add-data.h"
 
 #include "read-city-files.h"
-#include "read-station-files.h"
-#include "sqlite3db-utils.h"
 
 //' rcpp_import_to_trip_table
 //'
