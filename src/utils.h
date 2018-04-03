@@ -1,14 +1,7 @@
 #pragma once
 
-#include <string>
-#include <vector>
-#include <map>
-#include <stdio.h>
-
 // [[Rcpp::depends(BH)]]
 #include <Rcpp.h>
-
-#include <boost/algorithm/string/replace.hpp>
 
 char *strtokm(char *str, const char *delim);
 std::string str_token (std::string * line, const char * delim);
