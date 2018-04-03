@@ -54,6 +54,9 @@ std::string convert_dc_stn_name (std::string &station_name, bool id,
 
 unsigned int read_one_line_london (sqlite3_stmt * stmt, char * line);
 std::string add_0_to_time (std::string time);
+
 unsigned int read_one_line_nabsa (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry,
         std::string city);
+
+unsigned int read_one_line_mn (sqlite3_stmt * stmt, char * line);

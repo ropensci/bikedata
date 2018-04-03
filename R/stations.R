@@ -166,6 +166,41 @@ bike_get_bo_stations <- function (flists, data_dir)
     return (res)
 }
 
+#' Get Minneapolis/Minnesota station data
+#'
+#' @return \code{data.frame} of (id, name, lon, lat) of all stations in Boston's
+#' Hubway system
+#'
+#' @noRd
+bike_get_mn_stations <- function (flists)
+{
+    if (is.null (flists$flist_csv_stns))
+        stop ("Station files must be in nominated data_dir")
+
+    id <- name <- lon <- lat <- NULL
+    for (f in flists$flist_csv_stns)
+    {
+        fi <- read.csv (f, header = TRUE)
+        idcol <- grep ("terminal|number", names (fi), ignore.case = TRUE)
+        nmcol <- grep ("station|name", names (fi), ignore.case = TRUE)
+        loncol <- grep ("lon", names (fi), ignore.case = TRUE)
+        latcol <- grep ("lat", names (fi), ignore.case = TRUE)
+        id <- c (id, paste0 (fi [[idcol]]))
+        name <- c (name, paste0 (fi [[nmcol]]))
+        lon <- c (lon, paste0 (fi [[loncol]]))
+        lat <- c (lat, paste0 (fi [[latcol]]))
+    }
+    # Remove apostrophes from names coz they muck up sqlite fields:
+    name <- gsub ("\'", "", name)
+    res <- data.frame (id = id, name = name, lon = lon, lat = lat,
+                       stringsAsFactors = FALSE)
+    res <- res [which (!duplicated (res)), ]
+
+    indx <- which (res$lon != "N/A" & res$lon != "NA" &
+                   res$lat != "N/A" & res$lat != "NA")
+    return (res [indx, ])
+}
+
 #' Get Washington DC station data
 #'
 #' @return \code{data.frame} of (id, name, lon, lat) of all stations in

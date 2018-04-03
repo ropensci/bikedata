@@ -275,3 +275,47 @@ std::string convert_datetime_lo (std::string str)
 
     return str;
 }
+
+//' Difference between two time strings formatted as
+//' YYYY-MM-DD hh:mm:ss
+//' @param t1 start date-time string
+//' @param t2 end date-time string
+//' @noRd
+int timediff (std::string t1, std::string t2)
+{
+    if (t1.length () < 19)
+    {
+        Rcpp::Rcout << "---[" << t1 << "]---" << std::endl;
+        Rcpp::stop ("nope");
+    }
+    int Y1 = atoi (t1.substr (0, 4).c_str ()),
+        M1 = atoi (t1.substr (5, 2).c_str ()),
+        D1 = atoi (t1.substr (8, 2).c_str ()),
+        h1 = atoi (t1.substr (11, 2).c_str ()),
+        m1 = atoi (t1.substr (14, 2).c_str ()),
+        s1 = atoi (t1.substr (17, 2).c_str ()),
+        Y2 = atoi (t2.substr (0, 4).c_str ()),
+        M2 = atoi (t2.substr (5, 2).c_str ()),
+        D2 = atoi (t2.substr (8, 2).c_str ()),
+        h2 = atoi (t2.substr (11, 2).c_str ()),
+        m2 = atoi (t2.substr (14, 2).c_str ()),
+        s2 = atoi (t2.substr (17, 2).c_str ());
+
+    int y1 = daynum (Y1, M1, D1), y2 = daynum (Y2, M2, D2);
+    int d1 = y1 * 3600 * 24 + h1 * 3600 + m1 * 60 + s1,
+        d2 = y2 * 3600 * 24 + h2 * 3600 + m2 * 60 + s2;
+
+    return d2 - d1;
+}
+
+// Julian day number calculation from
+// http://www.cs.utsa.edu/~cs1063/projects/Spring2011/Project1/jdn-explanation.html
+int daynum (int y, int m, int d)
+{
+    int a = floor ((14 - m) / 12);
+    y = y + 4800 - a;
+    m = m + 12 * a - 3;
+    int res = d + floor ((153 * m + 2) / 5) + 365 * y +
+        floor (y / 4) - floor (y / 100) + floor (y / 400) - 32045;
+    return res;
+}

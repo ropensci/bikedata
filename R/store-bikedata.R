@@ -78,6 +78,9 @@ store_bikedata <- function (bikedb, city, data_dir, dates = NULL, quiet = FALSE)
     {
         if (!quiet)
             message ('Checking data for ', city)
+        if ("mn" %in% city)
+            stop ('Data for the Nice Ride MN system must be downloaded ',
+                  'manually from\nhttps://www.niceridemn.org/data/')
         for (ci in city)
             dl_bikedata (city = ci, dates = dates, quiet = quiet)
         data_dir <- tempdir ()
@@ -145,18 +148,17 @@ store_bikedata <- function (bikedb, city, data_dir, dates = NULL, quiet = FALSE)
                 ch_stns <- bike_get_chicago_stations (flists)
                 if (nrow (ch_stns) > 0)
                     nstations <- rcpp_import_stn_df (bikedb, ch_stns, 'ch')
-            } else if (ci == 'lo')
+            } else if (ci %in% c('bo', 'dc', 'lo', 'mn'))
             {
-                lo_stns <- bike_get_london_stations ()
-                nstations <- rcpp_import_stn_df (bikedb, lo_stns, 'lo')
-            } else if (ci == 'dc')
-            {
-                dc_stns <- bike_get_dc_stations ()
-                nstations <- rcpp_import_stn_df (bikedb, dc_stns, 'dc')
-            } else if (ci == 'bo')
-            {
-                bo_stns <- bike_get_bo_stations (flists, data_dir)
-                nstations <- rcpp_import_stn_df (bikedb, bo_stns, 'bo')
+                if (ci == "lo")
+                    stns <- bike_get_london_stations ()
+                else if (ci == 'dc')
+                    stns <- bike_get_dc_stations ()
+                else if (ci == 'bo')
+                    stns <- bike_get_bo_stations (flists, data_dir)
+                else if (ci == 'mn')
+                    stns <- bike_get_mn_stations (flists)
+                nstations <- rcpp_import_stn_df (bikedb, stns, ci)
             }
 
             # main step: Import trips
@@ -311,6 +313,8 @@ get_bike_cities <- function (data_dir)
         cities$lo <- TRUE
     if (any (grepl ('metro', flist, ignore.case = TRUE)))
         cities$la <- TRUE
+    if (any (grepl ('nice', flist, ignore.case = TRUE)))
+        cities$mn <- TRUE
     if (any (grepl ('indego', flist, ignore.case = TRUE)))
         cities$ph <- TRUE
 
@@ -348,6 +352,8 @@ get_flist_city <- function (data_dir, bikedb, city)
     else if (any (city == 'lo'))
         index <- which (grepl ('Journey', flist, ignore.case = TRUE) |
                         grepl ('cyclehireusage', flist, ignore.case = TRUE))
+    else if (any (city == 'mn'))
+        index <- which (grepl ('nice', flist, ignore.case = TRUE))
     else if (any (city == 'ph'))
         index <- which (grepl ('indego', flist, ignore.case = TRUE))
 
@@ -430,7 +436,14 @@ bike_unzip_files <- function (data_dir, bikedb, city, dates)
             fi <- unzip (f, list = TRUE)$Name
             # some files (LA) have junk "MAXOSX" files in the archives
             fi <- fi [which (!grepl ("MACOSX", fi))]
-            flist_csv <- c (flist_csv, basename (fi)) # that can duplicate entries
+            if (city == 'mn')
+            {
+                fit <- fi [grep ("trip", fi, ignore.case = TRUE)]
+                fis <- fi [grep ("station", fi, ignore.case = TRUE)]
+                flist_csv <- c (flist_csv, basename (fit))
+                flist_csv_stns <- c (flist_csv_stns, basename (fis))
+            } else
+                flist_csv <- c (flist_csv, basename (fi)) # can duplicate entries
             if (!all (fi %in% existing_csv_files))
             {
                 unzip (f, exdir = data_dir, junkpaths = TRUE)
@@ -439,6 +452,8 @@ bike_unzip_files <- function (data_dir, bikedb, city, dates)
         }
         if (length (flist_csv) > 0)
             flist_csv <- file.path (data_dir, basename (flist_csv))
+        if (length (flist_csv_stns) > 0)
+            flist_csv_stns <- file.path (data_dir, basename (flist_csv_stns))
         if (length (flist_rm) > 0)
             flist_rm <- file.path (data_dir, basename (flist_rm))
     }

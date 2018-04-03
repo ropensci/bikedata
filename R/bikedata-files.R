@@ -136,6 +136,8 @@ get_bike_files <- function (city)
         files <- get_chicago_bike_files ()
     else if (city == 'lo')
         files <- get_london_bike_files ()
+    else if (city == 'mn')
+        files <- get_mn_bike_files ()
 
     return (files)
 }

@@ -2,7 +2,7 @@
 #'
 #' @param city Name of one or more cities or corresponding bicycle hire systems
 #'
-#' @return A two letter prefix matching (ny, bo, ch, dc, la)
+#' @return A two letter prefix matching (bo, ch, dc, la, lo, mn, ny, ph)
 #'
 #' @noRd
 convert_city_names <- function (city)
@@ -26,9 +26,11 @@ convert_city_names <- function (city)
                      'wa', 'dc', 'ca', # washington dc capital bike share
                      'la', 'me', # LA metro
                      'lo', 'sa', # london santander
-                     'ph', 'in') # philly indego
+                     'ph', 'in', # philly indego
+                     'mn', 'mi') # minneapolis/st.paul nice ride
     city_code <- c ('ny', 'ny', 'ny', 'bo', 'bo', 'ch', 'ch',
-                    'dc', 'dc', 'dc', 'la', 'la', 'lo', 'lo', 'ph', 'ph')
+                    'dc', 'dc', 'dc', 'la', 'la', 'lo', 'lo', 'ph', 'ph',
+                    'mn', 'mn')
     city_code <- city_code [pmatch (city, city_names)]
 
     if (length (indx_lo) > 0)

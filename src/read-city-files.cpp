@@ -274,7 +274,6 @@ unsigned int read_one_line_boston_pre15 (sqlite3_stmt * stmt, char * line,
     end_time = add_0_to_time (end_time);
     end_time = convert_datetime_nabsa (end_time);
 
-    bool map_stns = false;
     // These station IDs in the annual dump files map directly on to those given
     // in the station files
     std::string start_station_id = strtokm (nullptr, delim);
@@ -905,6 +904,56 @@ unsigned int read_one_line_nabsa (sqlite3_stmt * stmt, char * line,
             start_station_lat == " " || start_station_lon == " " ||
             end_station_lat == " " || end_station_lon == " ")
         ret = 1; // trip data not stored!
+
+    return ret;
+}
+
+unsigned int read_one_line_mn (sqlite3_stmt * stmt, char * line)
+{
+    const char * delim = ",";
+
+    std::string in_line2 = line;
+    boost::replace_all (in_line2, "\\N","");
+
+    std::string start_date = strtokm (&in_line2[0u], delim);
+    start_date = add_0_to_time (start_date);
+    start_date = convert_datetime_nabsa (start_date);
+
+    std::string start_station_name = strtokm (nullptr, delim);
+    boost::replace_all (start_station_name, "\'", ""); // rm apostrophes
+    std::string start_station_id = strtokm (nullptr, delim);
+
+    std::string end_date = strtokm (nullptr, delim);
+    end_date = add_0_to_time (end_date);
+    end_date = convert_datetime_nabsa (end_date);
+    std::string end_station_name = strtokm (nullptr, delim);
+    boost::replace_all (start_station_name, "\'", ""); // rm apostrophes
+    std::string end_station_id = strtokm (nullptr, delim);
+
+    // The data do have trip durations, but these are in variable columns, so
+    // can be reconstructed from the start-end time data if really desired.
+    std::string duration = "", bike_number = "", user_type = "",
+        birth_year = "", gender = "";
+
+    unsigned int ret = 0;
+    if (start_date == "" || end_station_id == "")
+    {
+        ret = 1;
+    } else
+    {
+        int dur = timediff (start_date, end_date);
+        duration = std::to_string (dur);
+    }
+
+    sqlite3_bind_text(stmt, 2, duration.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 3, start_date.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 4, end_date.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 5, start_station_id.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 6, end_station_id.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 7, bike_number.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 8, user_type.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 9, birth_year.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 10, gender.c_str(), -1, SQLITE_TRANSIENT); 
 
     return ret;
 }

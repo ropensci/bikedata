@@ -12,3 +12,6 @@ std::string convert_datetime_ch (std::string str);
 std::string convert_datetime_nabsa (std::string str);
 std::string convert_datetime_dc (std::string str);
 std::string convert_datetime_lo (std::string str);
+
+int timediff (std::string t1, std::string t2);
+int daynum (int y, int m, int d);
