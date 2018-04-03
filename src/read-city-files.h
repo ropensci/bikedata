@@ -30,6 +30,11 @@ unsigned int read_one_line_nyc_mixed (sqlite3_stmt * stmt,
 
 unsigned int read_one_line_boston (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry);
+unsigned int read_one_line_boston_pre18 (sqlite3_stmt * stmt, char * line,
+        std::map <std::string, std::string> * stationqry);
+unsigned int read_one_line_boston_post18 (sqlite3_stmt * stmt, char * line,
+        std::map <std::string, std::string> * stationqry);
+
 unsigned int read_one_line_chicago (sqlite3_stmt * stmt, char * line,
         const char * delim);
 unsigned int read_one_line_dc (sqlite3_stmt * stmt, char * line, 

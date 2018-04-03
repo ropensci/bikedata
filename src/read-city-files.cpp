@@ -220,6 +220,9 @@ unsigned int read_one_line_nyc_mixed (sqlite3_stmt * stmt,
 
 //' read_one_line_boston
 //'
+//' Like NYC, Boston has now also changed format (201801). All fields were
+//' formerly embedded in quotes; now only non-numeric fields are quoted.
+//' 
 //' @param stmt An sqlit3 statement to be assembled by reading the line of data
 //' @param line Line of data read from citibike file
 //' @param stationqry Sqlite3 query for station data table to be subsequently
@@ -227,6 +230,28 @@ unsigned int read_one_line_nyc_mixed (sqlite3_stmt * stmt,
 //'
 //' @noRd
 unsigned int read_one_line_boston (sqlite3_stmt * stmt, char * line,
+        std::map <std::string, std::string> * stationqry)
+{
+    unsigned int ret;
+    if (strncmp (line, "\"", 1) == 0)
+        ret = read_one_line_boston_pre18 (stmt, line, stationqry);
+    else
+        ret = read_one_line_boston_post18 (stmt, line, stationqry);
+
+    return ret;
+}
+
+//' read_one_line_boston_pre18
+//'
+//' Parser for data files with all fields embedded in quotes
+//'
+//' @param stmt An sqlit3 statement to be assembled by reading the line of data
+//' @param line Line of data read from citibike file
+//' @param stationqry Sqlite3 query for station data table to be subsequently
+//'        passed to 'import_to_station_table()'
+//'
+//' @noRd
+unsigned int read_one_line_boston_pre18 (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry)
 {
     // TDOD: Replace strokm with strok here!
@@ -279,6 +304,98 @@ unsigned int read_one_line_boston (sqlite3_stmt * stmt, char * line,
 
     std::string bike_number = strtokm (nullptr, delim);
     std::string user_type = strtokm (nullptr, delim);
+    std::string birth_year = "", gender = "";
+    if (user_type == "Subscriber")
+    {
+        birth_year = strtokm (nullptr, delim);
+        gender = strtokm (nullptr, delim);
+        boost::replace_all (gender, "\n","");
+        boost::replace_all (gender, "\"", "");
+        boost::replace_all (birth_year, "\n","");
+        boost::replace_all (birth_year, "\"", "");
+        user_type = "1";
+    } else
+        user_type = "0";
+
+    sqlite3_bind_text(stmt, 2, duration.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 3, start_time.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 4, end_time.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 5, start_station_id.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 6, end_station_id.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 7, bike_number.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 8, user_type.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 9, birth_year.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 10, gender.c_str(), -1, SQLITE_TRANSIENT); 
+
+    return 0;
+}
+
+//' read_one_line_boston_post18
+//'
+//' Parser for data files in which only non-numeric fields are embedded in
+//' quotes
+//'
+//' @param stmt An sqlit3 statement to be assembled by reading the line of data
+//' @param line Line of data read from citibike file
+//' @param stationqry Sqlite3 query for station data table to be subsequently
+//'        passed to 'import_to_station_table()'
+//'
+//' @noRd
+unsigned int read_one_line_boston_post18 (sqlite3_stmt * stmt, char * line,
+        std::map <std::string, std::string> * stationqry)
+{
+    // TDOD: Replace strokm with strok here!
+    const char * delim = ",";
+    const char * delim_nq_q = ",\""; // no quote followed by quote
+    const char * delim_q_nq = "\","; // quote followed by noquote
+    const char * delim_q_q = "\",\""; // quote followed by quote
+
+    std::string in_line2 = line;
+    boost::replace_all (in_line2, "\\N","\"\"");
+
+    std::string duration = strtokm (&in_line2[0u], delim_nq_q);
+    std::string start_time = strtokm (nullptr, delim_q_q); // no need to convert
+    std::string end_time = strtokm (nullptr, delim_q_nq); 
+
+    std::string start_station_id = strtokm (nullptr, delim_nq_q);
+    start_station_id = "bo" + start_station_id;
+    if (stationqry->count (start_station_id) == 0) {
+        std::string start_station_name = strtokm (nullptr, delim_q_nq);
+        boost::replace_all (start_station_name, "\'", ""); // rm apostrophes
+        std::string start_station_lat = strtokm (nullptr, delim);
+        std::string start_station_lon = strtokm (nullptr, delim);
+        if (start_station_lat != "" && start_station_lon != "")
+            (*stationqry)[start_station_id] = "(\'bo\',\'" + 
+                start_station_id + "\',\'" + start_station_name + "\'," +
+                start_station_lat + "," + start_station_lon + ")";
+    } else
+    {
+        strtokm (nullptr, delim_q_nq);
+        strtokm (nullptr, delim);
+        strtokm (nullptr, delim);
+    }
+
+
+    std::string end_station_id = strtokm (nullptr, delim_nq_q);
+    end_station_id = "bo" + end_station_id;
+    if (stationqry->count (end_station_id) == 0) {
+        std::string end_station_name = strtokm (nullptr, delim_q_nq);
+        boost::replace_all (end_station_name, "\'", ""); // rm apostrophes
+        std::string end_station_lat = strtokm (nullptr, delim);
+        std::string end_station_lon = strtokm (nullptr, delim);
+        if (end_station_lat != "" && end_station_lon != "")
+            (*stationqry)[end_station_id] = "(\'bo\',\'" + 
+                end_station_id + "\',\'" + end_station_name + "\'," +
+                end_station_lat + "," + end_station_lon + ")";
+    } else
+    {
+        strtokm (nullptr, delim_q_nq);
+        strtokm (nullptr, delim);
+        strtokm (nullptr, delim);
+    }
+
+    std::string bike_number = strtokm (nullptr, delim_nq_q);
+    std::string user_type = strtokm (nullptr, delim_q_nq);
     std::string birth_year = "", gender = "";
     if (user_type == "Subscriber")
     {
