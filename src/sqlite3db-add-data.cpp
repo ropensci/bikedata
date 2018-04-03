@@ -15,8 +15,6 @@
 
 #include "sqlite3db-add-data.h"
 
-#include "read-city-files.h"
-
 //' rcpp_import_to_trip_table
 //'
 //' Extracts bike data for NYC citibike

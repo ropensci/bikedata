@@ -19,6 +19,7 @@
 #include "vendor/sqlite3/sqlite3.h"
 #include "sqlite3db-utils.h"
 #include "read-station-files.h"
+#include "read-city-files.h"
 
 #include <sstream>
 
