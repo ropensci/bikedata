@@ -344,7 +344,7 @@ unsigned int read_one_line_boston_pre18 (sqlite3_stmt * stmt, char * line,
 
     bool map_stns = false;
     std::string start_station_id = strtokm (nullptr, delim);
-    if (start_station_id.length () > 4)
+    if (start_station_id.length () <= 4)
     {
         map_stns = true;
         start_station_id = "bo" + start_station_id;
@@ -431,7 +431,7 @@ unsigned int read_one_line_boston_post18 (sqlite3_stmt * stmt, char * line,
 
     bool map_stns = false;
     std::string start_station_id = strtokm (nullptr, delim_nq_q);
-    if (start_station_id.length () > 4)
+    if (start_station_id.length () <= 4)
     {
         map_stns = true;
         start_station_id = "bo" + start_station_id;
@@ -676,7 +676,7 @@ std::string convert_bo_stn_name (std::string &station_name,
     size_t ipos = station_name.find ("(", 0);
     if (ipos != std::string::npos)
     {
-        station_id = "dc" + station_name.substr (ipos + 1,
+        station_id = "bo" + station_name.substr (ipos + 1,
                 station_name.length () - ipos - 2);
         station_name = station_name.substr (0, ipos - 1);
     } 

@@ -262,7 +262,8 @@ std::unordered_set <std::string> get_stn_ids (sqlite3 * dbcon, std::string ci)
 //'
 //' Import a data.frame of station (id, name, lon, lat) into the SQLite3
 //' database. Used for London and Chicago, for both of which stations are loaded
-//' within R and passed to this function.
+//' within R and passed to this function. The function also prepends the
+//' two-character city ID to each station ID.
 //'
 //' @param dbcon Active connection to sqlite3 database
 //' @param stn_data An R DataFrame of (id, name, lon, lat) for all stations
