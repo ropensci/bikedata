@@ -16,6 +16,21 @@
 #' @noRd
 NULL
 
+#' get_bo_stn_table
+#'
+#' Because some data files for Boston contain only the names of stations
+#' and not their ID numbers, a std::map is generated here mapping those names
+#' onto IDs for easy insertion into the trips data table.
+#'
+#' @param dbcon Active connection to SQLite3 database
+#'
+#' @return std::map of <station name, station ID>
+#'
+#' @note The map is tiny, so it's okay to return values rather than refs
+#'
+#' @noRd
+NULL
+
 #' get_dc_stn_table
 #'
 #' Because some data files for Washington DC contain only the names of stations
@@ -33,8 +48,8 @@ NULL
 
 #' get_dc_stn_ids
 #'
-#' Returns vector of all station IDs in the official DC Govt file. Only
-#' trips from and to stations with codes in this file are loaded into db.
+#' Returns vector of all station IDs in the official DC Govt and Boston files.
+#' Only trips from and to stations with codes in this file are loaded into db.
 #'
 #' @param dbcon Active connection to SQLite3 database
 #'

@@ -108,6 +108,64 @@ bike_get_chicago_stations <- function (flists)
     return (res)
 }
 
+#' Get Boston station data
+#'
+#' @param flists List of files returned from bike_unzip_files, which includes
+#' entries in \code{$flist_csv_stns}
+#'
+#' @return \code{data.frame} of (id, name, lon, lat) of all stations in Boston's
+#' Hubway system
+#'
+#' @noRd
+bike_get_bo_stations <- function (flists, data_dir)
+{
+    if (is.null (flists$flist_csv_stns))
+    {
+        # then download station data ...
+        dl_files <- get_bike_files (city = 'bo')
+        dl_files <- dl_files [which (grepl ('Stations', dl_files))]
+        for (f in dl_files)
+        {
+            furl <- gsub (" ", "%20", f)
+            f <- gsub (" ", "", f)
+            destfile <- file.path (data_dir, basename(f))
+            resp <- httr::GET (furl,
+                               httr::write_disk (destfile, overwrite = TRUE))
+            if (resp$status_code != 200)
+            {
+                count <- 0
+                while (!file.exists (destfile) & count < 5)
+                {
+                    resp <- httr::GET (furl,
+                                       httr::write_disk (destfile,
+                                                         overwrite = TRUE))
+                    count <- count + 1
+                }
+                if (!file.exists (destfile))
+                    stop ('Download request failed')
+            }
+        }
+        flists$flist_csv_stns <- file.path (data_dir, basename (dl_files))
+    }
+
+    id <- name <- lon <- lat <- NULL
+    for (f in flists$flist_csv_stns)
+    {
+        fi <- read.csv (f, header = TRUE)
+        id <- c (id, paste0 (fi$Station.ID))
+        name <- c (name, paste0 (fi$Station))
+        lon <- c (lon, paste0 (fi$Longitude))
+        lat <- c (lat, paste0 (fi$Latitude))
+    }
+    # Remove apostrophes from names coz they muck up sqlite fields:
+    name <- gsub ("\'", "", name)
+    res <- data.frame (id = id, name = name, lon = lon, lat = lat,
+                       stringsAsFactors = FALSE)
+    res <- res [which (!duplicated (res)), ]
+
+    return (res)
+}
+
 #' Get Washington DC station data
 #'
 #' @return \code{data.frame} of (id, name, lon, lat) of all stations in

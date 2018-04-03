@@ -65,6 +65,49 @@ int import_to_station_table (sqlite3 * dbcon,
 }
 
 
+//' get_bo_stn_table
+//'
+//' Because some data files for Boston contain only the names of stations
+//' and not their ID numbers, a std::map is generated here mapping those names
+//' onto IDs for easy insertion into the trips data table.
+//'
+//' @param dbcon Active connection to SQLite3 database
+//'
+//' @return std::map of <station name, station ID>
+//'
+//' @note The map is tiny, so it's okay to return values rather than refs
+//'
+//' @noRd
+std::map <std::string, std::string> get_bo_stn_table (sqlite3 * dbcon)
+{
+    sqlite3_stmt * stmt;
+    std::stringstream ss;
+    std::map <std::string, std::string> stn_map;
+
+    char qry_stns [BUFFER_SIZE] = "\0";
+    sprintf (qry_stns, 
+            "SELECT stn_id, name FROM stations WHERE city = 'bo'");
+
+    int rc = sqlite3_prepare_v2 (dbcon, qry_stns, BUFFER_SIZE, &stmt, nullptr);
+
+    while ((rc = sqlite3_step (stmt)) == SQLITE_ROW)
+    {
+        const unsigned char * c1 = sqlite3_column_text (stmt, 0);
+        ss << c1;
+        std::string stn_id = ss.str ();
+        ss.str ("");
+        c1 = sqlite3_column_text (stmt, 1);
+        ss << c1;
+        std::string stn_name = ss.str ();
+        ss.str ("");
+        stn_map [stn_name] = stn_id;
+    }
+
+    sqlite3_finalize(stmt);
+
+    return stn_map;
+}
+
 //' get_dc_stn_table
 //'
 //' Because some data files for Washington DC contain only the names of stations
@@ -174,8 +217,8 @@ std::map <std::string, std::string> get_dc_stn_table (sqlite3 * dbcon)
 
 //' get_dc_stn_ids
 //'
-//' Returns vector of all station IDs in the official DC Govt file. Only
-//' trips from and to stations with codes in this file are loaded into db.
+//' Returns vector of all station IDs in the official DC Govt and Boston files.
+//' Only trips from and to stations with codes in this file are loaded into db.
 //'
 //' @param dbcon Active connection to SQLite3 database
 //'
@@ -184,15 +227,19 @@ std::map <std::string, std::string> get_dc_stn_table (sqlite3 * dbcon)
 //' @note The map is tiny, so it's okay to return values rather than refs
 //'
 //' @noRd
-std::unordered_set <std::string> get_dc_stn_ids (sqlite3 * dbcon)
+std::unordered_set <std::string> get_stn_ids (sqlite3 * dbcon, std::string ci)
 {
     sqlite3_stmt * stmt;
     std::stringstream ss;
     std::unordered_set <std::string> stn_ids;
 
     char qry_stns [BUFFER_SIZE] = "\0";
-    sprintf (qry_stns, 
-            "SELECT stn_id FROM stations WHERE city = 'dc'");
+    if (ci == "dc")
+        sprintf (qry_stns, 
+                "SELECT stn_id FROM stations WHERE city = 'dc'");
+    else if (ci == "bo")
+        sprintf (qry_stns, 
+                "SELECT stn_id FROM stations WHERE city = 'bo'");
 
     int rc = sqlite3_prepare_v2 (dbcon, qry_stns, BUFFER_SIZE, &stmt, nullptr);
 

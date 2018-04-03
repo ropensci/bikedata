@@ -49,8 +49,11 @@ int rcpp_import_to_trip_table (const char* bikedb,
     // these cases to extract the right IDs.
     // --> The stations are now hard-coded in R/sysdata.rda because the
     //     opendata.arcgis.com is too unreliable.
-    std::map <std::string, std::string> dc_stn_map;
-    std::unordered_set <std::string> dc_stn_ids;
+    // A stn_map is now also needed for Boston, because they've changed to
+    // annual dumps for pre-2015, yet some trip files have only names and not
+    // the station IDs in the station files now provided.
+    std::map <std::string, std::string> stn_map;
+    std::unordered_set <std::string> stn_ids;
     if (city == "dc")
     {
         /*
@@ -59,8 +62,12 @@ int rcpp_import_to_trip_table (const char* bikedb,
         if (rc != SQLITE_OK)
             throw std::runtime_error ("Unable to insert Washington DC stations");
         */
-        dc_stn_map = get_dc_stn_table (dbcon);
-        dc_stn_ids = get_dc_stn_ids (dbcon);
+        stn_map = get_dc_stn_table (dbcon);
+        stn_ids = get_stn_ids (dbcon, "dc");
+    } else if (city == "bo")
+    {
+        stn_map = get_bo_stn_table (dbcon);
+        stn_ids = get_stn_ids (dbcon, "bo");
     }
 
     FILE * pFile;
@@ -130,34 +137,34 @@ int rcpp_import_to_trip_table (const char* bikedb,
         else
             delim = ",";
 
-        if (!london_is_junk)
+        if (london_is_junk)
+            break;
+
+        while (fgets (in_line, BUFFER_SIZE, pFile) != nullptr) 
         {
-            while (fgets (in_line, BUFFER_SIZE, pFile) != nullptr) 
+            rm_dos_end (in_line);
+            sqlite3_bind_text (stmt, 1, city.c_str (), -1, SQLITE_TRANSIENT); 
+
+            if (city == "ny")
+                rc = read_one_line_nyc (stmt, in_line, &stationqry, delim);
+            else if (city == "bo")
+                rc = read_one_line_boston (stmt, in_line, stn_map, stn_ids);
+            else if (city == "ch")
+                rc = read_one_line_chicago (stmt, in_line, delim);
+            else if (city == "dc")
+                rc = read_one_line_dc (stmt, in_line, stn_map, stn_ids,
+                        id_in_dc_file, dc_end_date_first);
+            else if (city == "lo")
+                rc = read_one_line_london (stmt, in_line);
+            else if (city == "la" || city == "ph")
+                rc = read_one_line_nabsa (stmt, in_line, &stationqry, city);
+
+            if (rc == 0) // only != 0 for LA, London, and Boston
             {
-                rm_dos_end (in_line);
-                sqlite3_bind_text (stmt, 1, city.c_str (), -1, SQLITE_TRANSIENT); 
-
-                if (city == "ny")
-                    rc = read_one_line_nyc (stmt, in_line, &stationqry, delim);
-                else if (city == "bo")
-                    rc = read_one_line_boston (stmt, in_line, &stationqry);
-                else if (city == "ch")
-                    rc = read_one_line_chicago (stmt, in_line, delim);
-                else if (city == "dc")
-                    rc = read_one_line_dc (stmt, in_line, dc_stn_map, dc_stn_ids,
-                            id_in_dc_file, dc_end_date_first);
-                else if (city == "lo")
-                    rc = read_one_line_london (stmt, in_line);
-                else if (city == "la" || city == "ph")
-                    rc = read_one_line_nabsa (stmt, in_line, &stationqry, city);
-
-                if (rc == 0) // only != 0 for LA and London
-                {
-                    ntrips++;
-                    sqlite3_step (stmt);
-                }
-                sqlite3_reset (stmt);
+                ntrips++;
+                sqlite3_step (stmt);
             }
+            sqlite3_reset (stmt);
         }
     }
     sqlite3_finalize(stmt);
@@ -165,7 +172,7 @@ int rcpp_import_to_trip_table (const char* bikedb,
     sqlite3_exec(dbcon, "END TRANSACTION", nullptr, nullptr, &zErrMsg);
     sqlite3_free (zErrMsg);
 
-    if (city == "ny" || city == "bo" || city == "la" || city == "ph")
+    if (city == "ny" || city == "la" || city == "ph")
         import_to_station_table (dbcon, stationqry);
 
     rc = static_cast <size_t> (sqlite3_close_v2 (dbcon));
