@@ -13,13 +13,11 @@
  *  Compiler Options:   -std=c++11
  ***************************************************************************/
 
-#include "common.h"
-#include "utils.h"
-#include "vendor/sqlite3/sqlite3.h"
+#include "sqlite3db-add-data.h"
+
 #include "read-city-files.h"
 #include "read-station-files.h"
 #include "sqlite3db-utils.h"
-#include "sqlite3db-add-data.h"
 
 //' rcpp_import_to_trip_table
 //'

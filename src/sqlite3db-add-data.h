@@ -14,6 +14,10 @@
  *  Compiler Options:   -std=c++11
  ***************************************************************************/
 
+#include "common.h"
+#include "utils.h"
+#include "vendor/sqlite3/sqlite3.h"
+
 #include <sstream>
 
 // [[Rcpp::depends(BH)]]
