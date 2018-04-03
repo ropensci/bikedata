@@ -268,7 +268,11 @@ unsigned int read_one_line_boston_pre15 (sqlite3_stmt * stmt, char * line,
     duration = std::to_string (atoi (duration.c_str ()) / 1000.0);
     // start and end times are also in compact format with no leading zeros
     std::string start_time = strtokm (nullptr, delim);
+    start_time = add_0_to_time (start_time);
+    start_time = convert_datetime_nabsa (start_time);
     std::string end_time = strtokm (nullptr, delim); 
+    end_time = add_0_to_time (end_time);
+    end_time = convert_datetime_nabsa (end_time);
 
     bool map_stns = false;
     // These station IDs in the annual dump files map directly on to those given
@@ -339,8 +343,12 @@ unsigned int read_one_line_boston_pre18 (sqlite3_stmt * stmt, char * line,
     char * token = strtokm (&in_line2[0u], "\""); // opening quote
     (void) token; // supress unused variable warning;
     std::string duration = strtokm (nullptr, delim);
-    std::string start_time = strtokm (nullptr, delim); // no need to convert
+    std::string start_time = strtokm (nullptr, delim);
+    start_time = add_0_to_time (start_time);
+    start_time = convert_datetime_nabsa (start_time);
     std::string end_time = strtokm (nullptr, delim); 
+    end_time = add_0_to_time (end_time);
+    end_time = convert_datetime_nabsa (end_time);
 
     bool map_stns = false;
     std::string start_station_id = strtokm (nullptr, delim);
