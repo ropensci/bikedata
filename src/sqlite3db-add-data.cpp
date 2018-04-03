@@ -25,14 +25,14 @@
 //'        .csv files to import.
 //' @param city First two letters of city for which data are to be added (thus
 //'        far, "ny", "bo", "ch", "dc", and "la")
-//' @param quiet If FALSE, progress is displayed on screen
+//' @param quiet If FALSE (0), progress is displayed on screen
 //'
 //' @return integer result code
 //'
 //' @noRd
 // [[Rcpp::export]]
 int rcpp_import_to_trip_table (const char* bikedb, 
-        Rcpp::CharacterVector datafiles, std::string city, bool quiet)
+        Rcpp::CharacterVector datafiles, std::string city, int quiet)
 {
     sqlite3 *dbcon;
     char *zErrMsg = nullptr;
@@ -89,7 +89,7 @@ int rcpp_import_to_trip_table (const char* bikedb,
     for(int filenum = 0; filenum < datafiles.length(); filenum++) 
     {
         Rcpp::checkUserInterrupt ();
-        if (!quiet)
+        if (quiet == 0)
             Rcpp::Rcout << "reading file " << filenum + 1 << "/" <<
                 datafiles.size() << ": " <<
                 datafiles [filenum] << std::endl;

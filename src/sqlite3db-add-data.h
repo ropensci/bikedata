@@ -27,6 +27,6 @@
 #include <Rcpp.h>
 
 int rcpp_import_to_trip_table (const char* bikedb, 
-        Rcpp::CharacterVector datafiles, std::string city, bool quiet);
+        Rcpp::CharacterVector datafiles, std::string city, int quiet);
 int rcpp_import_to_file_table (const char * bikedb,
         Rcpp::CharacterVector datafiles, std::string city, int nfiles);

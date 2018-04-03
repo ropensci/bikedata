@@ -88,7 +88,7 @@ rcpp_import_stn_df <- function(bikedb, stn_data, city) {
 #'        .csv files to import.
 #' @param city First two letters of city for which data are to be added (thus
 #'        far, "ny", "bo", "ch", "dc", and "la")
-#' @param quiet If FALSE, progress is displayed on screen
+#' @param quiet If FALSE (0), progress is displayed on screen
 #'
 #' @return integer result code
 #'
