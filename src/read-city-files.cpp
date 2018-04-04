@@ -580,7 +580,7 @@ unsigned int read_one_line_chicago (sqlite3_stmt * stmt, char * line,
 //' @noRd
 unsigned int read_one_line_dc (sqlite3_stmt * stmt, char * line, 
         std::map <std::string, std::string> &stn_map, 
-        std::unordered_set <std::string> &stn_ids, bool id, bool end_date_first)
+        std::unordered_set <std::string> &stn_ids)
 {
     std::string in_line2 = line;
 
@@ -604,53 +604,31 @@ unsigned int read_one_line_dc (sqlite3_stmt * stmt, char * line,
     }
 
     std::string start_date = convert_datetime_dc (strtokm (nullptr, ",")); 
+    std::string end_date = convert_datetime_dc (strtokm (nullptr, ",")); 
+    std::string start_station_id = strtokm (nullptr, ",");
+    start_station_id = "dc" + start_station_id;
+    std::string start_station_name = strtokm (nullptr, ",");
+    std::string end_station_id = strtokm (nullptr, ",");
+    end_station_id = "dc" + end_station_id;
+    std::string end_station_name = strtokm (nullptr, ",");
 
-    std::string start_station_name, start_station_id = "0",
-        end_station_name, end_station_id = "0", end_date;
-    if (id)
+    /*
+    if (start_station_name != "" && end_station_name != "")
     {
-        end_date = convert_datetime_dc (strtokm (nullptr, ",")); 
-        start_station_id = strtokm (nullptr, ",");
-        start_station_id = "dc" + start_station_id;
-        start_station_name = strtokm (nullptr, ",");
-        end_station_id = strtokm (nullptr, ",");
-        end_station_id = "dc" + end_station_id;
-        end_station_name = strtokm (nullptr, ",");
-    } else
-    {
-        if (end_date_first)
-        {
-            end_date = convert_datetime_dc (strtokm (nullptr, ",")); 
-            start_station_name = strtokm (nullptr, ",");
-        } else
-        {
-            start_station_name = strtokm (nullptr, ",");
-            end_date = convert_datetime_dc (strtokm (nullptr, ",")); 
-        }
-        end_station_name = strtokm (nullptr, ",");
-
-        if (start_station_name != "" && end_station_name != "")
-        {
-            start_station_id = convert_dc_stn_name (start_station_name, id,
-                    stn_map);
-            end_station_id = convert_dc_stn_name (end_station_name, id,
-                    stn_map);
-        }
+        start_station_id = convert_dc_stn_name (start_station_name, id,
+                stn_map);
+        end_station_id = convert_dc_stn_name (end_station_name, id,
+                stn_map);
     }
+    */
 
-    std::string bike_id, user_type;
-    if (id)
-    {
-    } else
-    {
         // Only personal data for DC is user_type
-        bike_id = strtokm (nullptr, ",");
-        user_type = strtokm (nullptr, ",");
-        if (user_type == "Casual")
-            user_type = "0";
-        else // sometimes "Member", sometimes "Registered"
-            user_type = "1";
-    }
+    std::string bike_id = strtokm (nullptr, ",");
+    std::string user_type = strtokm (nullptr, ",");
+    if (user_type == "Casual")
+        user_type = "0";
+    else // sometimes "Member", sometimes "Registered"
+        user_type = "1";
 
     // Only store those trip with stations in the official list:
     if (stn_ids.find (start_station_id) != stn_ids.end () &&

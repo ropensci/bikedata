@@ -306,7 +306,7 @@ get_bike_cities <- function (data_dir)
         cities$ch <- TRUE
     if (any (grepl ('hubway', flist, ignore.case = TRUE)))
         cities$bo <- TRUE
-    if (any (grepl ('cabi', flist, ignore.case = TRUE)))
+    if (any (grepl ('cabi|capi', flist, ignore.case = TRUE)))
         cities$dc <- TRUE
     if (any (grepl ('cyclehireusagestats', flist, ignore.case = TRUE) |
              grepl ('JourneyDataExtract', flist, ignore.case = TRUE)))
@@ -346,7 +346,7 @@ get_flist_city <- function (data_dir, bikedb, city)
     else if (any (city == 'bo'))
         index <- which (grepl ('hubway', flist, ignore.case = TRUE))
     else if (any (city == 'dc'))
-        index <- which (grepl ('cabi', flist, ignore.case = TRUE))
+        index <- which (grepl ('cabi|capi', flist, ignore.case = TRUE))
     else if (any (city == 'la'))
         index <- which (grepl ('metro', flist, ignore.case = TRUE))
     else if (any (city == 'lo'))
@@ -406,14 +406,18 @@ bike_unzip_files <- function (data_dir, bikedb, city, dates)
         indx <- which (grepl (paste (dates, collapse = "|"), flist_zip))
         flist_zip <- flist_zip [indx]
     }
-    existing_csv_files <- list.files (data_dir, pattern = '\\.csv$')
+    fcsv <- list.files (data_dir, pattern = '\\.csv$') # existing csv files
+    if (city == "bo")
+        fcsv <- fcsv [grep ("hubway", fcsv, ignore.case = TRUE)]
+    else if (city == "lo")
+        fcsv <- fcsv [grep ("JourneyDataExtract", fcsv)]
     flist_csv <- flist_rm <- flist_csv_stns <- NULL
 
     # Some cities issue non-compressed files (recent London files; annual Boston
     # dumps for 2011-14)
-    if (city %in% c ('bo', 'lo') && length (existing_csv_files) > 0)
+    if (city %in% c ('bo', 'lo') && length (fcsv) > 0)
     {
-        flist_csv <- get_new_datafiles (bikedb, existing_csv_files)
+        flist_csv <- get_new_datafiles (bikedb, fcsv)
         if (city == 'bo') # Also has station files
         {
             indx <- which (grepl ('Stations', flist_csv))
@@ -444,7 +448,7 @@ bike_unzip_files <- function (data_dir, bikedb, city, dates)
                 flist_csv_stns <- c (flist_csv_stns, basename (fis))
             } else
                 flist_csv <- c (flist_csv, basename (fi)) # can duplicate entries
-            if (!all (fi %in% existing_csv_files))
+            if (!all (fi %in% fcsv))
             {
                 unzip (f, exdir = data_dir, junkpaths = TRUE)
                 flist_rm <- c (flist_rm, fi)

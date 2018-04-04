@@ -47,8 +47,7 @@ unsigned int read_one_line_chicago (sqlite3_stmt * stmt, char * line,
         const char * delim);
 unsigned int read_one_line_dc (sqlite3_stmt * stmt, char * line, 
         std::map <std::string, std::string> &stn_map, 
-        std::unordered_set <std::string> &stn_ids,
-        bool id, bool end_date_first);
+        std::unordered_set <std::string> &stn_ids);
 std::string convert_dc_stn_name (std::string &station_name, bool id,
         std::map <std::string, std::string> &stn_map);
 

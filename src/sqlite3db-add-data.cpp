@@ -99,30 +99,12 @@ int rcpp_import_to_trip_table (const char* bikedb,
         (void) junk; // suppress unused variable warning
         rm_dos_end (in_line);
 
-        // DC files change structure a lot, with explicit station ID fields only
-        // appearing in later files, and files changing order from 2013Q3 with
-        // (Start date, End date, Start Station, End Station) to 2013Q4 with
-        // (Start date, Start Station, End date, End Station)
-        bool id_in_dc_file = false, dc_end_date_first = true;
         // One London file ("21JourneyDataExtract31Aug2016-06Sep2016.csv") has
         // "Start/EndStation Logical Terminal" numbers instead of IDs.  These
         // don't map on to any known station numbers and so can't be used.
         bool london_is_junk = false;
 
-        if (city == "dc")
-        {
-            std::string in_line2 = in_line;
-            if (in_line2.find ("station number") != std::string::npos)
-                id_in_dc_file = true;
-            size_t ss_pos = in_line2.find ("Start Station");
-            if (ss_pos == std::string::npos)
-                ss_pos = in_line2.find ("Start station");
-            if (ss_pos == std::string::npos)
-                throw std::runtime_error ("DC trip file has no Start Station field"); //nolint
-
-            if (in_line2.find ("End date", 0) > ss_pos)
-                dc_end_date_first = false;
-        } else if (city == "lo")
+        if (city == "lo")
         {
             std::string in_line2 = in_line;
             if (in_line2.find ("Logical Terminal") != std::string::npos)
@@ -152,8 +134,7 @@ int rcpp_import_to_trip_table (const char* bikedb,
             else if (city == "ch")
                 rc = read_one_line_chicago (stmt, in_line, delim);
             else if (city == "dc")
-                rc = read_one_line_dc (stmt, in_line, stn_map, stn_ids,
-                        id_in_dc_file, dc_end_date_first);
+                rc = read_one_line_dc (stmt, in_line, stn_map, stn_ids);
             else if (city == "lo")
                 rc = read_one_line_london (stmt, in_line);
             else if (city == "la" || city == "ph")

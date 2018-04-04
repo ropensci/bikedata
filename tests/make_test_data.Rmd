@@ -1,0 +1,111 @@
+# Script to assemble the `bike_test_data.rda` file
+
+```{r}
+devtools::load_all (".", export_all = FALSE)
+library (magrittr)
+data_dir <- tempdir ()
+nrows <- 200 # number of rows to read from each file
+
+names (bike_test_data)
+head (bike_test_data$la)
+
+# ----- DC -----
+dl_bikedata (city = "dc", data_dir = data_dir, dates = 201701)
+f <- list.files (tempdir ())
+f <- file.path (data_dir, f [grep ("capitalbikeshare", f)])
+fi <- unzip (f, list = TRUE)$Name
+unzip (f, files = fi [1], exdir = data_dir, junkpaths = TRUE)
+dc <- read.csv (file.path (data_dir, fi [1]), header = TRUE, nrows = nrows)
+
+# ----- LO -----
+dl_bikedata (city = "lo", data_dir = data_dir, dates = 201601)
+f <- list.files (tempdir ())
+f <- file.path (data_dir, f [grep ("JourneyDataExtract", f)])
+lo <- read.csv (f [1], header = TRUE, nrows = nrows)
+
+# ----- BO -----
+# These 3 different time periods have 3 different formats
+dl_bikedata (city = "bo", data_dir = data_dir, dates = 2012)
+dl_bikedata (city = "bo", data_dir = data_dir, dates = 201701)
+dl_bikedata (city = "bo", data_dir = data_dir, dates = 201801)
+f <- list.files (tempdir ())
+f <- file.path (data_dir, f [grep ("hubway", f)])
+# grepping all at once doesn't put them in this order:
+f <- c (f [grep ("2012", f)], f [grep ("2017", f)], f [grep ("2018", f)])
+bo12 <- read.csv (f [1], header = TRUE, nrows = nrows)
+fi <- unzip (f [2], list = TRUE)$Name
+unzip (f [2], files = fi, exdir = data_dir, junkpaths = TRUE)
+bo17 <- read.csv (file.path (data_dir, fi), header = TRUE, nrows = nrows)
+fi <- unzip (f [3], list = TRUE)$Name
+unzip (f [3], files = fi, exdir = data_dir, junkpaths = TRUE)
+bo18 <- read.csv (file.path (data_dir, fi), header = TRUE, nrows = nrows)
+# stations also need to be downloaded
+dl_files <- bikedata:::get_bike_files (city = 'bo')
+dl_files <- dl_files [which (grepl ('Stations', dl_files))]
+for (f in dl_files)
+{
+    furl <- gsub (" ", "%20", f)
+    f <- gsub (" ", "", f)
+    destfile <- file.path (data_dir, basename(f))
+    resp <- httr::GET (furl, httr::write_disk (destfile, overwrite = TRUE))
+}
+f <- list.files (tempdir ())
+f <- file.path (data_dir, f [grep ("hubway_stations", f, ignore.case = TRUE)])
+bo_st1 <- read.csv (f [1], header = TRUE)
+bo_st2 <- read.csv (f [2], header = TRUE)
+
+# ----- NY -----
+dl_bikedata (city = "ny", data_dir = data_dir, dates = 201612)
+f <- list.files (tempdir ())
+f <- file.path (data_dir, f [grep ("^201612-citibike", f)])
+fi <- unzip (f, list = TRUE)$Name
+unzip (f, files = fi [1], exdir = data_dir, junkpaths = TRUE)
+ny <- read.csv (file.path (data_dir, fi [1]), header = TRUE, nrows = nrows)
+
+# ----- CH -----
+dl_bikedata (city = "ch", data_dir = data_dir, dates = 201612)
+f <- list.files (tempdir ())
+f <- file.path (data_dir, f [grep ("Divvy", f)])
+fi <- unzip (f, list = TRUE)$Name
+fitr <- fi [grep ("Trips_2016_Q4", fi)]
+fist <- fi [grep ("Stations_2016_Q4", fi)]
+unzip (f, files = c (fitr, fist), exdir = data_dir, junkpaths = TRUE)
+ch_tr <- read.csv (file.path (data_dir, fitr), header = TRUE, nrows = nrows)
+ch_st <- read.csv (file.path (data_dir, fist), header = TRUE)
+
+# ----- LA -----
+dl_bikedata (city = "la", data_dir = data_dir, dates = 201701)
+f <- list.files (tempdir ())
+f <- file.path (data_dir, f [grep ("la_metro", f)])
+fi <- unzip (f, list = TRUE)$Name
+unzip (f, files = fi, exdir = data_dir, junkpaths = TRUE)
+la <- read.csv (file.path (data_dir, fi), header = TRUE, nrows = nrows)
+
+# ----- MN -----
+# data have to be pre-downloaded
+mn_dir <- "/data/data/bikes/mn"
+f <- list.files (mn_dir, full.names = TRUE) [3] # random file for 2012
+fi <- unzip (f, list = TRUE)$Name
+fitr <- fi [grepl ("trip", fi)]
+fist <- fi [grepl ("station", fi)]
+unzip (f, files = c (fitr, fist), exdir = data_dir, junkpaths = TRUE)
+mn_tr <- read.csv (file.path (data_dir, basename (fitr)),
+                   header = TRUE, nrows = nrows)
+mn_st <- read.csv (file.path (data_dir, basename (fist)),
+                   header = TRUE)
+
+bike_test_data <- list (dc = dc,
+                        lo = lo,
+                        bo12 = bo12,
+                        bo17 = bo17,
+                        bo18 = bo18,
+                        bo_st1 = bo_st1,
+                        bo_st2 = bo_st2,
+                        ny = ny,
+                        ch_tr = ch_tr,
+                        ch_st = ch_st,
+                        la = la,
+                        mn_tr = mn_tr,
+                        mn_st = mn_st)
+save (bike_test_data, file = "./data/bike_test_data.rda", compress = "xz")
+```
