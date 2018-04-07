@@ -495,15 +495,16 @@ bike_daily_trips <- function (bikedb, city, station, member, birth_year, gender,
 bike_demographic_data <- function ()
 {
     dat <- data.frame (city = c ('bo', 'ch', 'dc', 'la', 'lo',
-                                 'mn', 'ny', 'ph'),
+                                 'mn', 'ny', 'ph', 'sf'),
                        city_name = c ('Boston', 'Chicago', 'Washington DC',
                                       'Los Angeles', 'London', 'Minneapolis',
-                                      'New York', 'Philadelphia'),
+                                      'New York', 'Philadelphia', 'Bay Area'),
                        bike_system = c ('Hubway', 'Divvy', 'CapitalBikeShare',
                                         'Metro', 'Santander', 'NiceRide',
-                                        'Citibike', 'Indego'),
+                                        'Citibike', 'Indego','FordGoBike'),
                        demographic_data = c (TRUE, TRUE, FALSE, FALSE,
-                                             FALSE, TRUE, TRUE, FALSE),
+                                             FALSE, TRUE, TRUE, FALSE,
+                                             TRUE),
                        stringsAsFactors = FALSE)
 
     return (dat)
