@@ -970,6 +970,8 @@ unsigned int read_one_line_sf (sqlite3_stmt * stmt, char * line,
     std::string in_line2 = line;
     boost::replace_all (in_line2, "\\N","\"\"");
 
+// from read_one_boston
+
     std::string duration = strtokm (&in_line2[0u], delim_nq_q);
     std::string start_time = strtokm (nullptr, delim_q_q); // no need to convert
     std::string end_time = strtokm (nullptr, delim_q_nq); 
@@ -986,6 +988,26 @@ unsigned int read_one_line_sf (sqlite3_stmt * stmt, char * line,
     std::string end_station_lat = strtokm (nullptr, delim);
     std::string end_station_lon = strtokm (nullptr, delim);
 
+// end from read_one_boston
+
+// select from read_one_nabsa
+
+    unsigned int ret = 0;
+
+    start_station_id = city + start_station_id;
+    end_station_id = city + end_station_id;
+
+    if (stationqry->count(end_station_id) == 0 && ret == 0 &&
+            end_station_lat != " " && end_station_lon != " " &&
+            end_station_lat != "0" && end_station_lon != "0")
+    {
+        std::string end_station_name = "";
+        (*stationqry)[end_station_id] = "(\'" + city + "\',\'" +
+            end_station_id + "\',\'\'," + 
+            end_station_lat + "," + end_station_lon + ")";
+    }
+// end from read_one_nabsa
+
     std::string bike_number = strtokm (nullptr, delim_nq_q);
     std::string user_type = strtokm (nullptr, delim_q_nq);
     std::string birth_year = "", gender = "";
@@ -997,12 +1019,14 @@ unsigned int read_one_line_sf (sqlite3_stmt * stmt, char * line,
         gender = strtokm (nullptr, delim_nq_q);
         boost::replace_all (gender, "\n","");
         boost::replace_all (gender, "\"", "");
+        //from read_one_chicago
         if (gender == "Female")
             gender = "2";
         else if (gender == "Male")
             gender = "1";
         else
             gender = "0";
+        //end from read_one_chicago
         user_type = "1";
     } else
         user_type = "0";
@@ -1017,6 +1041,5 @@ unsigned int read_one_line_sf (sqlite3_stmt * stmt, char * line,
     sqlite3_bind_text(stmt, 9, birth_year.c_str(), -1, SQLITE_TRANSIENT); 
     sqlite3_bind_text(stmt, 10, gender.c_str(), -1, SQLITE_TRANSIENT); 
 
-    unsigned int ret = 0;
     return ret;
 }

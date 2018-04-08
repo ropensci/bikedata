@@ -143,7 +143,6 @@ int rcpp_import_to_trip_table (const char* bikedb,
                 rc = read_one_line_mn (stmt, in_line);
             else if (city == "sf")
                 rc = read_one_line_sf (stmt, in_line, &stationqry, city);
-
             if (rc == 0) // only != 0 for LA, London, Boston, and MN
             {
                 ntrips++;
@@ -157,7 +156,7 @@ int rcpp_import_to_trip_table (const char* bikedb,
     sqlite3_exec(dbcon, "END TRANSACTION", nullptr, nullptr, &zErrMsg);
     sqlite3_free (zErrMsg);
 
-    if (city == "ny" || city == "la" || city == "ph")
+    if (city == "ny" || city == "la" || city == "ph" || city == "sf")
         import_to_station_table (dbcon, stationqry);
 
     rc = static_cast <size_t> (sqlite3_close_v2 (dbcon));
