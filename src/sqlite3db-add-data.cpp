@@ -157,7 +157,7 @@ int rcpp_import_to_trip_table (const char* bikedb,
     sqlite3_exec(dbcon, "END TRANSACTION", nullptr, nullptr, &zErrMsg);
     sqlite3_free (zErrMsg);
 
-    if (city == "ny" || city == "la" || city == "ph" || city == "sf")
+    if (city == "ny" || city == "la" || city == "ph")
         import_to_station_table (dbcon, stationqry);
 
     rc = static_cast <size_t> (sqlite3_close_v2 (dbcon));

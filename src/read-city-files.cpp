@@ -992,11 +992,17 @@ unsigned int read_one_line_sf (sqlite3_stmt * stmt, char * line,
     if (user_type == "Subscriber")
     {
         birth_year = strtokm (nullptr, delim);
+        boost::replace_all (birth_year, "\n","");
+        boost::replace_all (birth_year, "\"", "");
         gender = strtokm (nullptr, delim_nq_q);
         boost::replace_all (gender, "\n","");
         boost::replace_all (gender, "\"", "");
-        boost::replace_all (birth_year, "\n","");
-        boost::replace_all (birth_year, "\"", "");
+        if (gender == "Female")
+            gender = "2";
+        else if (gender == "Male")
+            gender = "1";
+        else
+            gender = "0";
         user_type = "1";
     } else
         user_type = "0";
