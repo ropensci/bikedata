@@ -935,3 +935,82 @@ unsigned int read_one_line_mn (sqlite3_stmt * stmt, char * line)
 
     return ret;
 }
+
+
+//' read_one_line_sf
+//'
+//' This function might work. 
+//' 
+//' @param stmt An sqlit3 statement to be assembled by reading the line of data
+//' @param line Line of data read from citibike file
+//' @param stationqry Sqlite3 query for station data table to be subsequently
+//'        passed to 'import_to_station_table()'
+//'
+//' @noRd
+//' read_one_line_sf
+//'
+//' Parser for data files in which only non-numeric fields are embedded in
+//' quotes, like Boston post 2018
+//'
+//' @param stmt An sqlit3 statement to be assembled by reading the line of data
+//' @param line Line of data read from citibike file
+//' @param stationqry Sqlite3 query for station data table to be subsequently
+//'        passed to 'import_to_station_table()'
+//'
+//' @noRd
+unsigned int read_one_line_sf (sqlite3_stmt * stmt, char * line,
+                               std::map <std::string, std::string> * stationqry, 
+                                std::string city)
+{ 
+    const char * delim = ",";
+    const char * delim_nq_q = ",\""; // no quote followed by quote
+    const char * delim_q_nq = "\","; // quote followed by noquote
+    const char * delim_q_q = "\",\""; // quote followed by quote
+
+    std::string in_line2 = line;
+    boost::replace_all (in_line2, "\\N","\"\"");
+
+    std::string duration = strtokm (&in_line2[0u], delim_nq_q);
+    std::string start_time = strtokm (nullptr, delim_q_q); // no need to convert
+    std::string end_time = strtokm (nullptr, delim_q_nq); 
+
+    std::string start_station_id = strtokm (nullptr, delim_nq_q);
+    std::string start_station_name = strtokm (nullptr, delim_q_nq);
+    boost::replace_all (start_station_name, "\'", ""); // rm apostrophes
+    std::string start_station_lat = strtokm (nullptr, delim);
+    std::string start_station_lon = strtokm (nullptr, delim);
+
+    std::string end_station_id = strtokm (nullptr, delim_nq_q);
+    std::string end_station_name = strtokm (nullptr, delim_q_nq);
+    boost::replace_all (end_station_name, "\'", ""); // rm apostrophes
+    std::string end_station_lat = strtokm (nullptr, delim);
+    std::string end_station_lon = strtokm (nullptr, delim);
+
+    std::string bike_number = strtokm (nullptr, delim_nq_q);
+    std::string user_type = strtokm (nullptr, delim_q_nq);
+    std::string birth_year = "", gender = "";
+    if (user_type == "Subscriber")
+    {
+        birth_year = strtokm (nullptr, delim);
+        gender = strtokm (nullptr, delim_nq_q);
+        boost::replace_all (gender, "\n","");
+        boost::replace_all (gender, "\"", "");
+        boost::replace_all (birth_year, "\n","");
+        boost::replace_all (birth_year, "\"", "");
+        user_type = "1";
+    } else
+        user_type = "0";
+
+    sqlite3_bind_text(stmt, 2, duration.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 3, start_time.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 4, end_time.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 5, start_station_id.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 6, end_station_id.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 7, bike_number.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 8, user_type.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 9, birth_year.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 10, gender.c_str(), -1, SQLITE_TRANSIENT); 
+
+    unsigned int ret = 0;
+    return ret;
+}
