@@ -939,7 +939,7 @@ unsigned int read_one_line_mn (sqlite3_stmt * stmt, char * line)
 
 //' read_one_line_sf
 //'
-//' This function might work. 
+//' This function tokenizes strings from one line of san francisco bay area's bikeshare data
 //' 
 //' @param stmt An sqlit3 statement to be assembled by reading the line of data
 //' @param line Line of data read from citibike file
