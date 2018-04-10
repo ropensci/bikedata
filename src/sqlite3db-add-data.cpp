@@ -32,7 +32,8 @@
 //' @noRd
 // [[Rcpp::export]]
 int rcpp_import_to_trip_table (const char* bikedb, 
-        Rcpp::CharacterVector datafiles, std::string city, int quiet)
+        Rcpp::CharacterVector datafiles, std::string city,
+        std::string header_file, bool quiet)
 {
     sqlite3 *dbcon;
     char *zErrMsg = nullptr;
@@ -86,13 +87,18 @@ int rcpp_import_to_trip_table (const char* bikedb,
     sqlite3_exec(dbcon, "BEGIN TRANSACTION", nullptr, nullptr, &zErrMsg);
     sqlite3_free (zErrMsg);
 
+    HeaderStruct headers_all = get_all_file_headers (header_file);
+
     for(int filenum = 0; filenum < datafiles.length(); filenum++) 
     {
         Rcpp::checkUserInterrupt ();
-        if (quiet == 0)
+        if (!quiet)
             Rcpp::Rcout << "reading file " << filenum + 1 << "/" <<
                 datafiles.size() << ": " <<
                 datafiles [filenum] << std::endl;
+
+        std::string filename_i = Rcpp::as <std::string> (datafiles [filenum]);
+        HeaderStruct headers = get_file_headers (filename_i, city, headers_all);
 
         pFile = fopen (datafiles [filenum], "r");
         char * junk = fgets (in_line, BUFFER_SIZE, pFile);
@@ -102,13 +108,11 @@ int rcpp_import_to_trip_table (const char* bikedb,
         // One London file ("21JourneyDataExtract31Aug2016-06Sep2016.csv") has
         // "Start/EndStation Logical Terminal" numbers instead of IDs.  These
         // don't map on to any known station numbers and so can't be used.
-        bool london_is_junk = false;
-
         if (city == "lo")
         {
             std::string in_line2 = in_line;
             if (in_line2.find ("Logical Terminal") != std::string::npos)
-                london_is_junk = true;
+                break;
         }
 
         const char * delim;
@@ -118,9 +122,6 @@ int rcpp_import_to_trip_table (const char* bikedb,
             delim = "\",\"";
         else
             delim = ",";
-
-        if (london_is_junk)
-            break;
 
         while (fgets (in_line, BUFFER_SIZE, pFile) != nullptr) 
         {
@@ -214,4 +215,103 @@ int rcpp_import_to_file_table (const char * bikedb,
     sqlite3_free (zErrMsg);
 
     return nfiles;
+}
+
+// read in the entire structure of sysdata/headers
+HeaderStruct get_all_file_headers (const std::string header_file)
+{
+    std::ifstream in_file;
+    in_file.open (header_file.c_str(), std::ios_base::in);
+    std::string linetxt;
+    unsigned int nlines = 0;
+    while (getline (in_file, linetxt, '\n'))
+        nlines++;
+
+    HeaderStruct headers;
+    headers.city.resize (nlines);
+    headers.field_names.resize (nlines);
+    headers.quoted.resize (nlines);
+    headers.position.resize (nlines);
+    headers.do_stations.resize (nlines);
+    unsigned int i = 0;
+    in_file.clear ();
+    in_file.seekg (0);
+    getline (in_file, linetxt, '\n'); // header
+    while (getline (in_file, linetxt, '\n'))
+    {
+        boost::replace_all (linetxt, "\"","");
+        // first field is generic name:
+        unsigned int ipos = linetxt.find (",");
+        linetxt = linetxt.substr (ipos + 1, linetxt.length () - ipos - 1);
+        ipos = linetxt.find (",");
+        headers.city [i] = linetxt.substr (0, ipos);
+        linetxt = linetxt.substr (ipos + 1, linetxt.length () - ipos - 1);
+        ipos = linetxt.find (",");
+        headers.field_names [i] = linetxt.substr (0, ipos);
+        linetxt = linetxt.substr (ipos + 1, linetxt.length () - ipos - 1);
+        ipos = linetxt.find (",");
+        if (linetxt.substr (0, ipos) == "FALSE")
+            headers.quoted [i] = false;
+        else
+            headers.quoted [i] = true;
+        linetxt = linetxt.substr (ipos + 1, linetxt.length () - ipos - 1);
+        ipos = linetxt.find (",");
+        headers.position [i] = atoi (linetxt.substr (0, ipos).c_str ());
+        linetxt = linetxt.substr (ipos + 1, linetxt.length () - ipos - 1);
+        if (linetxt == "TRUE")
+            headers.do_stations [i] = true;
+        else
+            headers.do_stations [i] = false;
+    }
+
+    in_file.close ();
+
+    return headers;
+}
+
+HeaderStruct get_file_headers (const std::string fname, const std::string city,
+        const HeaderStruct &headers_all)
+{
+    const unsigned int nrecords = 15; // standard number of fields
+    HeaderStruct headers;
+    headers.city.resize (nrecords);
+    headers.field_names.resize (nrecords);
+    headers.quoted.resize (nrecords);
+    headers.position.resize (nrecords);
+    headers.do_stations.resize (nrecords);
+    std::string city_id = city;
+    if (city == "bo")
+    {
+        if (fname.find ("2011") != std::string::npos ||
+                fname.find ("2012") != std::string::npos ||
+                fname.find ("2013") != std::string::npos ||
+                fname.find ("2014") != std::string::npos ||
+                fname.find ("2015") != std::string::npos)
+        {
+            city_id = "bo_1";
+        } else if (fname.find ("2016") != std::string::npos ||
+                fname.find ("2017") != std::string::npos)
+            city_id = "bo_2";
+        else
+            city_id = "bo_3";
+
+    }
+
+    unsigned int count = 0;
+    for (unsigned int i = 0; i < headers_all.city.size (); i++)
+    {
+        if (headers_all.city [i] == city_id)
+        {
+            headers.city [count] = city; // city_id is just internal
+            headers.field_names [count] = headers_all.field_names [i];
+            headers.quoted [count] = headers_all.quoted [i];
+            headers.position [count] = headers_all.position [i];
+            headers.do_stations [count] = headers_all.do_stations [i];
+            count++;
+        }
+        if (count >= nrecords)
+            break;
+    }
+
+    return headers;
 }

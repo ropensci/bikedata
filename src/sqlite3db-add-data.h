@@ -22,11 +22,24 @@
 #include "read-city-files.h"
 
 #include <sstream>
+#include <fstream>
+#include <iostream>
 
 // [[Rcpp::depends(BH)]]
 #include <Rcpp.h>
 
+struct HeaderStruct {
+    std::vector <std::string> city, field_names;
+    std::vector <bool> quoted, do_stations;
+    std::vector <int> position;
+};
+
 int rcpp_import_to_trip_table (const char* bikedb, 
-        Rcpp::CharacterVector datafiles, std::string city, int quiet);
+        Rcpp::CharacterVector datafiles, std::string city,
+        std::string header_file, bool quiet);
 int rcpp_import_to_file_table (const char * bikedb,
         Rcpp::CharacterVector datafiles, std::string city, int nfiles);
+
+HeaderStruct get_all_file_headers (const std::string header_file);
+HeaderStruct get_file_headers (const std::string fname, const std::string city,
+        const HeaderStruct &headers_all);

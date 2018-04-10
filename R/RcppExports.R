@@ -93,8 +93,8 @@ rcpp_import_stn_df <- function(bikedb, stn_data, city) {
 #' @return integer result code
 #'
 #' @noRd
-rcpp_import_to_trip_table <- function(bikedb, datafiles, city, quiet) {
-    .Call(`_bikedata_rcpp_import_to_trip_table`, bikedb, datafiles, city, quiet)
+rcpp_import_to_trip_table <- function(bikedb, datafiles, city, header_file, quiet) {
+    .Call(`_bikedata_rcpp_import_to_trip_table`, bikedb, datafiles, city, header_file, quiet)
 }
 
 #' rcpp_import_to_file_table

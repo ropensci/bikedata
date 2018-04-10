@@ -184,8 +184,11 @@ store_bikedata <- function (bikedb, city, data_dir, dates = NULL, quiet = FALSE)
             }
 
             # main step: Import trips
-            ntrips_city <- rcpp_import_to_trip_table (bikedb, flists$flist_csv,
-                                                      ci, as.numeric (quiet))
+            ntrips_city <- rcpp_import_to_trip_table (bikedb,
+                                                      flists$flist_csv,
+                                                      ci,
+                                                      header_file_name (),
+                                                      quiet)
 
             if (length (flists$flist_rm) > 0)
                invisible (tryCatch (file.remove (flists$flist_rm),

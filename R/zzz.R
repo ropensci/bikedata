@@ -21,6 +21,8 @@
 {
     # make data set names global to avoid CHECK notes
     utils::globalVariables ("sysdata")
+    f <- file.path (tempdir (), "bikedata_headers.csv")
+    write.csv (sysdata$headers, file = f, row.names = FALSE)
 
     invisible ()
 }

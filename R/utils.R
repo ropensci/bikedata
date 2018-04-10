@@ -125,3 +125,10 @@ expand_home <- function (x)
         x <- gsub ("~", Sys.getenv ("HOME"), x)
     return (x)
 }
+
+# header files are parsed using sysdata.rda, which is written on load to the
+# following file, subsequently read directly within the C++ routines
+header_file_name <- function ()
+{
+    file.path (tempdir (), "bikedata_headers.csv")
+}

@@ -46,6 +46,7 @@ dat_sf$field_names <- c ("duration_sec", "start_time", "end_time",
 dat_sf$quoted <- c (FALSE, TRUE, TRUE, FALSE, TRUE, FALSE, FALSE, FALSE, TRUE,
                     FALSE, FALSE, FALSE, TRUE, FALSE, TRUE)
 dat_sf$position <- 1:15
+dat_sf$do_stations <- rep (TRUE, 15)
 
 dat_bo1 <- data.frame (fields = fields)
 dat_bo1$city <- "bo1"
@@ -58,6 +59,7 @@ dat_bo1$field_names <- c ("tripduration", "starttime", "stoptime",
 dat_bo1$quoted <- c (FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
                      FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE)
 dat_bo1$position <- 1:15
+dat_bo1$do_stations <- rep (FALSE, 15)
 
 dat_bo2 <- data.frame (fields = fields)
 dat_bo2$city <- "bo2"
@@ -70,6 +72,7 @@ dat_bo2$field_names <- c ("tripduration", "starttime", "stoptime",
 dat_bo2$quoted <- c (FALSE, TRUE, TRUE, FALSE, TRUE, FALSE, FALSE,
                      FALSE, TRUE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE)
 dat_bo2$position <- 1:15
+dat_bo2$do_stations <- rep (FALSE, 15)
 
 dat_bo3 <- data.frame (fields = fields)
 dat_bo3$city <- "bo3"
@@ -82,6 +85,7 @@ dat_bo3$field_names <- c ("tripduration", "starttime", "stoptime",
 dat_bo3$quoted <- c (TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,
                      TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE)
 dat_bo3$position <- 1:15
+dat_bo3$do_stations <- rep (FALSE, 15)
 
 headers <- rbind (dat_sf, dat_bo1, dat_bo2, dat_bo3)
 ```
@@ -89,6 +93,8 @@ And this then saves the correponding `data.frame` to the package data:
 ```{r}
 data_dir <- file.path (here::here (), "R")
 f <- file.path (data_dir, "sysdata.rda")
+load ("./R/sysdata.rda")
+stations_dc <- sysdata$stations_dc # comment out to refresh using above code
 sysdata <- list (stations_dc = stations_dc, headers = headers)
 save (sysdata, file = f, compress = "xz")
 ```
