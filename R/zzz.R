@@ -16,3 +16,11 @@
                    "  https://www.niceridemn.org/data_license")
     packageStartupMessage (msg)
 }
+
+.onLoad <- function (libname, pkgname)
+{
+    # make data set names global to avoid CHECK notes
+    utils::globalVariables ("sysdata")
+
+    invisible ()
+}

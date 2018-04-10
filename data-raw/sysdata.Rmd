@@ -1,0 +1,94 @@
+# The sysdata.rda object
+
+## DC station locations
+
+The function `R/stations.R/bike_get_dc_stations` has code to extract and process
+DC stations. The data can be obtained from 
+http://opendata.dc.gov/datasets/capital-bike-share-locations/, using
+Download->Spreadsheet. The code is reproduced here
+```{r}
+stations_dc <- read.csv ("Capital_Bike_Share_Locations.csv")
+names (stations_dc) <- tolower (names (stations_dc))
+name <- noquote (gsub ("'", "", stations_dc$address)) #nolint
+name <- trimws (name, which = 'right') # trim terminal white space
+stations_dc <- data.frame (id = stations_dc$terminal_number,
+                           name = name,
+                           lon = stations_dc$longitude,
+                           lat = stations_dc$latitude,
+                           stringsAsFactors = FALSE)
+```
+
+Script to generate the internal `bike_headers.rda` `data.frame` object which is
+used to parse the data. These header data are only used to specify file
+structure within the `C++` routines, and data for new cities may be added by
+specifying the correponding structure here, recreating the `bike_headers.rda`
+file, and modifying the **R** code as detailed in the [`bikedata`
+wiki](https://github.com/ropensci/bikedata/wiki/How-to-add-a-new-city).
+
+This first bit of code specifies the structures for the cities:
+```{r}
+fields <- c ("duration", "start_time", "end_time",
+             "start_station_id", "start_station_name",
+             "start_station_latitude", "start_station_longitude",
+             "end_station_id", "end_station_name",
+             "end_station_latitude", "end_station_longitude",
+             "bike_id", "user_type", "birth_year", "gender")
+
+dat_sf <- data.frame (fields = fields)
+dat_sf$city <- "sf"
+dat_sf$field_names <- c ("duration_sec", "start_time", "end_time",
+                      "start_station_id", "start_station_name",
+                      "start_station_latitude", "start_station_longitude",
+                      "end_station_id", "end_station_name",
+                      "end_station_latitude", "end_station_longitude",
+                      "bike_id", "user_type",
+                      "member_birth_year", "member_gender")
+dat_sf$quoted <- c (FALSE, TRUE, TRUE, FALSE, TRUE, FALSE, FALSE, FALSE, TRUE,
+                    FALSE, FALSE, FALSE, TRUE, FALSE, TRUE)
+dat_sf$position <- 1:15
+
+dat_bo1 <- data.frame (fields = fields)
+dat_bo1$city <- "bo1"
+dat_bo1$field_names <- c ("tripduration", "starttime", "stoptime",
+                          "start station id", "start station name",
+                          "start station latitude", "start station longitude",
+                          "end station id", "end station name",
+                          "end station latitude", "end station longitude",
+                          "bikeid", "usertype", "birth year", "gender")
+dat_bo1$quoted <- c (FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
+                     FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE)
+dat_bo1$position <- 1:15
+
+dat_bo2 <- data.frame (fields = fields)
+dat_bo2$city <- "bo2"
+dat_bo2$field_names <- c ("tripduration", "starttime", "stoptime",
+                          "start station id", "start station name",
+                          "start station latitude", "start station longitude",
+                          "end station id", "end station name",
+                          "end station latitude", "end station longitude",
+                          "bikeid", "usertype", "birth year", "gender")
+dat_bo2$quoted <- c (FALSE, TRUE, TRUE, FALSE, TRUE, FALSE, FALSE,
+                     FALSE, TRUE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE)
+dat_bo2$position <- 1:15
+
+dat_bo3 <- data.frame (fields = fields)
+dat_bo3$city <- "bo3"
+dat_bo3$field_names <- c ("tripduration", "starttime", "stoptime",
+                          "start station id", "start station name",
+                          "start station latitude", "start station longitude",
+                          "end station id", "end station name",
+                          "end station latitude", "end station longitude",
+                          "bikeid", "usertype", "birth year", "gender")
+dat_bo3$quoted <- c (TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,
+                     TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE)
+dat_bo3$position <- 1:15
+
+headers <- rbind (dat_sf, dat_bo1, dat_bo2, dat_bo3)
+```
+And this then saves the correponding `data.frame` to the package data:
+```{r}
+data_dir <- file.path (here::here (), "R")
+f <- file.path (data_dir, "sysdata.rda")
+sysdata <- list (stations_dc = stations_dc, headers = headers)
+save (sysdata, file = f, compress = "xz")
+```
