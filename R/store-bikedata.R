@@ -336,6 +336,8 @@ get_bike_cities <- function (data_dir)
         cities$mn <- TRUE
     if (any (grepl ('indego', flist, ignore.case = TRUE)))
         cities$ph <- TRUE
+    if (any (grepl ('fordgobike', flist, ignore.case = TRUE)))
+        cities$sf <- TRUE
 
     cities <- which (unlist (cities))
     names (cities)
