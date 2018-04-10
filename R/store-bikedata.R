@@ -112,7 +112,6 @@ store_bikedata <- function (bikedb, city, data_dir, dates = NULL, quiet = FALSE)
     ntrips <- 0
     for (ci in city)
     {
-        dl_bikedata (city = ci, dates = dates, quiet = quiet)
         if (!quiet)
         {
             if (length (city) == 1 & (ci != 'lo' & ci != 'sf'))
@@ -143,15 +142,22 @@ store_bikedata <- function (bikedb, city, data_dir, dates = NULL, quiet = FALSE)
             {
                 # These cities have both csv and zip files, but only store names
                 # of csv's that are not uncompressed zip files
-                fz <- basename (flists$flist_zip) %>%
-                    tools::file_path_sans_ext ()
-                fc <- basename (flists$flist_csv) %>%
-                    tools::file_path_sans_ext ()
-                indx <- seq (fc) [which (!fc %in% fz)]
-                if (length (indx) > 0)
+                if (length (flists$flist_zip) > 0)
                 {
-                    nms <- basename (flists$flist_csv [indx])
-                    nf <- rcpp_import_to_file_table (bikedb, nms, ci, nf)
+                    fz <- basename (flists$flist_zip) %>%
+                        tools::file_path_sans_ext ()
+                    fc <- basename (flists$flist_csv) %>%
+                        tools::file_path_sans_ext ()
+                    indx <- seq (fc) [which (!fc %in% fz)]
+                    if (length (indx) > 0)
+                    {
+                        nms <- basename (flists$flist_csv [indx])
+                        nf <- rcpp_import_to_file_table (bikedb, nms, ci, nf)
+                    }
+                } else
+                {
+                    nm <- basename (flists$flist_csv)
+                    nf <- rcpp_import_to_file_table (bikedb, nm, ci, nf)
                 }
             }
 
