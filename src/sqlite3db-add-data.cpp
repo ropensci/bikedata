@@ -273,6 +273,14 @@ HeaderStructAll get_all_file_headers (const std::string header_file)
     return headers;
 }
 
+bool strfound (const std::string str, const std::string target)
+{
+    bool found = false;
+    if (str.find (target) != std::string::npos)
+        found = true;
+    return found;
+}
+
 HeaderStruct get_file_headers (const std::string fname, const std::string city,
         const HeaderStructAll &headers_all)
 {
@@ -286,18 +294,23 @@ HeaderStruct get_file_headers (const std::string fname, const std::string city,
     std::string city_id = city;
     if (city == "bo")
     {
-        if (fname.find ("2011") != std::string::npos ||
-                fname.find ("2012") != std::string::npos ||
-                fname.find ("2013") != std::string::npos ||
-                fname.find ("2014") != std::string::npos ||
-                fname.find ("2015") != std::string::npos)
+        if (strfound (fname, "2011") || strfound (fname, "2012") ||
+                strfound (fname, "2013") || strfound (fname, "2014"))
         {
-            city_id = "bo_1";
-        } else if (fname.find ("2016") != std::string::npos ||
-                fname.find ("2017") != std::string::npos)
-            city_id = "bo_2";
+            city_id = "bo1";
+        } else if (strfound (fname, "2016") || strfound (fname, "2017"))
+            city_id = "bo2";
         else
-            city_id = "bo_3";
+            city_id = "bo3";
+
+    } else if (city == "ch")
+    {
+        if (strfound (fname, "2016_Q3") || strfound (fname, "2016_Q4") ||
+                strfound (fname, "2017_Q1") || strfound (fname, "2017_Q2") ||
+                strfound (fname, "2017_Q3"))
+            city_id = "ch2";
+        else
+            city_id = "ch1";
 
     }
 

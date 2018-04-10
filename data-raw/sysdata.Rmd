@@ -44,7 +44,8 @@ code then just referencing the following numbers for each field:
 | 12     | user_type               |
 | 13     | birth_year              |
 | 14     | gender                  |
-
+Note that the `field_names` are not actually used, so do not necessarily have to
+agree entirely with the values as given.
 ```{r}
 fields <- c ("duration", "start_time", "end_time",
              "start_station_id", "start_station_name",
@@ -52,6 +53,7 @@ fields <- c ("duration", "start_time", "end_time",
              "end_station_id", "end_station_name",
              "end_station_latitude", "end_station_longitude",
              "bike_id", "user_type", "birth_year", "gender")
+nfields <- length (fields) # 15
 
 dat_sf <- data.frame (fields = fields)
 dat_sf$city <- "sf"
@@ -67,6 +69,7 @@ dat_sf$quoted <- c (FALSE, TRUE, TRUE, FALSE, TRUE, FALSE, FALSE, FALSE, TRUE,
 dat_sf$position <- 1:15
 dat_sf$do_stations <- rep (TRUE, 15)
 
+# file format 2011-2015
 dat_bo1 <- data.frame (fields = fields)
 dat_bo1$city <- "bo1"
 dat_bo1$field_names <- c ("tripduration", "starttime", "stoptime",
@@ -77,9 +80,10 @@ dat_bo1$field_names <- c ("tripduration", "starttime", "stoptime",
                           "bikeid", "usertype", "birth year", "gender")
 dat_bo1$quoted <- c (FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
                      FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE)
-dat_bo1$position <- 1:15
-dat_bo1$do_stations <- rep (FALSE, 15)
+dat_bo1$position <- seq (nfields)
+dat_bo1$do_stations <- rep (FALSE, nfields)
 
+# file format 2016-2017
 dat_bo2 <- data.frame (fields = fields)
 dat_bo2$city <- "bo2"
 dat_bo2$field_names <- c ("tripduration", "starttime", "stoptime",
@@ -90,9 +94,10 @@ dat_bo2$field_names <- c ("tripduration", "starttime", "stoptime",
                           "bikeid", "usertype", "birth year", "gender")
 dat_bo2$quoted <- c (FALSE, TRUE, TRUE, FALSE, TRUE, FALSE, FALSE,
                      FALSE, TRUE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE)
-dat_bo2$position <- 1:15
-dat_bo2$do_stations <- rep (FALSE, 15)
+dat_bo2$position <- seq (nfields)
+dat_bo2$do_stations <- rep (FALSE, nfields)
 
+# file format 2018
 dat_bo3 <- data.frame (fields = fields)
 dat_bo3$city <- "bo3"
 dat_bo3$field_names <- c ("tripduration", "starttime", "stoptime",
@@ -103,10 +108,25 @@ dat_bo3$field_names <- c ("tripduration", "starttime", "stoptime",
                           "bikeid", "usertype", "birth year", "gender")
 dat_bo3$quoted <- c (TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,
                      TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE)
-dat_bo3$position <- 1:15
-dat_bo3$do_stations <- rep (FALSE, 15)
+dat_bo3$position <- seq (nfields)
+dat_bo3$do_stations <- rep (FALSE, nfields)
 
-headers <- rbind (dat_sf, dat_bo1, dat_bo2, dat_bo3)
+# file format 2013-2016Q2, then 2017Q4-
+dat_ch1 <- data.frame (fields = fields)
+dat_ch1$city <- "ch1"
+dat_ch1$field_names <- c ("tripduration", "starttime", "stoptime",
+                          "from_station_id", "from_station_name", "", "",
+                          "to_station_id", "to_station_name", "", "",
+                          "bikeid", "usertype", "birthday", "gender")
+dat_ch1$quoted <- rep (FALSE, nfields)
+dat_ch1$position <- c (5, 2, 3, 6, 7, -1, -1, 8, 9, -1, -1, 4, 10, 11, 12)
+dat_ch1$do_stations <- rep (FALSE, nfields)
+
+# file format 2016Q3-2017Q3
+dat_ch2 <- dat_ch1
+dat_ch2$quoted <- rep (TRUE, nfields)
+
+headers <- rbind (dat_sf, dat_bo1, dat_bo2, dat_bo3, dat_ch1, dat_ch2)
 ```
 And this then saves the correponding `data.frame` to the package data:
 ```{r}

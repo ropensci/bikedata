@@ -101,6 +101,8 @@ unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
     values [headers.position [4]] = city + values [headers.position [4]];
     values [headers.position [8]] = city + values [headers.position [8]];
 
+    // TDOD: Process datetime strings!
+
     // modify gender
     if (values [headers.position [14]] == "Female")
         values [headers.position [14]] = "2";

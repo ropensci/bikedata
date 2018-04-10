@@ -34,6 +34,7 @@ int rcpp_import_to_trip_table (const char* bikedb,
 int rcpp_import_to_file_table (const char * bikedb,
         Rcpp::CharacterVector datafiles, std::string city, int nfiles);
 
+bool strfound (const std::string str, const std::string target);
 HeaderStructAll get_all_file_headers (const std::string header_file);
 HeaderStruct get_file_headers (const std::string fname, const std::string city,
         const HeaderStructAll &headers_all);
