@@ -116,9 +116,9 @@ store_bikedata <- function (bikedb, city, data_dir, dates = NULL, quiet = FALSE)
     {
         if (!quiet)
         {
-            if (length (city) == 1 & ci != 'lo')
+            if (length (city) == 1 & (ci != 'lo' & ci != 'sf'))
                 message ('Unzipping raw data files ...')
-            else if (ci != 'lo') # mostly csv files that don't need unzipping
+            else if (ci != 'lo' & ci != 'sf') # mostly csv files that don't need unzipping
                 message ('Unzipping raw data files for ', ci, ' ...')
         }
         if (ci == 'ch')
@@ -137,7 +137,7 @@ store_bikedata <- function (bikedb, city, data_dir, dates = NULL, quiet = FALSE)
                 nf <- rcpp_import_to_file_table (bikedb,
                                                  basename (flists$flist_zip),
                                                  ci, nf)
-            if (ci %in% c('bo', 'lo') & length (flists$flist_csv) > 0)
+            if (ci %in% c('bo', 'lo', 'sf') & length (flists$flist_csv) > 0)
                 nf <- rcpp_import_to_file_table (bikedb,
                                                  basename (flists$flist_csv),
                                                  ci, nf)
@@ -356,6 +356,8 @@ get_flist_city <- function (data_dir, bikedb, city)
         index <- which (grepl ('nice', flist, ignore.case = TRUE))
     else if (any (city == 'ph'))
         index <- which (grepl ('indego', flist, ignore.case = TRUE))
+    else if (any (city == 'sf'))
+        index <- which (grepl ('fordgobike', flist, ignore.case = TRUE))
 
     ret <- NULL
     if (length (index) > 0)
@@ -415,7 +417,7 @@ bike_unzip_files <- function (data_dir, bikedb, city, dates)
 
     # Some cities issue non-compressed files (recent London files; annual Boston
     # dumps for 2011-14)
-    if (city %in% c ('bo', 'lo') && length (fcsv) > 0)
+    if (city %in% c ('bo', 'lo', 'sf') && length (fcsv) > 0)
     {
         flist_csv <- get_new_datafiles (bikedb, fcsv)
         if (city == 'bo') # Also has station files
