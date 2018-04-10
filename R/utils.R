@@ -8,6 +8,10 @@
 convert_city_names <- function (city)
 {
     city <- gsub (' ', '', city)
+    if (substring (tolower (city), 1, 4) == 'sant')
+        city <- 'lo'
+    else if (substring (tolower (city), 1, 4) == 'sanf')
+        city <- 'sf'
     city <- substring (gsub ('[[:punct:]]', '', tolower (city)), 1, 3)
     indx_lo <- which (city %in% c ('lon', 'los'))
     indx <- which (!seq (city) %in% indx_lo)
@@ -27,11 +31,11 @@ convert_city_names <- function (city)
                      'la', 'me', # LA metro
                      'lo', 'sa', # london santander
                      'ph', 'in', # philly indego
-                     'mn', 'mi',
-                     'by', 'fd', 'ok','sf','sj') # minneapolis/st.paul nice ride
+                     'mn', 'mi', # minneapolis/st.paul nice ride
+                     'fo', 'go', 'sf') # ford gobike san fran
     city_code <- c ('ny', 'ny', 'ny', 'bo', 'bo', 'ch', 'ch',
                     'dc', 'dc', 'dc', 'la', 'la', 'lo', 'lo', 'ph', 'ph',
-                    'mn', 'mn','sf','sf','sf','sf','sf')
+                    'mn', 'mn', 'sf', 'sf', 'sf')
     city_code <- city_code [pmatch (city, city_names)]
 
     if (length (indx_lo) > 0)
