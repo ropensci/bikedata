@@ -87,7 +87,7 @@ int rcpp_import_to_trip_table (const char* bikedb,
     sqlite3_exec(dbcon, "BEGIN TRANSACTION", nullptr, nullptr, &zErrMsg);
     sqlite3_free (zErrMsg);
 
-    HeaderStruct headers_all = get_all_file_headers (header_file);
+    HeaderStructAll headers_all = get_all_file_headers (header_file);
 
     for(int filenum = 0; filenum < datafiles.length(); filenum++) 
     {
@@ -128,6 +128,7 @@ int rcpp_import_to_trip_table (const char* bikedb,
             rm_dos_end (in_line);
             sqlite3_bind_text (stmt, 1, city.c_str (), -1, SQLITE_TRANSIENT); 
 
+            /*
             if (city == "ny")
                 rc = read_one_line_nyc (stmt, in_line, &stationqry, delim);
             else if (city == "bo")
@@ -144,6 +145,9 @@ int rcpp_import_to_trip_table (const char* bikedb,
                 rc = read_one_line_mn (stmt, in_line);
             else if (city == "sf")
                 rc = read_one_line_sf (stmt, in_line, &stationqry, city);
+            */
+            rc = read_one_line_generic (stmt, in_line, &stationqry, city,
+                    headers);
             if (rc == 0) // only != 0 for LA, London, Boston, and MN
             {
                 ntrips++;
@@ -218,7 +222,7 @@ int rcpp_import_to_file_table (const char * bikedb,
 }
 
 // read in the entire structure of sysdata/headers
-HeaderStruct get_all_file_headers (const std::string header_file)
+HeaderStructAll get_all_file_headers (const std::string header_file)
 {
     std::ifstream in_file;
     in_file.open (header_file.c_str(), std::ios_base::in);
@@ -227,7 +231,7 @@ HeaderStruct get_all_file_headers (const std::string header_file)
     while (getline (in_file, linetxt, '\n'))
         nlines++;
 
-    HeaderStruct headers;
+    HeaderStructAll headers;
     headers.city.resize (nlines);
     headers.field_names.resize (nlines);
     headers.quoted.resize (nlines);
@@ -270,15 +274,15 @@ HeaderStruct get_all_file_headers (const std::string header_file)
 }
 
 HeaderStruct get_file_headers (const std::string fname, const std::string city,
-        const HeaderStruct &headers_all)
+        const HeaderStructAll &headers_all)
 {
     const unsigned int nrecords = 15; // standard number of fields
+
     HeaderStruct headers;
-    headers.city.resize (nrecords);
+    headers.city = city;
     headers.field_names.resize (nrecords);
     headers.quoted.resize (nrecords);
     headers.position.resize (nrecords);
-    headers.do_stations.resize (nrecords);
     std::string city_id = city;
     if (city == "bo")
     {
@@ -300,18 +304,43 @@ HeaderStruct get_file_headers (const std::string fname, const std::string city,
     unsigned int count = 0;
     for (unsigned int i = 0; i < headers_all.city.size (); i++)
     {
+        unsigned int maxpos = 0;
         if (headers_all.city [i] == city_id)
         {
-            headers.city [count] = city; // city_id is just internal
             headers.field_names [count] = headers_all.field_names [i];
             headers.quoted [count] = headers_all.quoted [i];
             headers.position [count] = headers_all.position [i];
-            headers.do_stations [count] = headers_all.do_stations [i];
+
+            if (headers.position [count] > maxpos)
+            {
+                headers.do_stations = headers_all.do_stations [i];
+                headers.terminal_quote = headers_all.quoted [i];
+                // terminal_quote will then hold the terminal value of quoted
+            }
             count++;
         }
         if (count >= nrecords)
             break;
     }
 
+    has_terminal_quote (headers); // just set terminal_quote flag
+
     return headers;
+}
+
+// Does the header structure correspond to a terminal quote?
+void has_terminal_quote (HeaderStruct &headers)
+{
+    unsigned int maxpos = 0;
+    headers.nvalues = 0;
+    headers.terminal_quote = false;
+    for (unsigned int i = 0; i < headers.position.size (); i++)
+    {
+        if (headers.position [i] > maxpos)
+        {
+            maxpos = headers.position [i];
+            headers.terminal_quote = headers.quoted [i];
+            headers.nvalues++;
+        }
+    }
 }

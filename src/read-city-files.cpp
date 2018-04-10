@@ -14,6 +14,152 @@
 
 #include "read-city-files.h"
 
+//' This maps the data onto the fields defined in headers which follow this
+//' structure, as detailed in, and derived from, data-raw/sysdata.Rmd
+//' 
+//' | number | field                   |
+//' | ----   | ----------------------- |
+//' | 0      | duration                |
+//' | 1      | start_time              |
+//' | 2      | end_time                |
+//' | 3      | start_station_id        |
+//' | 4      | start_station_name      |
+//' | 5      | start_station_latitude  |
+//' | 6      | start_station_longitude |
+//' | 7      | end_station_id          |
+//' | 8      | end_station_name        |
+//' | 9      | end_station_latitude    |
+//' | 10     | end_station_longitude   |
+//' | 11     | bike_id                 |
+//' | 12     | user_type               |
+//' | 13     | birth_year              |
+//' | 14     | gender                  |
+//'
+//' @noRd
+unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
+        std::map <std::string, std::string> * stationqry,
+        const std::string city, const HeaderStruct &headers)
+{
+    const unsigned int num_db_fields = 15;
+    const char * delim_noq_noq = ",";
+    const char * delim_noq_q = ",\"";
+    const char * delim_q_noq = "\",";
+    const char * delim_q_q = "\",\"";
+
+    std::string linestr = line;
+    if (headers.terminal_quote)
+        boost::replace_all (linestr, "\\N", "\"\"");
+    else
+        boost::replace_all (linestr, "\\N", "");
+
+    std::vector <std::string> values (num_db_fields);
+    std::fill (values.begin (), values.end (), "\"\"");
+    // first field has to be done separately to feed the startline linestr
+    // pointer
+    if (headers.quoted [0])
+    {
+        char * token = strtokm (&linestr[0u], "\""); // opening quote
+        if (headers.quoted [1])
+            values [0] = strtokm (nullptr, delim_q_q);
+        else
+            values [0] = strtokm (nullptr, delim_q_noq);
+        (void) token; // suppress unused variable warning
+    } else
+    {
+        if (headers.quoted [1])
+            values [0] = strtokm (&linestr[0u], delim_noq_q);
+        else
+            values [0] = strtokm (&linestr[0u], delim_noq_noq);
+    }
+
+    unsigned int i = 1;
+    while (i < headers.nvalues)
+    {
+        if (headers.position [i] >= 0)
+        {
+            if (headers.quoted [i-1])
+            {
+                if (headers.quoted [i])
+                    values [i] = strtokm (nullptr, delim_q_q);
+                else
+                    values [i] = strtokm (nullptr, delim_q_noq);
+            } else
+            {
+                if (headers.quoted [i])
+                    values [i] = strtokm (nullptr, delim_noq_q);
+                else
+                    values [i] = strtokm (nullptr, delim_noq_noq);
+            }
+        }
+        i++;
+    }
+
+    // Important: See data-raw/sysdata.Rmd for translation between
+    // headers.position and actual fields.
+
+    // add city prefixes to station names
+    values [headers.position [4]] = city + values [headers.position [4]];
+    values [headers.position [8]] = city + values [headers.position [8]];
+
+    // modify gender
+    if (values [headers.position [14]] == "Female")
+        values [headers.position [14]] = "2";
+    else if (values [headers.position [14]] == "Male")
+        values [headers.position [14]] = "1";
+    else
+        values [headers.position [14]] = "0";
+
+    // modify user_type
+    if (values [headers.position [12]] == "Member" ||
+            values [headers.position [12]] == "Subscriber")
+        values [headers.position [12]] = "1";
+    else
+        values [headers.position [12]] = "0";
+
+    // Then bind the SQLITE statement
+    sqlite3_bind_text(stmt, 2, values [headers.position [0]].c_str(),
+            -1, SQLITE_TRANSIENT); // Trip duration
+    sqlite3_bind_text(stmt, 3, values [headers.position [1]].c_str(),
+            -1, SQLITE_TRANSIENT); // start time
+    sqlite3_bind_text(stmt, 4, values [headers.position [2]].c_str(),
+            -1, SQLITE_TRANSIENT); // end time
+    sqlite3_bind_text(stmt, 5, values [headers.position [3]].c_str(),
+            -1, SQLITE_TRANSIENT); // start station id
+    sqlite3_bind_text(stmt, 6, values [headers.position [7]].c_str(),
+            -1, SQLITE_TRANSIENT); // end station id
+    sqlite3_bind_text(stmt, 7, values [headers.position [11]].c_str(),
+            -1, SQLITE_TRANSIENT); // bike id
+    sqlite3_bind_text(stmt, 8, values [headers.position [12]].c_str(),
+            -1, SQLITE_TRANSIENT); // user type
+    sqlite3_bind_text(stmt, 9, values [headers.position [13]].c_str(),
+            -1, SQLITE_TRANSIENT); // birth year
+    sqlite3_bind_text(stmt, 10, values [headers.position [14]].c_str(),
+            -1, SQLITE_TRANSIENT); // gender
+
+    // and add station queries if needed
+    if (headers.do_stations)
+    {
+        // start station:
+        if (stationqry->count (values [headers.position [3]]) == 0 &&
+                values [headers.position [5]] != "0.0" &&
+                values [headers.position [6]] != "0.0")
+            (*stationqry)[values [headers.position [3]]] = "(\'" + city +
+                "\',\'" + values [headers.position [4]] +
+                "\'," + values [headers.position [5]] +
+                "\'," + values [headers.position [6]] + ")";
+
+        // end station:
+        if (stationqry->count (values [headers.position [7]]) == 0 &&
+                values [headers.position [9]] != "0.0" &&
+                values [headers.position [10]] != "0.0")
+            (*stationqry)[values [headers.position [7]]] = "(\'" + city +
+                "\',\'" + values [headers.position [8]] +
+                "\'," + values [headers.position [9]] +
+                "\'," + values [headers.position [10]] + ")";
+    }
+
+    return 0;
+}
 
 //' read_one_line_nyc
 //'
