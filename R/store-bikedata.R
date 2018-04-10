@@ -117,8 +117,11 @@ store_bikedata <- function (bikedb, city, data_dir, dates = NULL, quiet = FALSE)
         {
             if (length (city) == 1 & (ci != 'lo' & ci != 'sf'))
                 message ('Unzipping raw data files ...')
-            else if (ci != 'lo' & ci != 'sf') # mostly csv files that don't need unzipping
+            else if (ci != 'lo' & ci != 'sf')
+            {
+                # mostly csv files that don't need unzipping
                 message ('Unzipping raw data files for ', ci, ' ...')
+            }
         }
         if (ci == 'ch')
             flists <- bike_unzip_files_chicago (data_dir, bikedb, dates)
@@ -459,7 +462,10 @@ bike_unzip_files <- function (data_dir, bikedb, city, dates)
                 flist_csv <- c (flist_csv, basename (fit))
                 flist_csv_stns <- c (flist_csv_stns, basename (fis))
             } else
-                flist_csv <- c (flist_csv, basename (fi)) # can duplicate entries
+            {
+                # the following can result in duplicated entries
+                flist_csv <- c (flist_csv, basename (fi))
+            }
             if (!all (fi %in% fcsv))
             {
                 unzip (f, exdir = data_dir, junkpaths = TRUE)

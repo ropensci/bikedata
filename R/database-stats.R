@@ -501,7 +501,7 @@ bike_demographic_data <- function ()
                                       'New York', 'Philadelphia', 'Bay Area'),
                        bike_system = c ('Hubway', 'Divvy', 'CapitalBikeShare',
                                         'Metro', 'Santander', 'NiceRide',
-                                        'Citibike', 'Indego','FordGoBike'),
+                                        'Citibike', 'Indego', 'FordGoBike'),
                        demographic_data = c (TRUE, TRUE, FALSE, FALSE,
                                              FALSE, TRUE, TRUE, FALSE,
                                              TRUE),

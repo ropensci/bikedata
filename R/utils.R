@@ -35,7 +35,7 @@ convert_city_names <- function (city)
                      'fo', 'go', 'sf') # ford gobike san fran
     city_code <- c ('ny', 'ny', 'ny', 'bo', 'bo', 'ch', 'ch',
                     'dc', 'dc', 'dc', 'la', 'la', 'lo', 'lo', 'ph', 'ph',
-                    'mn', 'mn', 'sf', 'sf', 'sf')
+                    'mn', 'mn', 'sf', 'sf','sf')
     city_code <- city_code [pmatch (city, city_names)]
 
     if (length (indx_lo) > 0)

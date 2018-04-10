@@ -123,7 +123,7 @@ get_nabsa_files <- function (city)
 get_bike_files <- function (city)
 {
     aws_cities <- c ('ny', 'dc', 'bo', 'sf')
-    buckets <- c ('tripdata', 'capitalbikeshare-data', 
+    buckets <- c ('tripdata', 'capitalbikeshare-data',
                   'hubway-data', 'fordgobike-data')
     nabsa_cities <- c ('la', 'ph')
 
