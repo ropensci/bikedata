@@ -81,8 +81,6 @@ store_bikedata <- function (bikedb, city, data_dir, dates = NULL, quiet = FALSE)
         if ("mn" %in% city)
             stop ('Data for the Nice Ride MN system must be downloaded ',
                   'manually from\nhttps://www.niceridemn.org/data/')
-        for (ci in city)
-            dl_bikedata (city = ci, dates = dates, quiet = quiet)
         data_dir <- tempdir ()
     } else if (missing (city))
     {
@@ -114,6 +112,7 @@ store_bikedata <- function (bikedb, city, data_dir, dates = NULL, quiet = FALSE)
     ntrips <- 0
     for (ci in city)
     {
+        dl_bikedata (city = ci, dates = dates, quiet = quiet)
         if (!quiet)
         {
             if (length (city) == 1 & (ci != 'lo' & ci != 'sf'))
@@ -137,10 +136,21 @@ store_bikedata <- function (bikedb, city, data_dir, dates = NULL, quiet = FALSE)
                 nf <- rcpp_import_to_file_table (bikedb,
                                                  basename (flists$flist_zip),
                                                  ci, nf)
-            if (ci %in% c('bo', 'lo', 'sf') & length (flists$flist_csv) > 0)
-                nf <- rcpp_import_to_file_table (bikedb,
-                                                 basename (flists$flist_csv),
-                                                 ci, nf)
+            if (ci %in% c ('bo', 'lo', 'sf') & length (flists$flist_csv) > 0)
+            {
+                # These cities have both csv and zip files, but only store names
+                # of csv's that are not uncompressed zip files
+                fz <- basename (flists$flist_zip) %>%
+                    tools::file_path_sans_ext ()
+                fc <- basename (flists$flist_csv) %>%
+                    tools::file_path_sans_ext ()
+                indx <- seq (fc) [which (!fc %in% fz)]
+                if (length (indx) > 0)
+                {
+                    nms <- basename (flists$flist_csv [indx])
+                    nf <- rcpp_import_to_file_table (bikedb, nms, ci, nf)
+                }
+            }
 
             # import stations to stations table
             if (ci == 'ch')
@@ -403,7 +413,7 @@ bike_unzip_files <- function (data_dir, bikedb, city, dates)
     if (!is.null (dates))
     {
         dates <- bike_convert_dates (dates) %>%
-            expand_dates_to_range %>%
+            expand_dates_to_range () %>%
             convert_dates_to_filenames (city = city)
         indx <- which (grepl (paste (dates, collapse = "|"), flist_zip))
         flist_zip <- flist_zip [indx]
