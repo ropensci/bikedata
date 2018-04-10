@@ -15,3 +15,4 @@
 ^paper\.bib$
 ^\.Rproj\.user$
 ^codemeta\.json$
+^/src/vendor/sqlite3/sqlite3.o$

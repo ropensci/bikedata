@@ -29,16 +29,14 @@ values.}
 Number of trips added to database
 }
 \description{
-Store hire bicycle data in SQLite3 database
+Store previously downloaded data (via the \link{dl_bikedata} function) in a
+database for subsequent extraction and analysis.
 }
 \note{
-Data for different cities are all stored in the same database, with
+Data for different cities may all be stored in the same database, with
 city identifiers automatically established from the names of downloaded data
-files. This function can take quite a long time to execute (typically > 10
-minutes), and generates a SQLite3 database file several gigabytes in size.
-Downloaded data files are removed after loading into the database; files may
-be downloaded and stored permanently with \code{dl_bikedata}, and the
-corresponding \code{data_dir} passed to this function.
+files. This function can take quite a long time to execute, and may generate
+an SQLite3 database file several gigabytes in size.
 }
 \section{Details}{
 
@@ -47,12 +45,15 @@ unambiguously designate the desired city. Names of corresponding bike systems
 can also be given.  Currently possible cities (with minimal designations in
 parentheses) and names of bike hire systems are:
 \tabular{lr}{
- New York City (ny)\tab Citibike\cr
- Washington, D.C. (dc)\tab Capital Bike Share\cr
- Chicago (ch)\tab Divvy Bikes\cr
- Los Angeles (la)\tab Metro Bike Share\cr
  Boston (bo)\tab Hubway\cr
+ Chicago (ch)\tab Divvy Bikes\cr
+ Washington, D.C. (dc)\tab Capital Bike Share\cr
+ Los Angeles (la)\tab Metro Bike Share\cr
+ London (lo)\tab Santander Cycles\cr
+ Minnesota (mn)\tab NiceRide\cr
+ New York City (ny)\tab Citibike\cr
  Philadelphia (ph)\tab Indego\cr
+ San Francisco Bay Area (sf)\tab Ford GoBike\cr
 }
 }
 

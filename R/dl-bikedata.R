@@ -1,5 +1,7 @@
 #' Download hire bicycle data
 #'
+#' Download data for subsequent storage via \link{store_bikedata}.
+#'
 #' @param city City for which to download bike data, or name of corresponding
 #' bike system (see Details below).
 #' @param data_dir Directory to which to download the files
@@ -8,19 +10,21 @@
 #' @param quiet If FALSE, progress is displayed on screen
 #'
 #' @section Details:
-#' This function produces zip-compressed data in R's temporary directory. City
-#' names are not case sensitive, and must only be long enough to unambiguously
-#' designate the desired city. Names of corresponding bike systems can also be
-#' given.  Currently possible cities (with minimal designations in parentheses)
-#' and names of bike hire systems are:
+#' This function produces (generally) zip-compressed data in R's temporary
+#' directory. City names are not case sensitive, and must only be long enough to
+#' unambiguously designate the desired city. Names of corresponding bike systems
+#' can also be given.  Currently possible cities (with minimal designations in
+#' parentheses) and names of bike hire systems are:
 #' \tabular{lr}{
-#'  New York City (ny)\tab Citibike\cr
-#'  Washington, D.C. (dc)\tab Capital Bike Share\cr
-#'  Chicago (ch)\tab Divvy Bikes\cr
-#'  Los Angeles (la)\tab Metro Bike Share\cr
 #'  Boston (bo)\tab Hubway\cr
+#'  Chicago (ch)\tab Divvy Bikes\cr
+#'  Washington, D.C. (dc)\tab Capital Bike Share\cr
+#'  Los Angeles (la)\tab Metro Bike Share\cr
 #'  London (lo)\tab Santander Cycles\cr
+#'  Minnesota (mn)\tab NiceRide\cr
+#'  New York City (ny)\tab Citibike\cr
 #'  Philadelphia (ph)\tab Indego\cr
+#'  San Francisco Bay Area (sf)\tab Ford GoBike\cr
 #' }
 #'
 #' Ensure you have a fast internet connection and at least 100 Mb space

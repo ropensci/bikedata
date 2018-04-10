@@ -29,13 +29,14 @@ names of associated public bicycle hire systems currently included in the
 City | Hire Bicycle System | Number of Bicycles | Number of Docking Stations
 --- | --- | --- | ---
 London, U.K. | [Santander Cycles](https://tfl.gov.uk/modes/cycling/santander-cycles) | 13,600 | 839
+San Francisco Bay Area, U.S.A. | [Ford GoBike](https://www.fordgobike.com/)  | 7,000 | 540 
 New York City NY, U.S.A. | [citibike](https://www.citibikenyc.com/) | 7,000 | 458
 Chicago IL, U.S.A. | [Divvy](https://www.divvybikes.com/) | 5,837 | 576
 Washingon DC, U.S.A. | [Capital BikeShare](https://www.capitalbikeshare.com/) | 4,457 | 406
 Minneapolis/St Paul MN, U.S.A. | [Nice Ride](https://www.niceridemn.org/) | 1,833 | 171
 Boston MA, U.S.A. | [Hubway](https://www.thehubway.com/) | 1,461 | 158
+Philadelphia PA, U.S.A. | [Indego](https://www.rideindego.com) | 1,000 | 105
 Los Angeles CA, U.S.A. | [Metro](https://bikeshare.metro.net/) | 1,000 | 65
-Philadelphia PA, U.S.A. | [Indego](https://www.rideindego.com) | 600 | 60
 
 All of these systems record and disseminate individual trip data, minimally
 including the times and places at which every trip starts and ends. Some provide
@@ -72,27 +73,30 @@ devtools::load_all ()
 
 ## 2. Main Functions
 
-The `bikedata` function `store_bikedata()` downloads individual trip data from
-any or all or the above listed systems and stores them in an `SQLite3` database.
-For example, the following line will download all data from the Metro
-system of Los Angeles CA, U.S.A., and store them in a database named 'bikedb',
+The `bikedata` function `dl_bikedata()` downloads individual trip data from
+any or all or the above listed systems, and the function `store_bikedata()`
+stores them in an `SQLite3` database.  For example, the following line will
+download all data from the Metro system of Los Angeles CA, U.S.A., and store
+them in a database named 'bikedb',
 ```{r store-la-data, eval = TRUE}
 bikedb <- file.path (tempdir (), "bikedb.sqlite") # or whatever
-store_bikedata (city = 'la', bikedb = bikedb, dates = 2017, quiet = TRUE)
+dl_bikedata (city = 'la', dates = 2017, quiet = TRUE)
+store_bikedata (data_dir = tempdir (), bikedb = bikedb, quiet = TRUE)
 ```
-The function returns the number of trips added to the database.  Both the
-downloaded data and the `SQLite3` database are stored by default in the
-temporary directory of the current `R` session. The downloaded data are deleted
-after having been loaded into the `SQLite3` database, and the database itself
-is deleted on termination of the `R` session.  (All of these options may be
-overridden as described below.)
+The `store_bikedata()` function returns the number of trips added to the
+database.  Both the downloaded data and the `SQLite3` database are stored by
+default in the temporary directory of the current `R` session. Any data
+downloaded into `tempdir()` will of course be deleted on termination of the
+active **R** session; use of other directories (as described below) will create
+enduring data which must be managed by the user.
 
 Successive calls to `store_bikedata()` will append additional data to the same
 database. For example, the following line will append all data from Chicago's
 Divvy bike system from the year 2017 to the database created with the first
 call above. 
 ```{r, eval = FALSE}
-store_bikedata (bikedb = bikedb, city = 'divvy', dates = 2016, quiet = TRUE)
+dl_bikedata (city = 'divvy', dates = 2016, quiet = TRUE)
+store_bikedata (bikedb = bikedb, data_dir = tempdir (), quiet = TRUE)
 ```
 ```{r, echo = FALSE}
 3595383
@@ -103,7 +107,7 @@ is now less than the total number of trips stored of:
 bike_db_totals (bikedb = bikedb)
 ```
 ```{r, echo = FALSE}
-3726719
+3823255
 ```
 
 Prior to accessing any data from the `SQLite3` database, it is recommended to
@@ -124,21 +128,21 @@ class (tm); dim (tm); sum (tm)
 ```
 ```{r}
 ```{r, echo = FALSE}
-x <- "matrix"; y <- c (66, 66); z <- 131336
+x <- "matrix"; y <- c (129, 129); z <- 227872
 x; y; z
 ```
-The Los Angeles Metro system has 66 docking stations, and there were a total of
-131,336 individual trips up to April 2017.  Trip matrices can also be extracted
-in long form using
+The Los Angeles Metro system has 129 docking stations, and there were a total of
+227,872 individual trips during the year 2017.  Trip matrices can also be
+extracted in long form using
 ```{r, eval = FALSE}
 bike_tripmat (bikedb = bikedb, city = 'la', long = TRUE)
 ```
 ```{r, echo = FALSE}
-n <- 4356
-ss <- c (rep ('la3005', 10), rep (NA, n - 10))
-es <- c ('la3005', 'la3006', 'la3007', 'la3008', 'la3009',
-         'la3010', 'la3011', 'la3014', 'la3016', 'la3018', rep (NA, n - 10))
-nt <- c (324, 105, 31, 173, 1, 9, 86, 49, 12, 39, rep (NA, n - 10))
+n <- 16641
+ss <- c (rep ('la3000', 10), rep (NA, n - 10))
+es <- c ('la3000', 'la3005', 'la3006', 'la3007', 'la3008', 'la3009',
+         'la3010', 'la3011', 'la3013', 'la3014', rep (NA, n - 10))
+nt <- c (162, 19, 9, 0, 0, 0, 0, 0, 0, 5, rep (NA, n - 10))
 
 tm <- tibble::tibble (start_station_id = ss,
                       end_station_id = es, numtrips = nt)
@@ -150,11 +154,11 @@ obtained with
 bike_stations (bikedb = bikedb)
 ```
 ```{r, echo = FALSE}
-n <- 662
+n <- 724
 id <- seq (n)
 city <- rep ('la', n)
 ids <- c ('la3005', 'la3006', 'la3007', 'la3008', 'la3009',
-          'la3010', 'la3011', 'la3014', 'la3016', 'la3018', rep (NA, n - 10))
+          'la3010', 'la3011', 'la3013', 'la3014', 'la3016', rep (NA, n - 10))
 x <- c (-118.2590, -118.2567, -118.2546, -118.2627, -118.4728,
         -118.2549, -118.2680, -118.2372, -118.2416, -118.2601, rep (NA, n - 10))
 y <- c (34.04855, 34.04554, 34.05048, 34.04661, 33.98738,
@@ -194,10 +198,9 @@ functional aspects of downloading, storage, and extraction of data.
 
 ## 3. Downloading Data
 
-The `store_bikedata()` function demonstrated above automatically downloads data
-and deletes the downloaded files once the data has been loaded into the
-`SQLite3` database. Enduring copies of the raw data files may be created with
-the function `dl_bikedata()`, and specifying a (non-default) location, such as,
+Data may be downloaded with the `dl_bikedata()` function. In it's simplest form,
+this function requires specification only of a city for which data are to be
+downloaded, although the directory is usually specified as well:
 ```{r, eval = FALSE}
 dl_bikedata (city = 'chicago', data_dir = '/data/bikedata/')
 ```
@@ -249,6 +252,34 @@ Even though the database constructed with `store_bikedata()` will then contain
 data beyond the specified date ranges, it is nevertheless possible to obtain a
 trip matrix corresponding to specific dates and/or times, as described below.
 
+The `dates` argument can also be passed to `store_bikedata`. This is useful in
+cases where data are to be loaded only from a restricted set of files in the
+given data directory.
+
+## 3.2 Refreshing data sources
+
+The `dl_bikedata()` function will only download data that do not already exist
+in the nominated directory, and so can be use to periodically refresh data. If,
+for example, the following function were previously run at the end of 2017:
+```{r, eval = FALSE}
+dl_bikedata (city = 'sf', data_dir = '/data/stored/here')
+```
+then running again in, say, April 2018, would download three additional files
+corresponding to the first three months of 2018. These data can then be added to
+a previously-constructed database with the usual call
+```{r, eval = FALSE}
+store_bikedata (city = 'sf', data_dir = '/data/stored/here', bikedb = bikedb)
+```
+If previous data have been stored in a nominated database, yet deleted from
+local storage, then any new data can be added by first getting the names of
+previously stored files with
+```{r, eval = FALSE}
+bike_stored_files (bikedb = bikedb = city = 'sf')
+```
+And then calling `dl_bikedata`, with `dates` specified to add only those files
+not previously stored.
+
+
 ## 4. Storing Data
 
 As mentioned above, individual trip data are stored in a single `SQLite3`
@@ -269,28 +300,13 @@ however doing so will request confirmation that data from *all* cities really
 ought to be downloaded and/or stored.  Intended general usage of the
 `store_bikedata()` function is illustrated in the following line:
 ```{r, eval = FALSE}
-ntrips <- store_bikedata (bikedb = bikedb, city = 'ny',
-                          dates = '2014 aug - 2015 Dec')
-```
-Or to load data which have been previously downloaded using `dl_bikedata()`:
-```{r, eval = FALSE}
+dl_bikedata (bikedb = bikedb, city = 'ny', dates = '2014 aug - 2015 dec')
 ntrips <- store_bikedata (bikedb = bikedb, city = 'ny',
                           data_dir = '/data/stored/here')
 ```
-As described above, the function `dl_bikedata()` may be used to periodically
-refresh downloaded files when new data become available. The `store_bikedata()`
-function provides a similar capability. When called without specifying
-`data_dir`, the function will download only those files which have not been
-previously stored in the database, whereas when called with a specific
-`data_dir`, the function will download any files not present in the nominated
-directory and load them in to the database.
-
-In short, the `store_bikedata()` function may be repeatedly called to load only
-those data published since the last time the function was called, while
-enduring copies of the raw data files on individual trips may be periodically
-refreshed with `dl_bikedata()`, and the associated directory specified in the
-call to `store_bikedata()` to load only recently added files.
-
+Note that passing with `city` parameter to `store_bikedata()` is not strictly
+necessary, but will ensure that only data for the nominated city are loaded from
+directories which may contain additional data from other cities.
 
 
 ## 5. Accessing Aggregate Data
