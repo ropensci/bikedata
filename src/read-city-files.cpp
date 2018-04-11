@@ -14,6 +14,7 @@
 
 #include "read-city-files.h"
 
+
 //' This maps the data onto the fields defined in headers which follow this
 //' structure, as detailed in, and derived from, data-raw/sysdata.Rmd
 //' 
@@ -40,7 +41,6 @@ unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry,
         const std::string city, const HeaderStruct &headers)
 {
-    const unsigned int num_db_fields = 15;
     const char * delim_noq_noq = ",";
     const char * delim_noq_q = ",\"";
     const char * delim_q_noq = "\",";
@@ -72,92 +72,120 @@ unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
             values [0] = strtokm (&linestr[0u], delim_noq_noq);
     }
 
-    unsigned int i = 1;
-    while (i < headers.nvalues)
+    for (unsigned int i = 1; i <= headers.nvalues; i++)
     {
-        if (headers.position [i] >= 0)
+        if (headers.position_file2db [i] >= 0)
         {
-            if (headers.quoted [i-1])
+            if (headers.quoted [i])
             {
-                if (headers.quoted [i])
+                if (headers.quoted [i + 1])
                     values [i] = strtokm (nullptr, delim_q_q);
                 else
                     values [i] = strtokm (nullptr, delim_q_noq);
             } else
             {
-                if (headers.quoted [i])
+                if (headers.quoted [i + 1])
                     values [i] = strtokm (nullptr, delim_noq_q);
                 else
                     values [i] = strtokm (nullptr, delim_noq_noq);
             }
+
+            // add city prefixes to station names
+            if (headers.position_file2db [i] == 3 || headers.position_file2db [i] == 7)
+                values [i] = city + values [i];
+
+            if (headers.position_file2db [i] == 12) // user type
+            {
+                if (values [i] == "Member" ||
+                        values [i] == "Subscriber" ||
+                        values [i] == "Flex Pass" ||
+                        values [i] == "Monthly Pass" ||
+                        values [i] == "IndegoFlex" ||
+                        values [i] == "Indego30")
+                    values [i] = "1";
+                else
+                    values [i] = "0";
+            }
+
+            if (headers.position_file2db [i] == 14) // gender
+            {
+                if (values [i] == "Female")
+                    values [i] = "2";
+                else if (values [i] == "Male")
+                    values [i] = "1";
+                else
+                    values [i] = "0";
+            }
         }
-        i++;
     }
-
-    // Important: See data-raw/sysdata.Rmd for translation between
-    // headers.position and actual fields.
-
-    // add city prefixes to station names
-    values [headers.position [4]] = city + values [headers.position [4]];
-    values [headers.position [8]] = city + values [headers.position [8]];
+    /*
+    if (headers.terminal_quote)
+    {
+        i--;
+        values [i] = values [i].substr (0, values [i].length () - 1);
+    }
+    */
 
     // TDOD: Process datetime strings!
 
-    // modify gender
-    if (values [headers.position [14]] == "Female")
-        values [headers.position [14]] = "2";
-    else if (values [headers.position [14]] == "Male")
-        values [headers.position [14]] = "1";
-    else
-        values [headers.position [14]] = "0";
-
-    // modify user_type
-    if (values [headers.position [12]] == "Member" ||
-            values [headers.position [12]] == "Subscriber")
-        values [headers.position [12]] = "1";
-    else
-        values [headers.position [12]] = "0";
-
     // Then bind the SQLITE statement
-    sqlite3_bind_text(stmt, 2, values [headers.position [0]].c_str(),
-            -1, SQLITE_TRANSIENT); // Trip duration
-    sqlite3_bind_text(stmt, 3, values [headers.position [1]].c_str(),
-            -1, SQLITE_TRANSIENT); // start time
-    sqlite3_bind_text(stmt, 4, values [headers.position [2]].c_str(),
-            -1, SQLITE_TRANSIENT); // end time
-    sqlite3_bind_text(stmt, 5, values [headers.position [3]].c_str(),
-            -1, SQLITE_TRANSIENT); // start station id
-    sqlite3_bind_text(stmt, 6, values [headers.position [7]].c_str(),
-            -1, SQLITE_TRANSIENT); // end station id
-    sqlite3_bind_text(stmt, 7, values [headers.position [11]].c_str(),
-            -1, SQLITE_TRANSIENT); // bike id
-    sqlite3_bind_text(stmt, 8, values [headers.position [12]].c_str(),
-            -1, SQLITE_TRANSIENT); // user type
-    sqlite3_bind_text(stmt, 9, values [headers.position [13]].c_str(),
-            -1, SQLITE_TRANSIENT); // birth year
-    sqlite3_bind_text(stmt, 10, values [headers.position [14]].c_str(),
-            -1, SQLITE_TRANSIENT); // gender
+    std::string duration = "", starttime = "", endtime = "", startid = "", endid
+        = "", bikeid = "", user = "", birthyear = "", gender = "";
+
+    if (headers.position_db2file [0] >= 0)
+        duration = values [headers.position_db2file [0]];
+    sqlite3_bind_text(stmt, 2, duration.c_str (), -1, SQLITE_TRANSIENT);
+
+    if (headers.position_db2file [1] >= 0)
+        starttime = values [headers.position_db2file [1]];
+    sqlite3_bind_text(stmt, 3, starttime.c_str (), -1, SQLITE_TRANSIENT);
+
+    if (headers.position_db2file [2] >= 0)
+        endtime = values [headers.position_db2file [2]];
+    sqlite3_bind_text(stmt, 4, endtime.c_str (), -1, SQLITE_TRANSIENT);
+
+    if (headers.position_db2file [3] >= 0)
+        startid = values [headers.position_db2file [3]];
+    sqlite3_bind_text(stmt, 5, startid.c_str (), -1, SQLITE_TRANSIENT);
+
+    if (headers.position_db2file [7] >= 0)
+        endid = values [headers.position_db2file [7]];
+    sqlite3_bind_text(stmt, 6, endid.c_str (), -1, SQLITE_TRANSIENT);
+
+    if (headers.position_db2file [11] >= 0)
+        bikeid = values [headers.position_db2file [11]];
+    sqlite3_bind_text(stmt, 7, bikeid.c_str (), -1, SQLITE_TRANSIENT);
+
+    if (headers.position_db2file [12] >= 0)
+        user = values [headers.position_db2file [12]];
+    sqlite3_bind_text(stmt, 8, user.c_str (), -1, SQLITE_TRANSIENT);
+
+    if (headers.position_db2file [13] >= 0)
+        birthyear = values [headers.position_db2file [13]];
+    sqlite3_bind_text(stmt, 9, birthyear.c_str (), -1, SQLITE_TRANSIENT);
+
+    if (headers.position_db2file [14] >= 0)
+        gender = values [headers.position_db2file [14]];
+    sqlite3_bind_text(stmt, 10, gender.c_str (), -1, SQLITE_TRANSIENT);
 
     // and add station queries if needed
-    if (headers.do_stations)
+    if (headers.data_has_stations)
     {
         // start station:
-        if (stationqry->count (values [headers.position [3]]) == 0 &&
-                values [headers.position [5]] != "0.0" &&
-                values [headers.position [6]] != "0.0")
-            (*stationqry)[values [headers.position [3]]] = "(\'" + city +
-                "\',\'" + values [headers.position [4]] +
-                "\'," + values [headers.position [5]] +
-                "\'," + values [headers.position [6]] + ")";
+        std::string stn_id = values [headers.position_db2file [3]],
+            lon = values [headers.position_db2file [6]],
+            lat = values [headers.position_db2file [5]];
+        if (stationqry->count (stn_id) == 0 && lon != "0.0" && lat != "0.0")
+            (*stationqry)[stn_id] = "(\'" + city + "\',\'" + stn_id +
+                "\'," + lon + "\'," + lat + ")";
 
         // end station:
-        if (stationqry->count (values [headers.position [7]]) == 0 &&
-                values [headers.position [9]] != "0.0" &&
-                values [headers.position [10]] != "0.0")
-            (*stationqry)[values [headers.position [7]]] = "(\'" + city +
-                "\',\'" + values [headers.position [8]] +
-                "\'," + values [headers.position [9]] +
-                "\'," + values [headers.position [10]] + ")";
+        stn_id = values [headers.position_db2file [7]],
+            lon = values [headers.position_db2file [10]],
+            lat = values [headers.position_db2file [9]];
+        if (stationqry->count (stn_id) == 0 && lon != "0.0" && lat != "0.0")
+            (*stationqry)[stn_id] = "(\'" + city + "\',\'" + stn_id +
+                "\'," + lon + "\'," + lat + ")";
     }
 
     return 0;

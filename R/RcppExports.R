@@ -78,6 +78,42 @@ rcpp_import_stn_df <- function(bikedb, stn_data, city) {
     .Call(`_bikedata_rcpp_import_stn_df`, bikedb, stn_data, city)
 }
 
+#' Examine the header line of the data file to map the records on to the
+#' corresponding columns in the database. The database has the following fields
+#' and column numbers:
+#'    | number | field                   |
+#'    | ----   | ----------------------- |
+#'    | 0      | duration                |
+#'    | 1      | start_time              |
+#'    | 2      | end_time                |
+#'    | 3      | start_station_id        |
+#'    | 4      | start_station_name      |
+#'    | 5      | start_station_latitude  |
+#'    | 6      | start_station_longitude |
+#'    | 7      | end_station_id          |
+#'    | 8      | end_station_name        |
+#'    | 9      | end_station_latitude    |
+#'    | 10     | end_station_longitude   |
+#'    | 11     | bike_id                 |
+#'    | 12     | user_type               |
+#'    | 13     | birth_year              |
+#'    | 14     | gender                  |
+#' The HeaderStruct has vectors for "position" and "quoted". Each of these has
+#' the same length as the number of entries in the actual file (not necessarily
+#' equal to "num_db_fields = 15"), with "position" mapping each entry on to its
+#' corresponding position in the database, and using -1 to denote no
+#' corresponding field.
+#' @noRd
+NULL
+
+#' get_field_quotes
+#'
+#' The quotation structure of the header line does not always reflect the
+#' actual structure of the data, so the patterns of quotations are determined by
+#' the first data line rather than in "get_field_positions".
+#' @noRd
+NULL
+
 #' rcpp_import_to_trip_table
 #'
 #' Extracts bike data for NYC citibike
@@ -93,8 +129,8 @@ rcpp_import_stn_df <- function(bikedb, stn_data, city) {
 #' @return integer result code
 #'
 #' @noRd
-rcpp_import_to_trip_table <- function(bikedb, datafiles, city, header_file, quiet) {
-    .Call(`_bikedata_rcpp_import_to_trip_table`, bikedb, datafiles, city, header_file, quiet)
+rcpp_import_to_trip_table <- function(bikedb, datafiles, city, header_file_name, quiet) {
+    .Call(`_bikedata_rcpp_import_to_trip_table`, bikedb, datafiles, city, header_file_name, quiet)
 }
 
 #' rcpp_import_to_file_table

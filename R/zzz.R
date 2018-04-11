@@ -23,6 +23,8 @@
     utils::globalVariables ("sysdata")
     f <- file.path (tempdir (), "bikedata_headers.csv")
     write.csv (sysdata$headers, file = f, row.names = FALSE)
+    f <- file.path (tempdir (), "field_names.csv")
+    write.csv (sysdata$field_names, file = f, row.names = FALSE, quote = FALSE)
 
     invisible ()
 }

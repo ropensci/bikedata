@@ -15,6 +15,44 @@
 
 #include "sqlite3db-add-data.h"
 
+
+/***************************************************************************
+ *
+ * EXTENDED DESCRIPTIONS
+ * 
+ * The SQLite3 database has the following 15 fields and column numbers:
+ *    | number | field                   |
+ *    | ----   | ----------------------- |
+ *    | 0      | duration                |
+ *    | 1      | start_time              |
+ *    | 2      | end_time                |
+ *    | 3      | start_station_id        |
+ *    | 4      | start_station_name      |
+ *    | 5      | start_station_latitude  |
+ *    | 6      | start_station_longitude |
+ *    | 7      | end_station_id          |
+ *    | 8      | end_station_name        |
+ *    | 9      | end_station_latitude    |
+ *    | 10     | end_station_longitude   |
+ *    | 11     | bike_id                 |
+ *    | 12     | user_type               |
+ *    | 13     | birth_year              |
+ *    | 14     | gender                  |
+ * The value of 15 is held in common.h/num_db_fields = 15
+ *
+ * Each data field is examined to map its structure on to these fields. First
+ * the header is examined to fill both "position_file2db" and "position_db2file"
+ * vectors. The first of these vectors has length equal to the number of fields
+ * in the actual file, with values then identifying which of the above fields is
+ * recorded at that position.  Non-existent fields are coded -1. A "quoted"
+ * vector is also constructed to indicate whether or not each field is embedded
+ * in quotes.
+ *
+ * Having established these header structures (in a HeaderStruct object),
+ * reading a file then requires assembling a vector of string objects.
+ *
+ ***************************************************************************/
+
 //' rcpp_import_to_trip_table
 //'
 //' Extracts bike data for NYC citibike
@@ -33,7 +71,7 @@
 // [[Rcpp::export]]
 int rcpp_import_to_trip_table (const char* bikedb, 
         Rcpp::CharacterVector datafiles, std::string city,
-        std::string header_file, bool quiet)
+        std::string header_file_name, bool quiet)
 {
     sqlite3 *dbcon;
     char *zErrMsg = nullptr;
@@ -78,7 +116,9 @@ int rcpp_import_to_trip_table (const char* bikedb,
     sqlite3_stmt * stmt;
     std::map <std::string, std::string> stationqry;
 
-    int ntrips = 0; // ntrips is # added in this call
+    bool data_has_stations = false; // TODO: Properly process that!
+
+    int ntrips = 0; // ntrips is added in this call
 
     sprintf(sqlqry, "INSERT INTO trips VALUES (NOT NULL, @CI, @TD, @ST, @ET, @SSID, @ESID, @BID, @UT, @BY, @GE)");
 
@@ -87,7 +127,7 @@ int rcpp_import_to_trip_table (const char* bikedb,
     sqlite3_exec(dbcon, "BEGIN TRANSACTION", nullptr, nullptr, &zErrMsg);
     sqlite3_free (zErrMsg);
 
-    HeaderStructAll headers_all = get_all_file_headers (header_file);
+    //HeaderStructAll headers_all = get_all_file_headers (header_file);
 
     for(int filenum = 0; filenum < datafiles.length(); filenum++) 
     {
@@ -98,7 +138,8 @@ int rcpp_import_to_trip_table (const char* bikedb,
                 datafiles [filenum] << std::endl;
 
         std::string filename_i = Rcpp::as <std::string> (datafiles [filenum]);
-        HeaderStruct headers = get_file_headers (filename_i, city, headers_all);
+        HeaderStruct headers = get_field_positions (filename_i,
+                header_file_name, data_has_stations);
 
         pFile = fopen (datafiles [filenum], "r");
         char * junk = fgets (in_line, BUFFER_SIZE, pFile);
@@ -115,16 +156,15 @@ int rcpp_import_to_trip_table (const char* bikedb,
                 break;
         }
 
-        const char * delim;
-        // both ny and chicago sometimes place fields in double quotes,
-        // sometimes not.
-        if (line_has_quotes (in_line))
-            delim = "\",\"";
-        else
-            delim = ",";
-
+        bool get_structure = true;
         while (fgets (in_line, BUFFER_SIZE, pFile) != nullptr) 
         {
+            if (get_structure)
+            {
+                get_field_quotes (in_line, headers);
+                get_structure = false;
+            }
+
             rm_dos_end (in_line);
             sqlite3_bind_text (stmt, 1, city.c_str (), -1, SQLITE_TRANSIENT); 
 
@@ -221,58 +261,6 @@ int rcpp_import_to_file_table (const char * bikedb,
     return nfiles;
 }
 
-// read in the entire structure of sysdata/headers
-HeaderStructAll get_all_file_headers (const std::string header_file)
-{
-    std::ifstream in_file;
-    in_file.open (header_file.c_str(), std::ios_base::in);
-    std::string linetxt;
-    unsigned int nlines = 0;
-    while (getline (in_file, linetxt, '\n'))
-        nlines++;
-
-    HeaderStructAll headers;
-    headers.city.resize (nlines);
-    headers.field_names.resize (nlines);
-    headers.quoted.resize (nlines);
-    headers.position.resize (nlines);
-    headers.do_stations.resize (nlines);
-    unsigned int i = 0;
-    in_file.clear ();
-    in_file.seekg (0);
-    getline (in_file, linetxt, '\n'); // header
-    while (getline (in_file, linetxt, '\n'))
-    {
-        boost::replace_all (linetxt, "\"","");
-        // first field is generic name:
-        unsigned int ipos = linetxt.find (",");
-        linetxt = linetxt.substr (ipos + 1, linetxt.length () - ipos - 1);
-        ipos = linetxt.find (",");
-        headers.city [i] = linetxt.substr (0, ipos);
-        linetxt = linetxt.substr (ipos + 1, linetxt.length () - ipos - 1);
-        ipos = linetxt.find (",");
-        headers.field_names [i] = linetxt.substr (0, ipos);
-        linetxt = linetxt.substr (ipos + 1, linetxt.length () - ipos - 1);
-        ipos = linetxt.find (",");
-        if (linetxt.substr (0, ipos) == "FALSE")
-            headers.quoted [i] = false;
-        else
-            headers.quoted [i] = true;
-        linetxt = linetxt.substr (ipos + 1, linetxt.length () - ipos - 1);
-        ipos = linetxt.find (",");
-        headers.position [i] = atoi (linetxt.substr (0, ipos).c_str ());
-        linetxt = linetxt.substr (ipos + 1, linetxt.length () - ipos - 1);
-        if (linetxt == "TRUE")
-            headers.do_stations [i] = true;
-        else
-            headers.do_stations [i] = false;
-    }
-
-    in_file.close ();
-
-    return headers;
-}
-
 bool strfound (const std::string str, const std::string target)
 {
     bool found = false;
@@ -281,79 +269,131 @@ bool strfound (const std::string str, const std::string target)
     return found;
 }
 
-HeaderStruct get_file_headers (const std::string fname, const std::string city,
-        const HeaderStructAll &headers_all)
+//' Examine the header line of the data file to map the records on to the
+//' corresponding columns in the database. The database has the following fields
+//' and column numbers:
+//'    | number | field                   |
+//'    | ----   | ----------------------- |
+//'    | 0      | duration                |
+//'    | 1      | start_time              |
+//'    | 2      | end_time                |
+//'    | 3      | start_station_id        |
+//'    | 4      | start_station_name      |
+//'    | 5      | start_station_latitude  |
+//'    | 6      | start_station_longitude |
+//'    | 7      | end_station_id          |
+//'    | 8      | end_station_name        |
+//'    | 9      | end_station_latitude    |
+//'    | 10     | end_station_longitude   |
+//'    | 11     | bike_id                 |
+//'    | 12     | user_type               |
+//'    | 13     | birth_year              |
+//'    | 14     | gender                  |
+//' The HeaderStruct has vectors for "position" and "quoted". Each of these has
+//' the same length as the number of entries in the actual file (not necessarily
+//' equal to "num_db_fields = 15"), with "position" mapping each entry on to its
+//' corresponding position in the database, and using -1 to denote no
+//' corresponding field.
+//' @noRd
+HeaderStruct get_field_positions (const std::string fname,
+        const std::string header_file_name, bool data_has_stations)
 {
-    const unsigned int nrecords = 15; // standard number of fields
+    std::ifstream in_file;
+    // load file header variants - this file is very small, so no real loss
+    // doing this repeatedly here. Note that this is where the R 1-indexed
+    // positions are re-mapped to 0-indexed C++ versions.
+    in_file.open (header_file_name.c_str (), std::ios_base::in);
+    std::unordered_map <std::string, unsigned int> field_name_map;
+    std::string line;
+    while (getline (in_file, line, '\n'))
+    {
+        unsigned int ipos = line.find (",");
+        //std::string f1 = line.substr (0, ipos); // generic name: not used
+        line = line.substr (ipos + 1, line.length () - ipos - 1);
+        ipos = line.find (",");
+        std::string f2 = line.substr (0, ipos);
+        line = line.substr (ipos + 1, line.length () - ipos - 1);
+        field_name_map.emplace (f2, atoi (line.c_str ()) - 1);
+    }
+    in_file.close ();
 
+    in_file.open (fname.c_str(), std::ios_base::in);
+    getline (in_file, line, '\n');
+    // remove all quotes, whitespace, underscores, and convert to lower:
+    boost::replace_all (line, "\"", "");
+    boost::replace_all (line, " ", "");
+    boost::replace_all (line, "_", "");
+    boost::replace_all (line, "\n","");
+    boost::replace_all (line, "\r","");
+    // Note that this only works because all systems to date are from the
+    // English-speaking world; see
+    // https://stackoverflow.com/questions/313970/how-to-convert-stdstring-to-lower-case
+    std::transform (line.begin (), line.end (), line.begin (), ::tolower);
+    // Alternative
+    /*
+    std::locale loc;
+    for (std::string::size_type i = 0; i < line.length (); i++)
+        line [i] = std::tolower (line [i], loc);
+    */
+    unsigned int len = std::count (line.begin (), line.end (), ',');
+    
     HeaderStruct headers;
-    headers.city = city;
-    headers.field_names.resize (nrecords);
-    headers.quoted.resize (nrecords);
-    headers.position.resize (nrecords);
-    std::string city_id = city;
-    if (city == "bo")
+    headers.data_has_stations = data_has_stations;
+    headers.position_file2db.resize (len + 1); // one more fields than commas
+    std::fill (headers.position_file2db.begin (), headers.position_file2db.end (), -1);
+    headers.position_db2file.resize (num_db_fields);
+    std::fill (headers.position_db2file.begin (), headers.position_db2file.end (), -1);
+
+    for (unsigned int i = 0; i < len; i++)
     {
-        if (strfound (fname, "2011") || strfound (fname, "2012") ||
-                strfound (fname, "2013") || strfound (fname, "2014"))
+        unsigned int ipos = line.find (",");
+        std::string field = line.substr (0, ipos);
+        if (field_name_map.find (field) != field_name_map.end ())
         {
-            city_id = "bo1";
-        } else if (strfound (fname, "2016") || strfound (fname, "2017"))
-            city_id = "bo2";
-        else
-            city_id = "bo3";
-
-    } else if (city == "ch")
-    {
-        if (strfound (fname, "2016_Q3") || strfound (fname, "2016_Q4") ||
-                strfound (fname, "2017_Q1") || strfound (fname, "2017_Q2") ||
-                strfound (fname, "2017_Q3"))
-            city_id = "ch2";
-        else
-            city_id = "ch1";
-
-    }
-
-    unsigned int count = 0;
-    for (unsigned int i = 0; i < headers_all.city.size (); i++)
-    {
-        unsigned int maxpos = 0;
-        if (headers_all.city [i] == city_id)
-        {
-            headers.field_names [count] = headers_all.field_names [i];
-            headers.quoted [count] = headers_all.quoted [i];
-            headers.position [count] = headers_all.position [i];
-
-            if (headers.position [count] > maxpos)
-            {
-                headers.do_stations = headers_all.do_stations [i];
-                headers.terminal_quote = headers_all.quoted [i];
-                // terminal_quote will then hold the terminal value of quoted
-            }
-            count++;
+            headers.position_file2db [i] = field_name_map.at (field);
+            headers.position_db2file [field_name_map.at (field)] = i;
         }
-        if (count >= nrecords)
-            break;
+        line = line.substr (ipos + 1, line.length () - ipos - 1);
+    }
+    if (field_name_map.find (line) != field_name_map.end ())
+    {
+        headers.position_file2db [len] = field_name_map.at (line);
+        headers.position_db2file [field_name_map.at (line)] = len;
     }
 
-    has_terminal_quote (headers); // just set terminal_quote flag
+    headers.nvalues = len + 1;
+
 
     return headers;
 }
 
-// Does the header structure correspond to a terminal quote?
-void has_terminal_quote (HeaderStruct &headers)
+//' get_field_quotes
+//'
+//' The quotation structure of the header line does not always reflect the
+//' actual structure of the data, so the patterns of quotations are determined by
+//' the first data line rather than in "get_field_positions".
+//' @noRd
+void get_field_quotes (const std::string line, HeaderStruct &headers)
 {
-    unsigned int maxpos = 0;
-    headers.nvalues = 0;
-    headers.terminal_quote = false;
-    for (unsigned int i = 0; i < headers.position.size (); i++)
+    std::string l = line;
+    headers.quoted.resize (headers.position_file2db.size ());
+    for (unsigned int i = 0; i < (headers.nvalues - 1); i++)
     {
-        if (headers.position [i] > maxpos)
-        {
-            maxpos = headers.position [i];
-            headers.terminal_quote = headers.quoted [i];
-            headers.nvalues++;
-        }
+        if (l.find ("\"") < l.find (","))
+            headers.quoted [i] = true;
+        else
+            headers.quoted [i] = false;
+
+        unsigned int ipos = l.find (",");
+        l = l.substr (ipos + 1, l.length () - ipos - 1);
+    }
+    if (l.find ("\"") == std::string::npos)
+    {
+        headers.quoted [headers.nvalues] = false;
+        headers.terminal_quote = false;
+    } else
+    {
+        headers.quoted [headers.nvalues] = true;
+        headers.terminal_quote = true;
     }
 }

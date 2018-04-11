@@ -130,5 +130,5 @@ expand_home <- function (x)
 # following file, subsequently read directly within the C++ routines
 header_file_name <- function ()
 {
-    file.path (tempdir (), "bikedata_headers.csv")
+    file.path (tempdir (), "field_names.csv")
 }

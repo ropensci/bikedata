@@ -18,122 +18,87 @@ stations_dc <- data.frame (id = stations_dc$terminal_number,
                            stringsAsFactors = FALSE)
 ```
 
-Script to generate the internal `bike_headers.rda` `data.frame` object which is
-used to parse the data. These header data are only used to specify file
-structure within the `C++` routines, and data for new cities may be added by
-specifying the correponding structure here, recreating the `bike_headers.rda`
-file, and modifying the **R** code as detailed in the [`bikedata`
-wiki](https://github.com/ropensci/bikedata/wiki/How-to-add-a-new-city).
+## Bike Header Field Names
 
-This first bit of code specifies the structures for the cities, with the C++
-code then just referencing the following numbers for each field:
+The fields stored in the `bikedata` database are:
+
 | number | field                   |
 | ----   | ----------------------- |
-| 0      | duration                |
-| 1      | start_time              |
-| 2      | end_time                |
-| 3      | start_station_id        |
-| 4      | start_station_name      |
-| 5      | start_station_latitude  |
-| 6      | start_station_longitude |
-| 7      | end_station_id          |
-| 8      | end_station_name        |
-| 9      | end_station_latitude    |
-| 10     | end_station_longitude   |
-| 11     | bike_id                 |
-| 12     | user_type               |
-| 13     | birth_year              |
-| 14     | gender                  |
-Note that the `field_names` are not actually used, so do not necessarily have to
-agree entirely with the values as given.
+| 1      | duration                |
+| 2      | start_time              |
+| 3      | end_time                |
+| 4      | start_station_id        |
+| 5      | start_station_name      |
+| 6      | start_station_latitude  |
+| 7      | start_station_longitude |
+| 8      | end_station_id          |
+| 9      | end_station_name        |
+| 10     | end_station_latitude    |
+| 11     | end_station_longitude   |
+| 12     | bike_id                 |
+| 13     | user_type               |
+| 14     | birth_year              |
+| 15     | gender                  |
+
+Each file has at least some of these fields, but different systems naturally use
+different nomenclatures. The `header_names` structure maps different system
+names for these fields onto the above names. All names are converted to lower
+case and all white space and underscores removed, so entries here should be all
+lower case with no white space.
+
+old DC files had "Duration (ms)", but no longer do.
+LA has "passholder_type", which can be "Flex Pass" = annual, or "Monthly Pass"
+PH has "passholder_type", which can be "IndegoFlex" or "Indego30"
+
 ```{r}
-fields <- c ("duration", "start_time", "end_time",
-             "start_station_id", "start_station_name",
-             "start_station_latitude", "start_station_longitude",
-             "end_station_id", "end_station_name",
-             "end_station_latitude", "end_station_longitude",
-             "bike_id", "user_type", "birth_year", "gender")
-nfields <- length (fields) # 15
+fields <- c ("duration", "starttime", "endtime", "startstationid",
+            "startstationname", "startstationlatitude",
+            "startstationlongitude", "endstationid", "endstationname",
+            "endstationlatitude", "endstationlongitude", "bikeid",
+            "usertype", "birthyear", "gender")
 
-dat_sf <- data.frame (fields = fields)
-dat_sf$city <- "sf"
-dat_sf$field_names <- c ("duration_sec", "start_time", "end_time",
-                      "start_station_id", "start_station_name",
-                      "start_station_latitude", "start_station_longitude",
-                      "end_station_id", "end_station_name",
-                      "end_station_latitude", "end_station_longitude",
-                      "bike_id", "user_type",
-                      "member_birth_year", "member_gender")
-dat_sf$quoted <- c (FALSE, TRUE, TRUE, FALSE, TRUE, FALSE, FALSE, FALSE, TRUE,
-                    FALSE, FALSE, FALSE, TRUE, FALSE, TRUE)
-dat_sf$position <- 1:15
-dat_sf$do_stations <- rep (TRUE, 15)
+duration <- c ("duration", "tripduration", "totalduration", "durationseconds",
+               "totalduration(ms)")
 
-# file format 2011-2015
-dat_bo1 <- data.frame (fields = fields)
-dat_bo1$city <- "bo1"
-dat_bo1$field_names <- c ("tripduration", "starttime", "stoptime",
-                          "start station id", "start station name",
-                          "start station latitude", "start station longitude",
-                          "end station id", "end station name",
-                          "end station latitude", "end station longitude",
-                          "bikeid", "usertype", "birth year", "gender")
-dat_bo1$quoted <- c (FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
-                     FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE)
-dat_bo1$position <- seq (nfields)
-dat_bo1$do_stations <- rep (FALSE, nfields)
+starttime <- c ("starttime", "startdate")
+endtime <- c ("endtime", "enddate", "stoptime")
 
-# file format 2016-2017
-dat_bo2 <- data.frame (fields = fields)
-dat_bo2$city <- "bo2"
-dat_bo2$field_names <- c ("tripduration", "starttime", "stoptime",
-                          "start station id", "start station name",
-                          "start station latitude", "start station longitude",
-                          "end station id", "end station name",
-                          "end station latitude", "end station longitude",
-                          "bikeid", "usertype", "birth year", "gender")
-dat_bo2$quoted <- c (FALSE, TRUE, TRUE, FALSE, TRUE, FALSE, FALSE,
-                     FALSE, TRUE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE)
-dat_bo2$position <- seq (nfields)
-dat_bo2$do_stations <- rep (FALSE, nfields)
+startstationid <- c ("startstationid", "startstationnumber", "fromstationid",
+                     "startterminal")
+startstationname <- c ("startstationname", "fromstationname", "startstation")
+startstationlatitude <- c ("startstationlatitude", "startlat")
+startstationlongitude <- c ("startstationlongitude", "startlon")
 
-# file format 2018
-dat_bo3 <- data.frame (fields = fields)
-dat_bo3$city <- "bo3"
-dat_bo3$field_names <- c ("tripduration", "starttime", "stoptime",
-                          "start station id", "start station name",
-                          "start station latitude", "start station longitude",
-                          "end station id", "end station name",
-                          "end station latitude", "end station longitude",
-                          "bikeid", "usertype", "birth year", "gender")
-dat_bo3$quoted <- c (TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,
-                     TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE)
-dat_bo3$position <- seq (nfields)
-dat_bo3$do_stations <- rep (FALSE, nfields)
+endstationid <- c ("endstationid", "endstationnumber", "tostationid")
+endstationname <- c ("endstationname", "tostationname", "endstation",
+                     "endterminal")
+endstationlatitude <- c ("endstationlatitude", "endlat")
+endstationlongitude <- c ("endstationlongitude", "endlon")
 
-# file format 2013-2016Q2, then 2017Q4-
-dat_ch1 <- data.frame (fields = fields)
-dat_ch1$city <- "ch1"
-dat_ch1$field_names <- c ("tripduration", "starttime", "stoptime",
-                          "from_station_id", "from_station_name", "", "",
-                          "to_station_id", "to_station_name", "", "",
-                          "bikeid", "usertype", "birthday", "gender")
-dat_ch1$quoted <- rep (FALSE, nfields)
-dat_ch1$position <- c (5, 2, 3, 6, 7, -1, -1, 8, 9, -1, -1, 4, 10, 11, 12)
-dat_ch1$do_stations <- rep (FALSE, nfields)
+bikeid <- c ("bikeid", "bikenumber", "bike#")
+usertype <- c ("usertype", "membertype", "type", "subscribertype",
+               "subscriptiontype", "accounttype", "passholdertype")
+birthyear <- c ("birthyear", "birthday")
+gender <- c ("gender")
 
-# file format 2016Q3-2017Q3
-dat_ch2 <- dat_ch1
-dat_ch2$quoted <- rep (TRUE, nfields)
-
-headers <- rbind (dat_sf, dat_bo1, dat_bo2, dat_bo3, dat_ch1, dat_ch2)
+field_names <- data.frame (matrix (nrow = 0, ncol = 2))
+for (f in fields)
+{
+    field_names <- rbind (field_names,
+                          cbind (rep (f, length (get (f))), get (f)))
+}
+names (field_names) <- c ("field", "variation")
+field_names$index <- field_names$field
+levels (field_names$index) <- seq (unique (field_names$index))
+field_names$index <- as.numeric (field_names$index)
 ```
+
 And this then saves the correponding `data.frame` to the package data:
 ```{r}
 data_dir <- file.path (here::here (), "R")
 f <- file.path (data_dir, "sysdata.rda")
 load ("./R/sysdata.rda")
 stations_dc <- sysdata$stations_dc # comment out to refresh using above code
-sysdata <- list (stations_dc = stations_dc, headers = headers)
+sysdata <- list (stations_dc = stations_dc, field_names = field_names)
 save (sysdata, file = f, compress = "xz")
 ```
