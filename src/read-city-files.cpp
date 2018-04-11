@@ -90,6 +90,10 @@ unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
                     values [i] = strtokm (nullptr, delim_noq_noq);
             }
 
+            // date-time conversion
+            if (headers.position_file2db [i] == 1 || headers.position_file2db [i] == 2)
+                values [i] = convert_datetime_generic (values [i]);
+
             // add city prefixes to station names
             if (headers.position_file2db [i] == 3 || headers.position_file2db [i] == 7)
                 values [i] = city + values [i];

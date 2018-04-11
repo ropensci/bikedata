@@ -276,6 +276,114 @@ std::string convert_datetime_lo (std::string str)
     return str;
 }
 
+//' convert_datetime_generic
+//'
+//' Possible formats are:
+//' YYYY-mm-dd HH:MM:SS
+//' m/d/YYYY HH:MM:SS
+//' m/d/YYYY H:M
+//' YYYY-mm-dd HH:MM
+//' m/d/YYYY HH:MM
+//' m/d/YYYY HH:MM:ss
+//' m/d/YYYY H:MM
+//' YYYY-MM-DD HH:MM:SS.
+//' M/D/YYYY H:MM
+//' YYYY-MM-DD HH:M
+//'
+//' @noRd
+std::string convert_datetime_generic (std::string str)
+{
+    if (str.find (" ") == std::string::npos)
+        Rcpp::stop ("unable to parse date-time string");
+
+    unsigned int ipos = str.find (" ");
+    std::string ymd = str.substr (0, ipos);
+    str = str.substr (ipos + 1, str.length () - ipos - 1);
+
+    if (!date_is_standard (ymd))
+        ymd = convert_date (ymd);
+    if (!time_is_standard (str))
+        str = convert_time (str);
+
+    return ymd + " " + str;
+}
+
+bool date_is_standard (const std::string ymd)
+{
+    // stardard is yyyy-mm-dd
+    bool check = false;
+    // std::count counts char not string, so '-', not "-"
+    if (ymd.size () == 10 && std::count (ymd.begin(), ymd.end(), '-') == 2)
+        check = true;
+    return check;
+}
+
+bool time_is_standard (const std::string hms)
+{
+    // stardard is HH:MM:SS
+    bool check = false;
+    if (hms.size () == 8 && std::count (hms.begin(), hms.end(), ':') == 2)
+        check = true;
+    return check;
+}
+
+std::string convert_date (std::string ymd)
+{
+    std::string delim = "-";
+    if (ymd.find ("/") != std::string::npos)
+        delim = "/";
+
+    unsigned int ipos = ymd.find (delim.c_str ());
+    std::string y = ymd.substr (0, ipos);
+    ymd = ymd.substr (ipos + 1, ymd.length () - ipos - 1);
+    ipos = ymd.find (delim.c_str ());
+    std::string m = ymd.substr (0, ipos);
+    std::string d = ymd.substr (ipos + 1, ymd.length () - ipos - 1);
+
+    if (d.size () == 4) // change (y,m,d) = m/d/yyyy -> yyyy/m/d
+    {
+        std::string s = y;
+        y = d;
+        d = m;
+        m = s;
+    }
+    if (y.size () == 2)
+        y = "20" + y;
+    zero_pad (m);
+    zero_pad (d);
+
+    return y + "-" + m + "-" + d;
+}
+
+std::string convert_time (std::string hms)
+{
+    const std::string delim = ":";
+    unsigned int ipos = hms.find (delim.c_str ());
+    std::string h = hms.substr (0, ipos), m, s;
+    hms = hms.substr (ipos + 1, hms.length () - ipos - 1);
+    if (hms.find (delim.c_str ()) != std::string::npos) // has seconds
+    {
+        ipos = hms.find (delim.c_str ());
+        m = hms.substr (0, ipos);
+        s = hms.substr (ipos + 1, hms.length () - ipos - 1);
+    } else
+    {
+        m = hms;
+        s = "00";
+    }
+    zero_pad (h);
+    zero_pad (m);
+    zero_pad (s);
+    return h + delim + m + delim + s;
+}
+
+void zero_pad (std::string &t)
+{
+    if (t.size () == 1)
+        t = "0" + t;
+}
+
+
 //' Difference between two time strings formatted as
 //' YYYY-MM-DD hh:mm:ss
 //' @param t1 start date-time string
