@@ -132,3 +132,13 @@ header_file_name <- function ()
 {
     file.path (tempdir (), "field_names.csv")
 }
+
+data_with_stations <- function (city)
+{
+    cities <- bike_demographic_data ()$city
+    stns <- rep (FALSE, length (cities))
+    with_stns <- c ("la", "ny", "ph")
+    stns [which (cities %in% with_stns)] <- TRUE
+
+    return (stns [which (cities == city)])
+}
