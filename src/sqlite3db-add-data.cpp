@@ -71,7 +71,7 @@
 // [[Rcpp::export]]
 int rcpp_import_to_trip_table (const char* bikedb, 
         Rcpp::CharacterVector datafiles, std::string city,
-        std::string header_file_name, bool data_has_stns, bool quiet)
+        std::string header_file_name, bool quiet)
 {
     sqlite3 *dbcon;
     char *zErrMsg = nullptr;
@@ -116,6 +116,8 @@ int rcpp_import_to_trip_table (const char* bikedb,
     sqlite3_stmt * stmt;
     std::map <std::string, std::string> stationqry;
 
+    bool data_has_stations = false; // TODO: Properly process that!
+
     int ntrips = 0; // ntrips is added in this call
 
     sprintf(sqlqry, "INSERT INTO trips VALUES (NOT NULL, @CI, @TD, @ST, @ET, @SSID, @ESID, @BID, @UT, @BY, @GE)");
@@ -137,7 +139,7 @@ int rcpp_import_to_trip_table (const char* bikedb,
 
         std::string filename_i = Rcpp::as <std::string> (datafiles [filenum]);
         HeaderStruct headers = get_field_positions (filename_i,
-                header_file_name, data_has_stns);
+                header_file_name, data_has_stations);
 
         pFile = fopen (datafiles [filenum], "r");
         char * junk = fgets (in_line, BUFFER_SIZE, pFile);

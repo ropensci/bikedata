@@ -19,8 +19,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // rcpp_import_to_trip_table
-int rcpp_import_to_trip_table(const char* bikedb, Rcpp::CharacterVector datafiles, std::string city, std::string header_file_name, bool data_has_stns, bool quiet);
-RcppExport SEXP _bikedata_rcpp_import_to_trip_table(SEXP bikedbSEXP, SEXP datafilesSEXP, SEXP citySEXP, SEXP header_file_nameSEXP, SEXP data_has_stnsSEXP, SEXP quietSEXP) {
+int rcpp_import_to_trip_table(const char* bikedb, Rcpp::CharacterVector datafiles, std::string city, std::string header_file_name, bool quiet);
+RcppExport SEXP _bikedata_rcpp_import_to_trip_table(SEXP bikedbSEXP, SEXP datafilesSEXP, SEXP citySEXP, SEXP header_file_nameSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -28,9 +28,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type datafiles(datafilesSEXP);
     Rcpp::traits::input_parameter< std::string >::type city(citySEXP);
     Rcpp::traits::input_parameter< std::string >::type header_file_name(header_file_nameSEXP);
-    Rcpp::traits::input_parameter< bool >::type data_has_stns(data_has_stnsSEXP);
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_import_to_trip_table(bikedb, datafiles, city, header_file_name, data_has_stns, quiet));
+    rcpp_result_gen = Rcpp::wrap(rcpp_import_to_trip_table(bikedb, datafiles, city, header_file_name, quiet));
     return rcpp_result_gen;
 END_RCPP
 }

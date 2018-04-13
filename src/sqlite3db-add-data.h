@@ -30,7 +30,7 @@
 
 int rcpp_import_to_trip_table (const char* bikedb, 
         Rcpp::CharacterVector datafiles, std::string city,
-        std::string header_file_name, bool data_has_stns, bool quiet);
+        std::string header_file_name, bool quiet);
 int rcpp_import_to_file_table (const char * bikedb,
         Rcpp::CharacterVector datafiles, std::string city, int nfiles);
 
