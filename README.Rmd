@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-[![Build Status](https://travis-ci.org/ropensci/bikedata.svg)](https://travis-ci.org/ropensci/bikedata) 
+[![Build Status](https://travis-ci.org/ropensci/bikedata.svg?branch=master)](https://travis-ci.org/ropensci/bikedata?branch=master) 
 [![Build status](https://ci.appveyor.com/api/projects/status/github/ropensci/bikedata?svg=true)](https://ci.appveyor.com/project/ropensci/bikedata)
 [![codecov](https://codecov.io/gh/ropensci/bikedata/branch/master/graph/badge.svg)](https://codecov.io/gh/ropensci/bikedata)
 [![Project Status: Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
