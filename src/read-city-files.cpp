@@ -15,28 +15,31 @@
 #include "read-city-files.h"
 
 
-//' This maps the data onto the fields defined in headers which follow this
-//' structure, as detailed in, and derived from, data-raw/sysdata.Rmd
-//' 
-//' | number | field                   |
-//' | ----   | ----------------------- |
-//' | 0      | duration                |
-//' | 1      | start_time              |
-//' | 2      | end_time                |
-//' | 3      | start_station_id        |
-//' | 4      | start_station_name      |
-//' | 5      | start_station_latitude  |
-//' | 6      | start_station_longitude |
-//' | 7      | end_station_id          |
-//' | 8      | end_station_name        |
-//' | 9      | end_station_latitude    |
-//' | 10     | end_station_longitude   |
-//' | 11     | bike_id                 |
-//' | 12     | user_type               |
-//' | 13     | birth_year              |
-//' | 14     | gender                  |
-//'
-//' @noRd
+/***************************************************************************
+ *  This maps the data onto the fields defined in headers which follow this
+ *  structure, as detailed in, and derived from, data-raw/sysdata.Rmd
+ *  
+ *  | number | field                   |
+ *  | ----   | ----------------------- |
+ *  | 0      | duration                |
+ *  | 1      | start_time              |
+ *  | 2      | end_time                |
+ *  | 3      | start_station_id        |
+ *  | 4      | start_station_name      |
+ *  | 5      | start_station_latitude  |
+ *  | 6      | start_station_longitude |
+ *  | 7      | end_station_id          |
+ *  | 8      | end_station_name        |
+ *  | 9      | end_station_latitude    |
+ *  | 10     | end_station_longitude   |
+ *  | 11     | bike_id                 |
+ *  | 12     | user_type               |
+ *  | 13     | birth_year              |
+ *  | 14     | gender                  |
+ * 
+ ***************************************************************************/
+
+
 unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry,
         const std::string city, const HeaderStruct &headers)
@@ -129,8 +132,6 @@ unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
         values [i] = values [i].substr (0, values [i].length () - 1);
     }
     */
-
-    // TDOD: Process datetime strings!
 
     // Then bind the SQLITE statement
     std::string duration = "", starttime = "", endtime = "", startid = "", endid

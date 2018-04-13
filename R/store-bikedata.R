@@ -188,6 +188,7 @@ store_bikedata <- function (bikedb, city, data_dir, dates = NULL, quiet = FALSE)
                                                       flists$flist_csv,
                                                       ci,
                                                       header_file_name (),
+                                                      data_has_stations (ci),
                                                       quiet)
 
             if (length (flists$flist_rm) > 0)
