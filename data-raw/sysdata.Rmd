@@ -1,0 +1,118 @@
+# The sysdata.rda object
+
+## DC station locations
+
+The function `R/stations.R/bike_get_dc_stations` has code to extract and process
+DC stations. The data can be obtained from 
+http://opendata.dc.gov/datasets/capital-bike-share-locations/, using
+Download->Spreadsheet. The code is reproduced here
+```{r}
+stations_dc <- read.csv ("Capital_Bike_Share_Locations.csv")
+names (stations_dc) <- tolower (names (stations_dc))
+name <- noquote (gsub ("'", "", stations_dc$address)) #nolint
+name <- trimws (name, which = 'right') # trim terminal white space
+stations_dc <- data.frame (id = stations_dc$terminal_number,
+                           name = name,
+                           lon = stations_dc$longitude,
+                           lat = stations_dc$latitude,
+                           stringsAsFactors = FALSE)
+```
+
+## Bike Header Field Names
+
+The fields stored in the `bikedata` database are:
+
+| number | field                   |
+| ----   | ----------------------- |
+| 1      | duration                |
+| 2      | start_time              |
+| 3      | end_time                |
+| 4      | start_station_id        |
+| 5      | start_station_name      |
+| 6      | start_station_latitude  |
+| 7      | start_station_longitude |
+| 8      | end_station_id          |
+| 9      | end_station_name        |
+| 10     | end_station_latitude    |
+| 11     | end_station_longitude   |
+| 12     | bike_id                 |
+| 13     | user_type               |
+| 14     | birth_year              |
+| 15     | gender                  |
+
+Each file has at least some of these fields, but different systems naturally use
+different nomenclatures. The `header_names` structure maps different system
+names for these fields onto the above names. All names are converted to lower
+case and all white space and underscores removed, so entries here should be all
+lower case with no white space.
+
+old DC files had "Duration (ms)", but no longer do.
+LA has "passholder_type", which can be "Flex Pass" = annual, or "Monthly Pass"
+PH has "passholder_type", which can be "IndegoFlex" or "Indego30"
+
+Note that an extra city column is needed because LA has "start_station" and
+"end_station" for the ID columns, while MN has these for the station name
+columns.
+
+```{r}
+fields <- c ("duration", "starttime", "endtime", "startstationid",
+            "startstationname", "startstationlatitude",
+            "startstationlongitude", "endstationid", "endstationname",
+            "endstationlatitude", "endstationlongitude", "bikeid",
+            "usertype", "birthyear", "gender")
+
+duration <- c ("duration", "tripduration", "totalduration", "durationseconds",
+               "totalduration(ms)")
+
+starttime <- c ("starttime", "startdate")
+endtime <- c ("endtime", "enddate", "stoptime")
+
+startstationid <- c ("startstationid", "startstationnumber", "fromstationid",
+                     "startterminal", "startstation")
+startstationname <- c ("startstationname", "fromstationname", "startstation")
+startstationlatitude <- c ("startstationlatitude", "startlat")
+startstationlongitude <- c ("startstationlongitude", "startlon")
+
+endstationid <- c ("endstationid", "endstationnumber", "tostationid",
+                   "endstation", "endterminal")
+endstationname <- c ("endstationname", "tostationname", "endstation")
+endstationlatitude <- c ("endstationlatitude", "endlat")
+endstationlongitude <- c ("endstationlongitude", "endlon")
+
+bikeid <- c ("bikeid", "bikenumber", "bike#")
+usertype <- c ("usertype", "membertype", "type", "subscribertype",
+               "subscriptiontype", "accounttype", "passholdertype")
+birthyear <- c ("birthyear", "birthday", "memberbirthyear")
+gender <- c ("gender", "membergender")
+
+field_names <- data.frame (matrix (nrow = 0, ncol = 2))
+for (f in fields)
+{
+    field_names <- rbind (field_names,
+                          cbind (rep (f, length (get (f))), get (f)))
+}
+names (field_names) <- c ("field", "variation")
+field_names$index <- field_names$field
+levels (field_names$index) <- seq (unique (field_names$index))
+field_names$index <- as.numeric (field_names$index)
+
+field_names$city <- "all"
+field_names$city [field_names$field == "startstationid" &
+                  field_names$variation == "startstation"] <- "la"
+field_names$city [field_names$field == "endstationname" &
+                  field_names$variation == "endstation"] <- "mn"
+field_names$city [field_names$field == "startstationname" &
+                  field_names$variation == "startstation"] <- "mn"
+field_names$city [field_names$field == "endstationid" &
+                  field_names$variation == "endstation"] <- "la"
+```
+
+And this then saves the correponding `data.frame` to the package data:
+```{r}
+data_dir <- file.path (here::here (), "R")
+f <- file.path (data_dir, "sysdata.rda")
+load ("./R/sysdata.rda")
+stations_dc <- sysdata$stations_dc # comment out to refresh using above code
+sysdata <- list (stations_dc = stations_dc, field_names = field_names)
+save (sysdata, file = f, compress = "xz")
+```

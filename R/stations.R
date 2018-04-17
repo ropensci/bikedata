@@ -57,12 +57,16 @@ bike_stations <- function (bikedb, city)
 
 #' Get London station data from Transport for London (TfL)
 #'
+#' @param quiet If \code{FALSE}, just declare getting stations (coz it can take
+#' a while).
 #' @return \code{data.frame} of (id, name, lon, lat) of all stations in London's
 #' Santander Cycles system
 #'
 #' @noRd
-bike_get_london_stations <- function ()
+bike_get_london_stations <- function (quiet = TRUE)
 {
+    if (!quiet)
+        message ("getting london stations ...", appendLF = FALSE)
     tfl_url <- "https://api.tfl.gov.uk/BikePoint"
     resp <- httr::GET (tfl_url)
     res <- NULL
@@ -78,6 +82,9 @@ bike_get_london_stations <- function ()
         res <- data.frame (id = id, name = name, lon = lon, lat = lat,
                            stringsAsFactors = FALSE)
     }
+    if (!quiet)
+        message (" done")
+
     return (res)
 }
 
@@ -219,12 +226,12 @@ bike_get_dc_stations <- function ()
 {
     # rm apostrophes from names (only "L'Enfant Plaza"):
     # stations_dc is lazy loaded from R/sysdata.rda
-    name <- noquote (gsub ("'", "", stations_dc$address)) #nolint
+    name <- noquote (gsub ("'", "", sysdata$stations_dc$name)) #nolint
     name <- trimws (name, which = 'right') # trim terminal white space
-    res <- data.frame (id = stations_dc$terminal_number,
+    res <- data.frame (id = sysdata$stations_dc$id,
                        name = name,
-                       lon = stations_dc$longitude,
-                       lat = stations_dc$latitude,
+                       lon = sysdata$stations_dc$lon,
+                       lat = sysdata$stations_dc$lat,
                        stringsAsFactors = FALSE)
 
     return (res)

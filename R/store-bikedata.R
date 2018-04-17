@@ -145,22 +145,12 @@ store_bikedata <- function (bikedb, city, data_dir, dates = NULL, quiet = FALSE)
             {
                 # These cities have both csv and zip files, but only store names
                 # of csv's that are not uncompressed zip files
-                if (length (flists$flist_zip) > 0)
+                nms <- flists$flist_csv [which (!flists$flist_csv %in%
+                                                flists$flist_rm)]
+                if (length (nms) > 0)
                 {
-                    fz <- basename (flists$flist_zip) %>%
-                        tools::file_path_sans_ext ()
-                    fc <- basename (flists$flist_csv) %>%
-                        tools::file_path_sans_ext ()
-                    indx <- seq (fc) [which (!fc %in% fz)]
-                    if (length (indx) > 0)
-                    {
-                        nms <- basename (flists$flist_csv [indx])
-                        nf <- rcpp_import_to_file_table (bikedb, nms, ci, nf)
-                    }
-                } else
-                {
-                    nm <- basename (flists$flist_csv)
-                    nf <- rcpp_import_to_file_table (bikedb, nm, ci, nf)
+                    nms <- basename (nms)
+                    nf <- rcpp_import_to_file_table (bikedb, nms, ci, nf)
                 }
             }
 
@@ -173,19 +163,25 @@ store_bikedata <- function (bikedb, city, data_dir, dates = NULL, quiet = FALSE)
             } else if (ci %in% c('bo', 'dc', 'lo', 'mn'))
             {
                 if (ci == "lo")
-                    stns <- bike_get_london_stations ()
+                    stns <- bike_get_london_stations (quiet)
                 else if (ci == 'dc')
                     stns <- bike_get_dc_stations ()
                 else if (ci == 'bo')
                     stns <- bike_get_bo_stations (flists, data_dir)
                 else if (ci == 'mn')
                     stns <- bike_get_mn_stations (flists)
+                if (is.null (stns)) # can happen for London
+                    stop ("No stations returned; please try again")
                 nstations <- rcpp_import_stn_df (bikedb, stns, ci)
             }
 
             # main step: Import trips
-            ntrips_city <- rcpp_import_to_trip_table (bikedb, flists$flist_csv,
-                                                      ci, as.numeric (quiet))
+            ntrips_city <- rcpp_import_to_trip_table (bikedb,
+                                                      flists$flist_csv,
+                                                      ci,
+                                                      header_file_name (),
+                                                      data_has_stations (ci),
+                                                      quiet)
 
             if (length (flists$flist_rm) > 0)
                invisible (tryCatch (file.remove (flists$flist_rm),

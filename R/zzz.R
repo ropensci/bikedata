@@ -16,3 +16,15 @@
                    "  https://www.niceridemn.org/data_license")
     packageStartupMessage (msg)
 }
+
+.onLoad <- function (libname, pkgname)
+{
+    # make data set names global to avoid CHECK notes
+    utils::globalVariables ("sysdata")
+    f <- file.path (tempdir (), "bikedata_headers.csv")
+    write.csv (sysdata$headers, file = f, row.names = FALSE)
+    f <- file.path (tempdir (), "field_names.csv")
+    write.csv (sysdata$field_names, file = f, row.names = FALSE, quote = FALSE)
+
+    invisible ()
+}
