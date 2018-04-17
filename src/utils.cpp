@@ -293,19 +293,24 @@ std::string convert_datetime_lo (std::string str)
 //' @noRd
 std::string convert_datetime_generic (std::string str)
 {
+    std::string ret;
     if (str.find (" ") == std::string::npos)
-        Rcpp::stop ("unable to parse date-time string");
+    {
+        ret = "NA";
+    } else
+    {
+        unsigned int ipos = str.find (" ");
+        std::string ymd = str.substr (0, ipos);
+        str = str.substr (ipos + 1, str.length () - ipos - 1);
 
-    unsigned int ipos = str.find (" ");
-    std::string ymd = str.substr (0, ipos);
-    str = str.substr (ipos + 1, str.length () - ipos - 1);
+        if (!date_is_standard (ymd))
+            ymd = convert_date (ymd);
+        if (!time_is_standard (str))
+            str = convert_time (str);
 
-    if (!date_is_standard (ymd))
-        ymd = convert_date (ymd);
-    if (!time_is_standard (str))
-        str = convert_time (str);
-
-    return ymd + " " + str;
+        ret = ymd + " " + str;
+    }
+    return ret;
 }
 
 bool date_is_standard (const std::string ymd)
@@ -357,6 +362,10 @@ std::string convert_date (std::string ymd)
 
 std::string convert_time (std::string hms)
 {
+    // Some systems have decimal seconds which are discarded here:
+    if (hms.length () > 8 && hms.find (".") != std::string::npos)
+        hms = hms.substr (0, hms.find ("."));
+
     const std::string delim = ":";
     unsigned int ipos = hms.find (delim.c_str ());
     std::string h = hms.substr (0, ipos), m, s;

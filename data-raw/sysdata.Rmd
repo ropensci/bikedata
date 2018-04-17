@@ -82,8 +82,8 @@ endstationlongitude <- c ("endstationlongitude", "endlon")
 bikeid <- c ("bikeid", "bikenumber", "bike#")
 usertype <- c ("usertype", "membertype", "type", "subscribertype",
                "subscriptiontype", "accounttype", "passholdertype")
-birthyear <- c ("birthyear", "birthday")
-gender <- c ("gender")
+birthyear <- c ("birthyear", "birthday", "memberbirthyear")
+gender <- c ("gender", "membergender")
 
 field_names <- data.frame (matrix (nrow = 0, ncol = 2))
 for (f in fields)

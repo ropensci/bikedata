@@ -57,12 +57,16 @@ bike_stations <- function (bikedb, city)
 
 #' Get London station data from Transport for London (TfL)
 #'
+#' @param quiet If \code{FALSE}, just declare getting stations (coz it can take
+#' a while).
 #' @return \code{data.frame} of (id, name, lon, lat) of all stations in London's
 #' Santander Cycles system
 #'
 #' @noRd
-bike_get_london_stations <- function ()
+bike_get_london_stations <- function (quiet = TRUE)
 {
+    if (!quiet)
+        message ("getting london stations ...", appendLF = FALSE)
     tfl_url <- "https://api.tfl.gov.uk/BikePoint"
     resp <- httr::GET (tfl_url)
     res <- NULL
@@ -78,6 +82,9 @@ bike_get_london_stations <- function ()
         res <- data.frame (id = id, name = name, lon = lon, lat = lat,
                            stringsAsFactors = FALSE)
     }
+    if (!quiet)
+        message (" done")
+
     return (res)
 }
 

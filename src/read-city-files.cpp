@@ -90,13 +90,13 @@ unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
             if (headers.quoted [i + 1])
             {
                 if (dump)
-                    Rcpp::Rcout << "delim_q_q";
+                    Rcpp::Rcout << "delim_q_q ";
                 token = strtokm (nullptr, delim_q_q);
             }
             else
             {
                 if (dump)
-                    Rcpp::Rcout << "delim_q_noq";
+                    Rcpp::Rcout << "delim_q_noq ";
                 token = strtokm (nullptr, delim_q_noq);
             }
         } else
@@ -104,13 +104,13 @@ unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
             if (headers.quoted [i + 1])
             {
                 if (dump)
-                    Rcpp::Rcout << "delim_noq_q";
+                    Rcpp::Rcout << "delim_noq_q ";
                 token = strtokm (nullptr, delim_noq_q);
             }
             else
             {
                 if (dump)
-                    Rcpp::Rcout << "delim_noq_noq (" << i << ")";
+                    Rcpp::Rcout << "delim_noq_noq ";
                 token = strtokm (nullptr, delim_noq_noq);
             }
         }
@@ -152,23 +152,9 @@ unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
         if (dump)
             Rcpp::Rcout << std::endl;
     }
-    
-    /*
-    if (headers.terminal_quote)
-    {
-        const char * delim_t = "\"";
-        token = strtokm (nullptr, delim_t);
-    }
-    unsigned int i = headers.nvalues - 1;
-    int pos = headers.position_file2db [i];
-    if (pos > -1)
-    {
-        values [pos] = token;
-        if (dump)
-            Rcpp::Rcout << "values [" << i << " -> " << pos << "] = " <<
-                values [pos] << std::endl;
-    }
-    */
+
+    if (values [0] == "\"\"")
+        values [0] = std::to_string (timediff (values [1], values [2]));
 
     // Then bind the SQLITE statement
     // duration
@@ -196,6 +182,7 @@ unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
         // start station:
         std::string stn_id = values [3], stn_name = values [4],
             lon = values [6], lat = values [5];
+        boost::replace_all (stn_name, "\'", "");
         if (stationqry->count (stn_id) == 0 && lon != "0.0" && lat != "0.0" &&
                 lon != "" && lat != "")
             (*stationqry)[stn_id] = "(\'" + city + "\',\'" + stn_id + "\',\'" +
@@ -206,6 +193,7 @@ unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
         stn_name = values [8];
         lon = values [10];
         lat = values [9];
+        boost::replace_all (stn_name, "\'", "");
         if (stationqry->count (stn_id) == 0 && lon != "0.0" && lat != "0.0" &&
                 lon != "" && lat != "")
             (*stationqry)[stn_id] = "(\'" + city + "\',\'" + stn_id + "\',\'" +
@@ -968,7 +956,7 @@ unsigned int read_one_line_london (sqlite3_stmt * stmt, char * line)
     std::string duration = str_token (&in_line, ","); // Rental ID: not used
     duration = str_token (&in_line, ",");
     std::string bike_id = str_token (&in_line, ",");
-    std::string end_date = convert_datetime_lo (str_token (&in_line, ","));
+    std::string end_date = convert_datetime_generic (str_token (&in_line, ","));
     std::string end_station_id = str_token (&in_line, ",");
     end_station_id = "lo" + end_station_id;
     std::string end_station_name;
@@ -980,7 +968,7 @@ unsigned int read_one_line_london (sqlite3_stmt * stmt, char * line)
         in_line = in_line.substr (1, in_line.length ()); // rm comma from start
     } else
         end_station_name = str_token (&in_line, ",");
-    std::string start_date = convert_datetime_lo (str_token (&in_line, ","));
+    std::string start_date = convert_datetime_generic (str_token (&in_line, ","));
     std::string start_station_id = str_token (&in_line, ",");
     start_station_id = "lo" + start_station_id;
 
@@ -992,7 +980,8 @@ unsigned int read_one_line_london (sqlite3_stmt * stmt, char * line)
     sqlite3_bind_text(stmt, 7, bike_id.c_str(), -1, SQLITE_TRANSIENT); 
 
     unsigned int res = 0;
-    if (start_date == "" || end_date == "")
+    if (start_date == "" || end_date == "" ||
+            start_date == "NA" || end_date == "NA")
         res = 1;
 
     return res;

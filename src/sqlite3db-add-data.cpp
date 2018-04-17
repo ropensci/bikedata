@@ -149,7 +149,7 @@ int rcpp_import_to_trip_table (const char* bikedb,
         {
             std::string in_line2 = in_line;
             if (in_line2.find ("Logical Terminal") != std::string::npos)
-                break;
+                continue; // skip rest of that loop
         }
 
         bool get_structure = true;
@@ -160,7 +160,7 @@ int rcpp_import_to_trip_table (const char* bikedb,
             {
                 get_field_quotes (in_line, headers);
                 get_structure = false;
-                dump_headers (headers);
+                //dump_headers (headers);
             }
 
             rm_dos_end (in_line);
@@ -186,14 +186,16 @@ int rcpp_import_to_trip_table (const char* bikedb,
             */
 
             //Rcpp::Rcout << "   ---" << temp << "---" << std::endl;
-            // London data are ballsed up and change format within data files,
-            // so they are read with their own std::string routine, rather than
-            // then generic char * routine.
+            // London, LA, and Philly data are ballsed up and change format
+            // within data files, so they are read with their own std::string
+            // routines, rather than then generic char * routine.
             if (city == "lo")
                 rc = read_one_line_london (stmt, in_line);
+            else if (city == "la" || city == "ph")
+                rc = read_one_line_nabsa (stmt, in_line, &stationqry, city);
             else
                 rc = read_one_line_generic (stmt, in_line, &stationqry, city,
-                        headers, temp < 2);
+                        headers, false);
             temp++;
             if (rc == 0) // only != 0 for LA, London, Boston, and MN
             {
