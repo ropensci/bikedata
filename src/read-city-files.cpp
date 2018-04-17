@@ -39,10 +39,9 @@
  * 
  ***************************************************************************/
 
-
 unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry,
-        const std::string city, const HeaderStruct &headers)
+        const std::string city, const HeaderStruct &headers, bool dump)
 {
     const char * delim_noq_noq = ",";
     const char * delim_noq_q = ",\"";
@@ -59,141 +58,158 @@ unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
     std::fill (values.begin (), values.end (), "\"\"");
     // first field has to be done separately to feed the startline linestr
     // pointer
+    char * token;
     if (headers.quoted [0])
     {
-        char * token = strtokm (&linestr[0u], "\""); // opening quote
+        token = strtokm (&linestr[0u], "\""); // opening quote
         if (headers.quoted [1])
-            values [0] = strtokm (nullptr, delim_q_q);
+            token = strtokm (nullptr, delim_q_q);
         else
-            values [0] = strtokm (nullptr, delim_q_noq);
+            token = strtokm (nullptr, delim_q_noq);
         (void) token; // suppress unused variable warning
     } else
     {
         if (headers.quoted [1])
-            values [0] = strtokm (&linestr[0u], delim_noq_q);
+            token = strtokm (&linestr[0u], delim_noq_q);
         else
-            values [0] = strtokm (&linestr[0u], delim_noq_noq);
+            token = strtokm (&linestr[0u], delim_noq_noq);
     }
+    values [0] = token;
 
-    for (unsigned int i = 1; i <= headers.nvalues; i++)
+    for (unsigned int i = 1; i < headers.nvalues; i++)
     {
-        if (headers.position_file2db [i] >= 0)
+        int pos = headers.position_file2db [i];
+        if (dump)
+            Rcpp::Rcout << "values [" << i << " -> " << pos << "] with ";
+        if (headers.quoted [i])
         {
-            if (headers.quoted [i])
+            if (headers.quoted [i + 1])
             {
-                if (headers.quoted [i + 1])
-                    values [i] = strtokm (nullptr, delim_q_q);
-                else
-                    values [i] = strtokm (nullptr, delim_q_noq);
-            } else
-            {
-                if (headers.quoted [i + 1])
-                    values [i] = strtokm (nullptr, delim_noq_q);
-                else
-                    values [i] = strtokm (nullptr, delim_noq_noq);
+                if (dump)
+                    Rcpp::Rcout << "delim_q_q";
+                token = strtokm (nullptr, delim_q_q);
             }
-
-            // date-time conversion
-            if (headers.position_file2db [i] == 1 || headers.position_file2db [i] == 2)
-                values [i] = convert_datetime_generic (values [i]);
-
-            // add city prefixes to station names
-            if (headers.position_file2db [i] == 3 || headers.position_file2db [i] == 7)
-                values [i] = city + values [i];
-
-            if (headers.position_file2db [i] == 12) // user type
+            else
             {
-                if (values [i] == "Member" ||
-                        values [i] == "Subscriber" ||
-                        values [i] == "Flex Pass" ||
-                        values [i] == "Monthly Pass" ||
-                        values [i] == "IndegoFlex" ||
-                        values [i] == "Indego30")
-                    values [i] = "1";
-                else
-                    values [i] = "0";
+                if (dump)
+                    Rcpp::Rcout << "delim_q_noq";
+                token = strtokm (nullptr, delim_q_noq);
             }
-
-            if (headers.position_file2db [i] == 14) // gender
+        } else
+        {
+            if (headers.quoted [i + 1])
             {
-                if (values [i] == "Female")
-                    values [i] = "2";
-                else if (values [i] == "Male")
-                    values [i] = "1";
-                else
-                    values [i] = "0";
+                if (dump)
+                    Rcpp::Rcout << "delim_noq_q";
+                token = strtokm (nullptr, delim_noq_q);
+            }
+            else
+            {
+                if (dump)
+                    Rcpp::Rcout << "delim_noq_noq (" << i << ")";
+                token = strtokm (nullptr, delim_noq_noq);
             }
         }
+        if (pos >= 0)
+        {
+            values [pos] = token;
+            if (dump)
+                Rcpp::Rcout << " = " << values [pos];
+
+            if (pos == 1 || pos == 2)
+                values [pos] = convert_datetime_generic (values [pos]);
+
+            if (pos == 3 || pos == 7) // add city prefixes to station names
+                values [pos] = city + values [pos];
+
+            if (pos == 12) // user type
+                values [pos] = convert_usertype (values [pos]);
+
+            if (pos == 14) // gender
+                values [pos] = convert_gender (values [pos]);
+        }
+        if (dump)
+            Rcpp::Rcout << std::endl;
     }
+    if (dump)
+        Rcpp::Rcout << "---plus: (" << token << ")" << std::endl;
+    
     /*
     if (headers.terminal_quote)
     {
-        i--;
-        values [i] = values [i].substr (0, values [i].length () - 1);
+        const char * delim_t = "\"";
+        token = strtokm (nullptr, delim_t);
+    }
+    unsigned int i = headers.nvalues - 1;
+    int pos = headers.position_file2db [i];
+    if (pos > -1)
+    {
+        values [pos] = token;
+        if (dump)
+            Rcpp::Rcout << "values [" << i << " -> " << pos << "] = " <<
+                values [pos] << std::endl;
     }
     */
 
     // Then bind the SQLITE statement
-    std::string duration = "", starttime = "", endtime = "", startid = "", endid
-        = "", bikeid = "", user = "", birthyear = "", gender = "";
 
-    if (headers.position_db2file [0] >= 0)
-        duration = values [headers.position_db2file [0]];
-    sqlite3_bind_text(stmt, 2, duration.c_str (), -1, SQLITE_TRANSIENT);
-
-    if (headers.position_db2file [1] >= 0)
-        starttime = values [headers.position_db2file [1]];
-    sqlite3_bind_text(stmt, 3, starttime.c_str (), -1, SQLITE_TRANSIENT);
-
-    if (headers.position_db2file [2] >= 0)
-        endtime = values [headers.position_db2file [2]];
-    sqlite3_bind_text(stmt, 4, endtime.c_str (), -1, SQLITE_TRANSIENT);
-
-    if (headers.position_db2file [3] >= 0)
-        startid = values [headers.position_db2file [3]];
-    sqlite3_bind_text(stmt, 5, startid.c_str (), -1, SQLITE_TRANSIENT);
-
-    if (headers.position_db2file [7] >= 0)
-        endid = values [headers.position_db2file [7]];
-    sqlite3_bind_text(stmt, 6, endid.c_str (), -1, SQLITE_TRANSIENT);
-
-    if (headers.position_db2file [11] >= 0)
-        bikeid = values [headers.position_db2file [11]];
-    sqlite3_bind_text(stmt, 7, bikeid.c_str (), -1, SQLITE_TRANSIENT);
-
-    if (headers.position_db2file [12] >= 0)
-        user = values [headers.position_db2file [12]];
-    sqlite3_bind_text(stmt, 8, user.c_str (), -1, SQLITE_TRANSIENT);
-
-    if (headers.position_db2file [13] >= 0)
-        birthyear = values [headers.position_db2file [13]];
-    sqlite3_bind_text(stmt, 9, birthyear.c_str (), -1, SQLITE_TRANSIENT);
-
-    if (headers.position_db2file [14] >= 0)
-        gender = values [headers.position_db2file [14]];
-    sqlite3_bind_text(stmt, 10, gender.c_str (), -1, SQLITE_TRANSIENT);
+    // duration
+    sqlite3_bind_text(stmt, 2, values [0].c_str (), -1, SQLITE_TRANSIENT);
+    // starttime
+    sqlite3_bind_text(stmt, 3, values [1].c_str (), -1, SQLITE_TRANSIENT);
+    // endtime
+    sqlite3_bind_text(stmt, 4, values [2].c_str (), -1, SQLITE_TRANSIENT);
+    // startid
+    sqlite3_bind_text(stmt, 5, values [3].c_str (), -1, SQLITE_TRANSIENT);
+    // endid
+    sqlite3_bind_text(stmt, 6, values [7].c_str (), -1, SQLITE_TRANSIENT);
+    // bikeid
+    sqlite3_bind_text(stmt, 7, values [11].c_str (), -1, SQLITE_TRANSIENT);
+    // user
+    sqlite3_bind_text(stmt, 8, values [12].c_str (), -1, SQLITE_TRANSIENT);
+    // birthyear
+    sqlite3_bind_text(stmt, 9, values [13].c_str (), -1, SQLITE_TRANSIENT);
+    // gender
+    sqlite3_bind_text(stmt, 10, values [14].c_str (), -1, SQLITE_TRANSIENT);
 
     // and add station queries if needed
     if (headers.data_has_stations)
     {
         // start station:
-        std::string stn_id = values [headers.position_db2file [3]],
-            lon = values [headers.position_db2file [6]],
-            lat = values [headers.position_db2file [5]];
+        std::string stn_id = values [3], lon = values [6], lat = values [5];
         if (stationqry->count (stn_id) == 0 && lon != "0.0" && lat != "0.0")
             (*stationqry)[stn_id] = "(\'" + city + "\',\'" + stn_id +
                 "\'," + lon + "\'," + lat + ")";
 
         // end station:
-        stn_id = values [headers.position_db2file [7]],
-            lon = values [headers.position_db2file [10]],
-            lat = values [headers.position_db2file [9]];
+        stn_id = values [7], lon = values [10], lat = values [9];
         if (stationqry->count (stn_id) == 0 && lon != "0.0" && lat != "0.0")
             (*stationqry)[stn_id] = "(\'" + city + "\',\'" + stn_id +
                 "\'," + lon + "\'," + lat + ")";
     }
 
     return 0;
+}
+
+std::string convert_usertype (std::string ut)
+{
+    if (ut == "Member" || ut == "Subscriber" || ut == "Flex Pass" ||
+            ut == "Monthly Pass" || ut == "IndegoFlex" || ut == "Indego30")
+        ut = "1";
+    else
+        ut = "0";
+    return ut;
+}
+
+std::string convert_gender (std::string g)
+{
+    if (g == "Female")
+        g = "2";
+    else if (g == "Male")
+        g = "1";
+    else
+        g = "0";
+    return g;
 }
 
 //' read_one_line_nyc

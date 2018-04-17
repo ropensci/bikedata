@@ -38,3 +38,4 @@ bool strfound (const std::string str, const std::string target);
 HeaderStruct get_field_positions (const std::string fname,
         const std::string header_file_name, bool data_has_stations);
 void get_field_quotes (const std::string line, HeaderStruct &headers);
+void dump_headers (const HeaderStruct &headers);

@@ -153,12 +153,14 @@ int rcpp_import_to_trip_table (const char* bikedb,
         }
 
         bool get_structure = true;
+        unsigned int temp = 0; // TODO: Delete that!
         while (fgets (in_line, BUFFER_SIZE, pFile) != nullptr) 
         {
             if (get_structure)
             {
                 get_field_quotes (in_line, headers);
                 get_structure = false;
+                //dump_headers (headers);
             }
 
             rm_dos_end (in_line);
@@ -182,8 +184,10 @@ int rcpp_import_to_trip_table (const char* bikedb,
             else if (city == "sf")
                 rc = read_one_line_sf (stmt, in_line, &stationqry, city);
             */
+
             rc = read_one_line_generic (stmt, in_line, &stationqry, city,
-                    headers);
+                    headers, temp < 2);
+            temp++;
             if (rc == 0) // only != 0 for LA, London, Boston, and MN
             {
                 ntrips++;
@@ -359,7 +363,6 @@ HeaderStruct get_field_positions (const std::string fname,
 
     headers.nvalues = len + 1;
 
-
     return headers;
 }
 
@@ -391,5 +394,29 @@ void get_field_quotes (const std::string line, HeaderStruct &headers)
     {
         headers.quoted [headers.nvalues] = true;
         headers.terminal_quote = true;
+    }
+}
+
+void dump_headers (const HeaderStruct &headers)
+{
+    /*
+    unsigned int nvalues;
+    bool data_has_stations, terminal_quote;
+    std::vector <bool> quoted;
+    std::vector <int> position_file2db, position_db2file;
+    */
+    Rcpp::Rcout << "Header has " << headers.nvalues <<
+        " with [quoted, pos_file2db, _db2file] having [" <<
+        headers.quoted.size () << ", " << headers.position_file2db.size () <<
+        ", " << headers.position_db2file.size () << "]" << std::endl;
+
+    for (int i = 0; i < headers.position_file2db.size (); i++)
+    {
+        Rcpp::Rcout << "pos [" << i << "] = " <<
+            headers.position_file2db [i];
+        if (headers.quoted [i])
+            Rcpp::Rcout << " is quoted" << std::endl;
+        else
+            Rcpp::Rcout << " is NOT quoted" << std::endl;
     }
 }
