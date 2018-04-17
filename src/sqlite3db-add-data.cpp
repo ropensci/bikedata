@@ -341,6 +341,7 @@ HeaderStruct get_field_positions (const std::string fname,
     boost::replace_all (line, "\"", "");
     boost::replace_all (line, " ", "");
     boost::replace_all (line, "_", "");
+    boost::replace_all (line, ".", ""); // csv test files replace " " with "."
     boost::replace_all (line, "\n","");
     boost::replace_all (line, "\r","");
     // Note that this only works because all systems to date are from the
