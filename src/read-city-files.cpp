@@ -234,9 +234,9 @@ std::string convert_usertype (std::string ut)
 
 std::string convert_gender (std::string g)
 {
-    if (g == "Female")
+    if (g == "Female" || g == "2")
         g = "2";
-    else if (g == "Male")
+    else if (g == "Male" || g == "1")
         g = "1";
     else
         g = "0";
