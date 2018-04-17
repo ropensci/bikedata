@@ -74,7 +74,11 @@ unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
         else
             token = strtokm (&linestr[0u], delim_noq_noq);
     }
-    values [0] = token;
+    if (headers.position_file2db [0] >= 0)
+        values [headers.position_file2db [0]] = token;
+    if (dump)
+            Rcpp::Rcout << "values [0 -> " <<
+                headers.position_file2db [0] << "] = " << token << std::endl;
 
     for (unsigned int i = 1; i < headers.nvalues; i++)
     {
@@ -110,14 +114,31 @@ unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
                 token = strtokm (nullptr, delim_noq_noq);
             }
         }
+        if (dump)
+            Rcpp::Rcout << "[" << i << " / " << headers.nvalues << "] = " <<
+                token << std::endl;
+        std::string tks = token;
+        // sometimes (in London) string that should be quoted yet are missing
+        // have no empty quotes, and so the parsing is mucked up. This
+        // nevertheless always leaves empty commas at the start, so
+        if (tks.substr (0, 1) == ",")
+            return 1;
+        if (i == (headers.nvalues - 1) && headers.terminal_quote)
+            boost::replace_all (tks, "\"", "");
+
         if (pos >= 0)
         {
-            values [pos] = token;
+            values [pos] = tks;
             if (dump)
                 Rcpp::Rcout << " = " << values [pos];
 
             if (pos == 1 || pos == 2)
+            {
+                // some London files have missing datetime strings:
+                if (values [pos].length () == 0)
+                    return 1;
                 values [pos] = convert_datetime_generic (values [pos]);
+            }
 
             if (pos == 3 || pos == 7) // add city prefixes to station names
                 values [pos] = city + values [pos];
@@ -131,8 +152,6 @@ unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
         if (dump)
             Rcpp::Rcout << std::endl;
     }
-    if (dump)
-        Rcpp::Rcout << "---plus: (" << token << ")" << std::endl;
     
     /*
     if (headers.terminal_quote)
@@ -152,7 +171,6 @@ unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
     */
 
     // Then bind the SQLITE statement
-
     // duration
     sqlite3_bind_text(stmt, 2, values [0].c_str (), -1, SQLITE_TRANSIENT);
     // starttime
@@ -176,16 +194,22 @@ unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
     if (headers.data_has_stations)
     {
         // start station:
-        std::string stn_id = values [3], lon = values [6], lat = values [5];
-        if (stationqry->count (stn_id) == 0 && lon != "0.0" && lat != "0.0")
-            (*stationqry)[stn_id] = "(\'" + city + "\',\'" + stn_id +
-                "\'," + lon + "\'," + lat + ")";
+        std::string stn_id = values [3], stn_name = values [4],
+            lon = values [6], lat = values [5];
+        if (stationqry->count (stn_id) == 0 && lon != "0.0" && lat != "0.0" &&
+                lon != "" && lat != "")
+            (*stationqry)[stn_id] = "(\'" + city + "\',\'" + stn_id + "\',\'" +
+                stn_name + "\'," + lon + "," + lat + ")";
 
         // end station:
-        stn_id = values [7], lon = values [10], lat = values [9];
-        if (stationqry->count (stn_id) == 0 && lon != "0.0" && lat != "0.0")
-            (*stationqry)[stn_id] = "(\'" + city + "\',\'" + stn_id +
-                "\'," + lon + "\'," + lat + ")";
+        stn_id = values [7];
+        stn_name = values [8];
+        lon = values [10];
+        lat = values [9];
+        if (stationqry->count (stn_id) == 0 && lon != "0.0" && lat != "0.0" &&
+                lon != "" && lat != "")
+            (*stationqry)[stn_id] = "(\'" + city + "\',\'" + stn_id + "\',\'" +
+                stn_name + "\'," + lon + "," + lat + ")";
     }
 
     return 0;

@@ -50,6 +50,10 @@ old DC files had "Duration (ms)", but no longer do.
 LA has "passholder_type", which can be "Flex Pass" = annual, or "Monthly Pass"
 PH has "passholder_type", which can be "IndegoFlex" or "Indego30"
 
+Note that an extra city column is needed because LA has "start_station" and
+"end_station" for the ID columns, while MN has these for the station name
+columns.
+
 ```{r}
 fields <- c ("duration", "starttime", "endtime", "startstationid",
             "startstationname", "startstationlatitude",
@@ -64,14 +68,14 @@ starttime <- c ("starttime", "startdate")
 endtime <- c ("endtime", "enddate", "stoptime")
 
 startstationid <- c ("startstationid", "startstationnumber", "fromstationid",
-                     "startterminal")
+                     "startterminal", "startstation")
 startstationname <- c ("startstationname", "fromstationname", "startstation")
 startstationlatitude <- c ("startstationlatitude", "startlat")
 startstationlongitude <- c ("startstationlongitude", "startlon")
 
-endstationid <- c ("endstationid", "endstationnumber", "tostationid")
-endstationname <- c ("endstationname", "tostationname", "endstation",
-                     "endterminal")
+endstationid <- c ("endstationid", "endstationnumber", "tostationid",
+                   "endstation", "endterminal")
+endstationname <- c ("endstationname", "tostationname", "endstation")
 endstationlatitude <- c ("endstationlatitude", "endlat")
 endstationlongitude <- c ("endstationlongitude", "endlon")
 
@@ -91,6 +95,16 @@ names (field_names) <- c ("field", "variation")
 field_names$index <- field_names$field
 levels (field_names$index) <- seq (unique (field_names$index))
 field_names$index <- as.numeric (field_names$index)
+
+field_names$city <- "all"
+field_names$city [field_names$field == "startstationid" &
+                  field_names$variation == "startstation"] <- "la"
+field_names$city [field_names$field == "endstationname" &
+                  field_names$variation == "endstation"] <- "mn"
+field_names$city [field_names$field == "startstationname" &
+                  field_names$variation == "startstation"] <- "mn"
+field_names$city [field_names$field == "endstationid" &
+                  field_names$variation == "endstation"] <- "la"
 ```
 
 And this then saves the correponding `data.frame` to the package data:

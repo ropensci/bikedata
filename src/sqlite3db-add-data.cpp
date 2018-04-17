@@ -135,7 +135,7 @@ int rcpp_import_to_trip_table (const char* bikedb,
 
         std::string filename_i = Rcpp::as <std::string> (datafiles [filenum]);
         HeaderStruct headers = get_field_positions (filename_i,
-                header_file_name, data_has_stations);
+                header_file_name, data_has_stations, city);
 
         pFile = fopen (datafiles [filenum], "r");
         char * junk = fgets (in_line, BUFFER_SIZE, pFile);
@@ -160,7 +160,7 @@ int rcpp_import_to_trip_table (const char* bikedb,
             {
                 get_field_quotes (in_line, headers);
                 get_structure = false;
-                //dump_headers (headers);
+                dump_headers (headers);
             }
 
             rm_dos_end (in_line);
@@ -185,8 +185,15 @@ int rcpp_import_to_trip_table (const char* bikedb,
                 rc = read_one_line_sf (stmt, in_line, &stationqry, city);
             */
 
-            rc = read_one_line_generic (stmt, in_line, &stationqry, city,
-                    headers, temp < 2);
+            //Rcpp::Rcout << "   ---" << temp << "---" << std::endl;
+            // London data are ballsed up and change format within data files,
+            // so they are read with their own std::string routine, rather than
+            // then generic char * routine.
+            if (city == "lo")
+                rc = read_one_line_london (stmt, in_line);
+            else
+                rc = read_one_line_generic (stmt, in_line, &stationqry, city,
+                        headers, temp < 2);
             temp++;
             if (rc == 0) // only != 0 for LA, London, Boston, and MN
             {
@@ -296,7 +303,8 @@ bool strfound (const std::string str, const std::string target)
 //' corresponding field.
 //' @noRd
 HeaderStruct get_field_positions (const std::string fname,
-        const std::string header_file_name, bool data_has_stations)
+        const std::string header_file_name, bool data_has_stations,
+        const std::string city)
 {
     std::ifstream in_file;
     // load file header variants - this file is very small, so no real loss
@@ -305,6 +313,8 @@ HeaderStruct get_field_positions (const std::string fname,
     in_file.open (header_file_name.c_str (), std::ios_base::in);
     std::unordered_map <std::string, unsigned int> field_name_map;
     std::string line;
+    getline (in_file, line, '\n'); // header
+
     while (getline (in_file, line, '\n'))
     {
         unsigned int ipos = line.find (",");
@@ -313,7 +323,13 @@ HeaderStruct get_field_positions (const std::string fname,
         ipos = line.find (",");
         std::string f2 = line.substr (0, ipos);
         line = line.substr (ipos + 1, line.length () - ipos - 1);
-        field_name_map.emplace (f2, atoi (line.c_str ()) - 1);
+        ipos = line.find (",");
+        unsigned int indx = atoi (line.substr (0, ipos).c_str ());
+        line = line.substr (ipos + 1, line.length () - ipos - 1);
+        // line is then the city
+        if (line.find ("all") != std::string::npos ||
+                line.find (city) != std::string::npos)
+            field_name_map.emplace (f2, indx - 1);
     }
     in_file.close ();
 
@@ -383,16 +399,24 @@ void get_field_quotes (const std::string line, HeaderStruct &headers)
         else
             headers.quoted [i] = false;
 
-        unsigned int ipos = l.find (",");
-        l = l.substr (ipos + 1, l.length () - ipos - 1);
+        unsigned int ipos;
+        if (headers.quoted [i])
+        {
+            ipos = l.find ("\",");
+            l = l.substr (ipos + 2, l.length () - ipos - 2);
+        } else
+        {
+            ipos = l.find (",");
+            l = l.substr (ipos + 1, l.length () - ipos - 1);
+        }
     }
     if (l.find ("\"") == std::string::npos)
     {
-        headers.quoted [headers.nvalues] = false;
+        headers.quoted [headers.nvalues - 1] = false;
         headers.terminal_quote = false;
     } else
     {
-        headers.quoted [headers.nvalues] = true;
+        headers.quoted [headers.nvalues - 1] = true;
         headers.terminal_quote = true;
     }
 }
