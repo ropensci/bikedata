@@ -80,6 +80,22 @@ unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
             Rcpp::Rcout << "values [0 -> " <<
                 headers.position_file2db [0] << "] = " << token << std::endl;
 
+    int pos = headers.position_file2db [0];
+    if (pos == 1 || pos == 2) // happens for MN
+    {
+        if (values [pos].length () == 0)
+            return 1;
+        values [pos] = convert_datetime_generic (values [pos]);
+    }
+
+    // These don't arise in any data processed to date
+    if (pos == 3 || pos == 7) // add city prefixes to station names
+        values [pos] = city + values [pos];
+    if (pos == 12) // user type
+        values [pos] = convert_usertype (values [pos]);
+    if (pos == 14) // gender
+        values [pos] = convert_gender (values [pos]);
+
     for (unsigned int i = 1; i < headers.nvalues; i++)
     {
         int pos = headers.position_file2db [i];
@@ -129,8 +145,6 @@ unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
         if (pos >= 0)
         {
             values [pos] = tks;
-            if (dump)
-                Rcpp::Rcout << " = " << values [pos];
 
             if (pos == 1 || pos == 2)
             {

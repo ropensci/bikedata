@@ -402,7 +402,7 @@ int timediff (std::string t1, std::string t2)
 {
     if (t1.length () < 19)
     {
-        Rcpp::Rcout << "---[" << t1 << "]---" << std::endl;
+        Rcpp::Rcout << "---[" << t1 << ", " << t2 << "]---" << std::endl;
         Rcpp::stop ("nope");
     }
     int Y1 = atoi (t1.substr (0, 4).c_str ()),
