@@ -219,12 +219,12 @@ bike_get_dc_stations <- function ()
 {
     # rm apostrophes from names (only "L'Enfant Plaza"):
     # stations_dc is lazy loaded from R/sysdata.rda
-    name <- noquote (gsub ("'", "", sysdata$stations_dc$address)) #nolint
+    name <- noquote (gsub ("'", "", sysdata$stations_dc$name)) #nolint
     name <- trimws (name, which = 'right') # trim terminal white space
-    res <- data.frame (id = sysdata$stations_dc$terminal_number,
+    res <- data.frame (id = sysdata$stations_dc$id,
                        name = name,
-                       lon = sysdata$stations_dc$longitude,
-                       lat = sysdata$stations_dc$latitude,
+                       lon = sysdata$stations_dc$lon,
+                       lat = sysdata$stations_dc$lat,
                        stringsAsFactors = FALSE)
 
     return (res)

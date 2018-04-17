@@ -193,8 +193,15 @@ unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
 
 std::string convert_usertype (std::string ut)
 {
-    if (ut == "Member" || ut == "Subscriber" || ut == "Flex Pass" ||
-            ut == "Monthly Pass" || ut == "IndegoFlex" || ut == "Indego30")
+    // see comment in sqlite3db-add-data.cpp/get_field_positions - this is not
+    // locale-safe!
+    std::transform (ut.begin (), ut.end (), ut.begin (), ::tolower);
+    boost::replace_all (ut, " ", "");
+    if (ut.find ("member") != std::string::npos ||
+            ut.find ("subscriber") != std::string::npos ||
+            ut.find ("flex") != std::string::npos ||
+            ut.find ("monthly") != std::string::npos ||
+            ut.find ("indego30") != std::string::npos)
         ut = "1";
     else
         ut = "0";
