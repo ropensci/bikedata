@@ -99,7 +99,7 @@ unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
     {
         if (values [pos].length () == 0)
             return 1;
-        values [pos] = convert_datetime_generic (values [pos]);
+        values [pos] = convert_datetime (values [pos]);
     }
 
     // These don't arise in any data processed to date
@@ -165,7 +165,7 @@ unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
                 // some London files have missing datetime strings:
                 if (values [pos].length () == 0)
                     return 1;
-                values [pos] = convert_datetime_generic (values [pos]);
+                values [pos] = convert_datetime (values [pos]);
             }
 
             if (pos == 3 || pos == 7) // add city prefixes to station names
@@ -250,7 +250,7 @@ unsigned int read_one_line_london (sqlite3_stmt * stmt, char * line)
     std::string duration = str_token (&in_line, ","); // Rental ID: not used
     duration = str_token (&in_line, ",");
     std::string bike_id = str_token (&in_line, ",");
-    std::string end_date = convert_datetime_generic (str_token (&in_line, ","));
+    std::string end_date = convert_datetime (str_token (&in_line, ","));
     std::string end_station_id = str_token (&in_line, ",");
     end_station_id = "lo" + end_station_id;
     std::string end_station_name;
@@ -262,7 +262,7 @@ unsigned int read_one_line_london (sqlite3_stmt * stmt, char * line)
         in_line = in_line.substr (1, in_line.length ()); // rm comma from start
     } else
         end_station_name = str_token (&in_line, ",");
-    std::string start_date = convert_datetime_generic (str_token (&in_line, ","));
+    std::string start_date = convert_datetime (str_token (&in_line, ","));
     std::string start_station_id = str_token (&in_line, ",");
     start_station_id = "lo" + start_station_id;
 
@@ -310,9 +310,9 @@ unsigned int read_one_line_nabsa (sqlite3_stmt * stmt, char * line,
 
     std::string trip_duration = std::strtok (nullptr, delim);
     std::string start_date = std::strtok (nullptr, delim);
-    start_date = convert_datetime_generic (start_date);
+    start_date = convert_datetime (start_date);
     std::string end_date = std::strtok (nullptr, delim);
-    end_date = convert_datetime_generic (end_date);
+    end_date = convert_datetime (end_date);
     std::string start_station_id = std::strtok (nullptr, delim);
     if (start_station_id == " " || start_station_id == "#N/A")
         ret = 1;
