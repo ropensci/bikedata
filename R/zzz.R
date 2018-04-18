@@ -19,13 +19,17 @@
 
 .onLoad <- function (libname, pkgname)
 {
-    # make data set names global to avoid CHECK notes
     requireNamespace("utils", quietly = TRUE)
+    # make data set names global to avoid CHECK notes
     utils::globalVariables ("sysdata")
     f <- file.path (tempdir (), "bikedata_headers.csv")
-    utils::write.csv (sysdata$headers, file = f, row.names = FALSE)
+    #utils::write.csv (sysdata$headers, file = f, row.names = FALSE)
+    utils::write.table (sysdata$headers, file = f, row.names = FALSE,
+                        sep = ",")
     f <- file.path (tempdir (), "field_names.csv")
-    utils::write.csv (sysdata$field_names, file = f, row.names = FALSE, quote = FALSE)
+    #utils::write.csv (sysdata$field_names, file = f, row.names = FALSE, quote = FALSE)
+    utils::write.table (sysdata$field_names, file = f, row.names = FALSE,
+                        quote = FALSE, sep = ",")
 
     invisible ()
 }
