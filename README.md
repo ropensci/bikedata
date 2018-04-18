@@ -1,42 +1,57 @@
 bikedata
 ================
 
--   [bikedata](#bikedata)
-    -   [1 Installation](#installation)
-    -   [2 Usage](#usage)
-        -   [2.1 Filtering trips by dates, times, and weekdays](#filtering-trips-by-dates-times-and-weekdays)
-        -   [2.2 Filtering trips by demographic characteristics](#filtering-trips-by-demographic-characteristics)
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-[![Build Status](https://travis-ci.org/ropensci/bikedata.svg?branch=master)](https://travis-ci.org/ropensci/bikedata?branch=master) [![Build status](https://ci.appveyor.com/api/projects/status/github/ropensci/bikedata?svg=true)](https://ci.appveyor.com/project/ropensci/bikedata) [![codecov](https://codecov.io/gh/ropensci/bikedata/branch/master/graph/badge.svg)](https://codecov.io/gh/ropensci/bikedata) [![Project Status: Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/bikedata)](http://cran.r-project.org/web/packages/bikedata) [![CRAN Downloads](http://cranlogs.r-pkg.org/badges/grand-total/bikedata?color=orange)](http://cran.r-project.org/package=bikedata) [![](http://badges.ropensci.org/116_status.svg)](https://github.com/ropensci/onboarding/issues/116)
 
-bikedata
-========
+[![Build
+Status](https://travis-ci.org/ropensci/bikedata.svg?branch=master)](https://travis-ci.org/ropensci/bikedata?branch=master)
+[![Build
+status](https://ci.appveyor.com/api/projects/status/github/ropensci/bikedata?svg=true)](https://ci.appveyor.com/project/ropensci/bikedata)
+[![codecov](https://codecov.io/gh/ropensci/bikedata/branch/master/graph/badge.svg)](https://codecov.io/gh/ropensci/bikedata)
+[![Project Status:
+Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
+[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/bikedata)](http://cran.r-project.org/web/packages/bikedata)
+[![CRAN
+Downloads](http://cranlogs.r-pkg.org/badges/grand-total/bikedata?color=orange)](http://cran.r-project.org/package=bikedata)
+[![](http://badges.ropensci.org/116_status.svg)](https://github.com/ropensci/onboarding/issues/116)
 
-The `bikedata` package aims to enable ready importing of historical trip data from all public bicycle hire systems which provide data, and will be expanded on an ongoing basis as more systems publish open data. Cities and names of associated public bicycle systems currently included, along with numbers of bikes and of docking stations, are:
+The `bikedata` package aims to enable ready importing of historical trip
+data from all public bicycle hire systems which provide data, and will
+be expanded on an ongoing basis as more systems publish open data.
+Cities and names of associated public bicycle systems currently
+included, along with numbers of bikes and of docking stations,
+are:
 
 | City                           | Hire Bicycle System                                                   | Number of Bicycles | Number of Docking Stations |
-|--------------------------------|-----------------------------------------------------------------------|--------------------|----------------------------|
+| ------------------------------ | --------------------------------------------------------------------- | ------------------ | -------------------------- |
 | London, U.K.                   | [Santander Cycles](https://tfl.gov.uk/modes/cycling/santander-cycles) | 13,600             | 839                        |
 | San Francisco Bay Area, U.S.A. | [Ford GoBike](https://www.fordgobike.com/)                            | 7,000              | 540                        |
 | New York City NY, U.S.A.       | [citibike](https://www.citibikenyc.com/)                              | 7,000              | 458                        |
 | Chicago IL, U.S.A.             | [Divvy](https://www.divvybikes.com/)                                  | 5,837              | 576                        |
+| Montreal, Canada               | [Bixi](https://montreal.bixi.com/)                                    | 5,220              | 452                        |
 | Washingon DC, U.S.A.           | [Capital BikeShare](https://www.capitalbikeshare.com/)                | 4,457              | 406                        |
 | Minneapolis/St Paul MN, U.S.A. | [Nice Ride](https://www.niceridemn.org/)                              | 1,833              | 171                        |
 | Boston MA, U.S.A.              | [Hubway](https://www.thehubway.com/)                                  | 1,461              | 158                        |
 | Los Angeles CA, U.S.A.         | [Metro](https://bikeshare.metro.net/)                                 | 1,000              | 65                         |
 | Philadelphia PA, U.S.A.        | [Indego](https://www.rideindego.com)                                  | 1,000              | 105                        |
 
-These data include the places and times at which all trips start and end. Some systems provide additional demographic data including years of birth and genders of cyclists.
+<!-- numbers from
+https://en.wikipedia.org/wiki/List_of_bicycle-sharing_systems#Cities -->
 
-The following provides a brief overview of package functionality. For more detail, see the [vignette](https://ropensci.github.io/bikedata/articles/bikedata.html).
+These data include the places and times at which all trips start and
+end. Some systems provide additional demographic data including years of
+birth and genders of cyclists.
 
-------------------------------------------------------------------------
+The following provides a brief overview of package functionality. For
+more detail, see the
+[vignette](https://ropensci.github.io/bikedata/articles/bikedata.html).
 
-1 Installation
---------------
+-----
 
-Currently a development version only which can be installed with the following command,
+## 1 Installation
+
+Currently a development version only which can be installed with the
+following command,
 
 ``` r
 devtools::install_github("ropensci/bikedata")
@@ -48,17 +63,23 @@ and then loaded the usual way
 library (bikedata)
 ```
 
-2 Usage
--------
+## 2 Usage
 
-Data may downloaded for a particular city and stored in an `SQLite3` database with the simple command,
+Data may downloaded for a particular city and stored in an `SQLite3`
+database with the simple command,
 
 ``` r
 store_bikedata (city = 'nyc', bikedb = 'bikedb', dates = 201601:201603)
 # [1] 2019513
 ```
 
-where the `bikedb` parameter provides the name for the database, and the optional argument `dates` can be used to specify a particular range of dates (Jan-March 2016 in this example). The `store_bikedata` function returns the total number of trips added to the specified database. The primary objects returned by the `bikedata` packages are 'trip matrices' which contain aggregate numbers of trips between each pair of stations. These are extracted from the database with:
+where the `bikedb` parameter provides the name for the database, and the
+optional argument `dates` can be used to specify a particular range of
+dates (Jan-March 2016 in this example). The `store_bikedata` function
+returns the total number of trips added to the specified database. The
+primary objects returned by the `bikedata` packages are ‘trip matrices’
+which contain aggregate numbers of trips between each pair of stations.
+These are extracted from the database with:
 
 ``` r
 tm <- bike_tripmat (bikedb = 'bikedb')
@@ -68,7 +89,10 @@ dim (tm); format (sum (tm), big.mark = ',')
     #> [1] 518 518
     #> [1] "2,019,513"
 
-During the specified time period there were just over 2 million trips between 518 bicycle docking stations. Note that the associated databases can be very large, particularly in the absence of `dates` restrictions, and extracting these data can take quite some time.
+During the specified time period there were just over 2 million trips
+between 518 bicycle docking stations. Note that the associated databases
+can be very large, particularly in the absence of `dates` restrictions,
+and extracting these data can take quite some time.
 
 Data can also be aggregated as daily time series with
 
@@ -99,11 +123,15 @@ bike_summary_stats (bikedb = 'bikedb')
 #> ny  2019513          518 2016-01-01 00:00    2016-03-31 23:59        FALSE
 ```
 
-The final field, `latest_files`, indicates whether the files in the database are up to date with the latest published files.
+The final field, `latest_files`, indicates whether the files in the
+database are up to date with the latest published files.
 
 ### 2.1 Filtering trips by dates, times, and weekdays
 
-Trip matrices can be constructed for trips filtered by dates, days of the week, times of day, or any combination of these. The temporal extent of a `bikedata` database is given in the above `bike_summary_stats()` function, or can be directly viewed with
+Trip matrices can be constructed for trips filtered by dates, days of
+the week, times of day, or any combination of these. The temporal extent
+of a `bikedata` database is given in the above `bike_summary_stats()`
+function, or can be directly viewed with
 
 ``` r
 bike_datelimits (bikedb = 'bikedb')
@@ -112,7 +140,13 @@ bike_datelimits (bikedb = 'bikedb')
     #>              first               last 
     #> "2016-01-01 00:00" "2016-03-31 23:59"
 
-Additional temporal arguments which may be passed to the `bike_tripmat` function include `start_date`, `end_date`, `start_time`, `end_time`, and `weekday`. Dates and times may be specified in almost any format, but larger units must always precede smaller units (so years before months before days; hours before minutes before seconds). The following examples illustrate the variety of acceptable formats for these arguments.
+Additional temporal arguments which may be passed to the `bike_tripmat`
+function include `start_date`, `end_date`, `start_time`, `end_time`, and
+`weekday`. Dates and times may be specified in almost any format, but
+larger units must always precede smaller units (so years before months
+before days; hours before minutes before seconds). The following
+examples illustrate the variety of acceptable formats for these
+arguments.
 
 ``` r
 tm <- bike_tripmat ('bikedb', start_date = "20160102")
@@ -128,7 +162,12 @@ tm <- bike_tripmat ('bikedb', weekday = 2:6,
 
 ### 2.2 Filtering trips by demographic characteristics
 
-Trip matrices can also be filtered by demographic characteristics through specifying the three additional arguments of `member`, `gender`, and `birth_year`. `member = 0` is equivalent to `member = FALSE`, and `1` equivalent to `TRUE`. `gender` is specified numerically such that values of `2`, `1`, and `0` respectively translate to female, male, and unspecified. The following lines demonstrate this functionality
+Trip matrices can also be filtered by demographic characteristics
+through specifying the three additional arguments of `member`, `gender`,
+and `birth_year`. `member = 0` is equivalent to `member = FALSE`, and
+`1` equivalent to `TRUE`. `gender` is specified numerically such that
+values of `2`, `1`, and `0` respectively translate to female, male, and
+unspecified. The following lines demonstrate this functionality
 
 ``` r
 sum (bike_tripmat ('bikedb', member = 0))

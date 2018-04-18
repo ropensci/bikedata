@@ -2,12 +2,11 @@
 title: "bikedata"
 keywords: "bicycle hire systems, bike hire systems, bike hire, bicycle hire, database, bike data"
 output:
-  github_document:
-    toc: true
-  html_document:
-    toc: true
-    toc_float: true
-    theme: flatly
+    github_document:
+        toc: false
+    html_document:
+        toc: true
+        theme: flatly
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -28,8 +27,6 @@ knitr::opts_chunk$set(
 [![CRAN Downloads](http://cranlogs.r-pkg.org/badges/grand-total/bikedata?color=orange)](http://cran.r-project.org/package=bikedata)
 [![](http://badges.ropensci.org/116_status.svg)](https://github.com/ropensci/onboarding/issues/116)
 
-# bikedata
-
 
 The `bikedata` package aims to enable ready importing of historical trip data
 from all public bicycle hire systems which provide data, and will be expanded on
@@ -43,11 +40,15 @@ London, U.K. | [Santander Cycles](https://tfl.gov.uk/modes/cycling/santander-cyc
 San Francisco Bay Area, U.S.A. | [Ford GoBike](https://www.fordgobike.com/)  | 7,000 | 540 
 New York City NY, U.S.A. | [citibike](https://www.citibikenyc.com/) | 7,000 | 458
 Chicago IL, U.S.A. | [Divvy](https://www.divvybikes.com/) | 5,837 | 576
+Montreal, Canada | [Bixi](https://montreal.bixi.com/) | 5,220 | 452
 Washingon DC, U.S.A. | [Capital BikeShare](https://www.capitalbikeshare.com/) | 4,457 | 406
 Minneapolis/St Paul MN, U.S.A. | [Nice Ride](https://www.niceridemn.org/) | 1,833 | 171
 Boston MA, U.S.A. | [Hubway](https://www.thehubway.com/) | 1,461 | 158
 Los Angeles CA, U.S.A. | [Metro](https://bikeshare.metro.net/) | 1,000 | 65
 Philadelphia PA, U.S.A. | [Indego](https://www.rideindego.com) | 1,000 | 105
+
+<!-- numbers from
+https://en.wikipedia.org/wiki/List_of_bicycle-sharing_systems#Cities -->
 
 These data include the places and times at which all trips start and end. Some
 systems provide additional demographic data including years of birth and genders
