@@ -111,6 +111,26 @@ get_nabsa_files <- function (city)
 }
 
 
+#' get_montreal_bike_files
+#'
+#' Returns list of URLs for each trip data file from Montreal's Bixi system
+#'
+#' @return List of URLs used to download data
+#'
+#' @noRd
+get_montreal_bike_files <- function ()
+{
+    host <- "https://montreal.bixi.com/en/open-data"
+    . <- NULL # suppress R CMD check note
+    nodes <- httr::content (httr::GET (host), encoding = 'UTF-8') %>%
+        xml2::xml_find_all (".//div")
+    nodes <- nodes [which (xml2::xml_attr (nodes, "class") == 
+                           "container open-data-history")]
+    hrefs <- xml2::xml_find_all (nodes, ".//a") %>%
+        xml2::xml_attr ("href")
+    unique (hrefs)
+}
+
 #' get_bike_files
 #'
 #' Returns list of URLs for each trip data file from nominated system
@@ -141,6 +161,8 @@ get_bike_files <- function (city)
         warning ('Data for the Nice Ride MN system must be downloaded ',
                  'manually from\nhttps://www.niceridemn.org/data/, and ',
                  'loaded using store_bikedata')
+    else if (city == 'mo')
+        files <- get_montreal_bike_files ()
 
     return (files)
 }

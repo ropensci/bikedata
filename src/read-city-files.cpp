@@ -379,11 +379,9 @@ std::string convert_usertype (std::string ut)
     // locale-safe!
     std::transform (ut.begin (), ut.end (), ut.begin (), ::tolower);
     boost::replace_all (ut, " ", "");
-    if (ut.find ("member") != std::string::npos ||
-            ut.find ("subscriber") != std::string::npos ||
-            ut.find ("flex") != std::string::npos ||
-            ut.find ("monthly") != std::string::npos ||
-            ut.find ("indego30") != std::string::npos)
+    if (strfound (ut, "member") || strfound (ut, "subscriber") ||
+            strfound (ut, "flex") || strfound (ut, "monthly") ||
+            strfound (ut, "indego30") || strfound (ut, "1"))
         ut = "1";
     else
         ut = "0";

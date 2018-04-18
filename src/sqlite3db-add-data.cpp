@@ -245,14 +245,6 @@ int rcpp_import_to_file_table (const char * bikedb,
     return nfiles;
 }
 
-bool strfound (const std::string str, const std::string target)
-{
-    bool found = false;
-    if (str.find (target) != std::string::npos)
-        found = true;
-    return found;
-}
-
 //' Examine the header line of the data file to map the records on to the
 //' corresponding columns in the database. The database has the following fields
 //' and column numbers:

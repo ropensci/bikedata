@@ -61,27 +61,28 @@ fields <- c ("duration", "starttime", "endtime", "startstationid",
             "endstationlatitude", "endstationlongitude", "bikeid",
             "usertype", "birthyear", "gender")
 
-duration <- c ("duration", "tripduration", "totalduration", "durationseconds",
-               "totalduration(ms)")
+duration <- c ("duration", "tripduration", "totalduration", "durationsec",
+               "durationseconds", "totalduration(ms)")
 
 starttime <- c ("starttime", "startdate")
 endtime <- c ("endtime", "enddate", "stoptime")
 
 startstationid <- c ("startstationid", "startstationnumber", "fromstationid",
-                     "startterminal", "startstation")
+                     "startterminal", "startstation", "startstationcode")
 startstationname <- c ("startstationname", "fromstationname", "startstation")
 startstationlatitude <- c ("startstationlatitude", "startlat")
 startstationlongitude <- c ("startstationlongitude", "startlon")
 
 endstationid <- c ("endstationid", "endstationnumber", "tostationid",
-                   "endstation", "endterminal")
+                   "endstation", "endterminal", "endstationcode")
 endstationname <- c ("endstationname", "tostationname", "endstation")
 endstationlatitude <- c ("endstationlatitude", "endlat")
 endstationlongitude <- c ("endstationlongitude", "endlon")
 
 bikeid <- c ("bikeid", "bikenumber", "bike#")
 usertype <- c ("usertype", "membertype", "type", "subscribertype",
-               "subscriptiontype", "accounttype", "passholdertype")
+               "subscriptiontype", "accounttype", "passholdertype",
+               "ismember")
 birthyear <- c ("birthyear", "birthday", "memberbirthyear")
 gender <- c ("gender", "membergender")
 

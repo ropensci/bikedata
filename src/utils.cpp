@@ -62,6 +62,14 @@ void rm_dos_end (char *str)
         p[0] = '\0';
 }
 
+bool strfound (const std::string str, const std::string target)
+{
+    bool found = false;
+    if (str.find (target) != std::string::npos)
+        found = true;
+    return found;
+}
+
 //' convert_datetime
 //'
 //' Possible formats are:

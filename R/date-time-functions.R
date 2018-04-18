@@ -280,9 +280,14 @@ convert_dates_to_filenames <- function (x, city = 'ny')
             x <- unique (c (paste0 (yy, '_', qq), paste0 (qq, '_', yy),
                             paste0 (yy, '-', qq), paste0 (qq, '-', yy),
                             paste0 (yy, qq)))
-    } else if (city %in% c ('dc')) # changed to annual file dumps
+    } else if (city %in% c ('mo')) # annual file dumps
     {
         x <- unique (yy)
+        x <- x [which (x > 2013)]
+    } else if (city %in% c ('dc')) # annual up to current year
+    {
+        yr <- substr (Sys.Date (), 1, 4)
+        x <- c (unique (yy [which (yy < yr)]), x [which (yy == yr)])
     } else
         x <- paste0 (x)
 

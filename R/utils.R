@@ -35,10 +35,11 @@ convert_city_names <- function (city)
                      'lo', 'sa', # london santander
                      'ph', 'in', # philly indego
                      'mn', 'mi', # minneapolis/st.paul nice ride
-                     'fo', 'go', 'sf') # ford gobike san fran
+                     'fo', 'go', 'sf', # ford gobike san fran
+                     'mo', 'bi') # montreal bixi
     city_code <- c ('ny', 'ny', 'ny', 'bo', 'bo', 'ch', 'ch',
                     'dc', 'dc', 'dc', 'la', 'la', 'lo', 'lo', 'ph', 'ph',
-                    'mn', 'mn', 'sf', 'sf', 'sf')
+                    'mn', 'mn', 'sf', 'sf', 'sf', 'mo', 'mo')
     city_code <- city_code [pmatch (city, city_names)]
 
     if (length (indx_lo) > 0)

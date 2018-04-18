@@ -160,7 +160,7 @@ store_bikedata <- function (bikedb, city, data_dir, dates = NULL, quiet = FALSE)
                 ch_stns <- bike_get_chicago_stations (flists)
                 if (nrow (ch_stns) > 0)
                     nstations <- rcpp_import_stn_df (bikedb, ch_stns, 'ch')
-            } else if (ci %in% c('bo', 'dc', 'lo', 'mn'))
+            } else if (ci %in% c('bo', 'dc', 'lo', 'mn', 'mo'))
             {
                 if (ci == "lo")
                     stns <- bike_get_london_stations (quiet)
@@ -170,6 +170,8 @@ store_bikedata <- function (bikedb, city, data_dir, dates = NULL, quiet = FALSE)
                     stns <- bike_get_bo_stations (flists, data_dir)
                 else if (ci == 'mn')
                     stns <- bike_get_mn_stations (flists)
+                else if (ci == 'mo') # montreal
+                    stns <- bike_get_mo_stations (flists)
                 if (is.null (stns)) # can happen for London
                     stop ("No stations returned; please try again")
                 nstations <- rcpp_import_stn_df (bikedb, stns, ci)
@@ -326,8 +328,8 @@ get_bike_cities <- function (data_dir)
         cities$bo <- TRUE
     if (any (grepl ('cabi|capi', flist, ignore.case = TRUE)))
         cities$dc <- TRUE
-    if (any (grepl ('cyclehireusagestats', flist, ignore.case = TRUE) |
-             grepl ('JourneyDataExtract', flist, ignore.case = TRUE)))
+    if (any (grepl ('cyclehireusagestats|JourneyDataExtract', flist,
+                    ignore.case = TRUE)))
         cities$lo <- TRUE
     if (any (grepl ('metro', flist, ignore.case = TRUE)))
         cities$la <- TRUE
@@ -337,6 +339,8 @@ get_bike_cities <- function (data_dir)
         cities$ph <- TRUE
     if (any (grepl ('fordgobike', flist, ignore.case = TRUE)))
         cities$sf <- TRUE
+    if (any (grepl ('bixi|montreal', flist, ignore.case = TRUE)))
+        cities$mo <- TRUE
 
     cities <- which (unlist (cities))
     names (cities)
@@ -360,24 +364,26 @@ get_flist_city <- function (data_dir, bikedb, city)
 
     index <- NULL
     if (any (city == 'ny'))
-        index <- which (grepl ('citibike', flist, ignore.case = TRUE))
+        index <- grep ('citibike', flist, ignore.case = TRUE)
     else if (any (city == 'ch'))
-        index <- which (grepl ('divvy', flist, ignore.case = TRUE))
+        index <- grep ('divvy', flist, ignore.case = TRUE)
     else if (any (city == 'bo'))
-        index <- which (grepl ('hubway', flist, ignore.case = TRUE))
+        index <- grep ('hubway', flist, ignore.case = TRUE)
     else if (any (city == 'dc'))
-        index <- which (grepl ('cabi|capi', flist, ignore.case = TRUE))
+        index <- grep ('cabi|capi', flist, ignore.case = TRUE)
     else if (any (city == 'la'))
-        index <- which (grepl ('metro', flist, ignore.case = TRUE))
+        index <- grep ('metro', flist, ignore.case = TRUE)
     else if (any (city == 'lo'))
-        index <- which (grepl ('Journey', flist, ignore.case = TRUE) |
-                        grepl ('cyclehireusage', flist, ignore.case = TRUE))
+        index <- grep ('cyclehireusagestats|JourneyDataExtract', flist,
+                       ignore.case = TRUE)
     else if (any (city == 'mn'))
-        index <- which (grepl ('nice', flist, ignore.case = TRUE))
+        index <- grep ('nice', flist, ignore.case = TRUE)
     else if (any (city == 'ph'))
-        index <- which (grepl ('indego', flist, ignore.case = TRUE))
+        index <- grep ('indego', flist, ignore.case = TRUE)
     else if (any (city == 'sf'))
-        index <- which (grepl ('fordgobike', flist, ignore.case = TRUE))
+        index <- grep ('fordgobike', flist, ignore.case = TRUE)
+    else if (any (city == 'mo'))
+        index <- grep ('bixi|montreal', flist, ignore.case = TRUE)
 
     ret <- NULL
     if (length (index) > 0)
@@ -465,6 +471,14 @@ bike_unzip_files <- function (data_dir, bikedb, city, dates)
             if (city == 'mn')
             {
                 fit <- fi [grep ("trip", fi, ignore.case = TRUE)]
+                fis <- fi [grep ("station", fi, ignore.case = TRUE)]
+                flist_csv <- c (flist_csv, basename (fit))
+                flist_csv_stns <- c (flist_csv_stns, basename (fis))
+            } else if (city == 'mo')
+            {
+                # exclude the directory:
+                fi <- fi [which (substring (fi, nchar (fi)) != "/")]
+                fit <- fi [grep ("OD", fi, ignore.case = TRUE)]
                 fis <- fi [grep ("station", fi, ignore.case = TRUE)]
                 flist_csv <- c (flist_csv, basename (fit))
                 flist_csv_stns <- c (flist_csv_stns, basename (fis))
