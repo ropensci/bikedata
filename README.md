@@ -31,6 +31,7 @@ are
 | Chicago IL, U.S.A.             | [Divvy](https://www.divvybikes.com/)                                  | 5,837              | 576                        |
 | Montreal, Canada               | [Bixi](https://montreal.bixi.com/)                                    | 5,220              | 452                        |
 | Washingon DC, U.S.A.           | [Capital BikeShare](https://www.capitalbikeshare.com/)                | 4,457              | 406                        |
+| Guadalajara, Mexico            | [mibici](https://www.mibici.net/)                                     | 2,116              | 242                        |
 | Minneapolis/St Paul MN, U.S.A. | [Nice Ride](https://www.niceridemn.org/)                              | 1,833              | 171                        |
 | Boston MA, U.S.A.              | [Hubway](https://www.thehubway.com/)                                  | 1,461              | 158                        |
 | Philadelphia PA, U.S.A.        | [Indego](https://www.rideindego.com)                                  | 1,000              | 105                        |
