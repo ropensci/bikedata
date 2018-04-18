@@ -20,11 +20,7 @@
 int import_to_station_table (sqlite3 * dbcon,
     std::map <std::string, std::string> stationqry);
 
-int import_boston_stations (sqlite3 * dbcon);
 std::map <std::string, std::string> get_bo_stn_table (sqlite3 * dbcon);
-std::unordered_set <std::string> get_bo_stn_ids (sqlite3 * dbcon);
-
-std::string import_dc_stations ();
 std::map <std::string, std::string> get_dc_stn_table (sqlite3 * dbcon);
 std::unordered_set <std::string> get_stn_ids (sqlite3 * dbcon, std::string ci);
 

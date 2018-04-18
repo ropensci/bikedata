@@ -95,12 +95,6 @@ int rcpp_import_to_trip_table (const char* bikedb,
     std::unordered_set <std::string> stn_ids;
     if (city == "dc")
     {
-        /*
-        std::string dc_stn_qry = import_dc_stations ();
-        rc = sqlite3_exec (dbcon, dc_stn_qry.c_str(), NULL, 0, &zErrMsg);
-        if (rc != SQLITE_OK)
-            throw std::runtime_error ("Unable to insert Washington DC stations");
-        */
         stn_map = get_dc_stn_table (dbcon);
         stn_ids = get_stn_ids (dbcon, "dc");
     } else if (city == "bo")
@@ -165,25 +159,6 @@ int rcpp_import_to_trip_table (const char* bikedb,
 
             rm_dos_end (in_line);
             sqlite3_bind_text (stmt, 1, city.c_str (), -1, SQLITE_TRANSIENT); 
-
-            /*
-            if (city == "ny")
-                rc = read_one_line_nyc (stmt, in_line, &stationqry, delim);
-            else if (city == "bo")
-                rc = read_one_line_boston (stmt, in_line, stn_map, stn_ids);
-            else if (city == "ch")
-                rc = read_one_line_chicago (stmt, in_line, delim);
-            else if (city == "dc")
-                rc = read_one_line_dc (stmt, in_line, stn_map, stn_ids);
-            else if (city == "lo")
-                rc = read_one_line_london (stmt, in_line);
-            else if (city == "la" || city == "ph")
-                rc = read_one_line_nabsa (stmt, in_line, &stationqry, city);
-            else if (city == "mn")
-                rc = read_one_line_mn (stmt, in_line);
-            else if (city == "sf")
-                rc = read_one_line_sf (stmt, in_line, &stationqry, city);
-            */
 
             //Rcpp::Rcout << "   ---" << temp << "---" << std::endl;
             // London, LA, and Philly data are ballsed up and change format
