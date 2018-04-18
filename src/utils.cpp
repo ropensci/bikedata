@@ -62,36 +62,6 @@ void rm_dos_end (char *str)
         p[0] = '\0';
 }
 
-//' line_has_quotes
-//'
-//' Determine whether or not fields within a line are separated by double quotes
-//' and a comma, or just comma separated.
-//'
-//' @param line Character string with or without double-quote-comma separation
-//'
-//' @return true if line is delimited by double quotes and commas, false if
-//' commas only.
-//'
-//' @noRd
-bool line_has_quotes (char * line)
-{
-    bool has_quotes = false;
-    size_t slen = strlen (line);
-    char * b;
-    b = static_cast <char*> (line);
-    char ch;
-    for (size_t i = 0; i < slen; ++i)
-    {
-        strncpy (&ch, b+i, 1);
-        if (ch == '\"')
-        {
-            has_quotes = true;
-            break;
-        }
-    }
-    return has_quotes;
-}
-
 //' convert_datetime
 //'
 //' Possible formats are:
