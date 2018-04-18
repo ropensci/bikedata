@@ -141,7 +141,8 @@ store_bikedata <- function (bikedb, city, data_dir, dates = NULL, quiet = FALSE)
                 nf <- rcpp_import_to_file_table (bikedb,
                                                  basename (flists$flist_zip),
                                                  ci, nf)
-            if (ci %in% c ('bo', 'lo', 'sf') & length (flists$flist_csv) > 0)
+            if (ci %in% c ('bo', 'gu', 'lo', 'sf') &
+                length (flists$flist_csv) > 0)
             {
                 # These cities have both csv and zip files, but only store names
                 # of csv's that are not uncompressed zip files
@@ -160,7 +161,7 @@ store_bikedata <- function (bikedb, city, data_dir, dates = NULL, quiet = FALSE)
                 ch_stns <- bike_get_chicago_stations (flists)
                 if (nrow (ch_stns) > 0)
                     nstations <- rcpp_import_stn_df (bikedb, ch_stns, 'ch')
-            } else if (ci %in% c('bo', 'dc', 'lo', 'mn', 'mo'))
+            } else if (ci %in% c('bo', 'dc', 'gu', 'lo', 'mn', 'mo'))
             {
                 if (ci == "lo")
                     stns <- bike_get_london_stations (quiet)
@@ -168,6 +169,8 @@ store_bikedata <- function (bikedb, city, data_dir, dates = NULL, quiet = FALSE)
                     stns <- bike_get_dc_stations ()
                 else if (ci == 'bo')
                     stns <- bike_get_bo_stations (flists, data_dir)
+                else if (ci == 'gu')
+                    stns <- bike_get_gu_stations ()
                 else if (ci == 'mn')
                     stns <- bike_get_mn_stations (flists)
                 else if (ci == 'mo') # montreal
@@ -311,8 +314,10 @@ get_bike_cities <- function (data_dir)
 {
     ptn <- '.zip'
     flist <- list.files (data_dir)
-    if (any (grepl ('cyclehireusagestats', flist, ignore.case = TRUE) |
-             grepl ('JourneyDataExtract', flist, ignore.case = TRUE)))
+    # Grepped patterns for raw csv files, the first two for London, the third
+    # for Guadalajara
+    gptns <- 'cyclehireusagestats|JourneyDataExtract|datos'
+    if (any (grepl (gptns, flist, ignore.case = TRUE)))
         ptn <- paste0 (ptn, '|.csv') # London has raw csv files too
     flist <- list.files (data_dir, pattern = ptn)
 
@@ -341,6 +346,8 @@ get_bike_cities <- function (data_dir)
         cities$sf <- TRUE
     if (any (grepl ('bixi|montreal', flist, ignore.case = TRUE)))
         cities$mo <- TRUE
+    if (any (grepl ('datos|abiertos', flist, ignore.case = TRUE)))
+        cities$gu <- TRUE
 
     cities <- which (unlist (cities))
     names (cities)
@@ -384,6 +391,8 @@ get_flist_city <- function (data_dir, bikedb, city)
         index <- grep ('fordgobike', flist, ignore.case = TRUE)
     else if (any (city == 'mo'))
         index <- grep ('bixi|montreal', flist, ignore.case = TRUE)
+    else if (any (city == 'gu'))
+        indx <- grep ('bixi|montreal', flist, ignore.case = TRUE)
 
     ret <- NULL
     if (length (index) > 0)
@@ -439,11 +448,13 @@ bike_unzip_files <- function (data_dir, bikedb, city, dates)
         fcsv <- fcsv [grep ("hubway", fcsv, ignore.case = TRUE)]
     else if (city == "lo")
         fcsv <- fcsv [grep ("JourneyDataExtract", fcsv)]
+    else if (city == "gu")
+        fcsv <- fcsv [grep ("datos", fcsv)]
     flist_csv <- flist_rm <- flist_csv_stns <- NULL
 
     # Some cities issue non-compressed files (recent London files; annual Boston
-    # dumps for 2011-14)
-    if (city %in% c ('bo', 'lo', 'sf') && length (fcsv) > 0)
+    # dumps for 2011-14; all Guadalajara)
+    if (city %in% c ('bo', 'gu', 'lo', 'sf') && length (fcsv) > 0)
     {
         flist_csv <- get_new_datafiles (bikedb, fcsv)
         if (city == 'bo') # Also has station files

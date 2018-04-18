@@ -288,6 +288,9 @@ convert_dates_to_filenames <- function (x, city = 'ny')
     {
         yr <- substr (Sys.Date (), 1, 4)
         x <- c (unique (yy [which (yy < yr)]), x [which (yy == yr)])
+    } else if (city %in% c ('gu')) # strict YYYY_MM
+    {
+        x <- unique (paste0 (yy, '_', as.numeric (substring (x, 5, 6))))
     } else
         x <- paste0 (x)
 

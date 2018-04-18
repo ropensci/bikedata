@@ -64,17 +64,19 @@ fields <- c ("duration", "starttime", "endtime", "startstationid",
 duration <- c ("duration", "tripduration", "totalduration", "durationsec",
                "durationseconds", "totalduration(ms)")
 
-starttime <- c ("starttime", "startdate")
-endtime <- c ("endtime", "enddate", "stoptime")
+starttime <- c ("starttime", "startdate", "iniciodelviaje")
+endtime <- c ("endtime", "enddate", "stoptime", "findelviaje")
 
 startstationid <- c ("startstationid", "startstationnumber", "fromstationid",
-                     "startterminal", "startstation", "startstationcode")
+                     "startterminal", "startstation", "startstationcode",
+                     "origenid")
 startstationname <- c ("startstationname", "fromstationname", "startstation")
 startstationlatitude <- c ("startstationlatitude", "startlat")
 startstationlongitude <- c ("startstationlongitude", "startlon")
 
 endstationid <- c ("endstationid", "endstationnumber", "tostationid",
-                   "endstation", "endterminal", "endstationcode")
+                   "endstation", "endterminal", "endstationcode",
+                   "destinoid")
 endstationname <- c ("endstationname", "tostationname", "endstation")
 endstationlatitude <- c ("endstationlatitude", "endlat")
 endstationlongitude <- c ("endstationlongitude", "endlon")
@@ -82,9 +84,10 @@ endstationlongitude <- c ("endstationlongitude", "endlon")
 bikeid <- c ("bikeid", "bikenumber", "bike#")
 usertype <- c ("usertype", "membertype", "type", "subscribertype",
                "subscriptiontype", "accounttype", "passholdertype",
-               "ismember")
-birthyear <- c ("birthyear", "birthday", "memberbirthyear")
-gender <- c ("gender", "membergender")
+               "ismember", "usuarioid")
+birthyear <- c ("birthyear", "birthday", "memberbirthyear",
+                "edad","anodenacimento")
+gender <- c ("gender", "membergender", "genero")
 
 field_names <- data.frame (matrix (nrow = 0, ncol = 2))
 for (f in fields)

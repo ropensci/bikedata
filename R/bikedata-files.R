@@ -121,13 +121,35 @@ get_nabsa_files <- function (city)
 get_montreal_bike_files <- function ()
 {
     host <- "https://montreal.bixi.com/en/open-data"
-    . <- NULL # suppress R CMD check note
+    . <- NULL # suppress R CMD check note #nolint
     nodes <- httr::content (httr::GET (host), encoding = 'UTF-8') %>%
         xml2::xml_find_all (".//div")
-    nodes <- nodes [which (xml2::xml_attr (nodes, "class") == 
+    nodes <- nodes [which (xml2::xml_attr (nodes, "class") ==
                            "container open-data-history")]
     hrefs <- xml2::xml_find_all (nodes, ".//a") %>%
         xml2::xml_attr ("href")
+    unique (hrefs)
+}
+
+#' get_guadala_bike_files
+#'
+#' Returns list of URLs for each trip data file from Guadalajara's mibici system
+#'
+#' @return List of URLs used to download data
+#'
+#' @noRd
+get_guadala_bike_files <- function ()
+{
+    host_base <- "https://www.mibici.net"
+    host <- paste0 (host_base, "/en/open-data/")
+    . <- NULL # suppress R CMD check note #nolint
+    nodes <- httr::content (httr::GET (host), encoding = 'UTF-8') %>%
+        xml2::xml_find_all (".//div")
+    nodes <- nodes [which (xml2::xml_attr (nodes, "class") ==
+                           "unit one-quarter")]
+    hrefs <- xml2::xml_find_all (nodes, ".//a") %>%
+        xml2::xml_attr ("href")
+    hrefs <- paste0 (host_base, hrefs [grepl ("datos", hrefs)])
     unique (hrefs)
 }
 
@@ -155,6 +177,8 @@ get_bike_files <- function (city)
         files <- get_nabsa_files (city = city)
     else if (city == 'ch')
         files <- get_chicago_bike_files ()
+    else if (city == 'gu')
+        files <- get_guadala_bike_files ()
     else if (city == 'lo')
         files <- get_london_bike_files ()
     else if (city == 'mn')

@@ -390,9 +390,11 @@ std::string convert_usertype (std::string ut)
 
 std::string convert_gender (std::string g)
 {
-    if (g == "Female" || g == "2")
+    if (strfound (g, "Female") || strfound (g, "F") ||
+            strfound (g, "2"))
         g = "2";
-    else if (g == "Male" || g == "1")
+    else if (strfound (g, "Male") || strfound (g, "M") ||
+            strfound (g, "1"))
         g = "1";
     else
         g = "0";

@@ -271,3 +271,28 @@ bike_get_dc_stations <- function ()
 
     return (res)
 }
+
+#' Get Guadalajara stations
+#'
+#' @return \code{data.frame} of (id, name, lon, lat) of all stations in
+#' Gaudalajara's mibici system
+#'
+#' @noRd
+bike_get_gu_stations <- function ()
+{
+    link <- "https://www.mibici.net/site/assets/files/1118/nomenclatura_1.csv"
+    suppressMessages (
+                      dat <- httr::GET (link) %>%
+                          httr::content (encoding = 'UTF-8')
+                      )
+
+    # Remove apostrophes from names coz they muck up sqlite fields:
+    nm <- gsub ("\"", "", dat$name)
+    nm <- gsub ("\'", "", nm)
+    res <- data.frame (id = dat$id, name = nm,
+                       lon = dat$longitude, lat = dat$latitude,
+                       stringsAsFactors = FALSE)
+    res <- res [which (!duplicated (res)), ]
+
+    return (res)
+}
