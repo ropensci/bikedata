@@ -11,6 +11,7 @@
 ^aaa\.Rmd$
 ^script\.R$
 ^docs$
+^data-raw$
 ^paper\.md$
 ^paper\.bib$
 ^\.Rproj\.user$

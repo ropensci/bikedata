@@ -1,9 +1,4 @@
 .onAttach <- function(libname, pkgname) {
-    f <- file.path (tempdir (), "bikedata_headers.csv")
-    write.csv (sysdata$headers, file = f, row.names = FALSE)
-    f <- file.path (tempdir (), "field_names.csv")
-    write.csv (sysdata$field_names, file = f, row.names = FALSE, quote = FALSE)
-
     msg <- paste0 ("Data for London, U.K. powered by TfL Open Data:\n",
                    "  Contains OS data \u24B8 Crown copyright and ",
                    "database rights 2016\n",
@@ -25,6 +20,12 @@
 .onLoad <- function (libname, pkgname)
 {
     # make data set names global to avoid CHECK notes
+    requireNamespace("utils", quietly = TRUE)
     utils::globalVariables ("sysdata")
+    f <- file.path (tempdir (), "bikedata_headers.csv")
+    utils::write.csv (sysdata$headers, file = f, row.names = FALSE)
+    f <- file.path (tempdir (), "field_names.csv")
+    utils::write.csv (sysdata$field_names, file = f, row.names = FALSE, quote = FALSE)
+
     invisible ()
 }
