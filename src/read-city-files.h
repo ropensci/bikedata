@@ -20,19 +20,15 @@
 unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry,
         const std::string city, const HeaderStruct &headers, bool dump);
+unsigned int read_one_line_london (sqlite3_stmt * stmt, char * line);
+unsigned int read_one_line_nabsa (sqlite3_stmt * stmt, char * line,
+        std::map <std::string, std::string> * stationqry,
+        std::string city);
 
 std::string convert_usertype (std::string ut);
 std::string convert_gender (std::string g);
 
 std::string convert_bo_stn_name (std::string &station_name,
         std::map <std::string, std::string> &stn_map);
-
 std::string convert_dc_stn_name (std::string &station_name, bool id,
         std::map <std::string, std::string> &stn_map);
-
-unsigned int read_one_line_london (sqlite3_stmt * stmt, char * line);
-std::string add_0_to_time (std::string time);
-
-unsigned int read_one_line_nabsa (sqlite3_stmt * stmt, char * line,
-        std::map <std::string, std::string> * stationqry,
-        std::string city);

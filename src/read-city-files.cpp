@@ -231,6 +231,148 @@ unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
     return 0;
 }
 
+//' read_one_line_london
+//'
+//' @param stmt An sqlit3 statement to be assembled by reading the line of data
+//' @param line Line of data read from Santander cycles file
+//'
+//' @noRd
+unsigned int read_one_line_london (sqlite3_stmt * stmt, char * line)
+{
+    std::string in_line = line;
+
+    // London is done with str_token which uses std::strings because
+    // end_station_names are sometimes but not always surrounded by double
+    // quotes.  They also sometimes have commas, but if so they  always have
+    // double quotes. It is therefore necessary to get relative positions of
+    // commas and double quotes, and this is much easier to do with strings than
+    // with char arrays. Only disadvantage: Somewhat slower.
+    std::string duration = str_token (&in_line, ","); // Rental ID: not used
+    duration = str_token (&in_line, ",");
+    std::string bike_id = str_token (&in_line, ",");
+    std::string end_date = convert_datetime_generic (str_token (&in_line, ","));
+    std::string end_station_id = str_token (&in_line, ",");
+    end_station_id = "lo" + end_station_id;
+    std::string end_station_name;
+    if (strcspn (in_line.c_str (), "\"") == 0) // name in quotes
+    {
+        end_station_name = str_token (&in_line, "\",");
+        end_station_name = end_station_name.substr (1, 
+                end_station_name.length ()); // rm quote from start
+        in_line = in_line.substr (1, in_line.length ()); // rm comma from start
+    } else
+        end_station_name = str_token (&in_line, ",");
+    std::string start_date = convert_datetime_generic (str_token (&in_line, ","));
+    std::string start_station_id = str_token (&in_line, ",");
+    start_station_id = "lo" + start_station_id;
+
+    sqlite3_bind_text(stmt, 2, duration.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 3, start_date.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 4, end_date.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 5, start_station_id.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 6, end_station_id.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 7, bike_id.c_str(), -1, SQLITE_TRANSIENT); 
+
+    unsigned int res = 0;
+    if (start_date == "" || end_date == "" ||
+            start_date == "NA" || end_date == "NA")
+        res = 1;
+
+    return res;
+}
+
+//' read_one_line_nabsa
+//'
+//' North American Bike Share Association open data standard (LA and
+//' Philadelpia) have identical file formats
+//'
+//' @param stmt An sqlit3 statement to be assembled by reading the line of data
+//' @param line Line of data read from LA metro or Philadelphia Indego file
+//' @param stationqry Sqlite3 query for station data table to be subsequently
+//'        passed to 'import_to_station_table()'
+//'
+//' @noRd
+unsigned int read_one_line_nabsa (sqlite3_stmt * stmt, char * line,
+        std::map <std::string, std::string> * stationqry, std::string city)
+{
+    std::string in_line = line;
+    boost::replace_all (in_line, "\\N"," "); 
+    // replace_all only works with the following two lines, NOT with a single
+    // attempt to replace all ",,"!
+    boost::replace_all (in_line, ",,,",", , ,");
+    boost::replace_all (in_line, ",,",", ,");
+
+    const char * delim;
+    delim = ",";
+    char * trip_id = std::strtok (&in_line[0u], delim); 
+    (void) trip_id; // supress unused variable warning;
+    unsigned int ret = 0;
+
+    std::string trip_duration = std::strtok (nullptr, delim);
+    std::string start_date = std::strtok (nullptr, delim);
+    start_date = convert_datetime_generic (start_date);
+    std::string end_date = std::strtok (nullptr, delim);
+    end_date = convert_datetime_generic (end_date);
+    std::string start_station_id = std::strtok (nullptr, delim);
+    if (start_station_id == " " || start_station_id == "#N/A")
+        ret = 1;
+    start_station_id = city + start_station_id;
+    std::string start_station_lat = std::strtok (nullptr, delim);
+    std::string start_station_lon = std::strtok (nullptr, delim);
+    // lat and lons are sometimes empty, which is useless 
+    if (stationqry->count(start_station_id) == 0 && ret == 0 &&
+            start_station_lat != " " && start_station_lon != " " &&
+            start_station_lat != "0" && start_station_lon != "0")
+    {
+        std::string start_station_name = "";
+        (*stationqry)[start_station_id] = "(\'" + city + "\',\'" +
+            start_station_id + "\',\'\'," + 
+            start_station_lat + delim + start_station_lon + ")";
+    }
+
+    std::string end_station_id = std::strtok (nullptr, delim);
+    if (end_station_id == " " || end_station_id == "#N/A")
+        ret = 1;
+    end_station_id = city + end_station_id;
+    std::string end_station_lat = std::strtok (nullptr, delim);
+    std::string end_station_lon = std::strtok (nullptr, delim);
+    if (stationqry->count(end_station_id) == 0 && ret == 0 &&
+            end_station_lat != " " && end_station_lon != " " &&
+            end_station_lat != "0" && end_station_lon != "0")
+    {
+        std::string end_station_name = "";
+        (*stationqry)[end_station_id] = "(\'" + city + "\',\'" +
+            end_station_id + "\',\'\'," + 
+            end_station_lat + "," + end_station_lon + ")";
+    }
+    // NABSA systems only have duration of membership as (30 = monthly, etc)
+    std::string user_type = std::strtok (nullptr, delim); // bike_id
+    user_type = std::strtok (nullptr, delim); // plan_duration
+    user_type = std::strtok (nullptr, delim); // trip_route_category
+    user_type = std::strtok (nullptr, delim); // finally, "passholder_type"
+    if (user_type == "" || user_type == "Walk-up")
+        user_type = "0"; // casual
+    else
+        user_type = "1"; // subscriber
+
+    sqlite3_bind_text(stmt, 2, trip_duration.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 3, start_date.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 4, end_date.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 5, start_station_id.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 6, end_station_id.c_str(), -1, SQLITE_TRANSIENT); 
+    sqlite3_bind_text(stmt, 7, "", -1, SQLITE_TRANSIENT); // bike ID
+    sqlite3_bind_text(stmt, 8, user_type.c_str(), -1, SQLITE_TRANSIENT); 
+
+    // The boost::replace_all above ensures void values are all single spaces
+    if (start_station_id == " " || end_station_id == " " ||
+            start_station_lat == " " || start_station_lon == " " ||
+            end_station_lat == " " || end_station_lon == " ")
+        ret = 1; // trip data not stored!
+
+    return ret;
+}
+
+
 std::string convert_usertype (std::string ut)
 {
     // see comment in sqlite3db-add-data.cpp/get_field_positions - this is not
@@ -332,170 +474,4 @@ std::string convert_dc_stn_name (std::string &station_name, bool id,
     }
 
     return station_id;
-}
-
-//' read_one_line_london
-//'
-//' @param stmt An sqlit3 statement to be assembled by reading the line of data
-//' @param line Line of data read from Santander cycles file
-//'
-//' @noRd
-unsigned int read_one_line_london (sqlite3_stmt * stmt, char * line)
-{
-    std::string in_line = line;
-
-    // London is done with str_token which uses std::strings because
-    // end_station_names are sometimes but not always surrounded by double
-    // quotes.  They also sometimes have commas, but if so they  always have
-    // double quotes. It is therefore necessary to get relative positions of
-    // commas and double quotes, and this is much easier to do with strings than
-    // with char arrays. Only disadvantage: Somewhat slower.
-    std::string duration = str_token (&in_line, ","); // Rental ID: not used
-    duration = str_token (&in_line, ",");
-    std::string bike_id = str_token (&in_line, ",");
-    std::string end_date = convert_datetime_generic (str_token (&in_line, ","));
-    std::string end_station_id = str_token (&in_line, ",");
-    end_station_id = "lo" + end_station_id;
-    std::string end_station_name;
-    if (strcspn (in_line.c_str (), "\"") == 0) // name in quotes
-    {
-        end_station_name = str_token (&in_line, "\",");
-        end_station_name = end_station_name.substr (1, 
-                end_station_name.length ()); // rm quote from start
-        in_line = in_line.substr (1, in_line.length ()); // rm comma from start
-    } else
-        end_station_name = str_token (&in_line, ",");
-    std::string start_date = convert_datetime_generic (str_token (&in_line, ","));
-    std::string start_station_id = str_token (&in_line, ",");
-    start_station_id = "lo" + start_station_id;
-
-    sqlite3_bind_text(stmt, 2, duration.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 3, start_date.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 4, end_date.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 5, start_station_id.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 6, end_station_id.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 7, bike_id.c_str(), -1, SQLITE_TRANSIENT); 
-
-    unsigned int res = 0;
-    if (start_date == "" || end_date == "" ||
-            start_date == "NA" || end_date == "NA")
-        res = 1;
-
-    return res;
-}
-
-
-//' add_0_to_time
-//'
-//' The hours part of LA and Philly times are single digit for HH < 10. SQLite
-//' requires ' strict HH, so this function inserts an extra zero where needed.
-//'
-//' @param time A datetime column from the LA or Philly data
-//'
-//' @return datetime with two-digit hour field
-//'
-//' @noRd
-std::string add_0_to_time (std::string time)
-{
-    size_t gap_pos = time.find (" ");
-    size_t time_div_pos = time.find (":");
-    if ((time_div_pos - gap_pos) == 2)
-        time = time.substr (0, gap_pos + 1) + "0" +
-            time.substr (time_div_pos - 1, time.length () - 1);
-
-    return time;
-}
-
-
-//' read_one_line_nabsa
-//'
-//' North American Bike Share Association open data standard (LA and
-//' Philadelpia) have identical file formats
-//'
-//' @param stmt An sqlit3 statement to be assembled by reading the line of data
-//' @param line Line of data read from LA metro or Philadelphia Indego file
-//' @param stationqry Sqlite3 query for station data table to be subsequently
-//'        passed to 'import_to_station_table()'
-//'
-//' @noRd
-unsigned int read_one_line_nabsa (sqlite3_stmt * stmt, char * line,
-        std::map <std::string, std::string> * stationqry, std::string city)
-{
-    std::string in_line = line;
-    boost::replace_all (in_line, "\\N"," "); 
-    // replace_all only works with the following two lines, NOT with a single
-    // attempt to replace all ",,"!
-    boost::replace_all (in_line, ",,,",", , ,");
-    boost::replace_all (in_line, ",,",", ,");
-
-    const char * delim;
-    delim = ",";
-    char * trip_id = std::strtok (&in_line[0u], delim); 
-    (void) trip_id; // supress unused variable warning;
-    unsigned int ret = 0;
-
-    std::string trip_duration = std::strtok (nullptr, delim);
-    std::string start_date = std::strtok (nullptr, delim);
-    start_date = add_0_to_time (start_date);
-    start_date = convert_datetime_nabsa (start_date);
-    std::string end_date = std::strtok (nullptr, delim);
-    end_date = add_0_to_time (end_date);
-    end_date = convert_datetime_nabsa (end_date);
-    std::string start_station_id = std::strtok (nullptr, delim);
-    if (start_station_id == " " || start_station_id == "#N/A")
-        ret = 1;
-    start_station_id = city + start_station_id;
-    std::string start_station_lat = std::strtok (nullptr, delim);
-    std::string start_station_lon = std::strtok (nullptr, delim);
-    // lat and lons are sometimes empty, which is useless 
-    if (stationqry->count(start_station_id) == 0 && ret == 0 &&
-            start_station_lat != " " && start_station_lon != " " &&
-            start_station_lat != "0" && start_station_lon != "0")
-    {
-        std::string start_station_name = "";
-        (*stationqry)[start_station_id] = "(\'" + city + "\',\'" +
-            start_station_id + "\',\'\'," + 
-            start_station_lat + delim + start_station_lon + ")";
-    }
-
-    std::string end_station_id = std::strtok (nullptr, delim);
-    if (end_station_id == " " || end_station_id == "#N/A")
-        ret = 1;
-    end_station_id = city + end_station_id;
-    std::string end_station_lat = std::strtok (nullptr, delim);
-    std::string end_station_lon = std::strtok (nullptr, delim);
-    if (stationqry->count(end_station_id) == 0 && ret == 0 &&
-            end_station_lat != " " && end_station_lon != " " &&
-            end_station_lat != "0" && end_station_lon != "0")
-    {
-        std::string end_station_name = "";
-        (*stationqry)[end_station_id] = "(\'" + city + "\',\'" +
-            end_station_id + "\',\'\'," + 
-            end_station_lat + "," + end_station_lon + ")";
-    }
-    // NABSA systems only have duration of membership as (30 = monthly, etc)
-    std::string user_type = std::strtok (nullptr, delim); // bike_id
-    user_type = std::strtok (nullptr, delim); // plan_duration
-    user_type = std::strtok (nullptr, delim); // trip_route_category
-    user_type = std::strtok (nullptr, delim); // finally, "passholder_type"
-    if (user_type == "" || user_type == "Walk-up")
-        user_type = "0"; // casual
-    else
-        user_type = "1"; // subscriber
-
-    sqlite3_bind_text(stmt, 2, trip_duration.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 3, start_date.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 4, end_date.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 5, start_station_id.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 6, end_station_id.c_str(), -1, SQLITE_TRANSIENT); 
-    sqlite3_bind_text(stmt, 7, "", -1, SQLITE_TRANSIENT); // bike ID
-    sqlite3_bind_text(stmt, 8, user_type.c_str(), -1, SQLITE_TRANSIENT); 
-
-    // The boost::replace_all above ensures void values are all single spaces
-    if (start_station_id == " " || end_station_id == " " ||
-            start_station_lat == " " || start_station_lon == " " ||
-            end_station_lat == " " || end_station_lon == " ")
-        ret = 1; // trip data not stored!
-
-    return ret;
 }
