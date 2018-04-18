@@ -19,8 +19,9 @@ The `bikedata` package aims to enable ready importing of historical trip
 data from all public bicycle hire systems which provide data, and will
 be expanded on an ongoing basis as more systems publish open data.
 Cities and names of associated public bicycle systems currently
-included, along with numbers of bikes and of docking stations,
-are:
+included, along with numbers of bikes and of docking stations (from
+[wikipedia](https://en.wikipedia.org/wiki/List_of_bicycle-sharing_systems#Cities)),
+are
 
 | City                           | Hire Bicycle System                                                   | Number of Bicycles | Number of Docking Stations |
 | ------------------------------ | --------------------------------------------------------------------- | ------------------ | -------------------------- |
@@ -32,11 +33,8 @@ are:
 | Washingon DC, U.S.A.           | [Capital BikeShare](https://www.capitalbikeshare.com/)                | 4,457              | 406                        |
 | Minneapolis/St Paul MN, U.S.A. | [Nice Ride](https://www.niceridemn.org/)                              | 1,833              | 171                        |
 | Boston MA, U.S.A.              | [Hubway](https://www.thehubway.com/)                                  | 1,461              | 158                        |
-| Los Angeles CA, U.S.A.         | [Metro](https://bikeshare.metro.net/)                                 | 1,000              | 65                         |
 | Philadelphia PA, U.S.A.        | [Indego](https://www.rideindego.com)                                  | 1,000              | 105                        |
-
-<!-- numbers from
-https://en.wikipedia.org/wiki/List_of_bicycle-sharing_systems#Cities -->
+| Los Angeles CA, U.S.A.         | [Metro](https://bikeshare.metro.net/)                                 | 1,000              | 65                         |
 
 These data include the places and times at which all trips start and
 end. Some systems provide additional demographic data including years of
