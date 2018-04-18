@@ -24,35 +24,9 @@ unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
 std::string convert_usertype (std::string ut);
 std::string convert_gender (std::string g);
 
-unsigned int read_one_line_nyc (sqlite3_stmt * stmt, char * line,
-        std::map <std::string, std::string> * stationqry, const char * delim);
-unsigned int read_one_line_nyc_standard (sqlite3_stmt * stmt,
-        std::string &in_line2,
-        std::map <std::string, std::string> * stationqry, const char * delim);
-unsigned int read_one_line_nyc_mixed (sqlite3_stmt * stmt,
-        std::string &in_line2,
-        std::map <std::string, std::string> * stationqry);
-
-unsigned int read_one_line_boston (sqlite3_stmt * stmt, char * line,
-        std::map <std::string, std::string> &stn_map, 
-        std::unordered_set <std::string> &stn_ids);
-unsigned int read_one_line_boston_pre15 (sqlite3_stmt * stmt, char * line,
-        std::map <std::string, std::string> &stn_map, 
-        std::unordered_set <std::string> &stn_ids);
-unsigned int read_one_line_boston_pre18 (sqlite3_stmt * stmt, char * line,
-        std::map <std::string, std::string> &stn_map, 
-        std::unordered_set <std::string> &stn_ids);
-unsigned int read_one_line_boston_post18 (sqlite3_stmt * stmt, char * line,
-        std::map <std::string, std::string> &stn_map, 
-        std::unordered_set <std::string> &stn_ids);
 std::string convert_bo_stn_name (std::string &station_name,
         std::map <std::string, std::string> &stn_map);
 
-unsigned int read_one_line_chicago (sqlite3_stmt * stmt, char * line,
-        const char * delim);
-unsigned int read_one_line_dc (sqlite3_stmt * stmt, char * line, 
-        std::map <std::string, std::string> &stn_map, 
-        std::unordered_set <std::string> &stn_ids);
 std::string convert_dc_stn_name (std::string &station_name, bool id,
         std::map <std::string, std::string> &stn_map);
 
@@ -62,10 +36,3 @@ std::string add_0_to_time (std::string time);
 unsigned int read_one_line_nabsa (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry,
         std::string city);
-
-unsigned int read_one_line_mn (sqlite3_stmt * stmt, char * line);
-
-unsigned int read_one_line_sf (sqlite3_stmt * stmt, char * line,
-        std::map <std::string, std::string> * stationqry,
-        std::string city);
-
