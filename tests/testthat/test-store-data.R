@@ -45,7 +45,7 @@ test_that ('write and store data', {
                                                    bikedb = bikedb,
                                                    quiet = TRUE))
                expect_silent (bike_rm_db (bikedb))
-               expect_silent (n <- store_bikedata (data_dir = tempdir (),
+               expect_message (n <- store_bikedata (data_dir = tempdir (),
                                                    bikedb = bikedb,
                                                    quiet = FALSE))
                expect_true (file.exists (bikedb))
