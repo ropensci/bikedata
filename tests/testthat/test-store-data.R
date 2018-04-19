@@ -43,6 +43,10 @@ test_that ('write and store data', {
                expect_silent (bike_write_test_data (data_dir = tempdir ()))
                expect_silent (n <- store_bikedata (data_dir = tempdir (),
                                                    bikedb = bikedb,
+                                                   quiet = TRUE))
+               expect_silent (bike_rm_db (bikedb))
+               expect_silent (n <- store_bikedata (data_dir = tempdir (),
+                                                   bikedb = bikedb,
                                                    quiet = FALSE))
                expect_true (file.exists (bikedb))
                expect_silent (index_bikedata_db (bikedb = bikedb))
