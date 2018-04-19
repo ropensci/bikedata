@@ -20,7 +20,11 @@ filter_bike_tripmat <- function (bikedb, ...)
     # dplyr.
     x <- as.list (...)
     qryargs <- c()
-    qry <- paste("SELECT s1.stn_id AS start_station_id,",
+    # and NOTE here that the DISTINCT is necessary for Boston, which has a
+    # station table with 300 entries for 193 stations, because lots change
+    # names. All must nevertheless be stored so names in the trip data can be
+    # mapped to IDs.
+    qry <- paste("SELECT DISTINCT s1.stn_id AS start_station_id,",
                  "s2.stn_id AS end_station_id, iq.numtrips",
                  "FROM stations s1, stations s2 LEFT OUTER JOIN",
                  "(SELECT start_station_id, end_station_id,",
@@ -337,7 +341,11 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
         trips <- filter_bike_tripmat (bikedb, x)
     } else
     {
-        qry <- paste("SELECT s1.stn_id AS start_station_id,",
+        # NOTE that the DISTINCT is necessary for Boston, which has a station
+        # table with 300 entries for 193 stations, because lots change names.
+        # All must nevertheless be stored so names in the trip data can be
+        # mapped to IDs.
+        qry <- paste("SELECT DISTINCT s1.stn_id AS start_station_id,",
                      "s2.stn_id AS end_station_id, iq.numtrips",
                      "FROM stations s1, stations s2 LEFT OUTER JOIN",
                      "(SELECT start_station_id, end_station_id,",
