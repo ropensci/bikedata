@@ -279,20 +279,22 @@ HeaderStruct get_field_positions (const std::string fname,
     // doing this repeatedly here. Note that this is where the R 1-indexed
     // positions are re-mapped to 0-indexed C++ versions.
     in_file.open (header_file_name.c_str (), std::ios_base::in);
-    std::unordered_map <std::string, unsigned int> field_name_map;
+    // field_name_map is int coz it's from headers.position_file2db which uses
+    // -1 to flag no position
+    std::unordered_map <std::string, int> field_name_map;
     std::string line;
     getline (in_file, line, '\n'); // header
 
     while (getline (in_file, line, '\n'))
     {
-        unsigned int ipos = line.find (",");
+        size_t ipos = line.find (",");
         //std::string f1 = line.substr (0, ipos); // generic name: not used
         line = line.substr (ipos + 1, line.length () - ipos - 1);
         ipos = line.find (",");
         std::string f2 = line.substr (0, ipos);
         line = line.substr (ipos + 1, line.length () - ipos - 1);
         ipos = line.find (",");
-        unsigned int indx = atoi (line.substr (0, ipos).c_str ());
+        int indx = atoi (line.substr (0, ipos).c_str ());
         line = line.substr (ipos + 1, line.length () - ipos - 1);
         // line is then the city
         if (line.find ("all") != std::string::npos ||
@@ -320,7 +322,8 @@ HeaderStruct get_field_positions (const std::string fname,
     for (std::string::size_type i = 0; i < line.length (); i++)
         line [i] = std::tolower (line [i], loc);
     */
-    unsigned int len = std::count (line.begin (), line.end (), ',');
+    unsigned int len = static_cast <unsigned int> (
+            std::count (line.begin (), line.end (), ','));
     
     HeaderStruct headers;
     headers.data_has_stations = data_has_stations;
@@ -331,19 +334,21 @@ HeaderStruct get_field_positions (const std::string fname,
 
     for (unsigned int i = 0; i < len; i++)
     {
-        unsigned int ipos = line.find (",");
+        size_t ipos = static_cast <size_t> (line.find (","));
         std::string field = line.substr (0, ipos);
         if (field_name_map.find (field) != field_name_map.end ())
         {
             headers.position_file2db [i] = field_name_map.at (field);
-            headers.position_db2file [field_name_map.at (field)] = i;
+            headers.position_db2file [static_cast <unsigned int>
+                (field_name_map.at (field))] = static_cast <int> (i);
         }
         line = line.substr (ipos + 1, line.length () - ipos - 1);
     }
     if (field_name_map.find (line) != field_name_map.end ())
     {
         headers.position_file2db [len] = field_name_map.at (line);
-        headers.position_db2file [field_name_map.at (line)] = len;
+        headers.position_db2file [static_cast <unsigned int> (
+                field_name_map.at (line))] = static_cast <int> (len);
     }
 
     headers.nvalues = len + 1;
@@ -368,7 +373,7 @@ void get_field_quotes (const std::string line, HeaderStruct &headers)
         else
             headers.quoted [i] = false;
 
-        unsigned int ipos;
+        size_t ipos;
         if (headers.quoted [i])
         {
             ipos = l.find ("\",");
@@ -403,7 +408,7 @@ void dump_headers (const HeaderStruct &headers)
         headers.quoted.size () << ", " << headers.position_file2db.size () <<
         ", " << headers.position_db2file.size () << "]" << std::endl;
 
-    for (int i = 0; i < headers.position_file2db.size (); i++)
+    for (size_t i = 0; i < headers.position_file2db.size (); i++)
     {
         Rcpp::Rcout << "pos [" << i << "] = " <<
             headers.position_file2db [i];

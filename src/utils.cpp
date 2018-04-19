@@ -93,7 +93,7 @@ std::string convert_datetime (std::string str)
         ret = "NA";
     } else
     {
-        unsigned int ipos = str.find (" ");
+        size_t ipos = str.find (" ");
         std::string ymd = str.substr (0, ipos);
         str = str.substr (ipos + 1, str.length () - ipos - 1);
 
@@ -132,7 +132,7 @@ std::string convert_date (std::string ymd)
     if (ymd.find ("/") != std::string::npos)
         delim = "/";
 
-    unsigned int ipos = ymd.find (delim.c_str ());
+    size_t ipos = ymd.find (delim.c_str ());
     std::string y = ymd.substr (0, ipos);
     ymd = ymd.substr (ipos + 1, ymd.length () - ipos - 1);
     ipos = ymd.find (delim.c_str ());
@@ -161,7 +161,7 @@ std::string convert_time (std::string hms)
         hms = hms.substr (0, hms.find ("."));
 
     const std::string delim = ":";
-    unsigned int ipos = hms.find (delim.c_str ());
+    size_t ipos = hms.find (delim.c_str ());
     std::string h = hms.substr (0, ipos), m, s;
     hms = hms.substr (ipos + 1, hms.length () - ipos - 1);
     if (hms.find (delim.c_str ()) != std::string::npos) // has seconds
@@ -223,10 +223,10 @@ int timediff (std::string t1, std::string t2)
 // http://www.cs.utsa.edu/~cs1063/projects/Spring2011/Project1/jdn-explanation.html
 int daynum (int y, int m, int d)
 {
-    int a = floor ((14 - m) / 12);
+    int a = static_cast <int> (floor ((14 - m) / 12));
     y = y + 4800 - a;
     m = m + 12 * a - 3;
-    int res = d + floor ((153 * m + 2) / 5) + 365 * y +
+    double res = d + floor ((153 * m + 2) / 5) + 365 * y +
         floor (y / 4) - floor (y / 100) + floor (y / 400) - 32045;
-    return res;
+    return static_cast <int> (res);
 }
