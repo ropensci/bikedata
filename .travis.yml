@@ -40,7 +40,8 @@ r_github_packages:
 #after_success
 after_success:
     - Rscript -e "covr::codecov(line_exclusions = list('R/distmat.R',"\
-        "'src/vendor/sqlite3/sqlite3.c'))"
+        "'src/vendor/sqlite3/sqlite3.c',"\
+        "'src/sqlite3db-add-data.cpp'=c(393:415)))" # dump_headers fn
     #- R -q -e 'tic::after_success()'
       #- Rscript -e "source ('https://install-github.me/MangoTheCat/goodpractice')"
       #- Rscript -e 'library(goodpractice);gp(checks=all_checks()[grepl("(rcmdcheck|covr)",all_checks())])'

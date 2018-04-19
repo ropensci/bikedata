@@ -160,7 +160,6 @@ int rcpp_import_to_trip_table (const char* bikedb,
             rm_dos_end (in_line);
             sqlite3_bind_text (stmt, 1, city.c_str (), -1, SQLITE_TRANSIENT); 
 
-            //Rcpp::Rcout << "   ---" << temp << "---" << std::endl;
             // London, LA, and Philly data are ballsed up and change format
             // within data files, so they are read with their own std::string
             // routines, rather than then generic char * routine.
@@ -170,7 +169,7 @@ int rcpp_import_to_trip_table (const char* bikedb,
                 rc = read_one_line_nabsa (stmt, in_line, &stationqry, city);
             else
                 rc = read_one_line_generic (stmt, in_line, &stationqry, city,
-                        headers, false);
+                        headers);
             temp++;
             if (rc == 0) // only != 0 for LA, London, Boston, and MN
             {

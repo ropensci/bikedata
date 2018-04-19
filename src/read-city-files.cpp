@@ -55,7 +55,7 @@
 //' @noRd
 unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry,
-        const std::string city, const HeaderStruct &headers, bool dump)
+        const std::string city, const HeaderStruct &headers)
 {
     const char * delim_noq_noq = ",";
     const char * delim_noq_q = ",\"";
@@ -88,13 +88,15 @@ unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
         else
             token = strtokm (&linestr[0u], delim_noq_noq);
     }
-    if (headers.position_file2db [0] >= 0)
-        values [headers.position_file2db [0]] = token;
-    if (dump)
-            Rcpp::Rcout << "values [0 -> " <<
-                headers.position_file2db [0] << "] = " << token << std::endl;
 
-    int pos = headers.position_file2db [0];
+    unsigned int pos;
+    if (headers.position_file2db [0] >= 0)
+    {
+        pos = static_cast <unsigned int> (headers.position_file2db [0]);
+        values [static_cast <size_t> (headers.position_file2db [0])] = token;
+    } else
+        pos = INT_MAX;
+
     if (pos == 1 || pos == 2) // happens for MN
     {
         if (values [pos].length () == 0)
@@ -112,41 +114,25 @@ unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
 
     for (unsigned int i = 1; i < headers.nvalues; i++)
     {
-        int pos = headers.position_file2db [i];
-        if (dump)
-            Rcpp::Rcout << "values [" << i << " -> " << pos << "] with ";
+        if (headers.position_file2db [i] >= 0)
+            pos = static_cast <unsigned int> (headers.position_file2db [i]);
+        else
+            pos = INT_MAX;
+
         if (headers.quoted [i])
         {
             if (headers.quoted [i + 1])
-            {
-                if (dump)
-                    Rcpp::Rcout << "delim_q_q ";
                 token = strtokm (nullptr, delim_q_q);
-            }
             else
-            {
-                if (dump)
-                    Rcpp::Rcout << "delim_q_noq ";
                 token = strtokm (nullptr, delim_q_noq);
-            }
         } else
         {
             if (headers.quoted [i + 1])
-            {
-                if (dump)
-                    Rcpp::Rcout << "delim_noq_q ";
                 token = strtokm (nullptr, delim_noq_q);
-            }
             else
-            {
-                if (dump)
-                    Rcpp::Rcout << "delim_noq_noq ";
                 token = strtokm (nullptr, delim_noq_noq);
-            }
         }
-        if (dump)
-            Rcpp::Rcout << "[" << i << " / " << headers.nvalues << "] = " <<
-                token << std::endl;
+
         std::string tks = token;
         // sometimes (in London) string that should be quoted yet are missing
         // have no empty quotes, and so the parsing is mucked up. This
@@ -156,7 +142,7 @@ unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
         if (i == (headers.nvalues - 1) && headers.terminal_quote)
             boost::replace_all (tks, "\"", "");
 
-        if (pos >= 0)
+        if (pos < INT_MAX)
         {
             values [pos] = tks;
 
@@ -177,8 +163,6 @@ unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
             if (pos == 14) // gender
                 values [pos] = convert_gender (values [pos]);
         }
-        if (dump)
-            Rcpp::Rcout << std::endl;
     }
 
     if (values [0] == "\"\"")
