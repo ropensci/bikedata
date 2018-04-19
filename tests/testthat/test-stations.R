@@ -20,13 +20,11 @@ test_that ('bike_stations function', {
 })
 
 # test_all used to switch off tests on CRAN
-test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
-             identical (Sys.getenv ("TRAVIS"), "true") |
-             identical (Sys.getenv ("APPVEYOR"), "True"))
+test_local <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true"))
 
 # extra tests for other cities
 test_that ('stations for extra cities', {
-               if (test_all)
+               if (test_local)
                {
                    st <- bike_get_gu_stations ()
                    expect_equal (ncol (st), 4)
