@@ -115,3 +115,17 @@ test_that ('dl_bikedata chicago', {
                                 warning = function (w) NULL,
                                 error = function (e) NULL)
                          })
+
+# test_all used to switch off tests on CRAN
+test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
+             identical (Sys.getenv ("TRAVIS"), "true") |
+             identical (Sys.getenv ("APPVEYOR"), "True"))
+
+# extra tests for other cities
+test_that ('download london data (for real!)', {
+               if (test_all)
+               {
+                   expect_message (f <- dl_bikedata (city = "lo", dates = 201501))
+                   expect_equal (length (f), 2)
+               }
+})

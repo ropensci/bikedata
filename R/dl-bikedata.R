@@ -64,7 +64,7 @@ dl_bikedata <- function (city, data_dir = tempdir(), dates = NULL,
     else
     {
         dates <- bike_convert_dates (dates) %>%
-            expand_dates_to_range %>%
+            expand_dates_to_range () %>%
             convert_dates_to_filenames (city = city) %>%
             sort ()
         indx <- which (grepl (paste (dates, collapse = "|"), files,
@@ -147,7 +147,8 @@ dl_bikedata <- function (city, data_dir = tempdir(), dates = NULL,
         #                     error = function (e) NULL))
     }
 
-    invisible (list.files (data_dir, pattern = ptn, full.names = TRUE))
+    ret <- list.files (data_dir, pattern = ptn, full.names = TRUE)
+    invisible (ret [!grepl ("field_names", ret)])
 }
 
 #' @rdname dl_bikedata

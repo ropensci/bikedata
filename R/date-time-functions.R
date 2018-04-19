@@ -267,8 +267,11 @@ convert_dates_to_filenames <- function (x, city = 'ny')
         indx2 <- which (yy >= 2015)
         x1 <- yy [indx1]
         x <- x [indx2]
-        mm <- month.abb [as.numeric (substring (x, 5, 6))]
-        x <- c (paste0 (mm, yy), paste0 (mm, substring (yy, 3, 4)))
+        if (length (x) > 0)
+        {
+            mm <- month.abb [as.numeric (substring (x, 5, 6))]
+            x <- c (paste0 (mm, yy), paste0 (mm, substring (yy, 3, 4)))
+        }
         x <- unique (c (x, x1))
     } else if (city %in% c ('la', 'ph'))
     {

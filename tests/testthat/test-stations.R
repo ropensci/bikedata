@@ -18,3 +18,24 @@ test_that ('bike_stations function', {
                expect_equal (nrow (st [st$city == 'lo', ]), 779)
                expect_equal (nrow (st [st$city == 'ny', ]), 233)
 })
+
+# test_all used to switch off tests on CRAN
+test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
+             identical (Sys.getenv ("TRAVIS"), "true") |
+             identical (Sys.getenv ("APPVEYOR"), "True"))
+
+# extra tests for other cities
+test_that ('stations for extra cities', {
+               if (test_all)
+               {
+                   st <- bike_get_gu_stations ()
+                   expect_equal (ncol (st), 4)
+                   expect_true (nrow (st) > 200) # currently 243
+
+                   data_dir <- tempdir ()
+                   flists <- list (flist_csv_stns = NULL)
+                   st <- bike_get_bo_stations (flists, data_dir)
+                   expect_equal (ncol (st), 4)
+                   expect_true (nrow (st) > 200) # currently 300
+               }
+})
