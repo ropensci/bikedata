@@ -19,7 +19,8 @@
 
 unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry,
-        const std::string city, const HeaderStruct &headers);
+        const std::string city, const HeaderStruct &headers,
+        std::map <std::string, std::string> &stn_map);
 unsigned int read_one_line_london (sqlite3_stmt * stmt, char * line);
 unsigned int read_one_line_nabsa (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry,

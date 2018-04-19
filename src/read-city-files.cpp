@@ -51,11 +51,14 @@
 //' @param stationqry Sqlite3 query for station data table to be subsequently
 //'        passed to 'import_to_station_table()'
 //' @param HeaderStruct from common.h; if filled by examining the file.
+//' @param stn_map Only used for cities which don't have proper station ID
+//' codes, so that names can be mapped to these (currently just BO & DC).
 //'
 //' @noRd
 unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry,
-        const std::string city, const HeaderStruct &headers)
+        const std::string city, const HeaderStruct &headers,
+        std::map <std::string, std::string> &stn_map)
 {
     const char * delim_noq_noq = ",";
     const char * delim_noq_q = ",\"";
@@ -167,6 +170,13 @@ unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
 
     if (values [0] == "\"\"")
         values [0] = std::to_string (timediff (values [1], values [2]));
+
+    // Use stn_maps for cities which don't have proper station ID values
+    if (strfound (city, "bo"))
+    {
+        values [3] = convert_bo_stn_name (values [4], stn_map);
+        values [7] = convert_bo_stn_name (values [8], stn_map);
+    }
 
     // Then bind the SQLITE statement
     // duration

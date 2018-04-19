@@ -92,15 +92,12 @@ int rcpp_import_to_trip_table (const char* bikedb,
     // annual dumps for pre-2015, yet some trip files have only names and not
     // the station IDs in the station files now provided.
     std::map <std::string, std::string> stn_map;
-    std::unordered_set <std::string> stn_ids;
     if (city == "dc")
     {
         stn_map = get_dc_stn_table (dbcon);
-        stn_ids = get_stn_ids (dbcon, "dc");
     } else if (city == "bo")
     {
         stn_map = get_bo_stn_table (dbcon);
-        stn_ids = get_stn_ids (dbcon, "bo");
     }
 
     FILE * pFile;
@@ -169,7 +166,7 @@ int rcpp_import_to_trip_table (const char* bikedb,
                 rc = read_one_line_nabsa (stmt, in_line, &stationqry, city);
             else
                 rc = read_one_line_generic (stmt, in_line, &stationqry, city,
-                        headers);
+                        headers, stn_map);
             temp++;
             if (rc == 0) // only != 0 for LA, London, Boston, and MN
             {
