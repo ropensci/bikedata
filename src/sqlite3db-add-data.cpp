@@ -41,12 +41,11 @@
  * The value of 15 is held in common.h/num_db_fields = 15
  *
  * Each data field is examined to map its structure on to these fields. First
- * the header is examined to fill both "position_file2db" and "position_db2file"
- * vectors. The first of these vectors has length equal to the number of fields
- * in the actual file, with values then identifying which of the above fields is
- * recorded at that position.  Non-existent fields are coded -1. A "quoted"
- * vector is also constructed to indicate whether or not each field is embedded
- * in quotes.
+ * the header is examined to fill the "position_file2db" vector. The first of
+ * these vectors has length equal to the number of fields in the actual file,
+ * with values then identifying which of the above fields is recorded at that
+ * position.  Non-existent fields are coded -1. A "quoted" vector is also
+ * constructed to indicate whether or not each field is embedded in quotes.
  *
  * Having established these header structures (in a HeaderStruct object),
  * reading a file then requires assembling a vector of string objects.
@@ -326,8 +325,6 @@ HeaderStruct get_field_positions (const std::string fname,
     headers.data_has_stations = data_has_stations;
     headers.position_file2db.resize (len + 1); // one more fields than commas
     std::fill (headers.position_file2db.begin (), headers.position_file2db.end (), -1);
-    headers.position_db2file.resize (num_db_fields);
-    std::fill (headers.position_db2file.begin (), headers.position_db2file.end (), -1);
 
     for (unsigned int i = 0; i < len; i++)
     {
@@ -336,16 +333,12 @@ HeaderStruct get_field_positions (const std::string fname,
         if (field_name_map.find (field) != field_name_map.end ())
         {
             headers.position_file2db [i] = field_name_map.at (field);
-            headers.position_db2file [static_cast <unsigned int>
-                (field_name_map.at (field))] = static_cast <int> (i);
         }
         line = line.substr (ipos + 1, line.length () - ipos - 1);
     }
     if (field_name_map.find (line) != field_name_map.end ())
     {
         headers.position_file2db [len] = field_name_map.at (line);
-        headers.position_db2file [static_cast <unsigned int> (
-                field_name_map.at (line))] = static_cast <int> (len);
     }
 
     headers.nvalues = len + 1;
@@ -394,16 +387,10 @@ void get_field_quotes (const std::string line, HeaderStruct &headers)
 
 void dump_headers (const HeaderStruct &headers)
 {
-    /*
-    unsigned int nvalues;
-    bool data_has_stations, terminal_quote;
-    std::vector <bool> quoted;
-    std::vector <int> position_file2db, position_db2file;
-    */
     Rcpp::Rcout << "Header has " << headers.nvalues <<
         " with [quoted, pos_file2db, _db2file] having [" <<
         headers.quoted.size () << ", " << headers.position_file2db.size () <<
-        ", " << headers.position_db2file.size () << "]" << std::endl;
+         "]" << std::endl;
 
     for (size_t i = 0; i < headers.position_file2db.size (); i++)
     {

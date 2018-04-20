@@ -18,7 +18,7 @@ struct HeaderStruct {
     unsigned int nvalues;
     bool data_has_stations, terminal_quote;
     std::vector <bool> quoted;
-    std::vector <int> position_file2db, position_db2file;
+    std::vector <int> position_file2db;
 };
 
 // total number of fields in the trip table of database
