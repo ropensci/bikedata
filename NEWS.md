@@ -1,12 +1,12 @@
 0.2.0
 ===================
-- Expansion to include new cities of San Francisco, Minneapolis/St Paul,
+- Major expansion to include new cities of San Francisco, Minneapolis/St Paul,
   Montreal Canada, and Guadalajara Mexico
-- Most code restructed to greatly ease the process of adding new cities (see
+- Most code restructured to greatly ease the process of adding new cities (see
   github wiki for how to do this).
 - New co-author: Tom Buckley
 
-minor changes:
+Minor changes:
 - Bug fix for LA data which previously caused error due to invisible mac OSX
   system files being bundled with the distributed data
 - More accurate date processing for quarterly LA data
