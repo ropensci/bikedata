@@ -37,43 +37,41 @@ test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
 # To ensure this is failsafe, tests for numbers of stations are simply
 # >= 93 + 581 + 456 + 5 + 233 + 700 = 2113
 
+if (test_all)
+{
 
-test_that ('write and store data', {
-               bikedb <- file.path (tempdir (), "testdb")
-               expect_silent (bike_write_test_data (data_dir = tempdir ()))
-               expect_silent (n <- store_bikedata (data_dir = tempdir (),
-                                                   bikedb = bikedb,
-                                                   quiet = TRUE))
-               expect_silent (bike_rm_db (bikedb))
-               expect_message (n <- store_bikedata (data_dir = tempdir (),
-                                                   bikedb = bikedb,
-                                                   quiet = FALSE))
-               expect_true (file.exists (bikedb))
-               expect_silent (index_bikedata_db (bikedb = bikedb))
-               # some windows test machines do not allow file deletion, so
-               # numbers of lines are incremented with each appveyor/CRAN matrix
-               # test. The following is therefore >= rather than just ==
-               #expect_equal (n, 1568)
-               expect_true (n >= 1568)
-})
+    test_that ('write and store data', {
+                   bikedb <- file.path (tempdir (), "testdb")
+                   expect_silent (bike_write_test_data (data_dir = tempdir ()))
+                   expect_silent (n <- store_bikedata (data_dir = tempdir (),
+                                                       bikedb = bikedb,
+                                                       quiet = TRUE))
+                   expect_silent (bike_rm_db (bikedb))
+                   expect_message (n <- store_bikedata (data_dir = tempdir (),
+                                                        bikedb = bikedb,
+                                                        quiet = FALSE))
+                   expect_true (file.exists (bikedb))
+                   expect_silent (index_bikedata_db (bikedb = bikedb))
+                   # some windows test machines do not allow file deletion, so
+                   # numbers of lines are incremented with each appveyor/CRAN matrix
+                   # test. The following is therefore >= rather than just ==
+                   #expect_equal (n, 1568)
+                   expect_true (n >= 1568)
+             })
 
-test_that ('stations from downloaded data', {
-               bikedb <- file.path (tempdir (), "testdb")
-               st <- bike_stations (bikedb)
-               if (test_all)
-               {
-                   # This sometimes fails on some cran windoze machines for some
-                   # reason
+    test_that ('stations from downloaded data', {
+                   bikedb <- file.path (tempdir (), "testdb")
+                   st <- bike_stations (bikedb)
                    expect_true (nrow (st) >= 2545)
-               }
-})
+             })
 
-# some windows machines also don't clean all 13 files up, so this is necessary:
-test_that ('remove data', {
-               expect_true (bike_rm_test_data (data_dir = tempdir ()) >= 10)
-})
+    # some windows machines also don't clean all 13 files up, so this is necessary:
+    test_that ('remove data', {
+                   expect_true (bike_rm_test_data (data_dir = tempdir ()) >= 10)
+             })
 
-bikedb <- file.path (tempdir (), "testdb")
-chk <- tryCatch (file.remove (bikedb),
-                 warning = function (w) NULL,
-                 error = function (e) NULL)
+    bikedb <- file.path (tempdir (), "testdb")
+    chk <- tryCatch (file.remove (bikedb),
+                     warning = function (w) NULL,
+                     error = function (e) NULL)
+}
