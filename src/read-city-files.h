@@ -17,6 +17,8 @@
 #include "utils.h"
 #include "vendor/sqlite3/sqlite3.h"
 
+namespace city {
+
 unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry,
         const std::string city, const HeaderStruct &headers,
@@ -33,3 +35,5 @@ std::string convert_bo_stn_name (std::string &station_name,
         std::map <std::string, std::string> &stn_map);
 std::string convert_dc_stn_name (std::string &station_name, bool id,
         std::map <std::string, std::string> &stn_map);
+
+} // end namespace city

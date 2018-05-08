@@ -20,7 +20,7 @@
 //' @return Maximal database primary ID of trips table
 //'
 //' @noRd
-int get_max_trip_id (sqlite3 * dbcon)
+int db_utils::get_max_trip_id (sqlite3 * dbcon)
 {
     sqlite3_stmt * stmt;
     char qry_id [BUFFER_SIZE] = "\0";
@@ -41,7 +41,7 @@ int get_max_trip_id (sqlite3 * dbcon)
 //' @return Maximal database primary ID of station table
 //'
 //' @noRd
-int get_max_stn_id (sqlite3 * dbcon)
+int db_utils::get_max_stn_id (sqlite3 * dbcon)
 {
     sqlite3_stmt * stmt;
     char qry_id [BUFFER_SIZE] = "\0";
@@ -62,7 +62,7 @@ int get_max_stn_id (sqlite3 * dbcon)
 //' @return Number of stations in table
 //'
 //' @noRd
-int get_stn_table_size (sqlite3 * dbcon)
+int db_utils::get_stn_table_size (sqlite3 * dbcon)
 {
     sqlite3_stmt * stmt;
     char qry_id [BUFFER_SIZE] = "\0";

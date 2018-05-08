@@ -27,7 +27,7 @@
 //' @return integer result code
 //'
 //' @noRd
-int import_to_station_table (sqlite3 * dbcon,
+int stns::import_to_station_table (sqlite3 * dbcon,
     std::map <std::string, std::string> stationqry)
 {
     char *zErrMsg = nullptr;
@@ -78,7 +78,7 @@ int import_to_station_table (sqlite3 * dbcon,
 //' @note The map is tiny, so it's okay to return values rather than refs
 //'
 //' @noRd
-std::map <std::string, std::string> get_bo_stn_table (sqlite3 * dbcon)
+std::map <std::string, std::string> stns::get_bo_stn_table (sqlite3 * dbcon)
 {
     sqlite3_stmt * stmt;
     std::stringstream ss;
@@ -121,7 +121,7 @@ std::map <std::string, std::string> get_bo_stn_table (sqlite3 * dbcon)
 //' @note The map is tiny, so it's okay to return values rather than refs
 //'
 //' @noRd
-std::map <std::string, std::string> get_dc_stn_table (sqlite3 * dbcon)
+std::map <std::string, std::string> stns::get_dc_stn_table (sqlite3 * dbcon)
 {
     sqlite3_stmt * stmt;
     std::stringstream ss;
@@ -227,7 +227,7 @@ std::map <std::string, std::string> get_dc_stn_table (sqlite3 * dbcon)
 //' @note The map is tiny, so it's okay to return values rather than refs
 //'
 //' @noRd
-std::unordered_set <std::string> get_stn_ids (sqlite3 * dbcon, std::string ci)
+std::unordered_set <std::string> stns::get_stn_ids (sqlite3 * dbcon, std::string ci)
 {
     sqlite3_stmt * stmt;
     std::stringstream ss;
@@ -289,7 +289,7 @@ int rcpp_import_stn_df (const char * bikedb, Rcpp::DataFrame stn_data,
 
     std::string msg = "Unable to insert stations for " + city; // used below
 
-    int num_stns_old = get_stn_table_size (dbcon);
+    int num_stns_old = db_utils::get_stn_table_size (dbcon);
 
     Rcpp::CharacterVector stn_id = stn_data ["id"];
     Rcpp::CharacterVector stn_name = stn_data ["name"];
@@ -325,7 +325,7 @@ int rcpp_import_stn_df (const char * bikedb, Rcpp::DataFrame stn_data,
         throw std::runtime_error (msg);
     sqlite3_free (zErrMsg);
 
-    int num_stns_added = get_stn_table_size (dbcon) - num_stns_old;
+    int num_stns_added = db_utils::get_stn_table_size (dbcon) - num_stns_old;
 
     rc = sqlite3_close_v2(dbcon);
     if (rc != SQLITE_OK)

@@ -93,10 +93,10 @@ int rcpp_import_to_trip_table (const char* bikedb,
     std::map <std::string, std::string> stn_map;
     if (city == "dc")
     {
-        stn_map = get_dc_stn_table (dbcon);
+        stn_map = stns::get_dc_stn_table (dbcon);
     } else if (city == "bo")
     {
-        stn_map = get_bo_stn_table (dbcon);
+        stn_map = stns::get_bo_stn_table (dbcon);
     }
 
     FILE * pFile;
@@ -124,13 +124,13 @@ int rcpp_import_to_trip_table (const char* bikedb,
                 datafiles [filenum] << std::endl;
 
         std::string filename_i = Rcpp::as <std::string> (datafiles [filenum]);
-        HeaderStruct headers = get_field_positions (filename_i,
+        HeaderStruct headers = db_add::get_field_positions (filename_i,
                 header_file_name, data_has_stations, city);
 
         pFile = fopen (datafiles [filenum], "r");
         char * junk = fgets (in_line, BUFFER_SIZE, pFile);
         (void) junk; // suppress unused variable warning
-        rm_dos_end (in_line);
+        utils::rm_dos_end (in_line);
 
         // One London file ("21JourneyDataExtract31Aug2016-06Sep2016.csv") has
         // "Start/EndStation Logical Terminal" numbers instead of IDs.  These
@@ -148,23 +148,23 @@ int rcpp_import_to_trip_table (const char* bikedb,
         {
             if (get_structure)
             {
-                get_field_quotes (in_line, headers);
+                db_add::get_field_quotes (in_line, headers);
                 get_structure = false;
-                //dump_headers (headers);
+                //db_add::dump_headers (headers);
             }
 
-            rm_dos_end (in_line);
+            utils::rm_dos_end (in_line);
             sqlite3_bind_text (stmt, 1, city.c_str (), -1, SQLITE_TRANSIENT); 
 
             // London, LA, and Philly data are ballsed up and change format
             // within data files, so they are read with their own std::string
             // routines, rather than then generic char * routine.
             if (city == "lo")
-                rc = read_one_line_london (stmt, in_line);
+                rc = city::read_one_line_london (stmt, in_line);
             else if (city == "la" || city == "ph")
-                rc = read_one_line_nabsa (stmt, in_line, &stationqry, city);
+                rc = city::read_one_line_nabsa (stmt, in_line, &stationqry, city);
             else
-                rc = read_one_line_generic (stmt, in_line, &stationqry, city,
+                rc = city::read_one_line_generic (stmt, in_line, &stationqry, city,
                         headers, stn_map);
             temp++;
             if (rc == 0) // only != 0 for LA, London, Boston, and MN
@@ -181,7 +181,7 @@ int rcpp_import_to_trip_table (const char* bikedb,
     sqlite3_free (zErrMsg);
 
     if (city == "ny" || city == "la" || city == "ph" || city == "sf")
-        import_to_station_table (dbcon, stationqry);
+        stns::import_to_station_table (dbcon, stationqry);
 
     rc = static_cast <size_t> (sqlite3_close_v2 (dbcon));
     if (rc != SQLITE_OK)
@@ -266,7 +266,7 @@ int rcpp_import_to_file_table (const char * bikedb,
 //' corresponding position in the database, and using -1 to denote no
 //' corresponding field.
 //' @noRd
-HeaderStruct get_field_positions (const std::string fname,
+HeaderStruct db_add::get_field_positions (const std::string fname,
         const std::string header_file_name, bool data_has_stations,
         const std::string city)
 {
@@ -352,7 +352,7 @@ HeaderStruct get_field_positions (const std::string fname,
 //' actual structure of the data, so the patterns of quotations are determined by
 //' the first data line rather than in "get_field_positions".
 //' @noRd
-void get_field_quotes (const std::string line, HeaderStruct &headers)
+void db_add::get_field_quotes (const std::string line, HeaderStruct &headers)
 {
     std::string l = line;
     headers.quoted.resize (headers.position_file2db.size ());
@@ -385,7 +385,7 @@ void get_field_quotes (const std::string line, HeaderStruct &headers)
     }
 }
 
-void dump_headers (const HeaderStruct &headers)
+void db_add::dump_headers (const HeaderStruct &headers)
 {
     Rcpp::Rcout << "Header has " << headers.nvalues <<
         " with [quoted, pos_file2db, _db2file] having [" <<

@@ -55,7 +55,7 @@
 //' codes, so that names can be mapped to these (currently just BO & DC).
 //'
 //' @noRd
-unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
+unsigned int city::read_one_line_generic (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry,
         const std::string city, const HeaderStruct &headers,
         std::map <std::string, std::string> &stn_map)
@@ -78,18 +78,18 @@ unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
     char * token;
     if (headers.quoted [0])
     {
-        token = strtokm (&linestr[0u], "\""); // opening quote
+        token = utils::strtokm (&linestr[0u], "\""); // opening quote
         if (headers.quoted [1])
-            token = strtokm (nullptr, delim_q_q);
+            token = utils::strtokm (nullptr, delim_q_q);
         else
-            token = strtokm (nullptr, delim_q_noq);
+            token = utils::strtokm (nullptr, delim_q_noq);
         (void) token; // suppress unused variable warning
     } else
     {
         if (headers.quoted [1])
-            token = strtokm (&linestr[0u], delim_noq_q);
+            token = utils::strtokm (&linestr[0u], delim_noq_q);
         else
-            token = strtokm (&linestr[0u], delim_noq_noq);
+            token = utils::strtokm (&linestr[0u], delim_noq_noq);
     }
 
     unsigned int pos;
@@ -104,16 +104,16 @@ unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
     {
         if (values [pos].length () == 0)
             return 1;
-        values [pos] = convert_datetime (values [pos]);
+        values [pos] = utils::convert_datetime (values [pos]);
     }
 
     // These don't arise in any data processed to date
     if (pos == 3 || pos == 7) // add city prefixes to station names
         values [pos] = city + values [pos];
     if (pos == 12) // user type
-        values [pos] = convert_usertype (values [pos]);
+        values [pos] = city::convert_usertype (values [pos]);
     if (pos == 14) // gender
-        values [pos] = convert_gender (values [pos]);
+        values [pos] = city::convert_gender (values [pos]);
 
     for (unsigned int i = 1; i < headers.nvalues; i++)
     {
@@ -125,15 +125,15 @@ unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
         if (headers.quoted [i])
         {
             if (headers.quoted [i + 1])
-                token = strtokm (nullptr, delim_q_q);
+                token = utils::strtokm (nullptr, delim_q_q);
             else
-                token = strtokm (nullptr, delim_q_noq);
+                token = utils::strtokm (nullptr, delim_q_noq);
         } else
         {
             if (headers.quoted [i + 1])
-                token = strtokm (nullptr, delim_noq_q);
+                token = utils::strtokm (nullptr, delim_noq_q);
             else
-                token = strtokm (nullptr, delim_noq_noq);
+                token = utils::strtokm (nullptr, delim_noq_noq);
         }
 
         std::string tks = token;
@@ -154,28 +154,28 @@ unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
                 // some London files have missing datetime strings:
                 if (values [pos].length () == 0)
                     return 1;
-                values [pos] = convert_datetime (values [pos]);
+                values [pos] = utils::convert_datetime (values [pos]);
             }
 
             if (pos == 3 || pos == 7) // add city prefixes to station names
                 values [pos] = city + values [pos];
 
             if (pos == 12) // user type
-                values [pos] = convert_usertype (values [pos]);
+                values [pos] = city::convert_usertype (values [pos]);
 
             if (pos == 14) // gender
-                values [pos] = convert_gender (values [pos]);
+                values [pos] = city::convert_gender (values [pos]);
         }
     }
 
     if (values [0] == "\"\"")
-        values [0] = std::to_string (timediff (values [1], values [2]));
+        values [0] = std::to_string (utils::timediff (values [1], values [2]));
 
     // Use stn_maps for cities which don't have proper station ID values
-    if (strfound (city, "bo"))
+    if (utils::strfound (city, "bo"))
     {
-        values [3] = convert_bo_stn_name (values [4], stn_map);
-        values [7] = convert_bo_stn_name (values [8], stn_map);
+        values [3] = city::convert_bo_stn_name (values [4], stn_map);
+        values [7] = city::convert_bo_stn_name (values [8], stn_map);
     }
 
     // Then bind the SQLITE statement
@@ -231,7 +231,7 @@ unsigned int read_one_line_generic (sqlite3_stmt * stmt, char * line,
 //' @param line Line of data read from Santander cycles file
 //'
 //' @noRd
-unsigned int read_one_line_london (sqlite3_stmt * stmt, char * line)
+unsigned int city::read_one_line_london (sqlite3_stmt * stmt, char * line)
 {
     std::string in_line = line;
 
@@ -241,23 +241,23 @@ unsigned int read_one_line_london (sqlite3_stmt * stmt, char * line)
     // double quotes. It is therefore necessary to get relative positions of
     // commas and double quotes, and this is much easier to do with strings than
     // with char arrays. Only disadvantage: Somewhat slower.
-    std::string duration = str_token (&in_line, ","); // Rental ID: not used
-    duration = str_token (&in_line, ",");
-    std::string bike_id = str_token (&in_line, ",");
-    std::string end_date = convert_datetime (str_token (&in_line, ","));
-    std::string end_station_id = str_token (&in_line, ",");
+    std::string duration = utils::str_token (&in_line, ","); // Rental ID: not used
+    duration = utils::str_token (&in_line, ",");
+    std::string bike_id = utils::str_token (&in_line, ",");
+    std::string end_date = utils::convert_datetime (utils::str_token (&in_line, ","));
+    std::string end_station_id = utils::str_token (&in_line, ",");
     end_station_id = "lo" + end_station_id;
     std::string end_station_name;
     if (strcspn (in_line.c_str (), "\"") == 0) // name in quotes
     {
-        end_station_name = str_token (&in_line, "\",");
+        end_station_name = utils::str_token (&in_line, "\",");
         end_station_name = end_station_name.substr (1, 
                 end_station_name.length ()); // rm quote from start
         in_line = in_line.substr (1, in_line.length ()); // rm comma from start
     } else
-        end_station_name = str_token (&in_line, ",");
-    std::string start_date = convert_datetime (str_token (&in_line, ","));
-    std::string start_station_id = str_token (&in_line, ",");
+        end_station_name = utils::str_token (&in_line, ",");
+    std::string start_date = utils::convert_datetime (utils::str_token (&in_line, ","));
+    std::string start_station_id = utils::str_token (&in_line, ",");
     start_station_id = "lo" + start_station_id;
 
     sqlite3_bind_text(stmt, 2, duration.c_str(), -1, SQLITE_TRANSIENT); 
@@ -286,7 +286,7 @@ unsigned int read_one_line_london (sqlite3_stmt * stmt, char * line)
 //'        passed to 'import_to_station_table()'
 //'
 //' @noRd
-unsigned int read_one_line_nabsa (sqlite3_stmt * stmt, char * line,
+unsigned int city::read_one_line_nabsa (sqlite3_stmt * stmt, char * line,
         std::map <std::string, std::string> * stationqry, std::string city)
 {
     std::string in_line = line;
@@ -304,9 +304,9 @@ unsigned int read_one_line_nabsa (sqlite3_stmt * stmt, char * line,
 
     std::string trip_duration = std::strtok (nullptr, delim);
     std::string start_date = std::strtok (nullptr, delim);
-    start_date = convert_datetime (start_date);
+    start_date = utils::convert_datetime (start_date);
     std::string end_date = std::strtok (nullptr, delim);
-    end_date = convert_datetime (end_date);
+    end_date = utils::convert_datetime (end_date);
     std::string start_station_id = std::strtok (nullptr, delim);
     if (start_station_id == " " || start_station_id == "#N/A")
         ret = 1;
@@ -367,28 +367,28 @@ unsigned int read_one_line_nabsa (sqlite3_stmt * stmt, char * line,
 }
 
 
-std::string convert_usertype (std::string ut)
+std::string city::convert_usertype (std::string ut)
 {
     // see comment in sqlite3db-add-data.cpp/get_field_positions - this is not
     // locale-safe!
     std::transform (ut.begin (), ut.end (), ut.begin (), ::tolower);
     boost::replace_all (ut, " ", "");
-    if (strfound (ut, "member") || strfound (ut, "subscriber") ||
-            strfound (ut, "flex") || strfound (ut, "monthly") ||
-            strfound (ut, "indego30") || strfound (ut, "1"))
+    if (utils::strfound (ut, "member") || utils::strfound (ut, "subscriber") ||
+            utils::strfound (ut, "flex") || utils::strfound (ut, "monthly") ||
+            utils::strfound (ut, "indego30") || utils::strfound (ut, "1"))
         ut = "1";
     else
         ut = "0";
     return ut;
 }
 
-std::string convert_gender (std::string g)
+std::string city::convert_gender (std::string g)
 {
-    if (strfound (g, "Female") || strfound (g, "F") ||
-            strfound (g, "2"))
+    if (utils::strfound (g, "Female") || utils::strfound (g, "F") ||
+            utils::strfound (g, "2"))
         g = "2";
-    else if (strfound (g, "Male") || strfound (g, "M") ||
-            strfound (g, "1"))
+    else if (utils::strfound (g, "Male") || utils::strfound (g, "M") ||
+            utils::strfound (g, "1"))
         g = "1";
     else
         g = "0";
@@ -401,7 +401,7 @@ std::string convert_gender (std::string g)
 //' @param stn_map Map of station names to IDs
 //'
 //' @noRd
-std::string convert_bo_stn_name (std::string &station_name,
+std::string city::convert_bo_stn_name (std::string &station_name,
         std::map <std::string, std::string> &stn_map)
 {
     std::string station, station_id = "";
@@ -435,7 +435,7 @@ std::string convert_bo_stn_name (std::string &station_name,
 //' appear in the official station file, and so this must be removed.
 //'
 //' @noRd
-std::string convert_dc_stn_name (std::string &station_name, bool id,
+std::string city::convert_dc_stn_name (std::string &station_name, bool id,
         std::map <std::string, std::string> &stn_map)
 {
     std::string station, station_id = "";
