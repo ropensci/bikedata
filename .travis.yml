@@ -2,7 +2,6 @@ language: R
 warnings_are_errors: true
 sudo: true
 cache: packages
-latex: false # TODO: Enable after https://github.com/travis-ci/travis-build/pull/1072
 
 matrix:
     allow_failures: # temporarily enabled. TODO: disable
@@ -15,10 +14,13 @@ matrix:
         - os: linux
           r: devel
           dist: trusty
+        - os: linux
+          r: oldrel
+          dist: trusty
         - os: osx
           r: release
-          #before_install: ''
-          #disable_homebrew: true
+          before_install: ''
+          disable_homebrew: true
           #- os: osx
           #r: devel
           #before_install: ''
