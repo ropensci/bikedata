@@ -128,6 +128,36 @@ expand_home <- function (x)
     return (x)
 }
 
+# check whether data_dir exists and add option to create if not
+# no code coverage coz it's interactive
+check_data_dir <- function (x) # nocov start
+{
+    split_path <- function (x)
+    {
+        if (dirname(x)==x)
+            x
+        else
+            c (basename (x), split_path (dirname (x)))
+    }
+    if (!file.exists (x))
+    {
+        message ("directory ", x, " does not exist")
+        inp <- readline ("Should it be created (y/n)? ") %>%
+                tolower ()
+        if (substring (inp, 1, 1) == "y")
+        {
+            xsp <- rev (split_path (x)) [-1]
+            for (i in seq_along (xsp))
+            {
+                fp <- do.call (file.path, as.list (xsp [1:i]))
+                if (!file.exists (fp))
+                    dir.create (fp)
+            }
+        }
+    }
+    invisible (x)
+} # nocov end
+
 # header files are parsed using sysdata.rda, which is written on load to the
 # following file, subsequently read directly within the C++ routines
 header_file_name <- function ()
