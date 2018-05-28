@@ -153,6 +153,9 @@ check_data_dir <- function (x) # nocov start
                 if (!file.exists (fp))
                     dir.create (fp)
             }
+        } else
+        {
+            stop ("Okay, stopping now")
         }
     }
     invisible (x)
