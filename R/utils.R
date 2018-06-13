@@ -1,3 +1,20 @@
+#' List of cities currently included in bikedata
+#'
+#' @return A \code{data.frame} of cities, abbreviations, and names of bike
+#' systems currently able to be accessed.
+#'
+#' @export
+#'
+#' @examples
+#' bike_cities ()
+bike_cities <- function ()
+{
+    dat <- bike_demographic_data ()
+    dat$demographic_data <- NULL
+    return (dat)
+}
+
+
 #' Convert city names to two-letter prefixes
 #'
 #' @param city Name of one or more cities or corresponding bicycle hire systems

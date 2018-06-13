@@ -44,7 +44,9 @@ All of these systems record and disseminate individual trip data, minimally
 including the times and places at which every trip starts and ends. Some provide
 additional anonymised individual data, typically including whether or not a user
 is registered with the system and if so, additional data including age, gender,
-and residential postal code.
+and residential postal code.  The list of cities may be obtained with the
+`bike_cities()` functions, and details of which include demographic data with
+`bike_demographic_data()`.
 
 Cities with extensively developed systems and cultures of public hire bicycles,
 yet which do not provide (publicly available) data include:

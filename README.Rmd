@@ -52,7 +52,9 @@ Los Angeles CA, U.S.A. | [Metro](https://bikeshare.metro.net/) | 1,000 | 65
 
 These data include the places and times at which all trips start and end. Some
 systems provide additional demographic data including years of birth and genders
-of cyclists.
+of cyclists. The list of cities may be obtained with the `bike_cities()`
+functions, and details of which include demographic data with
+`bike_demographic_data()`.
 
 The following provides a brief overview of package functionality. For more
 detail, see the

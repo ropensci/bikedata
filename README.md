@@ -39,7 +39,9 @@ are
 
 These data include the places and times at which all trips start and
 end. Some systems provide additional demographic data including years of
-birth and genders of cyclists.
+birth and genders of cyclists. The list of cities may be obtained with
+the `bike_cities()` functions, and details of which include demographic
+data with `bike_demographic_data()`.
 
 The following provides a brief overview of package functionality. For
 more detail, see the
@@ -102,16 +104,16 @@ bike_daily_trips (bikedb = 'bikedb')
     #> # A tibble: 87 x 2
     #>    date       numtrips
     #>    <chr>         <dbl>
-    #>  1 2016-01-01   11172.
-    #>  2 2016-01-02   14794.
-    #>  3 2016-01-03   15775.
-    #>  4 2016-01-04   19879.
-    #>  5 2016-01-05   18326.
-    #>  6 2016-01-06   24922.
-    #>  7 2016-01-07   28215.
-    #>  8 2016-01-08   29131.
-    #>  9 2016-01-08   21140.
-    #> 10 2016-01-10   14481.
+    #>  1 2016-01-01    11172
+    #>  2 2016-01-02    14794
+    #>  3 2016-01-03    15775
+    #>  4 2016-01-04    19879
+    #>  5 2016-01-05    18326
+    #>  6 2016-01-06    24922
+    #>  7 2016-01-07    28215
+    #>  8 2016-01-08    29131
+    #>  9 2016-01-08    21140
+    #> 10 2016-01-10    14481
     #> # ... with 77 more rows
 
 A summary of all data contained in a given database can be produced as
