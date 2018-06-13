@@ -1,3 +1,8 @@
+0.2.0.099
+===================
+Minor changes:
+- Bug fix for San Fran thanks to @tbdv (see issue #78)
+
 0.2.0
 ===================
 - Major expansion to include new cities of San Francisco, Minneapolis/St Paul,

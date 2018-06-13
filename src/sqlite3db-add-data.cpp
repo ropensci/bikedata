@@ -143,13 +143,16 @@ int rcpp_import_to_trip_table (const char* bikedb,
         }
 
         bool get_structure = true;
-        unsigned int temp = 0; // TODO: Delete that!
         while (fgets (in_line, BUFFER_SIZE, pFile) != nullptr) 
         {
             if (get_structure)
             {
                 db_add::get_field_quotes (in_line, headers);
-                get_structure = false;
+                // see issue#78 - from April 2018 "member_birth_year" is quoted
+                // when empty but unquoted when not, requiring structures to be
+                // re-read for every line.
+                if (city != "sf")
+                    get_structure = false;
                 //db_add::dump_headers (headers);
             }
 
@@ -166,7 +169,6 @@ int rcpp_import_to_trip_table (const char* bikedb,
             else
                 rc = city::read_one_line_generic (stmt, in_line, &stationqry, city,
                         headers, stn_map);
-            temp++;
             if (rc == 0) // only != 0 for LA, London, Boston, and MN
             {
                 ntrips++;
@@ -331,9 +333,7 @@ HeaderStruct db_add::get_field_positions (const std::string fname,
         size_t ipos = static_cast <size_t> (line.find (","));
         std::string field = line.substr (0, ipos);
         if (field_name_map.find (field) != field_name_map.end ())
-        {
             headers.position_file2db [i] = field_name_map.at (field);
-        }
         line = line.substr (ipos + 1, line.length () - ipos - 1);
     }
     if (field_name_map.find (line) != field_name_map.end ())
