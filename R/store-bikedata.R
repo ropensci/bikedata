@@ -444,6 +444,7 @@ bike_unzip_files <- function (data_dir, bikedb, city, dates)
         flist_zip <- flist_zip [indx]
     }
     fcsv <- list.files (data_dir, pattern = '\\.csv$') # existing csv files
+    fcsv <- fcsv [which (!grepl ("bikedata_headers.csv|field_names.csv", fcsv))]
     if (city == "bo")
         fcsv <- fcsv [grep ("hubway", fcsv, ignore.case = TRUE)]
     else if (city == "lo")
