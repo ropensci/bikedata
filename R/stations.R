@@ -52,6 +52,12 @@ bike_stations <- function (bikedb, city)
                    abs (st$latitude) > 1e-6)
     st <- st [indx, ]
 
+    indx_sf <- which (st$city=='sf')
+    longitude <- st[indx_sf,'latitude']
+    latitude <- st[indx_sf,'longitude']
+    st[indx_sf,'longitude'] <- longitude
+    st[indx_sf,'latitude'] <- latitude
+    
     return (st)
 }
 
