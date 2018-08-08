@@ -131,21 +131,25 @@ sum (bike_tripmat ('bikedb', weekday = 'sat', birth_year = 1980:1990,
 
 ``` r
 citation ("bikedata")
-#> Warning in citation("bikedata"): no date field in DESCRIPTION file of package 'bikedata'
-#> Warning in citation("bikedata"): could not determine year for 'bikedata' from package DESCRIPTION file
 #> 
-#> To cite package 'bikedata' in publications use:
+#> To cite bikedata in publications use:
 #> 
-#>   Mark Padgham, Richard Ellison and Tom Buckley (NA). bikedata: Download and Aggregate Data from Public
-#>   Hire Bicycle Systems. R package version 0.2.0.099. https://github.com/ropensci/bikedata
+#>   Mark Padgham, Richard Ellison (2017). bikedata Journal of Open Source Software, 2(20). URL
+#>   https://doi.org/10.21105/joss.00471
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
-#>   @Manual{,
-#>     title = {bikedata: Download and Aggregate Data from Public Hire Bicycle Systems},
-#>     author = {Mark Padgham and Richard Ellison and Tom Buckley},
-#>     note = {R package version 0.2.0.099},
-#>     url = {https://github.com/ropensci/bikedata},
+#>   @Article{,
+#>     title = {bikedata},
+#>     author = {Mark Padgham and Richard Ellison},
+#>     journal = {The Journal of Open Source Software},
+#>     year = {2017},
+#>     volume = {2},
+#>     number = {20},
+#>     month = {Dec},
+#>     publisher = {The Open Journal},
+#>     url = {https://doi.org/10.21105/joss.00471},
+#>     doi = {10.21105/joss.00471},
 #>   }
 ```
 

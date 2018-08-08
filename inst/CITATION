@@ -1,0 +1,21 @@
+citHeader("To cite bikedata in publications use:")
+
+citEntry(entry = "Article",
+        title        = "bikedata",
+        author       = personList(as.person("Mark Padgham"),
+                            as.person("Richard Ellison")),
+        journal      = "The Journal of Open Source Software",
+        year         = "2017",
+        volume       = "2",
+        number       = "20",
+        month        = "Dec",
+        publisher    = "The Open Journal",
+        url          = "https://doi.org/10.21105/joss.00471",
+        doi          = "10.21105/joss.00471",
+
+        textVersion  =
+        paste("Mark Padgham, Richard Ellison (2017).",
+            "bikedata",
+            "Journal of Open Source Software, 2(20).",
+            "URL https://doi.org/10.21105/joss.00471")
+        )
