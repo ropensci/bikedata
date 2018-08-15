@@ -70,6 +70,34 @@ bool utils::strfound (const std::string str, const std::string target)
     return found;
 }
 
+//' convert_datetime_dmy
+//'
+//' For London, with possible formats of:
+//' d/m/YYYY HH:MM
+//' d/m/YYYY HH:MM:ss
+//'
+//' @noRd
+std::string utils::convert_datetime_dmy (std::string str)
+{
+    std::string ret;
+    if (str.find (" ") == std::string::npos)
+    {
+        ret = "NA";
+    } else
+    {
+        size_t ipos = str.find (" ");
+        std::string dmy = str.substr (0, ipos);
+        str = str.substr (ipos + 1, str.length () - ipos - 1);
+
+        dmy = utils::convert_date_dmy (dmy);
+        if (!utils::time_is_standard (str))
+            str = utils::convert_time (str);
+
+        ret = dmy + " " + str;
+    }
+    return ret;
+}
+
 //' convert_datetime
 //'
 //' Possible formats are:
@@ -140,6 +168,34 @@ std::string utils::convert_date (std::string ymd)
     std::string d = ymd.substr (ipos + 1, ymd.length () - ipos - 1);
 
     if (d.size () == 4) // change (y,m,d) = m/d/yyyy -> yyyy/m/d
+    {
+        std::string s = y;
+        y = d;
+        d = m;
+        m = s;
+    }
+    if (y.size () == 2)
+        y = "20" + y;
+    utils::zero_pad (m);
+    utils::zero_pad (d);
+
+    return y + "-" + m + "-" + d;
+}
+
+std::string utils::convert_date_dmy (std::string dmy)
+{
+    std::string delim = "-";
+    if (dmy.find ("/") != std::string::npos)
+        delim = "/";
+
+    size_t ipos = dmy.find (delim.c_str ());
+    std::string d = dmy.substr (0, ipos);
+    dmy = dmy.substr (ipos + 1, dmy.length () - ipos - 1);
+    ipos = dmy.find (delim.c_str ());
+    std::string m = dmy.substr (0, ipos);
+    std::string y = dmy.substr (ipos + 1, dmy.length () - ipos - 1);
+
+    if (d.size () == 4) // change d/m/yyyy -> yyyy/d/m
     {
         std::string s = y;
         y = d;

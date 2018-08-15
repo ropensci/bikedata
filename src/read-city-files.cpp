@@ -244,7 +244,7 @@ unsigned int city::read_one_line_london (sqlite3_stmt * stmt, char * line)
     std::string duration = utils::str_token (&in_line, ","); // Rental ID: not used
     duration = utils::str_token (&in_line, ",");
     std::string bike_id = utils::str_token (&in_line, ",");
-    std::string end_date = utils::convert_datetime (utils::str_token (&in_line, ","));
+    std::string end_date = utils::convert_datetime_dmy (utils::str_token (&in_line, ","));
     std::string end_station_id = utils::str_token (&in_line, ",");
     end_station_id = "lo" + end_station_id;
     std::string end_station_name;
@@ -256,7 +256,7 @@ unsigned int city::read_one_line_london (sqlite3_stmt * stmt, char * line)
         in_line = in_line.substr (1, in_line.length ()); // rm comma from start
     } else
         end_station_name = utils::str_token (&in_line, ",");
-    std::string start_date = utils::convert_datetime (utils::str_token (&in_line, ","));
+    std::string start_date = utils::convert_datetime_dmy (utils::str_token (&in_line, ","));
     std::string start_station_id = utils::str_token (&in_line, ",");
     start_station_id = "lo" + start_station_id;
 
