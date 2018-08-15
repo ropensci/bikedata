@@ -37,7 +37,7 @@ bike_distmat <- function (bikedb, city, expand = 0.5,
         remove_xy_outliers ()
     stn_id <- xy$stn_id # names for matrix
     xy <- xy [, which (names (xy) %in% cols [1:2])] # remove ID
-    dmat <- dodgr_dists (from = xy, to = xy, quiet = quiet)
+    dmat <- dodgr::dodgr_dists (from = xy, to = xy, quiet = quiet)
     rownames (dmat) <- colnames (dmat) <- stn_id
 
     if (long)
