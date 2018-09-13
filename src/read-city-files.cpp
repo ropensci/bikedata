@@ -202,8 +202,17 @@ unsigned int city::read_one_line_generic (sqlite3_stmt * stmt, char * line,
     if (headers.data_has_stations)
     {
         // start station:
-        std::string stn_id = values [3], stn_name = values [4],
-            lat = values [5], lon = values [6];
+        std::string stn_id = values [3], stn_name = values [4], lon, lat;
+        if (utils::strfound (city, "sf"))
+        {
+            lat = values [5];
+            lon = values [6];
+        }
+        else
+        {
+            lon = values [5];
+            lat = values [6];
+        }
         boost::replace_all (stn_name, "\'", "");
         if (stationqry->count (stn_id) == 0 && lon != "0.0" && lat != "0.0" &&
                 lon != "" && lat != "")
