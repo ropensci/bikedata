@@ -205,8 +205,8 @@ unsigned int city::read_one_line_generic (sqlite3_stmt * stmt, char * line,
         std::string stn_id = values [3], stn_name = values [4], lon, lat;
         if (utils::strfound (city, "sf"))
         {
-            lat = values [5];
-            lon = values [6];
+            lon = values [5];
+            lat = values [6];
         }
         else
         {
@@ -222,8 +222,15 @@ unsigned int city::read_one_line_generic (sqlite3_stmt * stmt, char * line,
         // end station:
         stn_id = values [7];
         stn_name = values [8];
-        lat = values [9];
-        lon = values [10];
+        if (utils::strfound (city, "sf"))
+        {
+            lon = values [9];
+            lat = values [10];
+        } else
+        {
+            lon = values [9];
+            lat = values [10];
+        }
         boost::replace_all (stn_name, "\'", "");
         if (stationqry->count (stn_id) == 0 && lon != "0.0" && lat != "0.0" &&
                 lon != "" && lat != "")

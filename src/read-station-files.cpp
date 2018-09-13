@@ -35,7 +35,7 @@ int stns::import_to_station_table (sqlite3 * dbcon,
 
     // http://stackoverflow.com/questions/19337029/insert-if-not-exists-statement-in-sqlite
     std::string fullstationqry = "INSERT OR IGNORE INTO stations "
-        "(city, stn_id, name, longitude, latitude) VALUES ";
+        "(city, stn_id, name, latitude, longitude) VALUES ";
     fullstationqry += stationqry.begin ()->second;
     for (auto thisstation = std::next (stationqry.begin ());
             thisstation != stationqry.end (); ++thisstation)
