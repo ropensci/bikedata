@@ -223,10 +223,13 @@ int utils::timediff (std::string t1, std::string t2)
 // http://www.cs.utsa.edu/~cs1063/projects/Spring2011/Project1/jdn-explanation.html
 int utils::daynum (int y, int m, int d)
 {
-    int a = static_cast <int> (floor ((14 - m) / 12));
+    double md = static_cast <double> (m);
+    double dd = static_cast <double> (d);
+    double yd = static_cast <double> (y);
+    int a = static_cast <int> (floor ((14.0 - md) / 12.0));
     y = y + 4800 - a;
     m = m + 12 * a - 3;
-    double res = d + floor ((153 * m + 2) / 5) + 365 * y +
-        floor (y / 4) - floor (y / 100) + floor (y / 400) - 32045;
+    double res = dd + floor ((153.0 * md + 2.0) / 5.0) + 365.0 * yd +
+        floor (yd / 4.0) - floor (yd / 100.0) + floor (yd / 400.0) - 32045.0;
     return static_cast <int> (res);
 }
