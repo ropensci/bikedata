@@ -220,6 +220,8 @@ bike_db_totals <- function (bikedb, trips = TRUE, city)
 #' bike_write_test_data (data_dir = data_dir)
 #' # or download some real data!
 #' # dl_bikedata (city = 'la', data_dir = data_dir)
+#' # Remove one London file that triggers an API call which may fail tests:
+#' file.remove (file.path (tempdir(), "01aJourneyDataExtract10Jan16-23Jan16.csv"))
 #' bikedb <- file.path (data_dir, 'testdb')
 #' store_bikedata (data_dir = data_dir, bikedb = bikedb)
 #' # bike_latest_files (bikedb)
@@ -270,6 +272,8 @@ bike_latest_files <- function (bikedb)
 #' data_dir <- tempdir ()
 #' bike_write_test_data (data_dir = data_dir)
 #' # dl_bikedata (city = 'la', data_dir = data_dir) # or download some real data!
+#' # Remove one London file that triggers an API call which may fail tests:
+#' file.remove (file.path (tempdir(), "01aJourneyDataExtract10Jan16-23Jan16.csv"))
 #' bikedb <- file.path (data_dir, 'testdb')
 #' store_bikedata (data_dir = data_dir, bikedb = bikedb)
 #' # create database indexes for quicker access:
@@ -326,6 +330,8 @@ bike_datelimits <- function (bikedb, city)
 #' data_dir <- tempdir ()
 #' bike_write_test_data (data_dir = data_dir)
 #' # dl_bikedata (city = 'la', data_dir = data_dir) # or download some real data!
+#' # Remove one London file that triggers an API call which may fail tests:
+#' file.remove (file.path (tempdir(), "01aJourneyDataExtract10Jan16-23Jan16.csv"))
 #' bikedb <- file.path (data_dir, 'testdb')
 #' store_bikedata (data_dir = data_dir, bikedb = bikedb)
 #' # create database indexes for quicker access:
