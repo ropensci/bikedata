@@ -1,10 +1,11 @@
-0.2.0.099
+0.2.1
 ===================
 - New helper function `bike_cities` to directly list cities included in current
   package version
 
 Minor changes:
 - Bug fix for San Fran thanks to @tbdv (see issue #78)
+- Bug fix for LA (see issue #87)
 
 0.2.0
 ===================
