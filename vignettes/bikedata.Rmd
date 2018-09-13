@@ -82,10 +82,13 @@ any or all or the above listed systems, and the function `store_bikedata()`
 stores them in an `SQLite3` database.  For example, the following line will
 download all data from the Metro system of Los Angeles CA, U.S.A., and store
 them in a database named 'bikedb',
-```{r store-la-data, eval = TRUE}
+```{r store-la-data, eval = FALSE}
 bikedb <- file.path (tempdir (), "bikedb.sqlite") # or whatever
-dl_bikedata (city = 'la', dates = 2017, quiet = TRUE)
+dl_bikedata (city = 'la', dates = 2016, quiet = TRUE)
 store_bikedata (data_dir = tempdir (), bikedb = bikedb, quiet = TRUE)
+```
+```{r store-la-data-dummy, echo = FALSE}
+98138
 ```
 The `store_bikedata()` function returns the number of trips added to the
 database.  Both the downloaded data and the `SQLite3` database are stored by
@@ -111,7 +114,7 @@ is now less than the total number of trips stored of:
 bike_db_totals (bikedb = bikedb)
 ```
 ```{r, echo = FALSE}
-3823255
+3693521
 ```
 
 Prior to accessing any data from the `SQLite3` database, it is recommended to
@@ -132,21 +135,21 @@ class (tm); dim (tm); sum (tm)
 ```
 ```{r}
 ```{r, echo = FALSE}
-x <- "matrix"; y <- c (129, 129); z <- 227872
+x <- "matrix"; y <- c (64, 64); z <- 98138
 x; y; z
 ```
-The Los Angeles Metro system has 129 docking stations, and there were a total of
-227,872 individual trips during the year 2017.  Trip matrices can also be
+In 2016, the Los Angeles Metro system had 64 docking stations, and there were a
+total of 98,138 individual trips during the year. Trip matrices can also be
 extracted in long form using
 ```{r, eval = FALSE}
 bike_tripmat (bikedb = bikedb, city = 'la', long = TRUE)
 ```
 ```{r, echo = FALSE}
-n <- 16641
-ss <- c (rep ('la3000', 10), rep (NA, n - 10))
-es <- c ('la3000', 'la3005', 'la3006', 'la3007', 'la3008', 'la3009',
-         'la3010', 'la3011', 'la3013', 'la3014', rep (NA, n - 10))
-nt <- c (162, 19, 9, 0, 0, 0, 0, 0, 0, 5, rep (NA, n - 10))
+n <- 4096
+ss <- c (rep ('la3005', 10), rep (NA, n - 10))
+es <- c ('la3005', 'la3006', 'la3007', 'la3008', 'la3010', 'la3011',
+         'la3014', 'la3016', 'la3018', 'la3019', rep (NA, n - 10))
+nt <- c (252, 93, 23, 153, 5, 63, 40, 10, 31, 36, rep (NA, n - 10))
 
 tm <- tibble::tibble (start_station_id = ss,
                       end_station_id = es, numtrips = nt)
@@ -158,15 +161,15 @@ obtained with
 bike_stations (bikedb = bikedb)
 ```
 ```{r, echo = FALSE}
-n <- 724
+n <- 660
 id <- seq (n)
 city <- rep ('la', n)
 ids <- c ('la3005', 'la3006', 'la3007', 'la3008', 'la3009',
           'la3010', 'la3011', 'la3013', 'la3014', 'la3016', rep (NA, n - 10))
-x <- c (-118.2590, -118.2567, -118.2546, -118.2627, -118.4728,
-        -118.2549, -118.2680, -118.2372, -118.2416, -118.2601, rep (NA, n - 10))
-y <- c (34.04855, 34.04554, 34.05048, 34.04661, 33.98738,
+x <- c (34.04855, 34.04554, 34.05048, 34.04661, 33.98738,
         34.03705, 34.04113, 34.05661, 34.05290, 34.04373, rep (NA, n - 10))
+y <- c (-118.2590, -118.2567, -118.2546, -118.2627, -118.4728,
+        -118.2549, -118.2680, -118.2372, -118.2416, -118.2601, rep (NA, n - 10))
 stations1 <- tibble::tibble (id = id, city = city, stn_id = ids,
                              name = rep ('', n), longitude = x, latitude = y)
 stations1
@@ -516,17 +519,17 @@ statistics from the `SQLite3` database. The function `bike_summary_stats
 execute on large databases.)
 
 ```{r, eval = FALSE}
-bike_summary_stats ('bikedb')
+bike_summary_stats (bikedb)
 ```
 ```{r, echo = FALSE}
-ntr <- c (3726719, 3595383, 131336)
+ntr <- c (3693521, 3595383, 98138)
 nst <- c (662, 596, 66)
 startd <- c ('2016-01-01 00:07:00', '2016-01-01 00:07:00', 
              '2016-07-07 04:17:00')
-endd <- c ('2017-03-31 23:45:00', '2016-12-31 23:57:52',
-           '2017-03-31 23:45:00')
+endd <- rep ('2016-12-31 23:57:52', 3)
 fls <- c (NA, TRUE, TRUE)
-tbl <- tibble::tibble (num_trips = ntr, num_stations = nst,
+tbl <- tibble::tibble (city = c ("total", "ch", "la"),
+                       num_trips = ntr, num_stations = nst,
                        first_trip = as.factor (startd), 
                        last_trip = as.factor (endd), latest_files = fls)
 tbl
@@ -540,7 +543,7 @@ specifying `trips = FALSE`) from the entire database or from specific cities.
 bike_db_totals (bikedb = bikedb)
 ```
 ```{r, echo = FALSE}
-3726719
+3693521
 ```
 ```{r, eval = FALSE}
 bike_db_totals (bikedb = bikedb, city = "ch")
@@ -552,13 +555,13 @@ bike_db_totals (bikedb = bikedb, city = "ch")
 bike_db_totals (bikedb = bikedb, city = "la")
 ```
 ```{r, echo = FALSE}
-131336
+93138
 ```
 ```{r, eval = FALSE}
 bike_db_totals (bikedb = bikedb, trips = FALSE)
 ```
 ```{r, echo = FALSE}
-662
+660
 ```
 ```{r, eval = FALSE}
 bike_db_totals (bikedb = bikedb, trips = FALSE, city = "ch")
@@ -570,7 +573,7 @@ bike_db_totals (bikedb = bikedb, trips = FALSE, city = "ch")
 bike_db_totals (bikedb = bikedb, trips = FALSE, city = "la")
 ```
 ```{r, echo = FALSE}
-66
+64
 ```
 The other primary components of `bike_summary_stats()` are the dates of first
 and last trips for the entire database and for individual cities. These dates
@@ -579,7 +582,7 @@ can be obtained directly with the function `bike_datelimits()`:
 bike_datelimits (bikedb = bikedb)
 ```
 ```{r, echo = FALSE}
-c ('first' = "2016-01-01 00:07:00", 'last' = "2017-03-31 23:45:00")
+c ('first' = "2016-01-01 00:07:00", 'last' = "2016-12-31 23:57:52")
 ```
 ```{r, eval = FALSE}
 bike_datelimits (bikedb = bikedb, city = 'ch')
@@ -593,10 +596,8 @@ database represent the latest available files.
 bike_latest_files (bikedb = bikedb)
 ```
 ```{r}
-c ('la' = TRUE, 'ch' = TRUE)
+c ('la' = TRUE, 'ch' = FALSE)
 ```
-(At the time of this vignette, Chicago data for the first quarter of 2017 have
-not been released, and thus 2016 data are the latest.)
 
 
 ### 5.4. Time Series of Daily Trips
@@ -677,15 +678,15 @@ stations1
 dplyr::collect (dplyr::tbl (db, 'trips'))
 ```
 ```{r, echo = FALSE}
-n <- 100000
+n <- 3693511
 id <- seq (n)
 city <- rep ('la', n)
-dur <- c (480, 720, 1020, 300, 300, 1200, 720, 2880, 2820, 1500, 
+dur <- c (180, 1980, 300, 10860, 420, 780, 600, 600, 2880, 960,
           rep (NA, n - 10))
-st <- c ('2017-01-01 00:15:00', '2017-01-01 00:24:00', '2017-01-01 00:28:00',
-         '2017-01-01 00:38:00', '2017-01-01 00:38:00', '2017-01-01 00:39:00',
-         '2017-01-01 00:43:00', '2017-01-01 00:56:00', '2017-01-01 00:57:00',
-         '2017-01-01 01:54:00', rep (NA, n - 10))
+st <- c ('2016-01-01 00:15:00', '2016-01-01 00:24:00', '2016-01-01 00:28:00',
+         '2016-01-01 00:38:00', '2016-01-01 00:38:00', '2016-01-01 00:39:00',
+         '2016-01-01 00:43:00', '2016-01-01 00:56:00', '2016-01-01 00:57:00',
+         '2016-01-01 01:54:00', rep (NA, n - 10))
 et <- c ('2017-01-01 00:23:00', '2017-01-01 00:36:00', '2017-01-01 00:45:00',
          '2017-01-01 00:43:00', '2017-01-01 00:43:00', '2017-01-01 00:59:00',
          '2017-01-01 00:55:00', '2017-01-01 01:44:00', '2017-01-01 01:44:00',
@@ -697,14 +698,12 @@ tibble::tibble (id = id, city = city, trip_duration = dur,
                 start_station_id = nachr, end_station_id = nachr,
                 bike_id = nachr, user_type = nachr, birth_year = naint,
                 gender = naint)
-warning ('Only first 100,000 results retrieved. Use n = Inf to retrieve all.',
-         call. = FALSE)
 ```
 The [`RSQLite`](https://cran.r-project.org/package=RSQLite) package enables more
 complex queries to be constructed. The names of stations, for example, could be
 extracted using the following code
 ```{r, eval = FALSE}
-db <- RSQLite::dbConnect(SQLite(), bikedb, create = FALSE)
+db <- RSQLite::dbConnect(RSQLite::SQLite(), bikedb, create = FALSE)
 qry <- "SELECT stn_id, name FROM stations WHERE city = 'ch'"
 stns <- RSQLite::dbGetQuery(db, qry)
 RSQLite::dbDisconnect(db)
@@ -754,7 +753,7 @@ for (i in seq (x1))
     lines (c (x1 [i], x2 [i]), c (y1 [i], y2 [i]), col = cols [nt [i]],
         lwd = ntrips$numtrips [i] * 10 / max (ntrips$numtrips))
 ```
-```{r plot-la, echo = FALSE, eval = TRUE}
+```{r plot-la, echo = FALSE, eval = FALSE}
 # For some reason the R CMD build version loses one longitude in stns which
 # mucks up the plot
 stns <- bike_stations (bikedb = bikedb, city = 'la')
@@ -764,8 +763,8 @@ y1 <- stns$latitude [match (ntrips$start_station_id, stns$stn_id)]
 x2 <- stns$longitude [match (ntrips$end_station_id, stns$stn_id)]
 y2 <- stns$latitude [match (ntrips$end_station_id, stns$stn_id)]
 # Set plot area to central region of bike system
-xlims <- c (-118.27, -118.23)
-ylims <- c (34.02, 34.07)
+xlims <- c (34.02, 34.07)
+ylims <- c (-118.27, -118.23)
 plot (stns$longitude, stns$latitude, xlim = xlims, ylim = ylims)
 cols <- rainbow (100)
 nt <- ceiling (ntrips$numtrips * 100 / max (ntrips$numtrips))
@@ -773,6 +772,7 @@ for (i in seq (x1))
     lines (c (x1 [i], x2 [i]), c (y1 [i], y2 [i]), col = cols [nt [i]],
         lwd = ntrips$numtrips [i] * 10 / max (ntrips$numtrips))
 ```
+![](la_map_simple.png)
 
 ### 7.2 A More Sophisticated Visualisation
 
@@ -791,7 +791,7 @@ ex <- 0.1
 xlims_la <- xlims_la + c (-ex, ex) * diff (xlims_la)
 ylims_la <- ylims_la + c (-ex, ex) * diff (ylims_la)
 bbox <- c (xlims_la [1], ylims_la [1], xlims_la [2], ylims_la [2])
-bbox <- c (xlims [1], ylims [1], xlims [2], ylims [2])
+bbox <- c (xlims [1], xlims [2], ylims [1], ylims [2])
 # Then the actual osmdata query to extract all OpenStreetMap highways
 highways <- osmdata::opq (bbox = bbox) %>%
     osmdata::add_osm_feature (key = 'highway') %>%
