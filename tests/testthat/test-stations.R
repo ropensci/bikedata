@@ -4,7 +4,6 @@ require (testthat)
 
 bikedb <- system.file ('db', 'testdb.sqlite', package = 'bikedata')
 
-
 test_that ('bike_stations function', {
                st <- bike_stations (bikedb)
                expect_equal (names (st), c ('id', 'city', 'stn_id', 'name',

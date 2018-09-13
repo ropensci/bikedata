@@ -203,7 +203,7 @@ unsigned int city::read_one_line_generic (sqlite3_stmt * stmt, char * line,
     {
         // start station:
         std::string stn_id = values [3], stn_name = values [4],
-            lon = values [6], lat = values [5];
+            lat = values [5], lon = values [6];
         boost::replace_all (stn_name, "\'", "");
         if (stationqry->count (stn_id) == 0 && lon != "0.0" && lat != "0.0" &&
                 lon != "" && lat != "")
@@ -213,8 +213,8 @@ unsigned int city::read_one_line_generic (sqlite3_stmt * stmt, char * line,
         // end station:
         stn_id = values [7];
         stn_name = values [8];
-        lon = values [10];
         lat = values [9];
+        lon = values [10];
         boost::replace_all (stn_name, "\'", "");
         if (stationqry->count (stn_id) == 0 && lon != "0.0" && lat != "0.0" &&
                 lon != "" && lat != "")
@@ -244,7 +244,7 @@ unsigned int city::read_one_line_london (sqlite3_stmt * stmt, char * line)
     std::string duration = utils::str_token (&in_line, ","); // Rental ID: not used
     duration = utils::str_token (&in_line, ",");
     std::string bike_id = utils::str_token (&in_line, ",");
-    std::string end_date = utils::convert_datetime (utils::str_token (&in_line, ","));
+    std::string end_date = utils::convert_datetime_dmy (utils::str_token (&in_line, ","));
     std::string end_station_id = utils::str_token (&in_line, ",");
     end_station_id = "lo" + end_station_id;
     std::string end_station_name;
@@ -256,7 +256,7 @@ unsigned int city::read_one_line_london (sqlite3_stmt * stmt, char * line)
         in_line = in_line.substr (1, in_line.length ()); // rm comma from start
     } else
         end_station_name = utils::str_token (&in_line, ",");
-    std::string start_date = utils::convert_datetime (utils::str_token (&in_line, ","));
+    std::string start_date = utils::convert_datetime_dmy (utils::str_token (&in_line, ","));
     std::string start_station_id = utils::str_token (&in_line, ",");
     start_station_id = "lo" + start_station_id;
 

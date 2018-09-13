@@ -280,7 +280,7 @@ bike_get_dc_stations <- function ()
 #' @noRd
 bike_get_gu_stations <- function ()
 {
-    link <- "https://www.mibici.net/site/assets/files/1118/nomenclatura_1.csv"
+    link <- "https://www.mibici.net/site/assets/files/1118/nomenclatura-1.csv"
     suppressMessages (
                       dat <- httr::GET (link) %>%
                           httr::content (encoding = 'UTF-8')
@@ -289,7 +289,7 @@ bike_get_gu_stations <- function ()
     # Remove apostrophes from names coz they muck up sqlite fields:
     nm <- gsub ("\"", "", dat$name)
     nm <- gsub ("\'", "", nm)
-    res <- data.frame (id = dat$id, name = nm,
+    res <- data.frame (id = dat$obcn, name = nm,
                        lon = dat$longitude, lat = dat$latitude,
                        stringsAsFactors = FALSE)
     res <- res [which (!duplicated (res)), ]
