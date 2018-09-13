@@ -753,25 +753,6 @@ for (i in seq (x1))
     lines (c (x1 [i], x2 [i]), c (y1 [i], y2 [i]), col = cols [nt [i]],
         lwd = ntrips$numtrips [i] * 10 / max (ntrips$numtrips))
 ```
-```{r plot-la, echo = FALSE, eval = FALSE}
-# For some reason the R CMD build version loses one longitude in stns which
-# mucks up the plot
-stns <- bike_stations (bikedb = bikedb, city = 'la')
-ntrips <- bike_tripmat (bikedb = bikedb, city = 'la', long = TRUE)
-x1 <- stns$longitude [match (ntrips$start_station_id, stns$stn_id)]
-y1 <- stns$latitude [match (ntrips$start_station_id, stns$stn_id)]
-x2 <- stns$longitude [match (ntrips$end_station_id, stns$stn_id)]
-y2 <- stns$latitude [match (ntrips$end_station_id, stns$stn_id)]
-# Set plot area to central region of bike system
-xlims <- c (34.02, 34.07)
-ylims <- c (-118.27, -118.23)
-plot (stns$longitude, stns$latitude, xlim = xlims, ylim = ylims)
-cols <- rainbow (100)
-nt <- ceiling (ntrips$numtrips * 100 / max (ntrips$numtrips))
-for (i in seq (x1))
-    lines (c (x1 [i], x2 [i]), c (y1 [i], y2 [i]), col = cols [nt [i]],
-        lwd = ntrips$numtrips [i] * 10 / max (ntrips$numtrips))
-```
 ![](la_map_simple.png)
 
 ### 7.2 A More Sophisticated Visualisation
