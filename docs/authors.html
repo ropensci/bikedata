@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Authors • bikedata</title>
+<title>Citation and Authors • bikedata</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -18,13 +18,22 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
+
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="pkgdown.css" rel="stylesheet">
-<script src="jquery.sticky-kit.min.js"></script>
 <script src="pkgdown.js"></script>
-  
-  
+
+
+
+<meta property="og:title" content="Citation and Authors" />
+
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -37,7 +46,7 @@
   </head>
 
   <body>
-    <div class="container template-authors">
+    <div class="container template-citation-authors">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -47,8 +56,12 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="index.html">bikedata</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="index.html">bikedata</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.2.1.99</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
@@ -70,6 +83,7 @@
   </a>
 </li>
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -77,31 +91,56 @@
       
       </header>
 
-      <div class="row">
-  <div class="contents col-md-12">
+<div class="row">
+  <div class="contents col-md-9">
+    <div class="page-header">
+      <h1>Citation</h1>
+    </div>
+
+    <p>Padgham M, Ellison R (2017).
+&ldquo;bikedata.&rdquo;
+<em>The Journal of Open Source Software</em>, <b>2</b>(20).
+doi: <a href="http://doi.org/10.21105/joss.00471">10.21105/joss.00471</a>, <a href="https://doi.org/10.21105/joss.00471">https://doi.org/10.21105/joss.00471</a>. 
+</p>
+    <pre>@Article{,
+  title = {bikedata},
+  author = {Mark Padgham and Richard Ellison},
+  journal = {The Journal of Open Source Software},
+  year = {2017},
+  volume = {2},
+  number = {20},
+  month = {Dec},
+  publisher = {The Open Journal},
+  url = {https://doi.org/10.21105/joss.00471},
+  doi = {10.21105/joss.00471},
+}</pre>
     <div class="page-header">
       <h1>Authors</h1>
     </div>
 
     <ul class="list-unstyled">
       <li>
-        <p><strong>Mark Padgham</strong>. Author, maintainer.
-        <br /><small>https://orcid.org/0000-0003-2172-5265</small></p>
-      </li>
-      <li>
-        <p><strong>Richard Ellison</strong>. Author.
+        <p><strong>Mark Padgham</strong>. Author, maintainer. <a href='https://orcid.org/https://orcid.org/0000-0003-2172-5265' target='orcid.widget'><img src='https://members.orcid.org/sites/default/files/vector_iD_icon.svg' class='orcid' height='16'></a>
         </p>
       </li>
       <li>
-        <p><strong>Bea Hernández</strong>. Reviewer.
+        <p><strong>Richard Ellison</strong>. Author. 
+        </p>
+      </li>
+      <li>
+        <p><strong>Tom Buckley</strong>. Author. 
+        </p>
+      </li>
+      <li>
+        <p><strong>Bea Hernández</strong>. Reviewer. 
         <br /><small>Bea reviewed the package for ropensci, see https://github.com/ropensci/onboarding/issues/116</small></p>
       </li>
       <li>
-        <p><strong>Elaine McVey</strong>. Reviewer.
+        <p><strong>Elaine McVey</strong>. Reviewer. 
         <br /><small>Elaine reviewed the package for ropensci, see https://github.com/ropensci/onboarding/issues/116</small></p>
       </li>
       <li>
-        <p><strong> SQLite Consortium</strong>. Contributor.
+        <p><strong> SQLite Consortium</strong>. Contributor. 
         <br /><small>Authors of included SQLite code</small></p>
       </li>
     </ul>
@@ -113,15 +152,18 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by Mark Padgham, Richard Ellison.</p>
+  <p>Developed by Mark Padgham, Richard Ellison, Tom Buckley.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+

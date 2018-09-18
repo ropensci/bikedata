@@ -18,13 +18,22 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
+
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+
+
+
+<meta property="og:title" content="Function reference" />
+
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -47,8 +56,12 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">bikedata</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">bikedata</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.2.1.99</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
@@ -70,6 +83,7 @@
   </a>
 </li>
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -77,164 +91,160 @@
       
       </header>
 
-      <div class="row">
-  <div class="col-md-9">
+<div class="row">
+  <div class="contents col-md-9">
     <div class="page-header">
-      <h1>
-        Reference
-        <small>version&nbsp;0.1.1.099</small>
-      </h1>
+      <h1>Reference</h1>
     </div>
 
-    <div class="contents">
-      <table class="ref-index">
+    <table class="ref-index">
 
-      <colgroup>
-        <col class="alias" />
-        <col class="title" />
-      </colgroup>
+    <colgroup>
+      
+      <col class="alias" />
+      <col class="title" />
+    </colgroup>
 
-      <tbody>
-        <tr>
-          <th colspan="2">
-            <h2 id="section-package-overview" class="hasAnchor"><a href="#section-package-overview" class="anchor"></a>Package Overview</h2>
-            <p class="section-desc"></p>
-          </th>
-        </tr>
-        <tr>
-          <!--  -->
-          <td>
-            <p><code><a href="bikedata.html">bikedata</a></code> </p>
-          </td>
-          <td><p>Download and aggregate data from public bicycle hire systems</p></td>
-        </tr>
-      </tbody><tbody>
-        <tr>
-          <th colspan="2">
-            <h2 id="section-functions-to-download-and-store-data" class="hasAnchor"><a href="#section-functions-to-download-and-store-data" class="anchor"></a>Functions to Download and Store Data</h2>
-            <p class="section-desc"></p>
-          </th>
-        </tr>
-        <tr>
-          <!--  -->
-          <td>
-            <p><code><a href="dl_bikedata.html">dl_bikedata</a></code> <code><a href="dl_bikedata.html">download_bikedata</a></code> </p>
-          </td>
-          <td><p>Download hire bicycle data</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="store_bikedata.html">store_bikedata</a></code> </p>
-          </td>
-          <td><p>Store hire bicycle data in SQLite3 database</p></td>
-        </tr>
-      </tbody><tbody>
-        <tr>
-          <th colspan="2">
-            <h2 id="section-sample-data-for-testing-package" class="hasAnchor"><a href="#section-sample-data-for-testing-package" class="anchor"></a>Sample Data for Testing Package</h2>
-            <p class="section-desc"></p>
-          </th>
-        </tr>
-        <tr>
-          <!--  -->
-          <td>
-            <p><code><a href="bike_test_data.html">bike_test_data</a></code> </p>
-          </td>
-          <td><p>Test data for all 6 cities</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="bike_write_test_data.html">bike_write_test_data</a></code> </p>
-          </td>
-          <td><p>Writes test data bundled with package to zip files</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="bike_rm_test_data.html">bike_rm_test_data</a></code> </p>
-          </td>
-          <td><p>Removes test data written with 'bike_write_test_data()'</p></td>
-        </tr>
-      </tbody><tbody>
-        <tr>
-          <th colspan="2">
-            <h2 id="section-functions-to-aggregate-trip-data" class="hasAnchor"><a href="#section-functions-to-aggregate-trip-data" class="anchor"></a>Functions to Aggregate Trip Data</h2>
-            <p class="section-desc"></p>
-          </th>
-        </tr>
-        <tr>
-          <!--  -->
-          <td>
-            <p><code><a href="bike_daily_trips.html">bike_daily_trips</a></code> </p>
-          </td>
-          <td><p>Extract daily trip counts for all stations</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="bike_stations.html">bike_stations</a></code> </p>
-          </td>
-          <td><p>Extract station matrix from SQLite3 database</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="bike_tripmat.html">bike_tripmat</a></code> </p>
-          </td>
-          <td><p>Extract station-to-station trip matrix or data.frame from SQLite3 database</p></td>
-        </tr>
-      </tbody><tbody>
-        <tr>
-          <th colspan="2">
-            <h2 id="section-summary-statistics" class="hasAnchor"><a href="#section-summary-statistics" class="anchor"></a>Summary Statistics</h2>
-            <p class="section-desc"></p>
-          </th>
-        </tr>
-        <tr>
-          <!--  -->
-          <td>
-            <p><code><a href="bike_summary_stats.html">bike_summary_stats</a></code> </p>
-          </td>
-          <td><p>Extract summary statistics of database</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="bike_db_totals.html">bike_db_totals</a></code> </p>
-          </td>
-          <td><p>Count number of entries in sqlite3 database tables</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="bike_datelimits.html">bike_datelimits</a></code> </p>
-          </td>
-          <td><p>Extract date-time limits from trip database</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="bike_demographic_data.html">bike_demographic_data</a></code> </p>
-          </td>
-          <td><p>Static summary of which systems provide demographic data</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="bike_latest_files.html">bike_latest_files</a></code> </p>
-          </td>
-          <td><p>Check whether files in database are the latest published files</p></td>
-        </tr>
-      </tbody><tbody>
-        <tr>
-          <th colspan="2">
-            <h2 id="section-database-removal" class="hasAnchor"><a href="#section-database-removal" class="anchor"></a>Database Removal</h2>
-            <p class="section-desc"></p>
-          </th>
-        </tr>
-        <tr>
-          <!--  -->
-          <td>
-            <p><code><a href="bike_rm_db.html">bike_rm_db</a></code> </p>
-          </td>
-          <td><p>Remove SQLite3 database generated with 'store_bikedat()'</p></td>
-        </tr>
-      </tbody>
-      </table>
-    </div>
+    <tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-package-overview" class="hasAnchor"><a href="#section-package-overview" class="anchor"></a>Package Overview</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="bikedata.html">bikedata</a></code> </p>
+        </td>
+        <td><p>Download and aggregate data from public bicycle hire systems</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-functions-to-download-and-store-data" class="hasAnchor"><a href="#section-functions-to-download-and-store-data" class="anchor"></a>Functions to Download and Store Data</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="dl_bikedata.html">dl_bikedata()</a></code> <code><a href="dl_bikedata.html">download_bikedata()</a></code> </p>
+        </td>
+        <td><p>Download hire bicycle data</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="store_bikedata.html">store_bikedata()</a></code> </p>
+        </td>
+        <td><p>Store hire bicycle data in SQLite3 database</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-sample-data-for-testing-package" class="hasAnchor"><a href="#section-sample-data-for-testing-package" class="anchor"></a>Sample Data for Testing Package</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="bike_test_data.html">bike_test_data</a></code> </p>
+        </td>
+        <td><p>Test data for all 6 cities</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="bike_write_test_data.html">bike_write_test_data()</a></code> </p>
+        </td>
+        <td><p>Writes test data bundled with package to zip files</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="bike_rm_test_data.html">bike_rm_test_data()</a></code> </p>
+        </td>
+        <td><p>Removes test data written with 'bike_write_test_data()'</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-functions-to-aggregate-trip-data" class="hasAnchor"><a href="#section-functions-to-aggregate-trip-data" class="anchor"></a>Functions to Aggregate Trip Data</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="bike_daily_trips.html">bike_daily_trips()</a></code> </p>
+        </td>
+        <td><p>Extract daily trip counts for all stations</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="bike_stations.html">bike_stations()</a></code> </p>
+        </td>
+        <td><p>Extract station matrix from SQLite3 database</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="bike_tripmat.html">bike_tripmat()</a></code> </p>
+        </td>
+        <td><p>Extract station-to-station trip matrix or data.frame from SQLite3 database</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-summary-statistics" class="hasAnchor"><a href="#section-summary-statistics" class="anchor"></a>Summary Statistics</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="bike_summary_stats.html">bike_summary_stats()</a></code> </p>
+        </td>
+        <td><p>Extract summary statistics of database</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="bike_db_totals.html">bike_db_totals()</a></code> </p>
+        </td>
+        <td><p>Count number of entries in sqlite3 database tables</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="bike_datelimits.html">bike_datelimits()</a></code> </p>
+        </td>
+        <td><p>Extract date-time limits from trip database</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="bike_demographic_data.html">bike_demographic_data()</a></code> </p>
+        </td>
+        <td><p>Static summary of which systems provide demographic data</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="bike_latest_files.html">bike_latest_files()</a></code> </p>
+        </td>
+        <td><p>Check whether files in database are the latest published files</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-database-removal" class="hasAnchor"><a href="#section-database-removal" class="anchor"></a>Database Removal</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="bike_rm_db.html">bike_rm_db()</a></code> </p>
+        </td>
+        <td><p>Remove SQLite3 database generated with 'store_bikedat()'</p></td>
+      </tr>
+    </tbody>
+    </table>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -252,15 +262,18 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by Mark Padgham, Richard Ellison.</p>
+  <p>Developed by Mark Padgham, Richard Ellison, Tom Buckley.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+

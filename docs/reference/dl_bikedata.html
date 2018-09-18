@@ -18,13 +18,25 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
+
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+
+
+
+<meta property="og:title" content="Download hire bicycle data — dl_bikedata" />
+
+<meta property="og:description" content="Download data for subsequent storage via store_bikedata." />
+<meta name="twitter:card" content="summary" />
+
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -47,8 +59,12 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">bikedata</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">bikedata</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.2.1.99</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
@@ -70,6 +86,7 @@
   </a>
 </li>
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -77,21 +94,26 @@
       
       </header>
 
-      <div class="row">
+<div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Download hire bicycle data</h1>
+    <small class="dont-index">Source: <a href='https://github.com/ropensci/bikedata/blob/master/R/dl-bikedata.R'><code>R/dl-bikedata.R</code></a></small>
+    <div class="hidden name"><code>dl_bikedata.Rd</code></div>
     </div>
 
+    <div class="ref-description">
     
-    <p>Download hire bicycle data</p>
+    <p>Download data for subsequent storage via <a href='store_bikedata.html'>store_bikedata</a>.</p>
     
+    </div>
 
     <pre class="usage"><span class='fu'>dl_bikedata</span>(<span class='no'>city</span>, <span class='kw'>data_dir</span> <span class='kw'>=</span> <span class='fu'>tempdir</span>(), <span class='kw'>dates</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
-<span class='fu'>download_bikedata</span>(<span class='no'>city</span>, <span class='kw'>data_dir</span> <span class='kw'>=</span> <span class='fu'>tempdir</span>(), <span class='kw'>dates</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+<span class='fu'>download_bikedata</span>(<span class='no'>city</span>, <span class='kw'>data_dir</span> <span class='kw'>=</span> <span class='fu'>tempdir</span>(), <span class='kw'>dates</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
@@ -126,32 +148,22 @@ declaring that 'All data files already exist'</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     
-    <p>This function produces zip-compressed data in R's temporary directory. City
-names are not case sensitive, and must only be long enough to unambiguously
-designate the desired city. Names of corresponding bike systems can also be
-given.  Currently possible cities (with minimal designations in parentheses)
-and names of bike hire systems are:</p><table><tr><td>
- New York City (ny)</td>
-<td> Citibike</td>
-</tr><tr><td>
- Washington, D.C. (dc)</td>
-<td> Capital Bike Share</td>
-</tr><tr><td>
- Chicago (ch)</td>
-<td> Divvy Bikes</td>
-</tr><tr><td>
- Los Angeles (la)</td>
-<td> Metro Bike Share</td>
-</tr><tr><td>
- Boston (bo)</td>
-<td> Hubway</td>
-</tr><tr><td>
- London (lo)</td>
-<td> Santander Cycles</td>
-</tr><tr><td>
- Philadelphia (ph)</td>
-<td> Indego</td>
-</tr></table>
+    <p>This function produces (generally) zip-compressed data in R's temporary
+directory. City names are not case sensitive, and must only be long enough to
+unambiguously designate the desired city. Names of corresponding bike systems
+can also be given.  Currently possible cities (with minimal designations in
+parentheses) and names of bike hire systems are:</p><table class='table'>
+<tr><td>Boston (bo)</td><td>Hubway</td></tr>
+<tr><td>Chicago (ch)</td><td>Divvy Bikes</td></tr>
+<tr><td>Washington, D.C. (dc)</td><td>Capital Bike Share</td></tr>
+<tr><td>Los Angeles (la)</td><td>Metro Bike Share</td></tr>
+<tr><td>London (lo)</td><td>Santander Cycles</td></tr>
+<tr><td>Minnesota (mn)</td><td>NiceRide</td></tr>
+<tr><td>New York City (ny)</td><td>Citibike</td></tr>
+<tr><td>Philadelphia (ph)</td><td>Indego</td></tr>
+<tr><td>San Francisco Bay Area (sf)</td><td>Ford GoBike</td></tr>
+<tr><td></td><td>Boston (bo)</td></tr>
+</table>
     <p>Ensure you have a fast internet connection and at least 100 Mb space</p>
     
 
@@ -177,15 +189,18 @@ and names of bike hire systems are:</p><table><tr><td>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Mark Padgham, Richard Ellison.</p>
+  <p>Developed by Mark Padgham, Richard Ellison, Tom Buckley.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+
