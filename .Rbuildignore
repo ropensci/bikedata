@@ -1,6 +1,4 @@
-[.]md$
 ^README\.Rmd$
-^README\.md$
 ^\.gitignore$
 ^\.travis\.yml$
 ^appveyor\.yml$

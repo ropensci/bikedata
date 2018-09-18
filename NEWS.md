@@ -1,3 +1,9 @@
+
+0.2.1.099
+===================
+Minor changes:
+- add NEWS & README to CRAN description
+
 0.2.1
 ===================
 - New helper function `bike_cities` to directly list cities included in current
