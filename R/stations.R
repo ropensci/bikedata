@@ -280,10 +280,10 @@ bike_get_dc_stations <- function ()
 #' @noRd
 bike_get_gu_stations <- function ()
 {
-    link <- "https://www.mibici.net/site/assets/files/1118/nomenclatura-1.csv"
+    link <- "https://www.mibici.net/site/assets/files/1118/nomenclatura-3.csv"
     suppressMessages (
                       dat <- httr::GET (link) %>%
-                          httr::content (encoding = 'UTF-8')
+                          httr::content (encoding = 'UTF-8', as = "parsed")
                       )
 
     # Remove apostrophes from names coz they muck up sqlite fields:
