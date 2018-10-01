@@ -1,8 +1,9 @@
 
-0.2.1.099
+0.2.2
 ===================
 Minor changes:
 - add NEWS & README to CRAN description
+- Minor bug fixes
 
 0.2.1
 ===================
