@@ -1,3 +1,7 @@
+Previous errors arose from test failures due to changed file names on an
+external AWS service. This test has now been excluded from CRAN tests, with
+local version improved to avoid such failures.
+
 # Test environments
 
 * Ubuntu 14.04 (on `travis-ci`): R-release, R-devel

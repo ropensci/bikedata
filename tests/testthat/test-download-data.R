@@ -80,6 +80,8 @@ test_that ('dl_bikedata boston', {
                                 error = function (e) NULL)
                          })
 
+test_that::skip_on_cran ()
+
 test_that ('dl_bikedata la', {
                # These files change names, so this test first GETs the names of
                # current files
