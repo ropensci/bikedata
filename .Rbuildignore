@@ -10,7 +10,7 @@
 ^script\.R$
 ^docs$
 ^data-raw$
-^data\nomenclatura*
+^data/nomenclatura*
 ^paper\.md$
 ^paper\.bib$
 ^\.Rproj\.user$
