@@ -1,5 +1,9 @@
 context ("database stats")
 
+test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
+             identical (Sys.getenv ("TRAVIS"), "true") |
+             identical (Sys.getenv ("APPVEYOR"), "True"))
+
 require (testthat)
 
 bikedb <- system.file ('db', 'testdb.sqlite', package = 'bikedata')
@@ -26,9 +30,12 @@ test_that ('dplyr read db', {
 })
 
 test_that ('latest files', {
-               x <- bike_latest_files (bikedb)
-               expect_true (all (!x))
-               expect_equal (length (x), 6)
+               if (test_all)
+               {
+                   x <- bike_latest_files (bikedb)
+                   expect_true (all (!x))
+                   expect_equal (length (x), 6)
+               }
 })
 
 test_that ('date limits', {
@@ -38,17 +45,20 @@ test_that ('date limits', {
 })
 
 test_that ('db stats', {
-               db_stats <- bike_summary_stats (bikedb)
-               expect_is (db_stats, 'data.frame')
-               expect_is (db_stats, 'tbl')
-               expect_is (db_stats, 'tbl_df')
-               expect_equal (names (db_stats), c ('city', 'num_trips',
-                                                  'num_stations',
-                                                  'first_trip', 'last_trip',
-                                                  'latest_files'))
-               expect_equal (dim (db_stats), c (7, 6))
-               expect_true (all (db_stats$city == c ('total', 'bo', 'ch', 'dc',
-                                                     'la', 'lo', 'ny')))
-               expect_true (sum (db_stats$num_trips) == 2396)
-               expect_true (sum (db_stats$num_stations) == (2 * 2192))
+               if (test_all) # summary_stats checks latest_files too
+               {
+                   db_stats <- bike_summary_stats (bikedb)
+                   expect_is (db_stats, 'data.frame')
+                   expect_is (db_stats, 'tbl')
+                   expect_is (db_stats, 'tbl_df')
+                   expect_equal (names (db_stats), c ('city', 'num_trips',
+                                                      'num_stations',
+                                                      'first_trip', 'last_trip',
+                                                      'latest_files'))
+                   expect_equal (dim (db_stats), c (7, 6))
+                   expect_true (all (db_stats$city == c ('total', 'bo', 'ch', 'dc',
+                                                         'la', 'lo', 'ny')))
+                   expect_true (sum (db_stats$num_trips) == 2396)
+                   expect_true (sum (db_stats$num_stations) == (2 * 2192))
+               }
 })
