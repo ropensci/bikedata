@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">bikedata</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.2.1.99</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.2.2.99</span>
       </span>
     </div>
 
@@ -157,24 +157,24 @@
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>1 Installation</h2>
 <p>Currently a development version only which can be installed with the following command,</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"ropensci/bikedata"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1">devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/reexports">install_github</a></span>(<span class="st">"ropensci/bikedata"</span>)</a></code></pre></div>
 <p>and then loaded the usual way</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">library</span> (bikedata)</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">library</span> (bikedata)</a></code></pre></div>
 </div>
 <div id="usage" class="section level2">
 <h2 class="hasAnchor">
 <a href="#usage" class="anchor"></a>2 Usage</h2>
 <p>Data may downloaded for a particular city and stored in an <code>SQLite3</code> database with the simple command,</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="reference/store_bikedata.html">store_bikedata</a></span> (<span class="dt">city =</span> <span class="st">'nyc'</span>, <span class="dt">bikedb =</span> <span class="st">'bikedb'</span>, <span class="dt">dates =</span> <span class="dv">201601</span><span class="op">:</span><span class="dv">201603</span>)</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="co"># [1] 2019513</span></a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw"><a href="reference/store_bikedata.html">store_bikedata</a></span> (<span class="dt">city =</span> <span class="st">'nyc'</span>, <span class="dt">bikedb =</span> <span class="st">'bikedb'</span>, <span class="dt">dates =</span> <span class="dv">201601</span><span class="op">:</span><span class="dv">201603</span>)</a>
+<a class="sourceLine" id="cb3-2" title="2"><span class="co"># [1] 2019513</span></a></code></pre></div>
 <p>where the <code>bikedb</code> parameter provides the name for the database, and the optional argument <code>dates</code> can be used to specify a particular range of dates (Jan-March 2016 in this example). The <code>store_bikedata</code> function returns the total number of trips added to the specified database. The primary objects returned by the <code>bikedata</code> packages are ‘trip matrices’ which contain aggregate numbers of trips between each pair of stations. These are extracted from the database with:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">tm &lt;-<span class="st"> </span><span class="kw"><a href="reference/bike_tripmat.html">bike_tripmat</a></span> (<span class="dt">bikedb =</span> <span class="st">'bikedb'</span>)</a>
-<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="kw">dim</span> (tm); <span class="kw">format</span> (<span class="kw">sum</span> (tm), <span class="dt">big.mark =</span> <span class="st">','</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">tm &lt;-<span class="st"> </span><span class="kw"><a href="reference/bike_tripmat.html">bike_tripmat</a></span> (<span class="dt">bikedb =</span> <span class="st">'bikedb'</span>)</a>
+<a class="sourceLine" id="cb4-2" title="2"><span class="kw">dim</span> (tm); <span class="kw">format</span> (<span class="kw">sum</span> (tm), <span class="dt">big.mark =</span> <span class="st">','</span>)</a></code></pre></div>
 <pre><code>#&gt; [1] 518 518
 #&gt; [1] "2,019,513"</code></pre>
 <p>During the specified time period there were just over 2 million trips between 518 bicycle docking stations. Note that the associated databases can be very large, particularly in the absence of <code>dates</code> restrictions, and extracting these data can take quite some time.</p>
 <p>Data can also be aggregated as daily time series with</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw"><a href="reference/bike_daily_trips.html">bike_daily_trips</a></span> (<span class="dt">bikedb =</span> <span class="st">'bikedb'</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="kw"><a href="reference/bike_daily_trips.html">bike_daily_trips</a></span> (<span class="dt">bikedb =</span> <span class="st">'bikedb'</span>)</a></code></pre></div>
 <pre><code>#&gt; # A tibble: 87 x 2
 #&gt;    date       numtrips
 #&gt;    &lt;chr&gt;         &lt;dbl&gt;
@@ -190,61 +190,61 @@
 #&gt; 10 2016-01-10    14481
 #&gt; # ... with 77 more rows</code></pre>
 <p>A summary of all data contained in a given database can be produced as</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw"><a href="reference/bike_summary_stats.html">bike_summary_stats</a></span> (<span class="dt">bikedb =</span> <span class="st">'bikedb'</span>)</a>
-<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="co">#&gt;    num_trips num_stations          first_trip       last_trip latest_files</span></a>
-<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="co">#&gt; ny  2019513          518 2016-01-01 00:00    2016-03-31 23:59        FALSE</span></a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1"><span class="kw"><a href="reference/bike_summary_stats.html">bike_summary_stats</a></span> (<span class="dt">bikedb =</span> <span class="st">'bikedb'</span>)</a>
+<a class="sourceLine" id="cb8-2" title="2"><span class="co">#&gt;    num_trips num_stations          first_trip       last_trip latest_files</span></a>
+<a class="sourceLine" id="cb8-3" title="3"><span class="co">#&gt; ny  2019513          518 2016-01-01 00:00    2016-03-31 23:59        FALSE</span></a></code></pre></div>
 <p>The final field, <code>latest_files</code>, indicates whether the files in the database are up to date with the latest published files.</p>
 <div id="filtering-trips-by-dates-times-and-weekdays" class="section level3">
 <h3 class="hasAnchor">
 <a href="#filtering-trips-by-dates-times-and-weekdays" class="anchor"></a>2.1 Filtering trips by dates, times, and weekdays</h3>
 <p>Trip matrices can be constructed for trips filtered by dates, days of the week, times of day, or any combination of these. The temporal extent of a <code>bikedata</code> database is given in the above <code><a href="reference/bike_summary_stats.html">bike_summary_stats()</a></code> function, or can be directly viewed with</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw"><a href="reference/bike_datelimits.html">bike_datelimits</a></span> (<span class="dt">bikedb =</span> <span class="st">'bikedb'</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1"><span class="kw"><a href="reference/bike_datelimits.html">bike_datelimits</a></span> (<span class="dt">bikedb =</span> <span class="st">'bikedb'</span>)</a></code></pre></div>
 <pre><code>#&gt;              first               last 
 #&gt; "2016-01-01 00:00" "2016-03-31 23:59"</code></pre>
 <p>Additional temporal arguments which may be passed to the <code>bike_tripmat</code> function include <code>start_date</code>, <code>end_date</code>, <code>start_time</code>, <code>end_time</code>, and <code>weekday</code>. Dates and times may be specified in almost any format, but larger units must always precede smaller units (so years before months before days; hours before minutes before seconds). The following examples illustrate the variety of acceptable formats for these arguments.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">tm &lt;-<span class="st"> </span><span class="kw"><a href="reference/bike_tripmat.html">bike_tripmat</a></span> (<span class="st">'bikedb'</span>, <span class="dt">start_date =</span> <span class="st">"20160102"</span>)</a>
-<a class="sourceLine" id="cb11-2" data-line-number="2">tm &lt;-<span class="st"> </span><span class="kw"><a href="reference/bike_tripmat.html">bike_tripmat</a></span> (<span class="st">'bikedb'</span>, <span class="dt">start_date =</span> <span class="dv">20160102</span>, <span class="dt">end_date =</span> <span class="st">"16/02/28"</span>)</a>
-<a class="sourceLine" id="cb11-3" data-line-number="3">tm &lt;-<span class="st"> </span><span class="kw"><a href="reference/bike_tripmat.html">bike_tripmat</a></span> (<span class="st">'bikedb'</span>, <span class="dt">start_time =</span> <span class="dv">0</span>, <span class="dt">end_time =</span> <span class="dv">1</span>) <span class="co"># 00:00 - 01:00</span></a>
-<a class="sourceLine" id="cb11-4" data-line-number="4">tm &lt;-<span class="st"> </span><span class="kw"><a href="reference/bike_tripmat.html">bike_tripmat</a></span> (<span class="st">'bikedb'</span>, <span class="dt">start_date =</span> <span class="dv">20160101</span>, <span class="dt">end_date =</span> <span class="st">"16,02,28"</span>,</a>
-<a class="sourceLine" id="cb11-5" data-line-number="5">                 <span class="dt">start_time =</span> <span class="dv">6</span>, <span class="dt">end_time =</span> <span class="dv">24</span>) <span class="co"># 06:00 - 23:59</span></a>
-<a class="sourceLine" id="cb11-6" data-line-number="6">tm &lt;-<span class="st"> </span><span class="kw"><a href="reference/bike_tripmat.html">bike_tripmat</a></span> (<span class="st">'bikedb'</span>, <span class="dt">weekday =</span> <span class="dv">1</span>) <span class="co"># 1 = Sunday</span></a>
-<a class="sourceLine" id="cb11-7" data-line-number="7">tm &lt;-<span class="st"> </span><span class="kw"><a href="reference/bike_tripmat.html">bike_tripmat</a></span> (<span class="st">'bikedb'</span>, <span class="dt">weekday =</span> <span class="kw">c</span>(<span class="st">'m'</span>, <span class="st">'Th'</span>))</a>
-<a class="sourceLine" id="cb11-8" data-line-number="8">tm &lt;-<span class="st"> </span><span class="kw"><a href="reference/bike_tripmat.html">bike_tripmat</a></span> (<span class="st">'bikedb'</span>, <span class="dt">weekday =</span> <span class="dv">2</span><span class="op">:</span><span class="dv">6</span>,</a>
-<a class="sourceLine" id="cb11-9" data-line-number="9">                    <span class="dt">start_time =</span> <span class="st">"6:30"</span>, <span class="dt">end_time =</span> <span class="st">"10:15:25"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1">tm &lt;-<span class="st"> </span><span class="kw"><a href="reference/bike_tripmat.html">bike_tripmat</a></span> (<span class="st">'bikedb'</span>, <span class="dt">start_date =</span> <span class="st">"20160102"</span>)</a>
+<a class="sourceLine" id="cb11-2" title="2">tm &lt;-<span class="st"> </span><span class="kw"><a href="reference/bike_tripmat.html">bike_tripmat</a></span> (<span class="st">'bikedb'</span>, <span class="dt">start_date =</span> <span class="dv">20160102</span>, <span class="dt">end_date =</span> <span class="st">"16/02/28"</span>)</a>
+<a class="sourceLine" id="cb11-3" title="3">tm &lt;-<span class="st"> </span><span class="kw"><a href="reference/bike_tripmat.html">bike_tripmat</a></span> (<span class="st">'bikedb'</span>, <span class="dt">start_time =</span> <span class="dv">0</span>, <span class="dt">end_time =</span> <span class="dv">1</span>) <span class="co"># 00:00 - 01:00</span></a>
+<a class="sourceLine" id="cb11-4" title="4">tm &lt;-<span class="st"> </span><span class="kw"><a href="reference/bike_tripmat.html">bike_tripmat</a></span> (<span class="st">'bikedb'</span>, <span class="dt">start_date =</span> <span class="dv">20160101</span>, <span class="dt">end_date =</span> <span class="st">"16,02,28"</span>,</a>
+<a class="sourceLine" id="cb11-5" title="5">                 <span class="dt">start_time =</span> <span class="dv">6</span>, <span class="dt">end_time =</span> <span class="dv">24</span>) <span class="co"># 06:00 - 23:59</span></a>
+<a class="sourceLine" id="cb11-6" title="6">tm &lt;-<span class="st"> </span><span class="kw"><a href="reference/bike_tripmat.html">bike_tripmat</a></span> (<span class="st">'bikedb'</span>, <span class="dt">weekday =</span> <span class="dv">1</span>) <span class="co"># 1 = Sunday</span></a>
+<a class="sourceLine" id="cb11-7" title="7">tm &lt;-<span class="st"> </span><span class="kw"><a href="reference/bike_tripmat.html">bike_tripmat</a></span> (<span class="st">'bikedb'</span>, <span class="dt">weekday =</span> <span class="kw">c</span>(<span class="st">'m'</span>, <span class="st">'Th'</span>))</a>
+<a class="sourceLine" id="cb11-8" title="8">tm &lt;-<span class="st"> </span><span class="kw"><a href="reference/bike_tripmat.html">bike_tripmat</a></span> (<span class="st">'bikedb'</span>, <span class="dt">weekday =</span> <span class="dv">2</span><span class="op">:</span><span class="dv">6</span>,</a>
+<a class="sourceLine" id="cb11-9" title="9">                    <span class="dt">start_time =</span> <span class="st">"6:30"</span>, <span class="dt">end_time =</span> <span class="st">"10:15:25"</span>)</a></code></pre></div>
 </div>
 <div id="filtering-trips-by-demographic-characteristics" class="section level3">
 <h3 class="hasAnchor">
 <a href="#filtering-trips-by-demographic-characteristics" class="anchor"></a>2.2 Filtering trips by demographic characteristics</h3>
 <p>Trip matrices can also be filtered by demographic characteristics through specifying the three additional arguments of <code>member</code>, <code>gender</code>, and <code>birth_year</code>. <code>member = 0</code> is equivalent to <code>member = FALSE</code>, and <code>1</code> equivalent to <code>TRUE</code>. <code>gender</code> is specified numerically such that values of <code>2</code>, <code>1</code>, and <code>0</code> respectively translate to female, male, and unspecified. The following lines demonstrate this functionality</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw">sum</span> (<span class="kw"><a href="reference/bike_tripmat.html">bike_tripmat</a></span> (<span class="st">'bikedb'</span>, <span class="dt">member =</span> <span class="dv">0</span>))</a>
-<a class="sourceLine" id="cb12-2" data-line-number="2"><span class="kw">sum</span> (<span class="kw"><a href="reference/bike_tripmat.html">bike_tripmat</a></span> (<span class="st">'bikedb'</span>, <span class="dt">gender =</span> <span class="st">'female'</span>))</a>
-<a class="sourceLine" id="cb12-3" data-line-number="3"><span class="kw">sum</span> (<span class="kw"><a href="reference/bike_tripmat.html">bike_tripmat</a></span> (<span class="st">'bikedb'</span>, <span class="dt">weekday =</span> <span class="st">'sat'</span>, <span class="dt">birth_year =</span> <span class="dv">1980</span><span class="op">:</span><span class="dv">1990</span>,</a>
-<a class="sourceLine" id="cb12-4" data-line-number="4">                   <span class="dt">gender =</span> <span class="st">'unspecified'</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1"><span class="kw">sum</span> (<span class="kw"><a href="reference/bike_tripmat.html">bike_tripmat</a></span> (<span class="st">'bikedb'</span>, <span class="dt">member =</span> <span class="dv">0</span>))</a>
+<a class="sourceLine" id="cb12-2" title="2"><span class="kw">sum</span> (<span class="kw"><a href="reference/bike_tripmat.html">bike_tripmat</a></span> (<span class="st">'bikedb'</span>, <span class="dt">gender =</span> <span class="st">'female'</span>))</a>
+<a class="sourceLine" id="cb12-3" title="3"><span class="kw">sum</span> (<span class="kw"><a href="reference/bike_tripmat.html">bike_tripmat</a></span> (<span class="st">'bikedb'</span>, <span class="dt">weekday =</span> <span class="st">'sat'</span>, <span class="dt">birth_year =</span> <span class="dv">1980</span><span class="op">:</span><span class="dv">1990</span>,</a>
+<a class="sourceLine" id="cb12-4" title="4">                   <span class="dt">gender =</span> <span class="st">'unspecified'</span>))</a></code></pre></div>
 </div>
 <div id="citation" class="section level3">
 <h3 class="hasAnchor">
 <a href="#citation" class="anchor"></a>3. Citation</h3>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="kw">citation</span> (<span class="st">"bikedata"</span>)</a>
-<a class="sourceLine" id="cb13-2" data-line-number="2"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb13-3" data-line-number="3"><span class="co">#&gt; To cite bikedata in publications use:</span></a>
-<a class="sourceLine" id="cb13-4" data-line-number="4"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb13-5" data-line-number="5"><span class="co">#&gt;   Mark Padgham, Richard Ellison (2017). bikedata Journal of Open Source Software, 2(20). URL</span></a>
-<a class="sourceLine" id="cb13-6" data-line-number="6"><span class="co">#&gt;   https://doi.org/10.21105/joss.00471</span></a>
-<a class="sourceLine" id="cb13-7" data-line-number="7"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb13-8" data-line-number="8"><span class="co">#&gt; A BibTeX entry for LaTeX users is</span></a>
-<a class="sourceLine" id="cb13-9" data-line-number="9"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb13-10" data-line-number="10"><span class="co">#&gt;   @Article{,</span></a>
-<a class="sourceLine" id="cb13-11" data-line-number="11"><span class="co">#&gt;     title = {bikedata},</span></a>
-<a class="sourceLine" id="cb13-12" data-line-number="12"><span class="co">#&gt;     author = {Mark Padgham and Richard Ellison},</span></a>
-<a class="sourceLine" id="cb13-13" data-line-number="13"><span class="co">#&gt;     journal = {The Journal of Open Source Software},</span></a>
-<a class="sourceLine" id="cb13-14" data-line-number="14"><span class="co">#&gt;     year = {2017},</span></a>
-<a class="sourceLine" id="cb13-15" data-line-number="15"><span class="co">#&gt;     volume = {2},</span></a>
-<a class="sourceLine" id="cb13-16" data-line-number="16"><span class="co">#&gt;     number = {20},</span></a>
-<a class="sourceLine" id="cb13-17" data-line-number="17"><span class="co">#&gt;     month = {Dec},</span></a>
-<a class="sourceLine" id="cb13-18" data-line-number="18"><span class="co">#&gt;     publisher = {The Open Journal},</span></a>
-<a class="sourceLine" id="cb13-19" data-line-number="19"><span class="co">#&gt;     url = {https://doi.org/10.21105/joss.00471},</span></a>
-<a class="sourceLine" id="cb13-20" data-line-number="20"><span class="co">#&gt;     doi = {10.21105/joss.00471},</span></a>
-<a class="sourceLine" id="cb13-21" data-line-number="21"><span class="co">#&gt;   }</span></a></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1"><span class="kw">citation</span> (<span class="st">"bikedata"</span>)</a>
+<a class="sourceLine" id="cb13-2" title="2"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb13-3" title="3"><span class="co">#&gt; To cite bikedata in publications use:</span></a>
+<a class="sourceLine" id="cb13-4" title="4"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb13-5" title="5"><span class="co">#&gt;   Mark Padgham, Richard Ellison (2017). bikedata Journal of Open Source Software, 2(20). URL</span></a>
+<a class="sourceLine" id="cb13-6" title="6"><span class="co">#&gt;   https://doi.org/10.21105/joss.00471</span></a>
+<a class="sourceLine" id="cb13-7" title="7"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb13-8" title="8"><span class="co">#&gt; A BibTeX entry for LaTeX users is</span></a>
+<a class="sourceLine" id="cb13-9" title="9"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb13-10" title="10"><span class="co">#&gt;   @Article{,</span></a>
+<a class="sourceLine" id="cb13-11" title="11"><span class="co">#&gt;     title = {bikedata},</span></a>
+<a class="sourceLine" id="cb13-12" title="12"><span class="co">#&gt;     author = {Mark Padgham and Richard Ellison},</span></a>
+<a class="sourceLine" id="cb13-13" title="13"><span class="co">#&gt;     journal = {The Journal of Open Source Software},</span></a>
+<a class="sourceLine" id="cb13-14" title="14"><span class="co">#&gt;     year = {2017},</span></a>
+<a class="sourceLine" id="cb13-15" title="15"><span class="co">#&gt;     volume = {2},</span></a>
+<a class="sourceLine" id="cb13-16" title="16"><span class="co">#&gt;     number = {20},</span></a>
+<a class="sourceLine" id="cb13-17" title="17"><span class="co">#&gt;     month = {Dec},</span></a>
+<a class="sourceLine" id="cb13-18" title="18"><span class="co">#&gt;     publisher = {The Open Journal},</span></a>
+<a class="sourceLine" id="cb13-19" title="19"><span class="co">#&gt;     url = {https://doi.org/10.21105/joss.00471},</span></a>
+<a class="sourceLine" id="cb13-20" title="20"><span class="co">#&gt;     doi = {10.21105/joss.00471},</span></a>
+<a class="sourceLine" id="cb13-21" title="21"><span class="co">#&gt;   }</span></a></code></pre></div>
 </div>
 <div id="code-of-conduct" class="section level3">
 <h3 class="hasAnchor">
@@ -296,8 +296,8 @@
 <li><a href="https://ci.appveyor.com/project/ropensci/bikedata"><img src="https://ci.appveyor.com/api/projects/status/github/ropensci/bikedata?svg=true" alt="Build status"></a></li>
 <li><a href="https://codecov.io/gh/ropensci/bikedata"><img src="https://codecov.io/gh/ropensci/bikedata/branch/master/graph/badge.svg" alt="codecov"></a></li>
 <li><a href="http://www.repostatus.org/#active"><img src="http://www.repostatus.org/badges/latest/active.svg" alt="Project Status: Active"></a></li>
-<li><a href="http://cran.r-project.org/web/packages/bikedata"><img src="http://www.r-pkg.org/badges/version/bikedata" alt="CRAN_Status_Badge"></a></li>
-<li><a href="http://cran.r-project.org/package=bikedata"><img src="http://cranlogs.r-pkg.org/badges/grand-total/bikedata?color=orange" alt="CRAN Downloads"></a></li>
+<li><a href="https://cran.r-project.org/package=bikedata"><img src="https://www.r-pkg.org/badges/version/bikedata" alt="CRAN_Status_Badge"></a></li>
+<li><a href="https://cran.r-project.org/package=bikedata"><img src="https://cranlogs.r-pkg.org/badges/grand-total/bikedata?color=orange" alt="CRAN Downloads"></a></li>
 <li><a href="https://github.com/ropensci/onboarding/issues/116"><img src="http://badges.ropensci.org/116_status.svg"></a></li>
 </ul>
 </div>
