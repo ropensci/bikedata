@@ -10,6 +10,7 @@ Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostat
 [![CRAN
 Downloads](https://cranlogs.r-pkg.org/badges/grand-total/bikedata?color=orange)](https://cran.r-project.org/package=bikedata)
 [![](http://badges.ropensci.org/116_status.svg)](https://github.com/ropensci/onboarding/issues/116)
+[![status](http://joss.theoj.org/papers/232cd77b73dbef4accd36ddfb20f96ae/status.svg)](http://joss.theoj.org/papers/232cd77b73dbef4accd36ddfb20f96ae)
 
 The `bikedata` package aims to enable ready importing of historical trip
 data from all public bicycle hire systems which provide data, and will
