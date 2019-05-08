@@ -45,7 +45,7 @@ bike_distmat <- function (bikedb, city, expand = 0.5,
         dmat <- reshape2::melt (dmat,
                                 id.vars = c (rownames (dmat), colnames (dmat)))
         colnames (dmat) <- c ("start_station_id", "end_station_id", "distance")
-        dmat <- tibble::as.tibble (dmat)
+        dmat <- tibble::as_tibble (dmat)
     } else
     {
         attr (dmat, "variable") <- "distance" # used in match_matrices
