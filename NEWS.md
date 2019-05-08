@@ -1,5 +1,8 @@
-0.2.2.099
+0.2.3
 ===================
+Minor changes:
+- Fix dl_bikedata for Philadelphia
+- Improve robustness of tests
 
 0.2.2
 ===================

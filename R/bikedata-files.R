@@ -109,11 +109,16 @@ get_nabsa_files <- function (city)
     hrefs <- xml2::xml_attr (xml2::xml_find_all (doc, ".//a"), "href")
     hrefs <- hrefs [which (grepl ("\\.zip", hrefs) &
                            !grepl ("[Ss]tation", hrefs))]
+
     if (city == 'la')
+    {
         the_url_sh <- "https://bikeshare.metro.net/"
-    as.character (vapply (hrefs, function (i)
-                          gsub ("../../", the_url_sh, i, fixed = TRUE),
-                          "character"))
+        hrefs <- as.character (vapply (hrefs, function (i)
+                                       gsub ("../../", the_url_sh, i, fixed = TRUE),
+                                       "character"))
+    }
+
+    return (hrefs)
 }
 
 
