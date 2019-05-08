@@ -280,7 +280,16 @@ bike_get_dc_stations <- function ()
 #' @noRd
 bike_get_gu_stations <- function ()
 {
-    link <- "https://www.mibici.net/site/assets/files/1118/nomenclatura-3.csv"
+    # the name of this station file changes, but it's always called
+    # "nomenclatura" something, and is the only file with this word in its name
+    link <- "https://www.mibici.net/en/open-data/"
+    hrefs <- httr::content (httr::GET (link), encoding = 'UTF-8') %>%
+        xml2::xml_children () %>%
+        xml2::xml_find_all (., ".//a") %>%
+        xml2::xml_attr (., "href")
+    link <- paste0 ("https://www.mibici.net",
+                    hrefs [grep ("nomenclatura", hrefs, ignore.case = TRUE)])
+
     suppressMessages (
                       dat <- httr::GET (link) %>%
                           httr::content (encoding = 'UTF-8', as = "parsed")
