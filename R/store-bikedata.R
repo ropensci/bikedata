@@ -83,7 +83,7 @@ store_bikedata <- function (bikedb, city, data_dir, dates = NULL, quiet = FALSE)
             message ('Checking data for ', city)
         if ("mn" %in% city)
             stop ('Data for the Nice Ride MN system must be downloaded ',
-                  'manually from\nhttps://www.niceridemn.org/data/')
+                  'manually from\nhttps://www.niceridemn.com/system-data/')
         data_dir <- tempdir ()
     } else if (missing (city))
     {

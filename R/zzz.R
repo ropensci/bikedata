@@ -13,7 +13,7 @@
                    "  and https://www.divvybikes.com/data-license-agreement\n",
                    "  and https://www.thehubway.com/data-license-agreement\n",
                    "Nice Ride Minnesota license",
-                   "  https://www.niceridemn.org/data_license")
+                   "  https://assets.niceridemn.com/data-license-agreement.html")
     packageStartupMessage (msg)
 }
 

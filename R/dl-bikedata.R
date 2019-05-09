@@ -51,7 +51,7 @@ dl_bikedata <- function (city, data_dir = tempdir(), dates = NULL,
     city <- convert_city_names (city)
     if (city == 'mn')
         warning ('Data for the Nice Ride MN system must be downloaded ',
-                 'manually from\nhttps://www.niceridemn.org/data/, and ',
+                 'manually from\nhttps://www.niceridemn.com/system-data/, and ',
                  'loaded using store_bikedata')
 
     dl_files <- get_bike_files (city)

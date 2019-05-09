@@ -286,7 +286,7 @@ bike_get_gu_stations <- function ()
     hrefs <- httr::content (httr::GET (link), encoding = 'UTF-8') %>%
         xml2::xml_children () %>%
         xml2::xml_find_all (., ".//a") %>%
-        xml2::xml_attr (., "href")
+        xml2::xml_attr ("href")
     link <- paste0 ("https://www.mibici.net",
                     hrefs [grep ("nomenclatura", hrefs, ignore.case = TRUE)])
 
