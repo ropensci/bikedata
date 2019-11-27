@@ -4,8 +4,15 @@
 \alias{bike_daily_trips}
 \title{Extract daily trip counts for all stations}
 \usage{
-bike_daily_trips(bikedb, city, station, member, birth_year, gender,
-  standardise = FALSE)
+bike_daily_trips(
+  bikedb,
+  city,
+  station,
+  member,
+  birth_year,
+  gender,
+  standardise = FALSE
+)
 }
 \arguments{
 \item{bikedb}{A string containing the path to the SQLite3 database.

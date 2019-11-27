@@ -7,8 +7,7 @@
 \usage{
 dl_bikedata(city, data_dir = tempdir(), dates = NULL, quiet = FALSE)
 
-download_bikedata(city, data_dir = tempdir(), dates = NULL,
-  quiet = FALSE)
+download_bikedata(city, data_dir = tempdir(), dates = NULL, quiet = FALSE)
 }
 \arguments{
 \item{city}{City for which to download bike data, or name of corresponding

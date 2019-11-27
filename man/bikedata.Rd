@@ -3,7 +3,6 @@
 \docType{package}
 \name{bikedata}
 \alias{bikedata}
-\alias{bikedata-package}
 \title{Download and aggregate data from public bicycle hire systems}
 \description{
 Download data from all public bicycle hire systems which provide open data,

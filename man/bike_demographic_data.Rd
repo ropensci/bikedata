@@ -30,7 +30,7 @@ sum (bike_tripmat (bikedb = bikedb, city = 'bo', gender = 'f')) # 22
 sum (bike_tripmat (bikedb = bikedb, city = 'bo', gender = 2)) # 22
 sum (bike_tripmat (bikedb = bikedb, city = 'bo', gender = 1)) # = m; 68
 sum (bike_tripmat (bikedb = bikedb, city = 'bo', gender = 0)) # = n; 9
-# Sum of gender-filtered trips is less than total because \\code{gender = 0}
+# Sum of gender-filtered trips is less than total because \code{gender = 0}
 # extracts all registered users with unspecified genders, while without gender
 # filtering extracts all trips for registered and non-registered users.
 
