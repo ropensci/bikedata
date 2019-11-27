@@ -5,21 +5,19 @@
   ],
   "@type": "SoftwareSourceCode",
   "identifier": "bikedata",
-  "description":
-    "Download and aggregate data from all public hire bicycle systems\n    which provide open data, currently including 'Santander' Cycles in London,\n    U.K., and from the U.S.A., 'citibike' in New York City NY, 'Divvy' in\n    Chicago IL, 'Capital Bikeshare' in Washington DC, 'Hubway' in Boston MA, \n    'Metro' in Los Angeles LA, and 'Indego' in Philadelphia PA.",
-  "name":
-    "bikedata: Download and Aggregate Data from Public Hire Bicycle Systems",
-  "codeRepository": "https://github.com/ropensci/bikedata.git",
+  "description": "Download and aggregate data from all public hire bicycle systems\n    which provide open data, currently including 'Santander' Cycles in London,\n    U.K.; from the U.S.A., 'Ford GoBike' in San Francisco CA, 'citibike' in New\n    York City NY, 'Divvy' in Chicago IL, 'Capital Bikeshare' in Washington DC,\n    'Hubway' in Boston MA, 'Metro' in Los Angeles LA, 'Indego' in Philadelphia\n    PA, and 'Nice Ride' in Minnesota; 'Bixi' from Montreal, Canada; and 'mibici'\n    from Guadalajara, Mexico.",
+  "name": "bikedata: Download and Aggregate Data from Public Hire Bicycle Systems",
+  "codeRepository": "https://github.com/ropensci/bikedata",
   "issueTracker": "https://github.com/ropensci/bikedata/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.1.0",
+  "version": "0.2.3.2",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
-    "version": "3.4.2",
+    "version": "3.6.1",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 3.4.2 (2017-09-28)",
+  "runtimePlatform": "R version 3.6.1 (2019-07-05)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -38,6 +36,11 @@
       "@type": "Person",
       "givenName": "Richard",
       "familyName": "Ellison"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Tom",
+      "familyName": "Buckley"
     }
   ],
   "contributor": [
@@ -46,13 +49,15 @@
       "name": "SQLite Consortium"
     }
   ],
-  "maintainer": {
-    "@type": "Person",
-    "givenName": "Mark",
-    "familyName": "Padgham",
-    "email": "mark.padgham@email.com",
-    "@id": "https://orcid.org/0000-0003-2172-5265"
-  },
+  "maintainer": [
+    {
+      "@type": "Person",
+      "givenName": "Mark",
+      "familyName": "Padgham",
+      "email": "mark.padgham@email.com",
+      "@id": "https://orcid.org/0000-0003-2172-5265"
+    }
+  ],
   "softwareSuggestions": [
     {
       "@type": "SoftwareApplication",
@@ -61,9 +66,10 @@
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
-        "name": "Central R Archive Network (CRAN)",
+        "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
-      }
+      },
+      "sameAs": "https://CRAN.R-project.org/package=knitr"
     },
     {
       "@type": "SoftwareApplication",
@@ -72,9 +78,10 @@
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
-        "name": "Central R Archive Network (CRAN)",
+        "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
-      }
+      },
+      "sameAs": "https://CRAN.R-project.org/package=rmarkdown"
     },
     {
       "@type": "SoftwareApplication",
@@ -83,9 +90,10 @@
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
-        "name": "Central R Archive Network (CRAN)",
+        "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
-      }
+      },
+      "sameAs": "https://CRAN.R-project.org/package=roxygen2"
     },
     {
       "@type": "SoftwareApplication",
@@ -94,9 +102,10 @@
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
-        "name": "Central R Archive Network (CRAN)",
+        "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
-      }
+      },
+      "sameAs": "https://CRAN.R-project.org/package=testthat"
     },
     {
       "@type": "SoftwareApplication",
@@ -105,12 +114,19 @@
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
-        "name": "Central R Archive Network (CRAN)",
+        "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
-      }
+      },
+      "sameAs": "https://CRAN.R-project.org/package=covr"
     }
   ],
   "softwareRequirements": [
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "R",
+      "name": "R",
+      "version": ">= 3.0"
+    },
     {
       "@type": "SoftwareApplication",
       "identifier": "DBI",
@@ -118,9 +134,10 @@
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
-        "name": "Central R Archive Network (CRAN)",
+        "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
-      }
+      },
+      "sameAs": "https://CRAN.R-project.org/package=DBI"
     },
     {
       "@type": "SoftwareApplication",
@@ -129,9 +146,10 @@
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
-        "name": "Central R Archive Network (CRAN)",
+        "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
-      }
+      },
+      "sameAs": "https://CRAN.R-project.org/package=dodgr"
     },
     {
       "@type": "SoftwareApplication",
@@ -140,9 +158,10 @@
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
-        "name": "Central R Archive Network (CRAN)",
+        "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
-      }
+      },
+      "sameAs": "https://CRAN.R-project.org/package=httr"
     },
     {
       "@type": "SoftwareApplication",
@@ -151,9 +170,10 @@
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
-        "name": "Central R Archive Network (CRAN)",
+        "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
-      }
+      },
+      "sameAs": "https://CRAN.R-project.org/package=lubridate"
     },
     {
       "@type": "SoftwareApplication",
@@ -162,9 +182,10 @@
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
-        "name": "Central R Archive Network (CRAN)",
+        "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
-      }
+      },
+      "sameAs": "https://CRAN.R-project.org/package=magrittr"
     },
     {
       "@type": "SoftwareApplication",
@@ -178,9 +199,22 @@
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
-        "name": "Central R Archive Network (CRAN)",
+        "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
-      }
+      },
+      "sameAs": "https://CRAN.R-project.org/package=Rcpp"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "readxl",
+      "name": "readxl",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=readxl"
     },
     {
       "@type": "SoftwareApplication",
@@ -189,9 +223,10 @@
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
-        "name": "Central R Archive Network (CRAN)",
+        "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
-      }
+      },
+      "sameAs": "https://CRAN.R-project.org/package=RSQLite"
     },
     {
       "@type": "SoftwareApplication",
@@ -200,9 +235,10 @@
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
-        "name": "Central R Archive Network (CRAN)",
+        "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
-      }
+      },
+      "sameAs": "https://CRAN.R-project.org/package=reshape2"
     },
     {
       "@type": "SoftwareApplication",
@@ -211,9 +247,10 @@
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
-        "name": "Central R Archive Network (CRAN)",
+        "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
-      }
+      },
+      "sameAs": "https://CRAN.R-project.org/package=tibble"
     },
     {
       "@type": "SoftwareApplication",
@@ -222,31 +259,62 @@
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
-        "name": "Central R Archive Network (CRAN)",
+        "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
-      }
+      },
+      "sameAs": "https://CRAN.R-project.org/package=xml2"
     },
     {
       "@type": "SoftwareApplication",
-      "identifier": "R",
-      "name": "R",
-      "version": "3.0"
+      "identifier": "https://sysreqs.r-hub.io/get/cxx11"
     }
   ],
   "applicationCategory": "DataAccess",
   "isPartOf": "https://ropensci.org",
-  "keywords": [
-    "bicycle-hire-systems",
-    "bike-hire-systems",
-    "bike-hire",
-    "bicycle-hire",
-    "database",
-    "bike-data"
-  ],
+  "keywords": ["bicycle-hire-systems", "bike-hire-systems", "bike-hire", "bicycle-hire", "database", "bike-data", "r", "rstats", "r-package", "peer-reviewed"],
   "contIntegration": "https://travis-ci.org/ropensci/bikedata",
   "developmentStatus": "active",
-  "releaseNotes":
-    "https://github.com/ropensci/bikedata.git/blob/master/NEWS.md",
-  "readme": "https://github.com/ropensci/bikedata.git/blob/master/README.md",
-  "fileSize": "2614.888KB"
+  "releaseNotes": "https://github.com/ropensci/bikedata/blob/master/NEWS.md",
+  "readme": "https://github.com/ropensci/bikedata/blob/master/README.md",
+  "fileSize": "2926.121KB",
+  "copyrightHolder": {},
+  "funder": {},
+  "review": {
+    "@type": "Review",
+    "url": "https://github.com/ropensci/onboarding/issues/116",
+    "provider": "http://ropensci.org"
+  },
+  "citation": [
+    {
+      "@type": "ScholarlyArticle",
+      "datePublished": "2017",
+      "author": [
+        {
+          "@type": "Person",
+          "givenName": "Mark",
+          "familyName": "Padgham"
+        },
+        {
+          "@type": "Person",
+          "givenName": "Richard",
+          "familyName": "Ellison"
+        }
+      ],
+      "name": "bikedata",
+      "identifier": "10.21105/joss.00471",
+      "url": "https://doi.org/10.21105/joss.00471",
+      "@id": "https://doi.org/10.21105/joss.00471",
+      "sameAs": "https://doi.org/10.21105/joss.00471",
+      "isPartOf": {
+        "@type": "PublicationIssue",
+        "issueNumber": "20",
+        "datePublished": "2017",
+        "isPartOf": {
+          "@type": ["PublicationVolume", "Periodical"],
+          "volumeNumber": "2",
+          "name": "The Journal of Open Source Software"
+        }
+      }
+    }
+  ]
 }
