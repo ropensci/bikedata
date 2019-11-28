@@ -35,27 +35,6 @@ get_aws_bike_files <- function (bucket)
 }
 
 
-#' get_chicago_bike_files
-#'
-#' Returns list of URLs for each trip data file from Chicago's Divvy system
-#'
-#' @return List of URLs used to download data
-#'
-#' @note This is also an AWS, but it requires an OAuth key for direct access.
-#' The AWS URLs are nevertheless listed in the main \code{html} file. 
-#'
-#' @noRd
-get_chicago_bike_files <- function ()
-{
-    host <- "https://www.divvybikes.com/system-data"
-    . <- NULL # suppress R CMD check note
-    nodes <- httr::content (httr::GET (host), encoding = 'UTF-8') %>%
-        xml2::xml_find_all (., ".//aside") %>%
-        xml2::xml_find_all (., ".//a")
-    unique (xml2::xml_attr (nodes, "href"))
-}
-
-
 #' get_london_bike_files
 #'
 #' Returns list of URLs for each trip data file from London's Santander Cycles
@@ -175,9 +154,9 @@ get_guadala_bike_files <- function ()
 #' @noRd
 get_bike_files <- function (city)
 {
-    aws_cities <- c ('ny', 'dc', 'bo', 'sf')
+    aws_cities <- c ('ny', 'dc', 'bo', 'sf', 'ch')
     buckets <- c ('tripdata', 'capitalbikeshare-data',
-                  'hubway-data', 'fordgobike-data')
+                  'hubway-data', 'fordgobike-data', 'divvy-data')
     nabsa_cities <- c ('la', 'ph')
 
     if (city %in% aws_cities)
@@ -186,8 +165,6 @@ get_bike_files <- function (city)
         files <- get_aws_bike_files (bucket)
     } else if (city %in% nabsa_cities)
         files <- get_nabsa_files (city = city)
-    else if (city == 'ch')
-        files <- get_chicago_bike_files ()
     else if (city == 'gu')
         files <- get_guadala_bike_files ()
     else if (city == 'lo')
