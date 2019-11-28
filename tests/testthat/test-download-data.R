@@ -135,18 +135,12 @@ test_that ('dl_bikedata la', {
                          })
 
 test_that ('dl_bikedata chicago', {
-               host <- "https://www.divvybikes.com/system-data"
-               nodes <- httr::content (httr::GET (host),
-                                       encoding = 'UTF-8') %>%
-                                       xml2::xml_find_all (., ".//aside") %>%
-                                       xml2::xml_find_all (., ".//a")
-               files <- unique (basename (xml2::xml_attr (nodes, "href")))
-               files <- file.path (tempdir (), files)
+               files <- file.path (tempdir (), basename (get_bike_files ("ch")))
+
                for (f in files) write ('a', file = f)
                msg <- "All data files already exist"
                expect_message (tryCatch (dl_bikedata (city = 'chicago',
-                                                      data_dir = tempdir (),
-                                                      dates = d),
+                                                      data_dir = tempdir ()),
                                          warning = function (w) { message (msg); NULL },
                                          error = function (e) { message (msg); NULL }),
                                msg)
