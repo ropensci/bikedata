@@ -289,6 +289,8 @@ bike_get_gu_stations <- function ()
         xml2::xml_attr ("href")
     link <- paste0 ("https://www.mibici.net",
                     hrefs [grep ("nomenclatura", hrefs, ignore.case = TRUE)])
+    if (length (link) > 1)
+        link <- link [length (link)] # latest version
 
     suppressMessages (
                       dat <- httr::GET (link) %>%
