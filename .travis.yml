@@ -1,30 +1,21 @@
 language: R
-warnings_are_errors: true
-sudo: true
 cache: packages
 
 matrix:
-    allow_failures: # temporarily enabled. TODO: disable
-        -os: osx
     include:
-        - os: linux
-          r: release
-          dist: trusty # 14.04
-          env: R_CODECOV=true
-        - os: linux
-          r: devel
-          dist: trusty
-        - os: linux
-          r: oldrel
-          dist: trusty
+        - r: release
+          after_success:
+              - Rscript -e "covr::codecov(line_exclusions = list('R/distmat.R',"\
+                            "'src/vendor/sqlite3/sqlite3.c',"\
+                            "'src/sqlite3db-add-data.cpp'=c(398:420)))" # dump_headers fn
+        - r: devel
+        - r: oldrel
         - os: osx
           r: release
-          before_install: ''
-          disable_homebrew: true
-          #- os: osx
-          #r: devel
-          #before_install: ''
-          #disable_homebrew: true
+    allow_failures:
+        - r: devel
+        - os: osx
+          r: release
 
 notifications:
   email:
@@ -33,21 +24,5 @@ notifications:
   slack:
     secure: IwEjNKm8jXWYMRcXlY9OtMphJs/PWqs1mE2SKLUzYRbo8dYnJ6LqqHVua+7nh/xZYu4hrq6NYDFg5vfDTAfIkvd66dP8UyerfSb9jCw+RkUzBKH6YTtlrmQdgbORvSsHY70G752cOGXkza8MWC7XJT0W7DFz1pg2gBsQHdsQ7cR3CdldxNjyaDM24HHAGKVsLVvBMUGb6Dmzvl4fXWk06MeU36+75NneBp8bMJg+dxZlyzilGPszTMitiEe3l1oKLWkOkvOgDuYpECWIYH6cw1tb4jrffR4DITzCMqaYEGXCZdGTFmd7xyNYcXX8fV3gYKukuvvkDgVOXP7TCchieigKkADfsJ05wnYWpppFP196iak0qtUmvZw63zz9GyfkNMQAmVOUt8GMwpowHUlu8q+aFAhZhUNBtY4MvWcnE3E9ltzUGxxCe/1eBstKUSudtnWEEGTQMSnp1nT7bdvZAUtRAYy2PmjIpZpMH+gChpnRcTcDZup7LHQ9wXke3i+JKkPnASrfQd+v+ugnBHqBJ6Oxzj1iFI3g2Ob7jXNPgeXLWDf0M65/BCjhE/3UFoOXN3h7WkTM2JMcmVw7uSVjdkhFdRUxhiCZrs/5GekEapWlFUcO284XUF5TXbx02PhswIZx9OO2hq1BvGjPGY9QC54U2BahDciMKbmn+AQ2Bvg=
 
-#before_script
-#- R -q -e 'devtools::install_github("ropenscilabs/tic"); tic::prepare_all_stages()'
-
 r_packages:
-    - devtools
-r_github_packages:
-      - jimhester/covr
-
-#after_success
-after_success:
-    - Rscript -e "covr::codecov(line_exclusions = list('R/distmat.R',"\
-        "'src/vendor/sqlite3/sqlite3.c',"\
-        "'src/sqlite3db-add-data.cpp'=c(398:420)))" # dump_headers fn
-    #- R -q -e 'tic::after_success()'
-      #- Rscript -e "source ('https://install-github.me/MangoTheCat/goodpractice')"
-      #- Rscript -e 'library(goodpractice);gp(checks=all_checks()[grepl("(rcmdcheck|covr)",all_checks())])'
-      #- Rscript -e 'library(goodpractice);gp(checks=all_checks())'
-
+    - covr
