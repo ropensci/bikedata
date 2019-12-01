@@ -1,4 +1,5 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
 [![Build
 Status](https://travis-ci.org/ropensci/bikedata.svg?branch=master)](https://travis-ci.org/ropensci/bikedata?branch=master)
 [![Build
@@ -113,7 +114,7 @@ bike_daily_trips (bikedb = 'bikedb')
     #>  8 2016-01-08    29131
     #>  9 2016-01-08    21140
     #> 10 2016-01-10    14481
-    #> # ... with 77 more rows
+    #> # … with 77 more rows
 
 A summary of all data contained in a given database can be produced as
 
@@ -205,7 +206,7 @@ citation ("bikedata")
 ### 4. Code of Conduct
 
 Please note that this project is released with a [Contributor Code of
-Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree
-to abide by its terms.
+Conduct](https://github.com/ropensci/bikedata/blob/master/CODE_OF_CONDUCT.md).
+By participating in this project you agree to abide by its terms.
 
 [![ropensci\_footer](http://ropensci.org/public_images/github_footer.png)](http://ropensci.org)
