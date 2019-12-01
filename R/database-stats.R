@@ -216,6 +216,7 @@ bike_db_totals <- function (bikedb, trips = TRUE, city)
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' data_dir <- tempdir ()
 #' bike_write_test_data (data_dir = data_dir)
 #' # or download some real data!
@@ -231,6 +232,7 @@ bike_db_totals <- function (bikedb, trips = TRUE, city)
 #' bike_rm_db (bikedb)
 #' # don't forget to remove real data!
 #' # file.remove (list.files (data_dir, pattern = '.zip'))
+#'}
 bike_latest_files <- function (bikedb)
 {
     if (missing (bikedb))
@@ -242,6 +244,9 @@ bike_latest_files <- function (bikedb)
     files <- DBI::dbGetQuery (db, "SELECT * FROM datafiles")
     cities <- unique (files$city)
     DBI::dbDisconnect (db)
+
+    files <- files [files$city != "mn", ]
+    cities <- cities [cities != "mn"]
 
     latest_files <- rep (TRUE, length (cities))
     names (latest_files) <- cities
