@@ -134,7 +134,7 @@ dl_bikedata <- function (city, data_dir = tempdir(), dates = NULL,
         {
             fcsv <- paste0 (tools::file_path_sans_ext (f), ".csv")
             readxl::read_xlsx (f) %>%
-                write.csv (, file = fcsv, row.names = FALSE)
+                utils::write.csv (, file = fcsv, row.names = FALSE)
             chk <- file.remove (f)
         }
         ptn <- paste0 (ptn, '|.csv')

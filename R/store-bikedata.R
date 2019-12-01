@@ -71,7 +71,7 @@ store_bikedata <- function (bikedb, city, data_dir, dates = NULL, quiet = FALSE)
                      "for all cities and store it in a *HUGE* database.\n",
                      "This will likely take quite a long time. ",
                      "Is this really what you want to do?")
-        val <- menu (c ("yes", "no"), graphics = FALSE, title = mt)
+        val <- utils::menu (c ("yes", "no"), graphics = FALSE, title = mt)
         if (val != 1)
             stop ('Yeah, probably better not to do that')
         city <- bike_demographic_data ()$city
@@ -477,7 +477,7 @@ bike_unzip_files <- function (data_dir, bikedb, city, dates)
         flist_zip <- get_new_datafiles (bikedb, flist_zip)
         for (f in flist_zip)
         {
-            fi <- unzip (f, list = TRUE)$Name
+            fi <- utils::unzip (f, list = TRUE)$Name
             # some files (LA) have junk "MAXOSX" files in the archives
             fi <- fi [which (!grepl ("MACOSX", fi))]
             if (city == 'mn')
@@ -501,7 +501,7 @@ bike_unzip_files <- function (data_dir, bikedb, city, dates)
             }
             if (!all (fi %in% fcsv))
             {
-                unzip (f, exdir = data_dir, junkpaths = TRUE)
+                utils::unzip (f, exdir = data_dir, junkpaths = TRUE)
                 flist_rm <- c (flist_rm, fi)
             }
         }
@@ -566,7 +566,7 @@ bike_unzip_files_chicago <- function (data_dir, bikedb, dates)
     {
         for (f in flist_zip)
         {
-            fi <- unzip (f, list = TRUE)$Name
+            fi <- utils::unzip (f, list = TRUE)$Name
             fi_trips <- fi [which (grepl ('Trips.*\\.csv', basename (fi)))]
             fi_stns <- fi [which (grepl ('Stations', basename (fi)) &
                                             grepl ('.csv', basename (fi)))]
@@ -574,14 +574,15 @@ bike_unzip_files_chicago <- function (data_dir, bikedb, dates)
             flist_csv_stns <- c (flist_csv_stns, basename (fi_stns))
             if (!all (basename (fi_trips) %in% existing_csv_files))
             {
-                unzip (f, files = fi_trips, exdir = data_dir, junkpaths = TRUE)
+                utils::unzip (f, files = fi_trips, exdir = data_dir,
+                              junkpaths = TRUE)
                 flist_rm <- c (flist_rm, basename (fi_trips))
             }
             if (length (fi_stns) > 0) # always except 2014_Q1Q2 with .xlsx
                 if (!all (basename (fi_stns) %in% existing_csv_files))
                 {
-                    unzip (f, files = fi_stns, exdir = data_dir,
-                           junkpaths = TRUE)
+                    utils::unzip (f, files = fi_stns, exdir = data_dir,
+                                  junkpaths = TRUE)
                     flist_rm <- c (flist_rm, basename (fi_stns))
                 }
         }

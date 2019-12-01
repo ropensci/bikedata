@@ -31,15 +31,15 @@ bike_write_test_data <- function (data_dir = tempdir ())
     # doesn't
     #bike_test_data <- get ("bike_test_data", envir = .GlobalEnv)
     env <- new.env ()
-    data ('bike_test_data', envir = env)
+    utils::data ('bike_test_data', envir = env)
 
     # chicago has to be done separately
     fdir <- file.path (data_dir, 'Divvy_Trips_sample')
     dir.create (fdir)
     fst <- file.path (data_dir, 'Divvy_Trips_sample', 'Divvy_Stations.csv')
     ftr <- file.path (data_dir, 'Divvy_Trips_sample', 'Divvy_Trips_sample.csv')
-    write.csv (env$bike_test_data$ch_st, file = fst,
-               quote = FALSE, row.names = FALSE, na = '')
+    utils::write.csv (env$bike_test_data$ch_st, file = fst,
+                      quote = FALSE, row.names = FALSE, na = '')
     # quotes need manual tweaking here:
     ch_tr <- env$bike_test_data$ch_tr
     cols <- c ("trip_id", "bikeid", "tripduration", "from_station_id",
@@ -48,29 +48,30 @@ bike_write_test_data <- function (data_dir = tempdir ())
         ch_tr [[i]] <- as.character (ch_tr [[i]])
     ch_tr$birthyear [which (is.na (ch_tr$birthyear))] <- ""
      
-    write.csv (ch_tr, file = ftr, quote = TRUE, row.names = FALSE, na = '')
-    zip (file.path (data_dir, 'sample-divvy-trips.zip'), fdir)
+    utils::write.csv (ch_tr, file = ftr, quote = TRUE,
+                      row.names = FALSE, na = '')
+    utils::zip (file.path (data_dir, 'sample-divvy-trips.zip'), fdir)
     invisible (tryCatch (file.remove (fst, ftr, fdir),
                          warning = function (w) NULL,
                          error = function (e) NULL))
     # so does boston
     f12 <- file.path (data_dir, "hubway_Trips_2012.csv")
-    write.csv (env$bike_test_data$bo12, row.names = FALSE, file = f12,
-               quote = FALSE, na = '') # not zipped
+    utils::write.csv (env$bike_test_data$bo12, row.names = FALSE, file = f12,
+                      quote = FALSE, na = '') # not zipped
     f17 <- file.path (data_dir, "201701-hubway-tripdata.csv")
-    write.csv (env$bike_test_data$bo17, row.names = FALSE, file = f17,
-               quote = FALSE, na = '')
-    zip (file.path (data_dir, "201701_hubway_tripdata.zip"), f17)
+    utils::write.csv (env$bike_test_data$bo17, row.names = FALSE, file = f17,
+                      quote = FALSE, na = '')
+    utils::zip (file.path (data_dir, "201701_hubway_tripdata.zip"), f17)
     f18 <- file.path (data_dir, "201801_hubway_tripdata.csv")
-    write.csv (env$bike_test_data$bo18, row.names = FALSE, file = f18,
-               quote = TRUE, na = '')
-    zip (file.path (data_dir, "201801_hubway_tripdata.csv.zip"), f18)
+    utils::write.csv (env$bike_test_data$bo18, row.names = FALSE, file = f18,
+                      quote = TRUE, na = '')
+    utils::zip (file.path (data_dir, "201801_hubway_tripdata.csv.zip"), f18)
     st1 <- file.path (data_dir, "Hubway_Stations_2011_2016.csv")
-    write.csv (env$bike_test_data$bo_st1, row.names = FALSE, file = st1,
-               quote = FALSE, na = '')
+    utils::write.csv (env$bike_test_data$bo_st1, row.names = FALSE, file = st1,
+                      quote = FALSE, na = '')
     st2 <- file.path (data_dir, "Hubway_Stations_as_of_July_2017.csv")
-    write.csv (env$bike_test_data$bo_st2, row.names = FALSE, file = st2,
-               quote = FALSE, na = '')
+    utils::write.csv (env$bike_test_data$bo_st2, row.names = FALSE, file = st2,
+                      quote = FALSE, na = '')
     invisible (tryCatch (file.remove (f17, f18),
                          warning = function (w) NULL,
                          error = function (e) NULL))
@@ -82,11 +83,11 @@ bike_write_test_data <- function (data_dir = tempdir ())
                       "Nice_Ride_2012-station_locations .csv") # original typo
     ftr <- file.path (data_dir, "Nice_Ride_data_2012_season",
                       "Nice_Ride_trip_history_2012_season.csv")
-    write.csv (env$bike_test_data$mn_st, file = fst,
-               quote = FALSE, row.names = FALSE, na = '')
-    write.csv (env$bike_test_data$mn_tr, file = ftr,
-               quote = FALSE, row.names = FALSE, na = '')
-    zip (file.path (data_dir, 'Nice_Ride_data_2012_season.zip'), fdir)
+    utils::write.csv (env$bike_test_data$mn_st, file = fst,
+                      quote = FALSE, row.names = FALSE, na = '')
+    utils::write.csv (env$bike_test_data$mn_tr, file = ftr,
+                      quote = FALSE, row.names = FALSE, na = '')
+    utils::zip (file.path (data_dir, 'Nice_Ride_data_2012_season.zip'), fdir)
     invisible (tryCatch (file.remove (fst, ftr, fdir),
                          warning = function (w) NULL,
                          error = function (e) NULL))
@@ -96,7 +97,7 @@ bike_write_test_data <- function (data_dir = tempdir ())
     lo <- env$bike_test_data$lo
     lo$EndStation.Name <- paste0 ("\"", lo$EndStation.Name, "\"")
     lo$StartStation.Name <- paste0 ("\"", lo$StartStation.Name, "\"")
-    write.csv (lo, file = csv, quote = FALSE, row.names = FALSE, na = '')
+    utils::write.csv (lo, file = csv, quote = FALSE, row.names = FALSE, na = '')
 
     # dc has to have numeric fields quoted
     cols <- c ("Duration", "Start.station.number", "End.station.number")
@@ -119,11 +120,11 @@ bike_write_test_data <- function (data_dir = tempdir ())
     for (i in seq (csvs))
     {
         dati <- env$bike_test_data [[cities [i]]]
-        write.csv (dati, file = csvs [i], quote = quotes [i], na = '',
-                   row.names = FALSE)
+        utils::write.csv (dati, file = csvs [i], quote = quotes [i], na = '',
+                          row.names = FALSE)
         # Note: Output of zip can't be suppressed because it's a 'system2()'
         # command
-        zip (zips [i], csvs [i])
+        utils::zip (zips [i], csvs [i])
     }
     invisible (tryCatch (file.remove (csvs),
                          warning = function (w) NULL,

@@ -386,7 +386,7 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
         trips <- tibble::as_tibble (trips)
     }
     attr (trips, "variable") <- "numtrips" # used in bike_match_matrices
-    attr (trips, "bikedata_version") <- packageVersion ("bikedata")
+    attr (trips, "bikedata_version") <- utils::packageVersion ("bikedata")
     attr (trips, "start_date") <- dl [1]
     attr (trips, "end_date") <- dl [2]
 

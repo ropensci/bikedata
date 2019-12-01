@@ -102,7 +102,7 @@ bike_get_chicago_stations <- function (flists)
     id <- name <- lon <- lat <- NULL
     for (f in flists$flist_csv_stns)
     {
-        fi <- read.csv (f, header = TRUE)
+        fi <- utils::read.csv (f, header = TRUE)
         id <- c (id, paste0 (fi$id))
         name <- c (name, paste0 (fi$name))
         lon <- c (lon, paste0 (fi$longitude))
@@ -158,7 +158,7 @@ bike_get_bo_stations <- function (flists, data_dir)
     id <- name <- lon <- lat <- NULL
     for (f in flists$flist_csv_stns)
     {
-        fi <- read.csv (f, header = TRUE)
+        fi <- utils::read.csv (f, header = TRUE)
         id <- c (id, paste0 (fi$Station.ID))
         name <- c (name, paste0 (fi$Station))
         lon <- c (lon, paste0 (fi$Longitude))
@@ -187,7 +187,7 @@ bike_get_mn_stations <- function (flists)
     id <- name <- lon <- lat <- NULL
     for (f in flists$flist_csv_stns)
     {
-        fi <- read.csv (f, header = TRUE)
+        fi <- utils::read.csv (f, header = TRUE)
         idcol <- grep ("terminal|number", names (fi), ignore.case = TRUE)
         nmcol <- grep ("station|name", names (fi), ignore.case = TRUE)
         loncol <- grep ("lon", names (fi), ignore.case = TRUE)
@@ -222,7 +222,7 @@ bike_get_mo_stations <- function (flists)
     id <- name <- lon <- lat <- NULL
     for (f in flists$flist_csv_stns)
     {
-        fi <- read.csv (f, header = TRUE)
+        fi <- utils::read.csv (f, header = TRUE)
         idcol <- grep ("code", names (fi), ignore.case = TRUE)
         nmcol <- grep ("name", names (fi), ignore.case = TRUE)
         loncol <- grep ("longitude", names (fi), ignore.case = TRUE)

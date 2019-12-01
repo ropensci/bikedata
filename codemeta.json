@@ -61,6 +61,18 @@
   "softwareSuggestions": [
     {
       "@type": "SoftwareApplication",
+      "identifier": "dodgr",
+      "name": "dodgr",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=dodgr"
+    },
+    {
+      "@type": "SoftwareApplication",
       "identifier": "knitr",
       "name": "knitr",
       "provider": {
@@ -138,18 +150,6 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=DBI"
-    },
-    {
-      "@type": "SoftwareApplication",
-      "identifier": "dodgr",
-      "name": "dodgr",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=dodgr"
     },
     {
       "@type": "SoftwareApplication",
@@ -276,7 +276,7 @@
   "developmentStatus": "active",
   "releaseNotes": "https://github.com/ropensci/bikedata/blob/master/NEWS.md",
   "readme": "https://github.com/ropensci/bikedata/blob/master/README.md",
-  "fileSize": "2925.917KB",
+  "fileSize": "2925.565KB",
   "copyrightHolder": {},
   "funder": {},
   "review": {
