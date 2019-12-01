@@ -25,7 +25,6 @@ Depends:
     R (>= 3.0)
 Imports:
     DBI,
-    dodgr,
     httr,
     lubridate,
     magrittr,
@@ -37,6 +36,7 @@ Imports:
     tibble,
     xml2
 Suggests:
+    dodgr,
     knitr,
     rmarkdown,
     roxygen2,

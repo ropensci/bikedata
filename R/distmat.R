@@ -29,6 +29,8 @@ bike_distmat <- function (bikedb, city, expand = 0.5,
     if (missing (bikedb))
         stop ("Can't get trip matrix if bikedb isn't provided")
 
+    requireNamespace ("dodgr")
+
     bikedb <- check_db_arg (bikedb = bikedb)
     city <- check_city_arg (bikedb = bikedb, city = city)
     stns <- bike_stations (bikedb = bikedb, city = city)
@@ -63,7 +65,7 @@ remove_xy_outliers <- function (xy)
     xmn <- mean (xy$longitude)
     ymn <- mean (xy$latitude)
     d <- sqrt ( (xy$longitude - xmn) ^ 2 + (xy$latitude - ymn) ^ 2)
-    dsd <- sd (c (-d, d))
+    dsd <- stats::sd (c (-d, d))
     if (any (d > (10 * dsd)))
     {
         indx <- which (d < (10 * dsd))
