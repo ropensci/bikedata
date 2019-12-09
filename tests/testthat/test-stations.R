@@ -34,6 +34,7 @@ test_that ('stations for extra cities', {
                        expect_equal (ncol (st), 4)
                        expect_true (nrow (st) > 200) # currently 243
                    }
+                   rm (st)
 
                    data_dir <- tempdir ()
                    flists <- list (flist_csv_stns = NULL)

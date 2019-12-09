@@ -158,9 +158,15 @@ bike_get_bo_stations <- function (flists, data_dir)
     id <- name <- lon <- lat <- NULL
     for (f in flists$flist_csv_stns)
     {
+        f <- flists$flist_csv_stns [2]
         fi <- utils::read.csv (f, header = TRUE)
-        id <- c (id, paste0 (fi$Station.ID))
-        name <- c (name, paste0 (fi$Station))
+        if ("Station.ID" %in% names (fi)) {
+            id <- c (id, paste0 (fi$Station.ID))
+            name <- c (name, paste0 (fi$Station))
+        } else {
+            id <- c (id, paste0 (fi$Number))
+            name <- c (name, paste0 (fi$Name))
+        }
         lon <- c (lon, paste0 (fi$Longitude))
         lat <- c (lat, paste0 (fi$Latitude))
     }
@@ -304,6 +310,7 @@ bike_get_gu_stations <- function ()
                        lon = dat$longitude, lat = dat$latitude,
                        stringsAsFactors = FALSE)
     res <- res [which (!duplicated (res)), ]
+    res <- res [which (!res$id == "NULL"), ]
 
     return (res)
 }

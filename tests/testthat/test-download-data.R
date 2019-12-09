@@ -2,6 +2,8 @@ context ("download data")
 
 require (testthat)
 
+testthat::skip_on_cran ()
+
 test_that ('no city', {
                expect_error (dl_bikedata (), 'city must be specified')
 })
@@ -111,8 +113,6 @@ test_that ('dl_bikedata boston', {
                                 warning = function (w) NULL,
                                 error = function (e) NULL)
             })
-
-testthat::skip_on_cran ()
 
 test_that ('dl_bikedata la', {
                # These files change names, so this test first GETs the names of
