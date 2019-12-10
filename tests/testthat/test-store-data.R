@@ -62,7 +62,7 @@ if (test_all)
     test_that ('stations from downloaded data', {
                    bikedb <- file.path (tempdir (), "testdb")
                    st <- bike_stations (bikedb)
-                   expect_true (nrow (st) >= 2545)
+                   expect_true (nrow (st) >= 2000)
              })
 
     # some windows machines also don't clean all 13 files up, so this is necessary:
