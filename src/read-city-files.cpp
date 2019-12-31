@@ -67,9 +67,15 @@ unsigned int city::read_one_line_generic (sqlite3_stmt * stmt, char * line,
 
     std::string linestr = line;
     if (headers.terminal_quote)
+    {
+        boost::replace_all (linestr, "NULL", "\"\"");
         boost::replace_all (linestr, "\\N", "\"\"");
+    }
     else
+    {
+        boost::replace_all (linestr, "NULL", "");
         boost::replace_all (linestr, "\\N", "");
+    }
 
     std::vector <std::string> values (num_db_fields);
     std::fill (values.begin (), values.end (), "\"\"");
