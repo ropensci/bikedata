@@ -45,6 +45,12 @@
   ],
   "contributor": [
     {
+      "@type": "Person",
+      "givenName": "Ryszard",
+      "familyName": "Szymański",
+      "email": "ryszard.szymanski@outlook.com"
+    },
+    {
       "@type": "Organization",
       "name": "SQLite Consortium"
     }
@@ -274,9 +280,9 @@
   "keywords": ["bicycle-hire-systems", "bike-hire-systems", "bike-hire", "bicycle-hire", "database", "bike-data", "r", "rstats", "r-package", "peer-reviewed"],
   "contIntegration": "https://travis-ci.org/ropensci/bikedata",
   "developmentStatus": "active",
-  "releaseNotes": "https://github.com/ropensci/bikedata/blob/master/NEWS.md",
+  "releaseNotes": "https://github.com/ropensci/bikedata//blob/master/NEWS.md",
   "readme": "https://github.com/ropensci/bikedata/blob/master/README.md",
-  "fileSize": "2925.642KB",
+  "fileSize": "2925.625KB",
   "copyrightHolder": {},
   "funder": {},
   "review": {
@@ -316,5 +322,6 @@
         }
       }
     }
-  ]
+  ],
+  "relatedLink": "https://docs.ropensci.org/bikedata"
 }

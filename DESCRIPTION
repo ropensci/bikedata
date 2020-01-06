@@ -7,6 +7,7 @@ Authors@R: c(
         comment = c(ORCID = "https://orcid.org/0000-0003-2172-5265")),
     person("Richard", "Ellison", role = "aut"),
     person("Tom", "Buckley", role = "aut"),
+    person("Ryszard", "Szymański", email = "ryszard.szymanski@outlook.com", role = "ctb"),
     person("Bea", "Hernández", role = "rev",
         comment = "Bea reviewed the package for ropensci, see https://github.com/ropensci/onboarding/issues/116"),
     person("Elaine", "McVey", role = "rev",
