@@ -70,6 +70,11 @@ unsigned int city::read_one_line_generic (sqlite3_stmt * stmt, char * line,
         boost::replace_all (linestr, "\\N", "\"\"");
     else
         boost::replace_all (linestr, "\\N", "");
+    
+    // In NYC data files starting from Aug 2018 onwards missing values
+    // are marked as NULL: https://github.com/ropensci/bikedata/issues/96
+    if (utils::strfound (city, "ny"))
+        boost::replace_all (linestr, "NULL", "");
 
     std::vector <std::string> values (num_db_fields);
     std::fill (values.begin (), values.end (), "\"\"");
