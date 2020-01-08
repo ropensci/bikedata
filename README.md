@@ -43,7 +43,7 @@ data with `bike_demographic_data()`.
 
 The following provides a brief overview of package functionality. For
 more detail, see the
-[vignette](https://ropensci.github.io/bikedata/articles/bikedata.html).
+[vignette](https://docs.ropensci.org/bikedata/articles/bikedata.html).
 
 ------------------------------------------------------------------------
 
