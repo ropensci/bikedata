@@ -248,7 +248,7 @@ void utils::zero_pad (std::string &t)
 //' @param t1 start date-time string
 //' @param t2 end date-time string
 //' @noRd
-int utils::timediff (std::string t1, std::string t2)
+long int utils::timediff (std::string t1, std::string t2)
 {
     if (t1.length () < 19)
     {
@@ -269,7 +269,7 @@ int utils::timediff (std::string t1, std::string t2)
         s2 = atoi (t2.substr (17, 2).c_str ());
 
     int y1 = utils::daynum (Y1, M1, D1), y2 = utils::daynum (Y2, M2, D2);
-    int d1 = y1 * 3600 * 24 + h1 * 3600 + m1 * 60 + s1,
+    long int d1 = y1 * 3600 * 24 + h1 * 3600 + m1 * 60 + s1,
         d2 = y2 * 3600 * 24 + h2 * 3600 + m2 * 60 + s2;
 
     return d2 - d1;

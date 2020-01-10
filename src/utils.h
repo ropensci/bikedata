@@ -19,7 +19,7 @@ std::string convert_date_dmy (std::string ymd);
 std::string convert_time (std::string hms);
 void zero_pad (std::string &t);
 
-int timediff (std::string t1, std::string t2);
+long int timediff (std::string t1, std::string t2);
 int daynum (int y, int m, int d);
 
 } // end namespace utils

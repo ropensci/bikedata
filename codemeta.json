@@ -10,14 +10,14 @@
   "codeRepository": "https://github.com/ropensci/bikedata",
   "issueTracker": "https://github.com/ropensci/bikedata/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.2.4",
+  "version": "0.2.4.1",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
-    "version": "3.6.1",
+    "version": "3.6.2",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 3.6.1 (2019-07-05)",
+  "runtimePlatform": "R version 3.6.2 (2019-12-12)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -280,9 +280,9 @@
   "keywords": ["bicycle-hire-systems", "bike-hire-systems", "bike-hire", "bicycle-hire", "database", "bike-data", "r", "rstats", "r-package", "peer-reviewed"],
   "contIntegration": "https://travis-ci.org/ropensci/bikedata",
   "developmentStatus": "active",
-  "releaseNotes": "https://github.com/ropensci/bikedata//blob/master/NEWS.md",
+  "releaseNotes": "https://github.com/ropensci/bikedata/blob/master/NEWS.md",
   "readme": "https://github.com/ropensci/bikedata/blob/master/README.md",
-  "fileSize": "2925.625KB",
+  "fileSize": "2925.934KB",
   "copyrightHolder": {},
   "funder": {},
   "review": {
@@ -323,5 +323,5 @@
       }
     }
   ],
-  "relatedLink": "https://docs.ropensci.org/bikedata"
+  "relatedLink": ["https://docs.ropensci.org/bikedata", "https://CRAN.R-project.org/package=bikedata"]
 }
