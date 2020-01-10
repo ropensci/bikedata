@@ -4,7 +4,14 @@
 \alias{store_bikedata}
 \title{Store hire bicycle data in SQLite3 database}
 \usage{
-store_bikedata(bikedb, city, data_dir, dates = NULL, quiet = FALSE)
+store_bikedata(
+  bikedb,
+  city,
+  data_dir,
+  dates = NULL,
+  latest_lo_stns = TRUE,
+  quiet = FALSE
+)
 }
 \arguments{
 \item{bikedb}{A string containing the path to the SQLite3 database to 
@@ -22,6 +29,11 @@ cities. Only if this parameter is missing will data be downloaded.}
 \item{dates}{If specified and no \code{data_dir} is given, data are
 downloaded and stored only for these dates specified as vector of YYYYMM
 values.}
+
+\item{latest_lo_stns}{If \code{TRUE} (default), download latest version of
+London stations; otherwise use potentially obsolete internal version. (This
+parameter should not need to be changed, but can be set to \code{FALSE} to
+avoid external calls; for example when not online.)}
 
 \item{quiet}{If FALSE, progress is displayed on screen}
 }

@@ -57,14 +57,31 @@ bike_stations <- function (bikedb, city)
 
 #' Get London station data from Transport for London (TfL)
 #'
+#' @param external If \code{TRUE}, download latest list of stations from
+#' external TfL site, otherwise use potentially obsolete internal version.
 #' @param quiet If \code{FALSE}, just declare getting stations (coz it can take
 #' a while).
 #' @return \code{data.frame} of (id, name, lon, lat) of all stations in London's
 #' Santander Cycles system
 #'
 #' @noRd
-bike_get_london_stations <- function (quiet = TRUE)
+bike_get_london_stations <- function (external = TRUE, quiet = TRUE)
 {
+    if (external)
+        res <- get_london_stns_external (quiet = quiet)
+    else
+        res <- get_london_stns_internal ()
+
+    return (res)
+}
+
+get_london_stns_internal <- function () {
+    env <- new.env ()
+    utils::data ('lo_stns', envir = env)
+    return (env$lo_stns)
+}
+
+get_london_stns_external <- function (quiet = TRUE) {
     if (!quiet)
         message ("getting london stations ...", appendLF = FALSE)
     tfl_url <- "https://api.tfl.gov.uk/BikePoint"

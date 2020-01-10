@@ -1,3 +1,14 @@
+0.2.4.XXX
+==================
+Minor changes:
+- `store_bikedata()` now has additional parameter `latest_lo_stns` that should
+  generally just be left at default value, but which can be set to `FALSE` for
+  truly offline use.
+
+0.2.4
+==================
+Back on CRAN after being removed due to dependency (dodgr) having been removed
+
 0.2.3
 ===================
 Minor changes:

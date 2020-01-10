@@ -13,3 +13,16 @@
 #' using \code{bike_write_test_data()}. These \code{.zip} files can be
 #' subsequently read into an SQLite3 database using \code{store_bikedata}.
 "bike_test_data"
+
+#' Docking stations for London, U.K.
+#'
+#' A \code{data.frame} of station id values, names, and geographic coordinates
+#' for 786 stations for London, U.K. These stations are generally (and by
+#' default) downloaded automatically to ensure they are always up to date, but
+#' such downloading can be disabled in the \code{store_bikedata()} function by
+#' setting \code{latest_lo_stns = FALSE}.
+#'
+#' @docType data
+#'
+#' @format A \code{data.frame} of the four columns described above.
+"lo_stns"

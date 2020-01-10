@@ -21,7 +21,9 @@ Count number of entries in sqlite3 database tables
 data_dir <- tempdir ()
 bike_write_test_data (data_dir = data_dir)
 bikedb <- file.path (data_dir, 'testdb')
-store_bikedata (data_dir = data_dir, bikedb = bikedb)
+# latest_lo_stns is set to FALSE just to avoid download on CRAN; this should
+# normally remain at default value of TRUE:
+store_bikedata (data_dir = data_dir, bikedb = bikedb, latest_lo_stns = FALSE)
 # create database indexes for quicker access:
 index_bikedata_db (bikedb = bikedb)
 

@@ -15,6 +15,10 @@
 #' @param dates If specified and no \code{data_dir} is given, data are
 #' downloaded and stored only for these dates specified as vector of YYYYMM
 #' values.
+#' @param latest_lo_stns If \code{TRUE} (default), download latest version of
+#' London stations; otherwise use potentially obsolete internal version. (This
+#' parameter should not need to be changed, but can be set to \code{FALSE} to
+#' avoid external calls; for example when not online.)
 #' @param quiet If FALSE, progress is displayed on screen
 #'
 #' @return Number of trips added to database
@@ -62,7 +66,8 @@
 #' # don't forget to remove real data!
 #' # file.remove (list.files (data_dir, pattern = '.zip'))
 #' }
-store_bikedata <- function (bikedb, city, data_dir, dates = NULL, quiet = FALSE)
+store_bikedata <- function (bikedb, city, data_dir, dates = NULL,
+                            latest_lo_stns = TRUE, quiet = FALSE)
 {
     if (missing (city) & missing (data_dir))
     {
@@ -164,7 +169,8 @@ store_bikedata <- function (bikedb, city, data_dir, dates = NULL, quiet = FALSE)
             } else if (ci %in% c('bo', 'dc', 'gu', 'lo', 'mn', 'mo'))
             {
                 if (ci == "lo")
-                    stns <- bike_get_london_stations (quiet)
+                    stns <- bike_get_london_stations (external = latest_lo_stns,
+                                                      quiet = quiet)
                 else if (ci == 'dc')
                     stns <- bike_get_dc_stations ()
                 else if (ci == 'bo')
