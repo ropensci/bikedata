@@ -1,9 +1,11 @@
-0.2.4.XXX
+0.2.5
 ==================
 Minor changes:
 - `store_bikedata()` now has additional parameter `latest_lo_stns` that should
   generally just be left at default value, but which can be set to `FALSE` for
   truly offline use.
+- Update bundled version of sqlite3 from 3.28 to 3.30
+- minor bug fixes
 
 0.2.4
 ==================
