@@ -120,7 +120,7 @@ unsigned int city::read_one_line_generic (sqlite3_stmt * stmt, char * line,
     if (pos == 14) // gender
         values [pos] = city::convert_gender (values [pos]);
 
-    for (unsigned int i = 1; i < headers.nvalues; i++)
+    for (unsigned int i = 1; i < (headers.nvalues - 1); i++)
     {
         if (headers.position_file2db [i] >= 0)
             pos = static_cast <unsigned int> (headers.position_file2db [i]);
