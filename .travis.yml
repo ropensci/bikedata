@@ -12,10 +12,6 @@ matrix:
         - r: oldrel
         - os: osx
           r: release
-    allow_failures:
-        - r: devel
-        - os: osx
-          r: release
 
 notifications:
   email:
