@@ -20,6 +20,6 @@ std::string convert_time (std::string hms);
 void zero_pad (std::string &t);
 
 long int timediff (std::string t1, std::string t2);
-int daynum (int y, int m, int d);
+long int daynum (int y, int m, int d);
 
 } // end namespace utils

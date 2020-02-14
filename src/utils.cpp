@@ -268,7 +268,7 @@ long int utils::timediff (std::string t1, std::string t2)
         m2 = atoi (t2.substr (14, 2).c_str ()),
         s2 = atoi (t2.substr (17, 2).c_str ());
 
-    int y1 = utils::daynum (Y1, M1, D1), y2 = utils::daynum (Y2, M2, D2);
+    long int y1 = utils::daynum (Y1, M1, D1), y2 = utils::daynum (Y2, M2, D2);
     long int d1 = y1 * 3600 * 24 + h1 * 3600 + m1 * 60 + s1,
         d2 = y2 * 3600 * 24 + h2 * 3600 + m2 * 60 + s2;
 
@@ -277,7 +277,7 @@ long int utils::timediff (std::string t1, std::string t2)
 
 // Julian day number calculation from
 // http://www.cs.utsa.edu/~cs1063/projects/Spring2011/Project1/jdn-explanation.html
-int utils::daynum (int y, int m, int d)
+long int utils::daynum (int y, int m, int d)
 {
     double md = static_cast <double> (m);
     double dd = static_cast <double> (d);
@@ -287,5 +287,5 @@ int utils::daynum (int y, int m, int d)
     m = m + 12 * a - 3;
     double res = dd + floor ((153.0 * md + 2.0) / 5.0) + 365.0 * yd +
         floor (yd / 4.0) - floor (yd / 100.0) + floor (yd / 400.0) - 32045.0;
-    return static_cast <int> (res);
+    return static_cast <long int> (res);
 }
