@@ -19,4 +19,5 @@
 ^CODE_OF_CONDUCT.md$
 ^CONTRIBUTING.md$
 ^cran-comments.md$
+^\.github$
 ^\.pre-commit-config\.yaml$
