@@ -4,9 +4,11 @@
 \name{bike_test_data}
 \alias{bike_test_data}
 \title{Test data for all 6 cities}
-\format{A list of one data frame for each of the five cities of (bo, dc, la,
+\format{
+A list of one data frame for each of the five cities of (bo, dc, la,
 lo, ny), plus two more for chicago stations and trips (ch_st, ch_tr). Each of
-these (except 'ch_st') contains 200 representative trips.}
+these (except 'ch_st') contains 200 representative trips.
+}
 \usage{
 bike_test_data
 }
