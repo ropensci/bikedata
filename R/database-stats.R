@@ -278,6 +278,7 @@ bike_latest_files <- function (bikedb)
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' data_dir <- tempdir ()
 #' bike_write_test_data (data_dir = data_dir)
 #' # dl_bikedata (city = 'la', data_dir = data_dir) # or download some real data!
@@ -296,6 +297,7 @@ bike_latest_files <- function (bikedb)
 #' bike_rm_db (bikedb)
 #' # don't forget to remove real data!
 #' # file.remove (list.files ('.', pattern = '.zip'))
+#' }
 bike_datelimits <- function (bikedb, city)
 {
     if (missing (bikedb))
