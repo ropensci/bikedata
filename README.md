@@ -1,13 +1,11 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-[![Build
-Status](https://travis-ci.org/ropensci/bikedata.svg?branch=master)](https://travis-ci.org/ropensci/bikedata?branch=master)
-[![Build
-status](https://ci.appveyor.com/api/projects/status/github/ropensci/bikedata?svg=true)](https://ci.appveyor.com/project/ropensci/bikedata)
+[![R build
+status](https://github.com/ropensci/bikedata/workflows/R-CMD-check/badge.svg)](https://github.com/ropensci/bikedata/actions?query=workflow%3AR-CMD-check)
 [![codecov](https://codecov.io/gh/ropensci/bikedata/branch/master/graph/badge.svg)](https://codecov.io/gh/ropensci/bikedata)
 [![Project Status:
 Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
-[![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/bikedata)](https://cran.r-project.org/package=bikedata)
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/bikedata)](https://cran.r-project.org/package=bikedata)
 [![CRAN
 Downloads](https://cranlogs.r-pkg.org/badges/grand-total/bikedata?color=orange)](https://cran.r-project.org/package=bikedata)
 [![](http://badges.ropensci.org/116_status.svg)](https://github.com/ropensci/onboarding/issues/116)
@@ -47,8 +45,7 @@ more detail, see the
 
 ------------------------------------------------------------------------
 
-1 Installation
---------------
+## 1 Installation
 
 Currently a development version only which can be installed with the
 following command,
@@ -63,8 +60,7 @@ and then loaded the usual way
 library (bikedata)
 ```
 
-2 Usage
--------
+## 2 Usage
 
 Data may downloaded for a particular city and stored in an `SQLite3`
 database with the simple command,
@@ -209,4 +205,4 @@ Please note that this project is released with a [Contributor Code of
 Conduct](https://github.com/ropensci/bikedata/blob/master/CODE_OF_CONDUCT.md).
 By participating in this project you agree to abide by its terms.
 
-[![ropensci\_footer](http://ropensci.org/public_images/github_footer.png)](http://ropensci.org)
+[![ropensci_footer](http://ropensci.org/public_images/github_footer.png)](http://ropensci.org)
