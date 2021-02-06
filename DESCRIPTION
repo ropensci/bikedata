@@ -1,7 +1,7 @@
 Package: bikedata
 Title: Download and Aggregate Data from Public Hire Bicycle
     Systems
-Version: 0.2.5.002
+Version: 0.2.5.003
 Authors@R: 
     c(person(given = "Mark",
              family = "Padgham",
@@ -68,7 +68,7 @@ VignetteBuilder:
 Encoding: UTF-8
 LazyData: true
 NeedsCompilation: yes
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.1
 SystemRequirements: C++11
 X-schema.org-applicationCategory: Data Access
 X-schema.org-isPartOf: https://ropensci.org

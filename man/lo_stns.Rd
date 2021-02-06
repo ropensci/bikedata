@@ -4,7 +4,9 @@
 \name{lo_stns}
 \alias{lo_stns}
 \title{Docking stations for London, U.K.}
-\format{A \code{data.frame} of the four columns described above.}
+\format{
+A \code{data.frame} of the four columns described above.
+}
 \usage{
 lo_stns
 }
