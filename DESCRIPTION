@@ -40,9 +40,7 @@ Suggests:
     dodgr,
     knitr,
     rmarkdown,
-    roxygen2,
-    testthat,
-    covr
+    testthat
 LinkingTo: 
     BH,
     Rcpp
