@@ -44,5 +44,5 @@ jobs:
           git config --global user.name "GitHub Actions User"
 
       - name: Test coverage
-        run: covr::codecov(line_exclusions = list('R/distmat.R','src/vendor/sqlite3/sqlite3.c','src/sqlite3db-add-data.cpp'=c(398:420)))" # dump_headers fn
+        run: covr::codecov(line_exclusions = list('R/distmat.R','src/vendor/sqlite3/sqlite3.c','src/sqlite3db-add-data.cpp'=c(398:420)))
         shell: Rscript {0}
