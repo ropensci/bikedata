@@ -25,7 +25,8 @@ contains data for more than one city}
 to be counted}
 
 \item{member}{If given, extract only trips by registered members
-(\code{member = 1} or \code{TRUE}) or not (\code{member = 0} or \code{FALSE}).}
+(\code{member = 1} or \code{TRUE}) or not (\code{member = 0} or
+\code{FALSE}).}
 
 \item{birth_year}{If given, extract only trips by registered members whose
 declared birth years equal or lie within the specified value or values.}
@@ -47,20 +48,20 @@ Extract daily trip counts for all stations
 \examples{
 \dontrun{
 bike_write_test_data () # by default in tempdir ()
-# dl_bikedata (city = 'la', data_dir = data_dir) # or download some real data!
-store_bikedata (data_dir = tempdir (), bikedb = 'testdb')
+# dl_bikedata (city = "la", data_dir = data_dir) # or some real data!
+store_bikedata (data_dir = tempdir (), bikedb = "testdb")
 # create database indexes for quicker access:
-index_bikedata_db (bikedb = 'testdb')
+index_bikedata_db (bikedb = "testdb")
 
-bike_daily_trips (bikedb = 'testdb', city = 'ny')
-bike_daily_trips (bikedb = 'testdb', city = 'ny', member = TRUE)
-bike_daily_trips (bikedb = 'testdb', city = 'ny', gender = 'f')
-bike_daily_trips (bikedb = 'testdb', city = 'ny', station = '173',
+bike_daily_trips (bikedb = "testdb", city = "ny")
+bike_daily_trips (bikedb = "testdb", city = "ny", member = TRUE)
+bike_daily_trips (bikedb = "testdb", city = "ny", gender = "f")
+bike_daily_trips (bikedb = "testdb", city = "ny", station = "173",
                   gender = 1)
 
 bike_rm_test_data ()
-bike_rm_db ('testdb')
+bike_rm_db ("testdb")
 # don't forget to remove real data!
-# file.remove (list.files ('.', pattern = '.zip'))
+# file.remove (list.files (".", pattern = ".zip"))
 }
 }

@@ -10,7 +10,7 @@ bike_datelimits(bikedb, city)
 \item{bikedb}{A string containing the path to the SQLite3 database.
 If no directory specified, it is presumed to be in \code{tempdir()}.}
 
-\item{city}{If given, date limits are calculated only for trips in 
+\item{city}{If given, date limits are calculated only for trips in
 that city.}
 }
 \value{
@@ -24,17 +24,18 @@ Extract date-time limits from trip database
 \dontrun{
 data_dir <- tempdir ()
 bike_write_test_data (data_dir = data_dir)
-# dl_bikedata (city = 'la', data_dir = data_dir) # or download some real data!
+# dl_bikedata (city = 'la', data_dir = data_dir) # or some real data!
 # Remove one London file that triggers an API call which may fail tests:
-file.remove (file.path (tempdir(), "01aJourneyDataExtract10Jan16-23Jan16.csv"))
+file.remove (file.path (tempdir(),
+             "01aJourneyDataExtract10Jan16-23Jan16.csv"))
 bikedb <- file.path (data_dir, 'testdb')
 store_bikedata (data_dir = data_dir, bikedb = bikedb)
 # create database indexes for quicker access:
 index_bikedata_db (bikedb = bikedb)
 
 bike_datelimits ('testdb') # overall limits for all cities
-bike_datelimits ('testdb', city = 'NYC') 
-bike_datelimits ('testdb', city = 'los angeles') 
+bike_datelimits ('testdb', city = 'NYC')
+bike_datelimits ('testdb', city = 'los angeles')
 
 bike_rm_test_data (data_dir = data_dir)
 bike_rm_db (bikedb)

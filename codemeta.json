@@ -10,7 +10,7 @@
   "codeRepository": "https://github.com/ropensci/bikedata",
   "issueTracker": "https://github.com/ropensci/bikedata/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.2.5.009",
+  "version": "0.2.5.10",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -252,23 +252,12 @@
   ],
   "applicationCategory": "DataAccess",
   "isPartOf": "https://ropensci.org",
-  "keywords": [
-    "bicycle-hire-systems",
-    "bike-hire-systems",
-    "bike-hire",
-    "bicycle-hire",
-    "database",
-    "bike-data",
-    "r",
-    "rstats",
-    "r-package",
-    "peer-reviewed"
-  ],
+  "keywords": ["bicycle-hire-systems", "bike-hire-systems", "bike-hire", "bicycle-hire", "database", "bike-data", "r", "rstats", "r-package", "peer-reviewed"],
   "contIntegration": "https://codecov.io/gh/ropensci/bikedata",
   "developmentStatus": "http://www.repostatus.org/#active",
   "releaseNotes": "https://github.com/ropensci/bikedata/blob/master/NEWS.md",
   "readme": "https://github.com/ropensci/bikedata/blob/master/README.md",
-  "fileSize": "16416.152KB",
+  "fileSize": "16416.194KB",
   "copyrightHolder": {},
   "funder": {},
   "review": {
@@ -302,10 +291,7 @@
         "issueNumber": "20",
         "datePublished": "2017",
         "isPartOf": {
-          "@type": [
-            "PublicationVolume",
-            "Periodical"
-          ],
+          "@type": ["PublicationVolume", "Periodical"],
           "volumeNumber": "2",
           "name": "The Journal of Open Source Software"
         }
