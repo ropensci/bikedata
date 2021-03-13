@@ -1,7 +1,6 @@
 Package: bikedata
-Title: Download and Aggregate Data from Public Hire Bicycle
-    Systems
-Version: 0.2.5.006
+Title: Download and Aggregate Data from Public Hire Bicycle Systems
+Version: 0.2.5.007
 Authors@R: 
     c(person(given = "Mark",
              family = "Padgham",
@@ -29,13 +28,13 @@ Authors@R:
       person(family = "SQLite Consortium",
              role = "ctb",
              comment = "Authors of included SQLite code"))
-Description: Download and aggregate data from all public hire
-    bicycle systems which provide open data, currently including
-    'Santander' Cycles in London, U.K.; from the U.S.A., 'Ford GoBike' in
-    San Francisco CA, 'citibike' in New York City NY, 'Divvy' in Chicago
-    IL, 'Capital Bikeshare' in Washington DC, 'Hubway' in Boston MA,
-    'Metro' in Los Angeles LA, 'Indego' in Philadelphia PA, and 'Nice
-    Ride' in Minnesota; 'Bixi' from Montreal, Canada; and 'mibici' from
+Description: Download and aggregate data from all public hire bicycle
+    systems which provide open data, currently including 'Santander'
+    Cycles in London, U.K.; from the U.S.A., 'Ford GoBike' in San
+    Francisco CA, 'citibike' in New York City NY, 'Divvy' in Chicago IL,
+    'Capital Bikeshare' in Washington DC, 'Hubway' in Boston MA, 'Metro'
+    in Los Angeles LA, 'Indego' in Philadelphia PA, and 'Nice Ride' in
+    Minnesota; 'Bixi' from Montreal, Canada; and 'mibici' from
     Guadalajara, Mexico.
 License: GPL-3
 URL: https://docs.ropensci.org/bikedata,
@@ -72,5 +71,5 @@ RoxygenNote: 7.1.1
 SystemRequirements: C++11
 X-schema.org-applicationCategory: Data Access
 X-schema.org-isPartOf: https://ropensci.org
-X-schema.org-keywords: bicycle-hire-systems, bike-hire-systems,
-    bike-hire, bicycle-hire, database, bike-data
+X-schema.org-keywords: bicycle-hire-systems, bike-hire-systems, bike-hire,
+    bicycle-hire, database, bike-data

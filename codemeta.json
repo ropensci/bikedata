@@ -5,18 +5,18 @@
   ],
   "@type": "SoftwareSourceCode",
   "identifier": "bikedata",
-  "description": "Download and aggregate data from all public hire\n    bicycle systems which provide open data, currently including\n    'Santander' Cycles in London, U.K.; from the U.S.A., 'Ford GoBike' in\n    San Francisco CA, 'citibike' in New York City NY, 'Divvy' in Chicago\n    IL, 'Capital Bikeshare' in Washington DC, 'Hubway' in Boston MA,\n    'Metro' in Los Angeles LA, 'Indego' in Philadelphia PA, and 'Nice\n    Ride' in Minnesota; 'Bixi' from Montreal, Canada; and 'mibici' from\n    Guadalajara, Mexico.",
-  "name": "bikedata: Download and Aggregate Data from Public Hire Bicycle\n    Systems",
+  "description": "Download and aggregate data from all public hire bicycle\n    systems which provide open data, currently including 'Santander'\n    Cycles in London, U.K.; from the U.S.A., 'Ford GoBike' in San\n    Francisco CA, 'citibike' in New York City NY, 'Divvy' in Chicago IL,\n    'Capital Bikeshare' in Washington DC, 'Hubway' in Boston MA, 'Metro'\n    in Los Angeles LA, 'Indego' in Philadelphia PA, and 'Nice Ride' in\n    Minnesota; 'Bixi' from Montreal, Canada; and 'mibici' from\n    Guadalajara, Mexico.",
+  "name": "bikedata: Download and Aggregate Data from Public Hire Bicycle Systems",
   "codeRepository": "https://github.com/ropensci/bikedata",
   "issueTracker": "https://github.com/ropensci/bikedata/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.2.5.6",
+  "version": "0.2.5.7",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.0.3 (2020-10-10)",
+  "runtimePlatform": "R version 4.0.4 (2021-02-15)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -257,7 +257,7 @@
   "developmentStatus": "http://www.repostatus.org/#active",
   "releaseNotes": "https://github.com/ropensci/bikedata/blob/master/NEWS.md",
   "readme": "https://github.com/ropensci/bikedata/blob/master/README.md",
-  "fileSize": "16415.95KB",
+  "fileSize": "16416.152KB",
   "copyrightHolder": {},
   "funder": {},
   "review": {
