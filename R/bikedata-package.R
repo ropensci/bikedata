@@ -1,7 +1,7 @@
 #' Download and aggregate data from public bicycle hire systems
 #'
 #' Download data from all public bicycle hire systems which provide open data,
-#' currently including 
+#' currently including
 #' \itemize{
 #' \item Santander Cycles London, U.K.
 #' \item citibike New York City NY, U.S.A.
