@@ -24,8 +24,8 @@
 #'
 #' @export
 bike_distmat <- function (bikedb, city, expand = 0.5,
-                          long = FALSE, quiet = TRUE)
-{
+                          long = FALSE, quiet = TRUE) {
+
     if (missing (bikedb))
         stop ("Can't get trip matrix if bikedb isn't provided")
 
@@ -42,14 +42,14 @@ bike_distmat <- function (bikedb, city, expand = 0.5,
     dmat <- dodgr::dodgr_dists (from = xy, to = xy, quiet = quiet)
     rownames (dmat) <- colnames (dmat) <- stn_id
 
-    if (long)
-    {
+    if (long) {
+
         dmat <- reshape2::melt (dmat,
                                 id.vars = c (rownames (dmat), colnames (dmat)))
         colnames (dmat) <- c ("start_station_id", "end_station_id", "distance")
         dmat <- tibble::as_tibble (dmat)
-    } else
-    {
+    } else {
+
         attr (dmat, "variable") <- "distance" # used in match_matrices
     }
 
@@ -60,14 +60,14 @@ bike_distmat <- function (bikedb, city, expand = 0.5,
 #' humans mistyping a digit. These completely muck up distmat extraction, so are
 #' removed here.
 #' @noRd
-remove_xy_outliers <- function (xy)
-{
+remove_xy_outliers <- function (xy) {
+
     xmn <- mean (xy$longitude)
     ymn <- mean (xy$latitude)
-    d <- sqrt ( (xy$longitude - xmn) ^ 2 + (xy$latitude - ymn) ^ 2)
+    d <- sqrt ((xy$longitude - xmn) ^ 2 + (xy$latitude - ymn) ^ 2)
     dsd <- stats::sd (c (-d, d))
-    if (any (d > (10 * dsd)))
-    {
+    if (any (d > (10 * dsd))) {
+
         indx <- which (d < (10 * dsd))
         xy <- xy [indx, ]
     }
@@ -95,12 +95,12 @@ remove_xy_outliers <- function (xy)
 #' long-form matrices), enabling then to be directly compared.
 #'
 #' @export
-bike_match_matrices <- function (mat1, mat2)
-{
+bike_match_matrices <- function (mat1, mat2) {
+
     # convert both to wide form first
     long <- FALSE
-    if (!nrow (mat1) == ncol (mat1))
-    {
+    if (!nrow (mat1) == ncol (mat1)) {
+
         mat1 <- long2wide (mat1)
         if (nrow (mat2) == ncol (mat2))
             message ("One matrix is long-form, the other is wide; ",
@@ -123,8 +123,8 @@ bike_match_matrices <- function (mat1, mat2)
 #' match one trip or distance matrix to the \code{nms} common to both
 #' The \code{long} param determines the return form, not the input form.
 #' @noRd
-match_one_mat <- function (mat, nms, long = FALSE)
-{
+match_one_mat <- function (mat, nms, long = FALSE) {
+
     variable <- attr (mat, "variable")
     indx <- match (nms, rownames (mat))
     mat <- mat [indx, indx]
@@ -139,14 +139,14 @@ match_one_mat <- function (mat, nms, long = FALSE)
 
 #' Determine whether matrix is trip or distance matrix
 #' @noRd
-is_trip_or_dist <- function (mat)
-{
+is_trip_or_dist <- function (mat) {
+
     variable <- "numtrips"
-    if (nrow (mat) == ncol (mat))
-    {
+    if (nrow (mat) == ncol (mat)) {
+
         variable <- attr (mat, "variable")
-    } else
-    {
+    } else {
+
         if ("distance" %in% names (mat))
             variable <- "distance"
     }
