@@ -43,16 +43,16 @@
 #' dl_bikedata (city = 'New York City USA', dates = 201601:201613)
 #' }
 dl_bikedata <- function (city, data_dir = tempdir(), dates = NULL,
-                         quiet = FALSE)
-{
+                         quiet = FALSE) {
+
     if (missing (city))
-        stop ('city must be specified for dl_bikedata()')
+        stop ("city must be specified for dl_bikedata()")
 
     city <- convert_city_names (city)
-    if (city == 'mn')
-        warning ('Data for the Nice Ride MN system must be downloaded ',
-                 'manually from\nhttps://www.niceridemn.com/system-data/, and ',
-                 'loaded using store_bikedata')
+    if (city == "mn")
+        warning ("Data for the Nice Ride MN system must be downloaded ",
+                 "manually from\nhttps://www.niceridemn.com/system-data/, and ",
+                 "loaded using store_bikedata")
 
     dl_files <- get_bike_files (city)
     data_dir <- expand_home (data_dir) %>%
@@ -62,8 +62,8 @@ dl_bikedata <- function (city, data_dir = tempdir(), dates = NULL,
     dates_exist <- TRUE # set to F if requested dates do not exist
     if (is.null (dates))
         indx <- which (!file.exists (files))
-    else
-    {
+    else {
+
         dates <- bike_convert_dates (dates) %>%
             expand_dates_to_range () %>%
             convert_dates_to_filenames (city = city) %>%
@@ -79,67 +79,67 @@ dl_bikedata <- function (city, data_dir = tempdir(), dates = NULL,
                                   ignore.case = TRUE))
     }
 
-    if (length (indx) > 0)
-    {
-        for (f in dl_files [indx])
-        {
+    if (length (indx) > 0) {
+
+        for (f in dl_files [indx]) {
+
             # replace whitespace in URLs (see issue#53)
             furl <- gsub (" ", "%20", f)
             f <- gsub (" ", "", f)
             destfile <- file.path (data_dir, basename(f))
             if (!quiet)
-                message ('Downloading ', basename (f))
+                message ("Downloading ", basename (f))
             resp <- httr::GET (furl,
                                httr::write_disk (destfile, overwrite = TRUE))
-            if (resp$status_code != 200)
-            {
+            if (resp$status_code != 200) {
+
                 count <- 0
-                while (!file.exists (destfile) & count < 5)
-                {
+                while (!file.exists (destfile) & count < 5) {
+
                     resp <- httr::GET (furl,
                                        httr::write_disk (destfile,
                                                          overwrite = TRUE))
                     count <- count + 1
                 }
                 if (!file.exists (destfile))
-                    stop ('Download request failed')
+                    stop ("Download request failed")
                 # some junk files are also listed on AWS but not downloadable
                 if (resp$status_code != 200 & file.exists (destfile))
                     chk <- file.remove (destfile)
             }
         }
-    } else
-    {
+    } else {
+
         if (!dates_exist)
-            message ('There are no ', city, ' files for those dates')
+            message ("There are no ", city, " files for those dates")
         else
-            message ('All data files already exist')
+            message ("All data files already exist")
     }
 
-    ptn <- '.zip'
-    if (city == 'lo')
-    {
+    ptn <- ".zip"
+    if (city == "lo") {
+
         # London has raw csv files too, but sometimes the server delivers junk
         # data with default files that are very small. The following suffices to
         # remove these:
-        csvs <- file.path (data_dir, list.files (data_dir, pattern = '.csv'))
+        csvs <- file.path (data_dir, list.files (data_dir, pattern = ".csv"))
         indx <- which (file.info (csvs)$size < 1000)
         invisible (tryCatch (file.remove (csvs [indx]),
                              warning = function (w) NULL,
                              error = function (e) NULL))
         # There is also now one .xlxs file (#49, March 2017), which is converted
         # to .csv here
-        xls <- file.path (data_dir, list.files (data_dir, pattern = '.xlsx'))
-        for (f in xls)
-        {
+        xls <- file.path (data_dir, list.files (data_dir, pattern = ".xlsx"))
+        for (f in xls) {
+
             fcsv <- paste0 (tools::file_path_sans_ext (f), ".csv")
             readxl::read_xlsx (f) %>%
                 utils::write.csv (, file = fcsv, row.names = FALSE)
             chk <- file.remove (f)
         }
-        ptn <- paste0 (ptn, '|.csv')
-    } else if (city == 'ny')
-    {
+        ptn <- paste0 (ptn, "|.csv")
+    } else if (city == "ny") {
+
         # ny also has some junk .zip files, but temporarily disabled because all
         # seems okay again now? (Oct 17)
         #zips <- file.path (data_dir, list.files (data_dir, pattern = '.zip'))
@@ -156,7 +156,7 @@ dl_bikedata <- function (city, data_dir = tempdir(), dates = NULL,
 #' @rdname dl_bikedata
 #' @export
 download_bikedata <- function (city, data_dir = tempdir(), dates = NULL,
-                               quiet = FALSE)
-{
+                               quiet = FALSE) {
+
     dl_bikedata (city = city, data_dir = data_dir, dates = dates, quiet = quiet)
 }

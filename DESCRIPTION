@@ -1,6 +1,6 @@
 Package: bikedata
 Title: Download and Aggregate Data from Public Hire Bicycle Systems
-Version: 0.2.5.012
+Version: 0.2.5.013
 Authors@R: 
     c(person(given = "Mark",
              family = "Padgham",
