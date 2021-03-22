@@ -1,6 +1,6 @@
 Package: bikedata
 Title: Download and Aggregate Data from Public Hire Bicycle Systems
-Version: 0.2.5.024
+Version: 0.2.5.025
 Authors@R: 
     c(person(given = "Mark",
              family = "Padgham",
@@ -37,7 +37,7 @@ Description: Download and aggregate data from all public hire bicycle
     Minnesota; 'Bixi' from Montreal, Canada; and 'mibici' from
     Guadalajara, Mexico.
 License: GPL-3
-URL: https://docs.ropensci.org/bikedata,
+URL: https://docs.ropensci.org/bikedata/,
     https://github.com/ropensci/bikedata
 BugReports: https://github.com/ropensci/bikedata/issues
 Depends:

@@ -4,12 +4,12 @@
 status](https://github.com/ropensci/bikedata/workflows/R-CMD-check/badge.svg)](https://github.com/ropensci/bikedata/actions?query=workflow%3AR-CMD-check)
 [![codecov](https://codecov.io/gh/ropensci/bikedata/branch/master/graph/badge.svg)](https://codecov.io/gh/ropensci/bikedata)
 [![Project Status:
-Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
+Active](http://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/bikedata)](https://cran.r-project.org/package=bikedata)
 [![CRAN
 Downloads](https://cranlogs.r-pkg.org/badges/grand-total/bikedata?color=orange)](https://cran.r-project.org/package=bikedata)
-[![](http://badges.ropensci.org/116_status.svg)](https://github.com/ropensci/onboarding/issues/116)
-[![status](http://joss.theoj.org/papers/232cd77b73dbef4accd36ddfb20f96ae/status.svg)](http://joss.theoj.org/papers/232cd77b73dbef4accd36ddfb20f96ae)
+[![](http://badges.ropensci.org/116_status.svg)](https://github.com/ropensci/software-review/issues/116)
+[![status](https://joss.theoj.org/papers/10.21105/joss.00471/status.svg)](https://joss.theoj.org/papers/10.21105/joss.00471)
 
 The `bikedata` package aims to enable ready importing of historical trip
 data from all public bicycle hire systems which provide data, and will
@@ -25,11 +25,11 @@ are
 | San Francisco Bay Area, U.S.A. | [Ford GoBike](https://www.fordgobike.com/)                            | 7,000              | 540                        |
 | New York City NY, U.S.A.       | [citibike](https://www.citibikenyc.com/)                              | 7,000              | 458                        |
 | Chicago IL, U.S.A.             | [Divvy](https://www.divvybikes.com/)                                  | 5,837              | 576                        |
-| Montreal, Canada               | [Bixi](https://montreal.bixi.com/)                                    | 5,220              | 452                        |
+| Montreal, Canada               | [Bixi](https://bixi.com/)                                             | 5,220              | 452                        |
 | Washingon DC, U.S.A.           | [Capital BikeShare](https://www.capitalbikeshare.com/)                | 4,457              | 406                        |
 | Guadalajara, Mexico            | [mibici](https://www.mibici.net/)                                     | 2,116              | 242                        |
 | Minneapolis/St Paul MN, U.S.A. | [Nice Ride](https://www.niceridemn.com/)                              | 1,833              | 171                        |
-| Boston MA, U.S.A.              | [Hubway](https://www.thehubway.com/)                                  | 1,461              | 158                        |
+| Boston MA, U.S.A.              | [Hubway](https://www.bluebikes.com/)                                  | 1,461              | 158                        |
 | Philadelphia PA, U.S.A.        | [Indego](https://www.rideindego.com)                                  | 1,000              | 105                        |
 | Los Angeles CA, U.S.A.         | [Metro](https://bikeshare.metro.net/)                                 | 1,000              | 65                         |
 
@@ -205,4 +205,4 @@ Please note that this project is released with a [Contributor Code of
 Conduct](https://github.com/ropensci/bikedata/blob/master/CODE_OF_CONDUCT.md).
 By participating in this project you agree to abide by its terms.
 
-[![ropensci_footer](http://ropensci.org/public_images/github_footer.png)](http://ropensci.org)
+[![ropensci_footer](https://ropensci.org//public_images/github_footer.png)](https://ropensci.org/)
