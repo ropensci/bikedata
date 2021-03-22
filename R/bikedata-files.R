@@ -8,8 +8,8 @@
 #' @return List of URLs used to download data
 #'
 #' @note bukets which work straight from AWS are
-#' c ('tripdata', 'capitalbikeshare-data', 'hubway-data') for the cities
-#' c ('ny', 'dc', 'bo'), respectively.
+#' c ("tripdata", "capitalbikeshare-data", "hubway-data") for the cities
+#' c ("ny", "dc", "bo"), respectively.
 #'
 #' @noRd
 get_aws_bike_files <- function (bucket) {
@@ -93,7 +93,8 @@ get_nabsa_files <- function (city) {
 
         the_url_sh <- "https://bikeshare.metro.net/"
         hrefs <- as.character (vapply (hrefs, function (i)
-                                       gsub ("../../", the_url_sh, i, fixed = TRUE),
+                                       gsub ("../../", the_url_sh, i,
+                                             fixed = TRUE),
                                        "character"))
     }
 
