@@ -1,4 +1,4 @@
-.onAttach <- function(libname, pkgname) {
+.onAttach <- function(libname, pkgname) {       # nolint
     msg <- paste0 ("Data for London, U.K. powered by TfL Open Data:\n",
                    "  Contains OS data \u24B8 Crown copyright and ",
                    "database rights 2016\n",
@@ -13,12 +13,12 @@
                    "  and https://www.divvybikes.com/data-license-agreement\n",
                    "  and https://www.thehubway.com/data-license-agreement\n",
                    "Nice Ride Minnesota license",
-                   "  https://assets.niceridemn.com/data-license-agreement.html")
+                   "  https://assets.niceridemn.com/data-license-agreement.html")       # nolint
     packageStartupMessage (msg)
 }
 
-.onLoad <- function (libname, pkgname)
-{
+.onLoad <- function (libname, pkgname) {          # nolint
+
     requireNamespace("utils", quietly = TRUE)
     # make data set names global to avoid CHECK notes
     utils::globalVariables ("sysdata")
@@ -30,7 +30,8 @@
     utils::write.table (sysdata$headers, file = f, row.names = FALSE,
                         sep = ",")
     f <- file.path (tempdir (), "field_names.csv")
-    #utils::write.csv (sysdata$field_names, file = f, row.names = FALSE, quote = FALSE)
+    #utils::write.csv (sysdata$field_names, file = f,
+    #                  row.names = FALSE, quote = FALSE)
     utils::write.table (sysdata$field_names, file = f, row.names = FALSE,
                         quote = FALSE, sep = ",")
 
