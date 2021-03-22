@@ -9,8 +9,8 @@
 #' filtered by the specified times
 #'
 #' @noRd
-filter_bike_tripmat <- function (bikedb, ...)
-{
+filter_bike_tripmat <- function (bikedb, ...) {
+
     # NOTE that this approach is much more efficient than the `dplyr::filter`
     # command, because that can only be applied to the entire datetime field:
     # dplyr::filter (trips, start_time > "2014-07-07 00:00:00",
@@ -31,30 +31,30 @@ filter_bike_tripmat <- function (bikedb, ...)
                  "COUNT(*) as numtrips FROM trips")
 
     qry_dt <- NULL
-    if ('start_date' %in% names (x))
-    {
+    if ("start_date" %in% names (x)) {
+
       qry_dt <- c (qry_dt, "stop_time >= ?")
-      qryargs <- c (qryargs, paste(x$start_date, '00:00:00'))
+      qryargs <- c (qryargs, paste(x$start_date, "00:00:00"))
     }
-    if ('end_date' %in% names (x))
-    {
+    if ("end_date" %in% names (x)) {
+
       qry_dt <- c (qry_dt, "start_time <= ?")
-      qryargs <- c (qryargs, paste(x$end_date, '23:59:59'))
+      qryargs <- c (qryargs, paste(x$end_date, "23:59:59"))
     }
-    if ('start_time' %in% names (x))
-    {
+    if ("start_time" %in% names (x)) {
+
       qry_dt <- c (qry_dt, "time(stop_time) >= ?")
       qryargs <- c (qryargs, x$start_time)
     }
-    if ('end_time' %in% names (x))
-    {
+    if ("end_time" %in% names (x)) {
+
       qry_dt <- c (qry_dt, "time(start_time) <= ?")
       qryargs <- c (qryargs, x$end_time)
     }
 
     qry_wd <- NULL
-    if ('weekday' %in% names (x))
-    {
+    if ("weekday" %in% names (x)) {
+
         qry_wd <- "strftime('%w', start_time) IN "
         qry_wd <- paste0(qry_wd, " (",
                          paste (rep("?", times = length(x$weekday)),
@@ -64,19 +64,19 @@ filter_bike_tripmat <- function (bikedb, ...)
     }
 
     qry_demog <- NULL
-    if ('member' %in% names (x))
-    {
+    if ("member" %in% names (x)) {
+
         qry_demog <- c (qry_demog, "user_type = ?")
         qryargs <- c (qryargs, x$member)
     }
-    if ('birth_year' %in% names (x))
-    {
+    if ("birth_year" %in% names (x)) {
+
         qtmp <- add_birth_year_to_qry (qry_demog, qryargs, x$birth_year)
         qry_demog <- qtmp$qry
         qryargs <- qtmp$qryargs
     }
-    if ('gender' %in% names (x))
-    {
+    if ("gender" %in% names (x)) {
+
         qry_demog <- c (qry_demog, "gender = ?")
         qryargs <- c (qryargs, x$gender)
     }
@@ -87,8 +87,8 @@ filter_bike_tripmat <- function (bikedb, ...)
                   "ON s1.stn_id = iq.start_station_id AND",
                   "s2.stn_id = iq.end_station_id")
 
-    if ('city' %in% names (x))
-    {
+    if ("city" %in% names (x)) {
+
         qry <- paste (qry, "WHERE s1.city = ? AND s2.city = ?")
         qryargs <- c (qryargs, rep (x$city, 2))
     }
@@ -114,14 +114,14 @@ filter_bike_tripmat <- function (bikedb, ...)
 #' @return List containing modified versions of qry and qryargs
 #'
 #' @noRd
-add_birth_year_to_qry <- function (qry, qryargs, birth_year)
-{
-        if (length (birth_year) == 1)
-        {
+add_birth_year_to_qry <- function (qry, qryargs, birth_year) {
+
+        if (length (birth_year) == 1) {
+
             qry <- c (qry, "birth_year = ?")
             qryargs <- c (qryargs, birth_year)
-        } else
-        {
+        } else {
+
             qry <- c (qry, "birth_year >= ?", "birth_year <= ?")
             qryargs <- c (qryargs, min (birth_year), max (birth_year))
         }
@@ -140,8 +140,8 @@ add_birth_year_to_qry <- function (qry, qryargs, birth_year)
 #' same.
 #'
 #' @noRd
-bike_tripmat_standardisation <- function (bikedb, city)
-{
+bike_tripmat_standardisation <- function (bikedb, city) {
+
     dates <- bike_station_dates (bikedb, city = city)
     wt <- 1 / dates$ndays # shorter durations are weighted higher
     wt <- wt * nrow (dates) / sum (wt)
@@ -157,10 +157,10 @@ bike_tripmat_standardisation <- function (bikedb, city)
 #' @return Standardised 0/1 equivalent specification
 #'
 #' @noRd
-bike_transform_member <- function (member)
-{
+bike_transform_member <- function (member) {
+
     if (!(is.logical (member) | member %in% 0:1))
-        stop ('member must be TRUE/FALSE or 1/0')
+        stop ("member must be TRUE/FALSE or 1/0")
     if (!member)
         member <- 0
     else if (member)
@@ -177,20 +177,20 @@ bike_transform_member <- function (member)
 #' @return Standardised 0/1/2 equivalent specification
 #'
 #' @noRd
-bike_transform_gender <- function (gender)
-{
+bike_transform_gender <- function (gender) {
+
     if (!(is.numeric (gender) | is.character (gender)))
-        stop ('gender must be numeric or character')
-    if (is.numeric (gender) & (gender < 0 | gender > 2))
-    {
-        message ('gender only filtered for values of 0, 1, or 2')
+        stop ("gender must be numeric or character")
+    if (is.numeric (gender) & (gender < 0 | gender > 2)) {
+
+        message ("gender only filtered for values of 0, 1, or 2")
         gender <- NULL
-    } else if (is.character (gender))
-    {
+    } else if (is.character (gender)) {
+
         gender <- tolower (substring (gender, 1, 1))
-        if (gender == 'f')
+        if (gender == "f")
             gender <- 2
-        else if (gender == 'm')
+        else if (gender == "m")
             gender <- 1
         else
             gender <- 0
@@ -215,7 +215,8 @@ bike_transform_gender <- function (gender)
 #' weekdays. This can be a vector of numeric, starting with Sunday=1, or
 #' unambiguous characters, so "sa" and "tu" for Saturday and Tuesday.
 #' @param member If given, extract only trips by registered members
-#' (\code{member = 1} or \code{TRUE}) or not (\code{member = 0} or \code{FALSE}).
+#' (\code{member = 1} or \code{TRUE}) or not (\code{member = 0} or
+#' \code{FALSE}).
 #' @param birth_year If given, extract only trips by registered members whose
 #' declared birth years equal or lie within the specified value or values.
 #' @param gender If given, extract only records for trips by registered
@@ -246,50 +247,52 @@ bike_transform_gender <- function (gender)
 #' \code{standardise = FALSE}.
 #'
 #' @export
-#' 
+#'
 #' @examples
 #' \dontrun{
 #' data_dir <- tempdir ()
 #' bike_write_test_data (data_dir = data_dir)
 #' # or download some real data!
-#' # dl_bikedata (city = 'la', data_dir = data_dir)
-#' bikedb <- file.path (data_dir, 'testdb')
+#' # dl_bikedata (city = "la", data_dir = data_dir)
+#' bikedb <- file.path (data_dir, "testdb")
 #' store_bikedata (data_dir = data_dir, bikedb = bikedb)
 #' # create database indexes for quicker access:
 #' index_bikedata_db (bikedb = bikedb)
 #'
-#' 
-#' tm <- bike_tripmat (bikedb = bikedb, city = 'ny') # full trip matrix
-#' tm <- bike_tripmat (bikedb = bikedb, city = 'ny',
+#'
+#' tm <- bike_tripmat (bikedb = bikedb, city = "ny") # full trip matrix
+#' tm <- bike_tripmat (bikedb = bikedb, city = "ny",
 #'                     start_date = 20161201, end_date = 20161201)
-#' tm <- bike_tripmat (bikedb = bikedb, city = 'ny', start_time = 1)
-#' tm <- bike_tripmat (bikedb = bikedb, city = 'ny', start_time = "01:00")
-#' tm <- bike_tripmat (bikedb = bikedb, city = 'ny', end_time = "01:00")
-#' tm <- bike_tripmat (bikedb = bikedb, city = 'ny', 
+#' tm <- bike_tripmat (bikedb = bikedb, city = "ny", start_time = 1)
+#' tm <- bike_tripmat (bikedb = bikedb, city = "ny", start_time = "01:00")
+#' tm <- bike_tripmat (bikedb = bikedb, city = "ny", end_time = "01:00")
+#' tm <- bike_tripmat (bikedb = bikedb, city = "ny",
 #'                     start_date = 20161201, start_time = 1)
-#' tm <- bike_tripmat (bikedb = bikedb, city = 'ny', start_date = 20161201,
+#' tm <- bike_tripmat (bikedb = bikedb, city = "ny", start_date = 20161201,
 #'                     end_date = 20161201, start_time = 1, end_time = 2)
-#' tm <- bike_tripmat (bikedb = bikedb, city = 'ny', weekday = 5)
-#' tm <- bike_tripmat (bikedb = bikedb, city = 'ny', weekday = c('f', 'sa', 'th'))
-#' tm <- bike_tripmat (bikedb = bikedb, city = 'ny', weekday = c('f', 'th', 'sa'))
-#' tm <- bike_tripmat (bikedb = bikedb, city = 'ny', member = 1)
-#' tm <- bike_tripmat (bikedb = bikedb, city = 'ny', birth_year = 1976)
-#' tm <- bike_tripmat (bikedb = bikedb, city = 'ny', birth_year = 1976:1990)
-#' tm <- bike_tripmat (bikedb = bikedb, city = 'ny', gender = 'f')
-#' tm <- bike_tripmat (bikedb = bikedb, city = 'ny',
-#'                     gender = 'm', birth_year = 1976:1990)
-#' 
+#' tm <- bike_tripmat (bikedb = bikedb, city = "ny", weekday = 5)
+#' tm <- bike_tripmat (bikedb = bikedb, city = "ny",
+#'                     weekday = c("f", "sa", "th"))
+#' tm <- bike_tripmat (bikedb = bikedb, city = "ny",
+#'                     weekday = c("f", "th", "sa"))
+#' tm <- bike_tripmat (bikedb = bikedb, city = "ny", member = 1)
+#' tm <- bike_tripmat (bikedb = bikedb, city = "ny", birth_year = 1976)
+#' tm <- bike_tripmat (bikedb = bikedb, city = "ny", birth_year = 1976:1990)
+#' tm <- bike_tripmat (bikedb = bikedb, city = "ny", gender = "f")
+#' tm <- bike_tripmat (bikedb = bikedb, city = "ny",
+#'                     gender = "m", birth_year = 1976:1990)
+#'
 #' bike_rm_test_data (data_dir = data_dir)
 #' bike_rm_db (bikedb)
 #' # don't forget to remove real data!
-#' # file.remove (list.files (data_dir, pattern = '.zip'))
+#' # file.remove (list.files (data_dir, pattern = ".zip"))
 #' }
 bike_tripmat <- function (bikedb, city, start_date, end_date,
                           start_time, end_time, weekday,
                           member, birth_year, gender,
                           standardise = FALSE,
-                          long = FALSE, quiet = FALSE)
-{
+                          long = FALSE, quiet = FALSE) {
+
     if (missing (bikedb))
         stop ("Can't get trip matrix if bikedb isn't provided")
 
@@ -299,48 +302,48 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
                   strsplit (i, " ") [[1]] [1], "character") %>%
                 as.character ()
 
-    x <- c (NULL, 'city' = city)
-    if (!missing (start_date))
-    {
+    x <- c (NULL, "city" = city)
+    if (!missing (start_date)) {
+
         dl [1] <- convert_ymd (start_date)
-        x <- c (x, 'start_date' = dl [1])
+        x <- c (x, "start_date" = dl [1])
     }
-    if (!missing (end_date))
-    {
+    if (!missing (end_date)) {
+
         dl [2] <- convert_ymd (end_date)
-        x <- c (x, 'end_date' = dl [2])
+        x <- c (x, "end_date" = dl [2])
     }
     if (!missing (start_time))
-        x <- c (x, 'start_time' = convert_hms (start_time))
+        x <- c (x, "start_time" = convert_hms (start_time))
     if (!missing (end_time))
-        x <- c (x, 'end_time' = convert_hms (end_time))
+        x <- c (x, "end_time" = convert_hms (end_time))
     if (!missing (weekday))
-        x <- c (x, 'weekday' = list (convert_weekday (weekday)))
+        x <- c (x, "weekday" = list (convert_weekday (weekday)))
 
-    if ( (!missing (birth_year) | !missing (gender)) &
-        !city %in% (c ('bo', 'ch', 'ny')))
-        stop ('Only Boston, Chicago, and New York provide demographic data')
-    if ( !missing (member) & !city %in% c ('bo', 'ch', 'ny', 'la', 'ph'))
-        stop (paste0 ('Only Boston, Chicago, New York, LA, and ',
-                      'Philly provide member/non-member data'))
+    if ((!missing (birth_year) | !missing (gender)) &
+        !city %in% (c ("bo", "ch", "ny")))
+        stop ("Only Boston, Chicago, and New York provide demographic data")
+    if (!missing (member) & !city %in% c ("bo", "ch", "ny", "la", "ph"))
+        stop (paste0 ("Only Boston, Chicago, New York, LA, and ",
+                      "Philly provide member/non-member data"))
     if (!missing (member))
-        x <- c (x, 'member' = bike_transform_member (member))
-    if (!missing (birth_year))
-    {
+        x <- c (x, "member" = bike_transform_member (member))
+    if (!missing (birth_year)) {
+
         if (!is.numeric (birth_year))
-            stop ('birth_year must be numeric')
-        x <- c (x, 'birth_year' = list (birth_year))
+            stop ("birth_year must be numeric")
+        x <- c (x, "birth_year" = list (birth_year))
     }
     if (!missing (gender))
         if (!is.null (bike_transform_gender (gender)))
-            x <- c (x, 'gender' = bike_transform_gender (gender))
+            x <- c (x, "gender" = bike_transform_gender (gender))
 
-    if ( (missing (city) & length (x) > 0) |
-        (!missing (city) & length (x) > 1) )
-    {
+    if ((missing (city) & length (x) > 0) |
+        (!missing (city) & length (x) > 1)) {
+
         trips <- filter_bike_tripmat (bikedb, x)
-    } else
-    {
+    } else {
+
         # NOTE that the DISTINCT is necessary for Boston, which has a station
         # table with 300 entries for 193 stations, because lots change names.
         # All must nevertheless be stored so names in the trip data can be
@@ -364,8 +367,8 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
     }
 
 
-    if (standardise)
-    {
+    if (standardise) {
+
         wts <- bike_tripmat_standardisation (bikedb, city)
         wts_start <- wts [match (trips$start_station_id, names (wts))]
         wts_end <- wts [match (trips$end_station_id, names (wts))]
@@ -375,12 +378,12 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
         trips$numtrips <- round (trips$numtrips, digits = 3)
     }
 
-    if (!long)
-    {
+    if (!long) {
+
         trips <- long2wide (trips)
         trips [is.na (trips)] <- 0
-    } else
-    {
+    } else {
+
         trips$numtrips <- ifelse (is.na (trips$numtrips) == TRUE, 0,
                                   trips$numtrips)
         trips <- tibble::as_tibble (trips)
@@ -399,15 +402,15 @@ bike_tripmat <- function (bikedb, city, start_date, end_date,
 #' @return Equivalent square matrix
 #'
 #' @noRd
-long2wide <- function (mat)
-{
+long2wide <- function (mat) {
+
     variable <- "numtrips"
     if ("numtrips" %in% names (mat))
         mat <- reshape2::dcast (mat, start_station_id ~ end_station_id,
                                 value.var = "numtrips", fill = 0,
                                 fun.aggregate = sum)
-    else
-    {
+    else {
+
         mat <- reshape2::dcast (mat, start_station_id ~ end_station_id,
                                 value.var = "distance")
         variable <- "distance"
@@ -429,8 +432,8 @@ long2wide <- function (mat)
 #' @note This is only used in \code{match_dmat_tmat}
 #'
 #' @noRd
-bike_wide2long <- function (mat)
-{
+bike_wide2long <- function (mat) {
+
     zvar <- attr (mat, "variable") # "numtrips" or "distance"
 
     mat <- reshape2::melt (mat,
