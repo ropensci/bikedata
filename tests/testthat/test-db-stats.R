@@ -66,8 +66,9 @@ test_that ("db stats", {
                                                           "last_trip",
                                                           "latest_files"))
                        expect_equal (dim (db_stats), c (7, 6))
-                       expect_true (all (db_stats$city == c ("total", "bo", "ch", "dc",
-                                                             "la", "lo", "ny")))
+                       expect_true (all (db_stats$city == c ("total", "bo",
+                                                             "ch", "dc", "la",
+                                                             "lo", "ny")))
                        expect_true (sum (db_stats$num_trips) == 2396)
                        expect_true (sum (db_stats$num_stations) == (2 * 2192))
                    }
