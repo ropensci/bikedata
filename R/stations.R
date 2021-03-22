@@ -22,21 +22,21 @@
 #'
 #' stations <- bike_stations (bikedb)
 #' head (stations)
-#' 
+#'
 #' bike_rm_test_data (data_dir = data_dir)
 #' bike_rm_db (bikedb)
 #' # don't forget to remove real data!
 #' # file.remove (list.files (data_dir, pattern = '.zip'))
 #' }
-bike_stations <- function (bikedb, city)
-{
+bike_stations <- function (bikedb, city) {
+
     if (missing (bikedb))
         stop ("Can't get station data if bikedb isn't provided")
 
     bikedb <- check_db_arg (bikedb)
 
     db <- DBI::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
-    st <- tibble::as_tibble (DBI::dbReadTable (db, 'stations'))
+    st <- tibble::as_tibble (DBI::dbReadTable (db, "stations"))
     DBI::dbDisconnect (db)
 
     if (!missing (city))
@@ -65,8 +65,8 @@ bike_stations <- function (bikedb, city)
 #' Santander Cycles system
 #'
 #' @noRd
-bike_get_london_stations <- function (external = TRUE, quiet = TRUE)
-{
+bike_get_london_stations <- function (external = TRUE, quiet = TRUE) {
+
     if (external)
         res <- get_london_stns_external (quiet = quiet)
     else
@@ -77,7 +77,7 @@ bike_get_london_stations <- function (external = TRUE, quiet = TRUE)
 
 get_london_stns_internal <- function () {
     env <- new.env ()
-    utils::data ('lo_stns', envir = env)
+    utils::data ("lo_stns", envir = env)
     return (env$lo_stns)
 }
 
@@ -87,9 +87,9 @@ get_london_stns_external <- function (quiet = TRUE) {
     tfl_url <- "https://api.tfl.gov.uk/BikePoint"
     resp <- httr::GET (tfl_url)
     res <- NULL
-    if (resp$status_code == 200)
-    {
-        doc <- httr::content (resp, encoding  =  'UTF-8')
+    if (resp$status_code == 200) {
+
+        doc <- httr::content (resp, encoding  =  "UTF-8")
         id <- unlist (lapply (doc, function (i)
                               strsplit (i$id, "BikePoints_") [[1]] [2]))
         name <- unlist (lapply (doc, function (i)
@@ -107,18 +107,18 @@ get_london_stns_external <- function (quiet = TRUE) {
 
 #' Get Chicago station data
 #'
-#' @param flists List of files returned from bike_unzip_files_chicago 
+#' @param flists List of files returned from bike_unzip_files_chicago
 #'
-#' @return \code{data.frame} of (id, name, lon, lat) of all stations in Chicago's
-#' Divvybikes system
+#' @return \code{data.frame} of (id, name, lon, lat) of all stations in
+#' Chicago's Divvybikes system
 #'
 #' @noRd
-bike_get_chicago_stations <- function (flists)
-{
+bike_get_chicago_stations <- function (flists) {
+
 
     id <- name <- lon <- lat <- NULL
-    for (f in flists$flist_csv_stns)
-    {
+    for (f in flists$flist_csv_stns) {
+
         fi <- utils::read.csv (f, header = TRUE)
         id <- c (id, paste0 (fi$id))
         name <- c (name, paste0 (fi$name))
@@ -141,40 +141,40 @@ bike_get_chicago_stations <- function (flists)
 #' Hubway system
 #'
 #' @noRd
-bike_get_bo_stations <- function (flists, data_dir)
-{
-    if (is.null (flists$flist_csv_stns))
-    {
+bike_get_bo_stations <- function (flists, data_dir) {
+
+    if (is.null (flists$flist_csv_stns)) {
+
         # then download station data ...
-        dl_files <- get_bike_files (city = 'bo')
-        dl_files <- dl_files [which (grepl ('Stations', dl_files))]
-        for (f in dl_files)
-        {
+        dl_files <- get_bike_files (city = "bo")
+        dl_files <- dl_files [which (grepl ("Stations", dl_files))]
+        for (f in dl_files) {
+
             furl <- gsub (" ", "%20", f)
             f <- gsub (" ", "", f)
             destfile <- file.path (data_dir, basename(f))
             resp <- httr::GET (furl,
                                httr::write_disk (destfile, overwrite = TRUE))
-            if (resp$status_code != 200)
-            {
+            if (resp$status_code != 200) {
+
                 count <- 0
-                while (!file.exists (destfile) & count < 5)
-                {
+                while (!file.exists (destfile) & count < 5) {
+
                     resp <- httr::GET (furl,
                                        httr::write_disk (destfile,
                                                          overwrite = TRUE))
                     count <- count + 1
                 }
                 if (!file.exists (destfile))
-                    stop ('Download request failed')
+                    stop ("Download request failed")
             }
         }
         flists$flist_csv_stns <- file.path (data_dir, basename (dl_files))
     }
 
     id <- name <- lon <- lat <- NULL
-    for (f in flists$flist_csv_stns)
-    {
+    for (f in flists$flist_csv_stns) {
+
         f <- flists$flist_csv_stns [2]
         fi <- utils::read.csv (f, header = TRUE)
         if ("Station.ID" %in% names (fi)) {
@@ -202,14 +202,14 @@ bike_get_bo_stations <- function (flists, data_dir)
 #' Hubway system
 #'
 #' @noRd
-bike_get_mn_stations <- function (flists)
-{
+bike_get_mn_stations <- function (flists) {
+
     if (is.null (flists$flist_csv_stns))
         stop ("Station files must be in nominated data_dir")
 
     id <- name <- lon <- lat <- NULL
-    for (f in flists$flist_csv_stns)
-    {
+    for (f in flists$flist_csv_stns) {
+
         fi <- utils::read.csv (f, header = TRUE)
         idcol <- grep ("terminal|number", names (fi), ignore.case = TRUE)
         nmcol <- grep ("station|name", names (fi), ignore.case = TRUE)
@@ -237,14 +237,14 @@ bike_get_mn_stations <- function (flists)
 #' Montreal's Bixi system
 #'
 #' @noRd
-bike_get_mo_stations <- function (flists)
-{
+bike_get_mo_stations <- function (flists) {
+
     if (is.null (flists$flist_csv_stns))
         stop ("Station files must be in nominated data_dir")
 
     id <- name <- lon <- lat <- NULL
-    for (f in flists$flist_csv_stns)
-    {
+    for (f in flists$flist_csv_stns) {
+
         fi <- utils::read.csv (f, header = TRUE)
         idcol <- grep ("code", names (fi), ignore.case = TRUE)
         nmcol <- grep ("name", names (fi), ignore.case = TRUE)
@@ -271,7 +271,7 @@ bike_get_mo_stations <- function (flists)
 #' @return \code{data.frame} of (id, name, lon, lat) of all stations in
 #' Washington DC's Capital Bike Share system
 #'
-#' @note This data is available online from 
+#' @note This data is available online from
 #' http://opendata.dc.gov/datasets/capital-bike-share-locations/
 #' but this is a wrapper around an opendata.argis.com server that is not
 #' reliable because it very commonly returns errors and fails to retrieve the
@@ -280,12 +280,12 @@ bike_get_mo_stations <- function (flists)
 #' future.
 #'
 #' @noRd
-bike_get_dc_stations <- function ()
-{
+bike_get_dc_stations <- function () {
+
     # rm apostrophes from names (only "L'Enfant Plaza"):
     # stations_dc is lazy loaded from R/sysdata.rda
     name <- noquote (gsub ("'", "", sysdata$stations_dc$name)) #nolint
-    name <- trimws (name, which = 'right') # trim terminal white space
+    name <- trimws (name, which = "right") # trim terminal white space
     res <- data.frame (id = sysdata$stations_dc$id,
                        name = name,
                        lon = sysdata$stations_dc$lon,
@@ -301,12 +301,12 @@ bike_get_dc_stations <- function ()
 #' Gaudalajara's mibici system
 #'
 #' @noRd
-bike_get_gu_stations <- function ()
-{
+bike_get_gu_stations <- function () {
+
     # the name of this station file changes, but it's always called
     # "nomenclatura" something, and is the only file with this word in its name
     link <- "https://www.mibici.net/en/open-data/"
-    hrefs <- httr::content (httr::GET (link), encoding = 'UTF-8') %>%
+    hrefs <- httr::content (httr::GET (link), encoding = "UTF-8") %>%
         xml2::xml_children () %>%
         xml2::xml_find_all (".//a") %>%
         xml2::xml_attr ("href")
@@ -317,7 +317,7 @@ bike_get_gu_stations <- function ()
 
     suppressMessages (
                       dat <- httr::GET (link) %>%
-                          httr::content (encoding = 'UTF-8', as = "parsed")
+                          httr::content (encoding = "UTF-8", as = "parsed")
                       )
 
     # Remove apostrophes from names coz they muck up sqlite fields:
