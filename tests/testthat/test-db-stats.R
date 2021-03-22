@@ -1,8 +1,7 @@
 context ("database stats")
 
 test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
-             identical (Sys.getenv ("TRAVIS"), "true") |
-             identical (Sys.getenv ("APPVEYOR"), "True"))
+             identical (Sys.getenv ("GITHUB_WORKFLOW"), "test-coverage"))
 
 require (testthat)
 

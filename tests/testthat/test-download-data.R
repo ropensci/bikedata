@@ -156,10 +156,8 @@ test_that ('dl_bikedata chicago', {
                                 error = function (e) NULL)
                          })
 
-# test_all used to switch off tests on CRAN
 test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
-             identical (Sys.getenv ("TRAVIS"), "true") |
-             identical (Sys.getenv ("APPVEYOR"), "True"))
+             identical (Sys.getenv ("GITHUB_WORKFLOW"), "test-coverage"))
 
 # extra tests for other cities
 test_that ('download london data (for real!)', {

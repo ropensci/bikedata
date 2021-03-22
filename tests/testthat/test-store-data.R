@@ -2,10 +2,8 @@ context ("write and store data in db")
 
 require (testthat)
 
-# test_all used to switch off tests on CRAN
 test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
-             identical (Sys.getenv ("TRAVIS"), "true") |
-             identical (Sys.getenv ("APPVEYOR"), "True"))
+             identical (Sys.getenv ("GITHUB_WORKFLOW"), "test-coverage"))
 
 # NOTE: The direct routines used to create the database are not guaranteed to
 # give identical results each time, particularly because stations for some

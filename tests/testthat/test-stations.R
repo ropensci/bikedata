@@ -18,12 +18,12 @@ test_that ('bike_stations function', {
                expect_equal (nrow (st [st$city == 'ny', ]), 233)
 })
 
-# test_all used to switch off tests on CRAN
-test_local <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true"))
+test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
+             identical (Sys.getenv ("GITHUB_WORKFLOW"), "test-coverage"))
 
 # extra tests for other cities
 test_that ('stations for extra cities', {
-               if (test_local)
+               if (test_all)
                {
                    tryCatch (st <- bike_get_gu_stations (),
                              warning = function (w) NULL,
