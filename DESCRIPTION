@@ -1,6 +1,6 @@
 Package: bikedata
 Title: Download and Aggregate Data from Public Hire Bicycle Systems
-Version: 0.2.5.027
+Version: 0.2.5.028
 Authors@R: 
     c(person(given = "Mark",
              family = "Padgham",
@@ -57,6 +57,7 @@ Imports:
 Suggests:
     dodgr,
     knitr,
+    markdown,
     rmarkdown,
     testthat
 LinkingTo: 

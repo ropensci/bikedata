@@ -10,13 +10,13 @@
   "codeRepository": "https://github.com/ropensci/bikedata",
   "issueTracker": "https://github.com/ropensci/bikedata/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.2.5.027",
+  "version": "0.2.5.028",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.0.4 (2021-02-15)",
+  "runtimePlatform": "R version 4.0.5 (2021-03-31)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -87,6 +87,18 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=knitr"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "markdown",
+      "name": "markdown",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=markdown"
     },
     {
       "@type": "SoftwareApplication",
@@ -268,7 +280,7 @@
   "developmentStatus": "https://www.repostatus.org/",
   "releaseNotes": "https://github.com/ropensci/bikedata/blob/master/NEWS.md",
   "readme": "https://github.com/ropensci/bikedata/blob/master/README.md",
-  "fileSize": "16416.242KB",
+  "fileSize": "13496.273KB",
   "copyrightHolder": {},
   "funder": {},
   "review": {
