@@ -1,33 +1,19 @@
 Package: bikedata
 Title: Download and Aggregate Data from Public Hire Bicycle Systems
-Version: 0.2.5.030
-Authors@R: 
-    c(person(given = "Mark",
-             family = "Padgham",
-             role = c("aut", "cre"),
-             email = "mark.padgham@email.com",
-             comment = c(ORCID = "https://orcid.org/0000-0003-2172-5265")),
-      person(given = "Richard",
-             family = "Ellison",
-             role = "aut"),
-      person(given = "Tom",
-             family = "Buckley",
-             role = "aut"),
-      person(given = "Ryszard",
-             family = "Szymański",
-             role = "ctb",
-             email = "ryszard.szymanski@outlook.com"),
-      person(given = "Bea",
-             family = "Hernández",
-             role = "rev",
-             comment = "Bea reviewed the package for ropensci, see https://github.com/ropensci/onboarding/issues/116"),
-      person(given = "Elaine",
-             family = "McVey",
-             role = "rev",
-             comment = "Elaine reviewed the package for ropensci, see https://github.com/ropensci/onboarding/issues/116"),
-      person(family = "SQLite Consortium",
-             role = "ctb",
-             comment = "Authors of included SQLite code"))
+Version: 0.2.5.031
+Authors@R: c(
+    person("Mark", "Padgham", , "mark.padgham@email.com", role = c("aut", "cre"),
+           comment = c(ORCID = "https://orcid.org/0000-0003-2172-5265")),
+    person("Richard", "Ellison", role = "aut"),
+    person("Tom", "Buckley", role = "aut"),
+    person("Ryszard", "Szymański", , "ryszard.szymanski@outlook.com", role = "ctb"),
+    person("Bea", "Hernández", role = "rev",
+           comment = "Bea reviewed the package for ropensci, see https://github.com/ropensci/onboarding/issues/116"),
+    person("Elaine", "McVey", role = "rev",
+           comment = "Elaine reviewed the package for ropensci, see https://github.com/ropensci/onboarding/issues/116"),
+    person(, "SQLite Consortium", role = "ctb",
+           comment = "Authors of included SQLite code")
+  )
 Description: Download and aggregate data from all public hire bicycle
     systems which provide open data, currently including 'Santander'
     Cycles in London, U.K.; from the U.S.A., 'Ford GoBike' in San
