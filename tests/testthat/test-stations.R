@@ -25,6 +25,7 @@ test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
 test_that ("stations for extra cities", {
                if (test_all) {
 
+                   st <- NULL
                    tryCatch (st <- bike_get_gu_stations (),
                              warning = function (w) NULL,
                              error = function (e) NULL)
@@ -34,14 +35,18 @@ test_that ("stations for extra cities", {
                        expect_equal (ncol (st), 4)
                        expect_true (nrow (st) > 200) # currently 243
                    }
-                   rm (st)
 
+                   st <- NULL
                    data_dir <- tempdir ()
                    flists <- list (flist_csv_stns = NULL)
                    tryCatch (st <- bike_get_bo_stations (flists, data_dir),
                              warning = function (w) NULL,
                              error = function (e) NULL)
-                   expect_equal (ncol (st), 4)
-                   expect_true (nrow (st) > 200) # currently 300
+                   if (length (st) == 0) st <- NULL
+                   if (!is.null (st)) {
+
+                       expect_equal (ncol (st), 4)
+                       expect_true (nrow (st) > 200) # currently 300
+                   }
                }
 })
