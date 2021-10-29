@@ -1,6 +1,6 @@
 Package: bikedata
 Title: Download and Aggregate Data from Public Hire Bicycle Systems
-Version: 0.2.5.031
+Version: 0.2.5.032
 Authors@R: c(
     person("Mark", "Padgham", , "mark.padgham@email.com", role = c("aut", "cre"),
            comment = c(ORCID = "https://orcid.org/0000-0003-2172-5265")),
