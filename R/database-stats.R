@@ -165,6 +165,7 @@ bike_stored_files <- function (bikedb, city) {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' data_dir <- tempdir ()
 #' bike_write_test_data (data_dir = data_dir)
 #' bikedb <- file.path (data_dir, 'testdb')
@@ -188,6 +189,7 @@ bike_stored_files <- function (bikedb, city) {
 #' bike_rm_db (bikedb)
 #' # don't forget to remove real data!
 #' # file.remove (list.files ('.', pattern = '.zip'))
+#' }
 bike_db_totals <- function (bikedb, trips = TRUE, city) {
 
     if (missing (bikedb))

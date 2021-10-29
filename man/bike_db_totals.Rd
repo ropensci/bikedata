@@ -18,6 +18,7 @@ stations}
 Count number of entries in sqlite3 database tables
 }
 \examples{
+\dontrun{
 data_dir <- tempdir ()
 bike_write_test_data (data_dir = data_dir)
 bikedb <- file.path (data_dir, 'testdb')
@@ -41,4 +42,5 @@ bike_rm_test_data (data_dir = data_dir)
 bike_rm_db (bikedb)
 # don't forget to remove real data!
 # file.remove (list.files ('.', pattern = '.zip'))
+}
 }
