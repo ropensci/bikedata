@@ -10,13 +10,13 @@
   "codeRepository": "https://github.com/ropensci/bikedata",
   "issueTracker": "https://github.com/ropensci/bikedata/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.2.5.029",
+  "version": "0.2.5.30",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.0.5 (2021-03-31)",
+  "runtimePlatform": "R version 4.1.1 (2021-08-10)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -264,23 +264,12 @@
   ],
   "applicationCategory": "DataAccess",
   "isPartOf": "https://ropensci.org",
-  "keywords": [
-    "bicycle-hire-systems",
-    "bike-hire-systems",
-    "bike-hire",
-    "bicycle-hire",
-    "database",
-    "bike-data",
-    "r",
-    "rstats",
-    "r-package",
-    "peer-reviewed"
-  ],
-  "contIntegration": "https://codecov.io/gh/ropensci/bikedata",
+  "keywords": ["bicycle-hire-systems", "bike-hire-systems", "bike-hire", "bicycle-hire", "database", "bike-data", "r", "rstats", "r-package", "peer-reviewed"],
+  "contIntegration": ["https://github.com/ropensci/bikedata/actions?query=workflow%3AR-CMD-check", "https://codecov.io/gh/ropensci/bikedata"],
   "developmentStatus": "https://www.repostatus.org/",
   "releaseNotes": "https://github.com/ropensci/bikedata/blob/master/NEWS.md",
-  "readme": "https://github.com/ropensci/bikedata/blob/master/README.md",
-  "fileSize": "13496.273KB",
+  "readme": "https://github.com/ropensci/bikedata/blob/main/README.md",
+  "fileSize": "13496.05KB",
   "copyrightHolder": {},
   "funder": {},
   "review": {
@@ -314,10 +303,7 @@
         "issueNumber": "20",
         "datePublished": "2017",
         "isPartOf": {
-          "@type": [
-            "PublicationVolume",
-            "Periodical"
-          ],
+          "@type": ["PublicationVolume", "Periodical"],
           "volumeNumber": "2",
           "name": "The Journal of Open Source Software"
         }
