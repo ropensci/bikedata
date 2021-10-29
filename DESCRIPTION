@@ -1,6 +1,6 @@
 Package: bikedata
 Title: Download and Aggregate Data from Public Hire Bicycle Systems
-Version: 0.2.5.037
+Version: 0.2.5.038
 Authors@R: c(
     person("Mark", "Padgham", , "mark.padgham@email.com", role = c("aut", "cre"),
            comment = c(ORCID = "https://orcid.org/0000-0003-2172-5265")),
@@ -54,7 +54,7 @@ VignetteBuilder:
 Encoding: UTF-8
 LazyData: true
 NeedsCompilation: yes
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 SystemRequirements: C++11
 X-schema.org-applicationCategory: Data Access
 X-schema.org-isPartOf: https://ropensci.org

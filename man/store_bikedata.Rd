@@ -14,7 +14,7 @@ store_bikedata(
 )
 }
 \arguments{
-\item{bikedb}{A string containing the path to the SQLite3 database to 
+\item{bikedb}{A string containing the path to the SQLite3 database to
 use. If it doesn't already exist, it will be created, otherwise data
 will be appended to existing database.  If no directory specified,
 it is presumed to be in \code{tempdir()}.}
@@ -74,18 +74,18 @@ parentheses) and names of bike hire systems are:
 data_dir <- tempdir ()
 bike_write_test_data (data_dir = data_dir)
 # or download some real data!
-# dl_bikedata (city = 'la', data_dir = data_dir)
-bikedb <- file.path (data_dir, 'testdb')
+# dl_bikedata (city = "la", data_dir = data_dir)
+bikedb <- file.path (data_dir, "testdb")
 store_bikedata (data_dir = data_dir, bikedb = bikedb)
 # create database indexes for quicker access:
 index_bikedata_db (bikedb = bikedb)
 
-trips <- bike_tripmat (bikedb = bikedb, city = 'LA') # trip matrix
+trips <- bike_tripmat (bikedb = bikedb, city = "LA") # trip matrix
 stations <- bike_stations (bikedb = bikedb) # station data
 
 bike_rm_test_data (data_dir = data_dir)
 bike_rm_db (bikedb)
 # don't forget to remove real data!
-# file.remove (list.files (data_dir, pattern = '.zip'))
+# file.remove (list.files (data_dir, pattern = ".zip"))
 }
 }

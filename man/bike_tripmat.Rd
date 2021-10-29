@@ -43,7 +43,8 @@ weekdays. This can be a vector of numeric, starting with Sunday=1, or
 unambiguous characters, so "sa" and "tu" for Saturday and Tuesday.}
 
 \item{member}{If given, extract only trips by registered members
-(\code{member = 1} or \code{TRUE}) or not (\code{member = 0} or \code{FALSE}).}
+(\code{member = 1} or \code{TRUE}) or not (\code{member = 0} or
+\code{FALSE}).}
 
 \item{birth_year}{If given, extract only trips by registered members whose
 declared birth years equal or lie within the specified value or values.}
@@ -88,36 +89,38 @@ non-integer in this case, whereas they are always integer-valued for
 data_dir <- tempdir ()
 bike_write_test_data (data_dir = data_dir)
 # or download some real data!
-# dl_bikedata (city = 'la', data_dir = data_dir)
-bikedb <- file.path (data_dir, 'testdb')
+# dl_bikedata (city = "la", data_dir = data_dir)
+bikedb <- file.path (data_dir, "testdb")
 store_bikedata (data_dir = data_dir, bikedb = bikedb)
 # create database indexes for quicker access:
 index_bikedata_db (bikedb = bikedb)
 
 
-tm <- bike_tripmat (bikedb = bikedb, city = 'ny') # full trip matrix
-tm <- bike_tripmat (bikedb = bikedb, city = 'ny',
+tm <- bike_tripmat (bikedb = bikedb, city = "ny") # full trip matrix
+tm <- bike_tripmat (bikedb = bikedb, city = "ny",
                     start_date = 20161201, end_date = 20161201)
-tm <- bike_tripmat (bikedb = bikedb, city = 'ny', start_time = 1)
-tm <- bike_tripmat (bikedb = bikedb, city = 'ny', start_time = "01:00")
-tm <- bike_tripmat (bikedb = bikedb, city = 'ny', end_time = "01:00")
-tm <- bike_tripmat (bikedb = bikedb, city = 'ny', 
+tm <- bike_tripmat (bikedb = bikedb, city = "ny", start_time = 1)
+tm <- bike_tripmat (bikedb = bikedb, city = "ny", start_time = "01:00")
+tm <- bike_tripmat (bikedb = bikedb, city = "ny", end_time = "01:00")
+tm <- bike_tripmat (bikedb = bikedb, city = "ny",
                     start_date = 20161201, start_time = 1)
-tm <- bike_tripmat (bikedb = bikedb, city = 'ny', start_date = 20161201,
+tm <- bike_tripmat (bikedb = bikedb, city = "ny", start_date = 20161201,
                     end_date = 20161201, start_time = 1, end_time = 2)
-tm <- bike_tripmat (bikedb = bikedb, city = 'ny', weekday = 5)
-tm <- bike_tripmat (bikedb = bikedb, city = 'ny', weekday = c('f', 'sa', 'th'))
-tm <- bike_tripmat (bikedb = bikedb, city = 'ny', weekday = c('f', 'th', 'sa'))
-tm <- bike_tripmat (bikedb = bikedb, city = 'ny', member = 1)
-tm <- bike_tripmat (bikedb = bikedb, city = 'ny', birth_year = 1976)
-tm <- bike_tripmat (bikedb = bikedb, city = 'ny', birth_year = 1976:1990)
-tm <- bike_tripmat (bikedb = bikedb, city = 'ny', gender = 'f')
-tm <- bike_tripmat (bikedb = bikedb, city = 'ny',
-                    gender = 'm', birth_year = 1976:1990)
+tm <- bike_tripmat (bikedb = bikedb, city = "ny", weekday = 5)
+tm <- bike_tripmat (bikedb = bikedb, city = "ny",
+                    weekday = c("f", "sa", "th"))
+tm <- bike_tripmat (bikedb = bikedb, city = "ny",
+                    weekday = c("f", "th", "sa"))
+tm <- bike_tripmat (bikedb = bikedb, city = "ny", member = 1)
+tm <- bike_tripmat (bikedb = bikedb, city = "ny", birth_year = 1976)
+tm <- bike_tripmat (bikedb = bikedb, city = "ny", birth_year = 1976:1990)
+tm <- bike_tripmat (bikedb = bikedb, city = "ny", gender = "f")
+tm <- bike_tripmat (bikedb = bikedb, city = "ny",
+                    gender = "m", birth_year = 1976:1990)
 
 bike_rm_test_data (data_dir = data_dir)
 bike_rm_db (bikedb)
 # don't forget to remove real data!
-# file.remove (list.files (data_dir, pattern = '.zip'))
+# file.remove (list.files (data_dir, pattern = ".zip"))
 }
 }
