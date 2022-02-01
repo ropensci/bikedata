@@ -1,28 +1,20 @@
 {
-  "@context": [
-    "https://doi.org/doi:10.5063/schema/codemeta-2.0",
-    "http://schema.org"
-  ],
+  "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
   "@type": "SoftwareSourceCode",
   "identifier": "bikedata",
-  "description": "Download and aggregate data from all public hire bicycle\n    systems which provide open data, currently including 'Santander'\n    Cycles in London, U.K.; from the U.S.A., 'Ford GoBike' in San\n    Francisco CA, 'citibike' in New York City NY, 'Divvy' in Chicago IL,\n    'Capital Bikeshare' in Washington DC, 'Hubway' in Boston MA, 'Metro'\n    in Los Angeles LA, 'Indego' in Philadelphia PA, and 'Nice Ride' in\n    Minnesota; 'Bixi' from Montreal, Canada; and 'mibici' from\n    Guadalajara, Mexico.",
+  "description": "Download and aggregate data from all public hire bicycle systems which provide open data, currently including 'Santander' Cycles in London, U.K.; from the U.S.A., 'Ford GoBike' in San Francisco CA, 'citibike' in New York City NY, 'Divvy' in Chicago IL, 'Capital Bikeshare' in Washington DC, 'Hubway' in Boston MA, 'Metro' in Los Angeles LA, 'Indego' in Philadelphia PA, and 'Nice Ride' in Minnesota; 'Bixi' from Montreal, Canada; and 'mibici' from Guadalajara, Mexico.",
   "name": "bikedata: Download and Aggregate Data from Public Hire Bicycle Systems",
+  "relatedLink": "https://docs.ropensci.org/bikedata/",
   "codeRepository": "https://github.com/ropensci/bikedata",
   "issueTracker": "https://github.com/ropensci/bikedata/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.2.5.040",
+  "version": "0.2.5.41",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.1.1 (2021-08-10)",
-  "provider": {
-    "@id": "https://cran.r-project.org",
-    "@type": "Organization",
-    "name": "Central R Archive Network (CRAN)",
-    "url": "https://cran.r-project.org"
-  },
+  "runtimePlatform": "R version 4.1.2 (2021-11-01)",
   "author": [
     {
       "@type": "Person",
@@ -125,14 +117,14 @@
       "sameAs": "https://CRAN.R-project.org/package=testthat"
     }
   ],
-  "softwareRequirements": [
-    {
+  "softwareRequirements": {
+    "1": {
       "@type": "SoftwareApplication",
       "identifier": "R",
       "name": "R",
       "version": ">= 3.0"
     },
-    {
+    "2": {
       "@type": "SoftwareApplication",
       "identifier": "DBI",
       "name": "DBI",
@@ -144,7 +136,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=DBI"
     },
-    {
+    "3": {
       "@type": "SoftwareApplication",
       "identifier": "httr",
       "name": "httr",
@@ -156,7 +148,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=httr"
     },
-    {
+    "4": {
       "@type": "SoftwareApplication",
       "identifier": "lubridate",
       "name": "lubridate",
@@ -168,7 +160,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=lubridate"
     },
-    {
+    "5": {
       "@type": "SoftwareApplication",
       "identifier": "magrittr",
       "name": "magrittr",
@@ -180,12 +172,12 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=magrittr"
     },
-    {
+    "6": {
       "@type": "SoftwareApplication",
       "identifier": "methods",
       "name": "methods"
     },
-    {
+    "7": {
       "@type": "SoftwareApplication",
       "identifier": "Rcpp",
       "name": "Rcpp",
@@ -197,7 +189,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=Rcpp"
     },
-    {
+    "8": {
       "@type": "SoftwareApplication",
       "identifier": "readxl",
       "name": "readxl",
@@ -209,7 +201,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=readxl"
     },
-    {
+    "9": {
       "@type": "SoftwareApplication",
       "identifier": "reshape2",
       "name": "reshape2",
@@ -221,7 +213,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=reshape2"
     },
-    {
+    "10": {
       "@type": "SoftwareApplication",
       "identifier": "RSQLite",
       "name": "RSQLite",
@@ -233,7 +225,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=RSQLite"
     },
-    {
+    "11": {
       "@type": "SoftwareApplication",
       "identifier": "tibble",
       "name": "tibble",
@@ -245,7 +237,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=tibble"
     },
-    {
+    "12": {
       "@type": "SoftwareApplication",
       "identifier": "xml2",
       "name": "xml2",
@@ -257,40 +249,12 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=xml2"
     },
-    {
-      "@type": "SoftwareApplication",
-      "identifier": "https://sysreqs.r-hub.io/get/cxx11"
-    }
-  ],
+    "SystemRequirements": "C++11"
+  },
   "applicationCategory": "DataAccess",
   "isPartOf": "https://ropensci.org",
-  "keywords": [
-    "bicycle-hire-systems",
-    "bike-hire-systems",
-    "bike-hire",
-    "bicycle-hire",
-    "database",
-    "bike-data",
-    "r",
-    "rstats",
-    "r-package",
-    "peer-reviewed"
-  ],
-  "contIntegration": [
-    "https://github.com/ropensci/bikedata/actions?query=workflow%3AR-CMD-check",
-    "https://codecov.io/gh/ropensci/bikedata"
-  ],
-  "developmentStatus": "https://www.repostatus.org/",
-  "releaseNotes": "https://github.com/ropensci/bikedata/blob/master/NEWS.md",
-  "readme": "https://github.com/ropensci/bikedata/blob/main/README.md",
-  "fileSize": "13496.271KB",
-  "copyrightHolder": {},
-  "funder": {},
-  "review": {
-    "@type": "Review",
-    "url": "https://github.com/ropensci/software-review/issues/116",
-    "provider": "https://ropensci.org"
-  },
+  "keywords": ["bicycle-hire-systems", "bike-hire-systems", "bike-hire", "bicycle-hire", "database", "bike-data", "r", "rstats", "r-package", "peer-reviewed"],
+  "fileSize": "12910.322KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
@@ -317,19 +281,20 @@
         "issueNumber": "20",
         "datePublished": "2017",
         "isPartOf": {
-          "@type": [
-            "PublicationVolume",
-            "Periodical"
-          ],
+          "@type": ["PublicationVolume", "Periodical"],
           "volumeNumber": "2",
           "name": "The Journal of Open Source Software"
         }
       }
     }
   ],
-  "relatedLink": [
-    "https://docs.ropensci.org/bikedata",
-    "https://CRAN.R-project.org/package=bikedata",
-    "https://docs.ropensci.org/bikedata/"
-  ]
+  "releaseNotes": "https://github.com/ropensci/bikedata/blob/master/NEWS.md",
+  "readme": "https://github.com/ropensci/bikedata/blob/main/README.md",
+  "contIntegration": ["https://github.com/ropensci/bikedata/actions?query=workflow%3AR-CMD-check", "https://codecov.io/gh/ropensci/bikedata"],
+  "developmentStatus": "https://www.repostatus.org/",
+  "review": {
+    "@type": "Review",
+    "url": "https://github.com/ropensci/software-review/issues/116",
+    "provider": "https://ropensci.org"
+  }
 }
