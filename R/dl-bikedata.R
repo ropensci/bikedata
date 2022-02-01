@@ -61,7 +61,7 @@ dl_bikedata <- function (city, data_dir = tempdir(), dates = NULL,
 
     dates_exist <- TRUE # set to F if requested dates do not exist
     if (is.null (dates))
-        indx <- which (!file.exists (files))
+        index <- which (!file.exists (files))
     else {
 
         dates <- bike_convert_dates (dates) %>%
@@ -69,19 +69,19 @@ dl_bikedata <- function (city, data_dir = tempdir(), dates = NULL,
             convert_dates_to_filenames (city = city) %>%
             sort ()
         dates <- unique (c (dates, tolower (dates)))
-        indx <- which (grepl (paste (dates, collapse = "|"), files,
-                              ignore.case = TRUE))
-        if (length (indx) == 0)
+        index <- which (grepl (paste (dates, collapse = "|"), files,
+                               ignore.case = TRUE))
+        if (length (index) == 0)
             dates_exist <- FALSE
         else
-            indx <- which (!file.exists (files) &
+            index <- which (!file.exists (files) &
                            grepl (paste (dates, collapse = "|"), files,
                                   ignore.case = TRUE))
     }
 
-    if (length (indx) > 0) {
+    if (length (index) > 0) {
 
-        for (f in dl_files [indx]) {
+        for (f in dl_files [index]) {
 
             # replace whitespace in URLs (see issue#53)
             furl <- gsub (" ", "%20", f)
@@ -147,7 +147,7 @@ dl_bikedata <- function (city, data_dir = tempdir(), dates = NULL,
         #invisible (tryCatch (file.remove (zips [indx]),
         #                     warning = function (w) NULL,
         #                     error = function (e) NULL))
-    } else if (city == "gu") {
+    } else if (city == "gu" & length (index) > 0L) {
 
         # https://github.com/ropensci/bikedata/issues/106
         # Genders in quoted versions are unquoted when not reported. Could be
