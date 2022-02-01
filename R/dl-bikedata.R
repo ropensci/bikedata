@@ -147,6 +147,25 @@ dl_bikedata <- function (city, data_dir = tempdir(), dates = NULL,
         #invisible (tryCatch (file.remove (zips [indx]),
         #                     warning = function (w) NULL,
         #                     error = function (e) NULL))
+    } else if (city == "gu") {
+
+        # https://github.com/ropensci/bikedata/issues/106
+        # Genders in quoted versions are unquoted when not reported. Could be
+        # fixed in src code, but only by scanning each line for quotation
+        # structure which makes it way slower. This instead replaces these
+        # values with quoted versions.
+
+        message ("Tidying Guadalajara files ... ", appendLF = FALSE)
+        csvs <- list.files (data_dir, pattern = "^datos\\_", full.names = TRUE)
+        for (i in csvs) {
+            ptn <- ",\\s?NULL\\s?,"
+            x <- brio::read_lines (i)
+            if (any (grepl (ptn, x))) {
+                x <- gsub (ptn, ",\"NULL\",", x)
+                brio::write_lines (x, i)
+            }
+        }
+        message ("done.")
     }
 
     ret <- list.files (data_dir, pattern = ptn, full.names = TRUE)
