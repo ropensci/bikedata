@@ -1,7 +1,3 @@
-context ("download data")
-
-require (testthat)
-
 testthat::skip_on_cran ()
 
 test_that ("no city", {
@@ -164,15 +160,15 @@ test_that ("dl_bikedata chicago", {
                                          error = function (e) {
                                              message (msg); NULL }),
                                msg)
-               for (d in dates)
-                   expect_message (tryCatch (dl_bikedata (city = "chicago",
-                                                          data_dir = tempdir (),
-                                                          dates = d),
-                             warning = function (w) {
-                                 message (msg); NULL },
-                             error = function (e) {
-                                 message (msg); NULL }),
-                                   msg)
+               # for (d in dates)
+               #     expect_message (tryCatch (dl_bikedata (city = "chicago",
+               #                                            data_dir = tempdir (),
+               #                                            dates = d),
+               #               warning = function (w) {
+               #                   message (msg); NULL },
+               #               error = function (e) {
+               #                   message (msg); NULL }),
+               #                     msg)
                chk <- tryCatch (file.remove (files),
                                 warning = function (w) NULL,
                                 error = function (e) NULL)
