@@ -15,7 +15,7 @@
 #' @noRd
 indexes_exist <- function (bikedb) {
 
-    db <- DBI::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
+    db <- DBI::dbConnect (RSQLite::SQLite (), bikedb, create = FALSE)
     idx_list <- DBI::dbGetQuery (db, "PRAGMA index_list (trips)")
     DBI::dbDisconnect (db)
     nrow (idx_list) > 2 # 2 because city index is automatically created
@@ -28,7 +28,7 @@ indexes_exist <- function (bikedb) {
 #' @noRd
 num_datafiles_in_db <- function (bikedb) {
 
-    db <- DBI::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
+    db <- DBI::dbConnect (RSQLite::SQLite (), bikedb, create = FALSE)
     numtrips <- DBI::dbGetQuery (db, "SELECT Count(*) FROM datafiles")
     DBI::dbDisconnect (db)
     return (as.numeric (numtrips))
@@ -41,7 +41,7 @@ num_datafiles_in_db <- function (bikedb) {
 #' @noRd
 bike_cities_in_db <- function (bikedb) {
 
-    db <- DBI::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
+    db <- DBI::dbConnect (RSQLite::SQLite (), bikedb, create = FALSE)
     cities <- DBI::dbGetQuery (db, "SELECT city FROM stations")
     DBI::dbDisconnect (db)
     cities <- unique (cities)
@@ -63,7 +63,7 @@ get_new_datafiles <- function (bikedb, flist_zip) {
 
     if (!is.null (flist_zip)) {
 
-        db <- DBI::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
+        db <- DBI::dbConnect (RSQLite::SQLite (), bikedb, create = FALSE)
         old_files <- DBI::dbReadTable (db, "datafiles")$name
         DBI::dbDisconnect (db)
         flist_zip <- flist_zip [which (!basename (flist_zip) %in% old_files)]
@@ -84,11 +84,13 @@ get_new_datafiles <- function (bikedb, flist_zip) {
 #' @noRd
 bike_station_dates <- function (bikedb, city) {
 
-    db <- DBI::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
-    qry <- paste0 ("SELECT MIN (STRFTIME('%Y-%m-%d', start_time)) AS 'first',",
-                   "MAX (STRFTIME('%Y-%m-%d', start_time)) AS 'last',",
-                   "start_station_id AS 'station' FROM trips WHERE city = '",
-                   city, "' GROUP BY start_station_id")
+    db <- DBI::dbConnect (RSQLite::SQLite (), bikedb, create = FALSE)
+    qry <- paste0 (
+        "SELECT MIN (STRFTIME('%Y-%m-%d', start_time)) AS 'first',",
+        "MAX (STRFTIME('%Y-%m-%d', start_time)) AS 'last',",
+        "start_station_id AS 'station' FROM trips WHERE city = '",
+        city, "' GROUP BY start_station_id"
+    )
     dates <- DBI::dbGetQuery (db, qry)
     DBI::dbDisconnect (db)
     # re-order stations to numeric order
@@ -97,10 +99,12 @@ bike_station_dates <- function (bikedb, city) {
     # Then add numbers of days in operation
     ndays <- lubridate::interval (dates$first, dates$last) /
         lubridate::ddays (1)
-    dates <- data.frame (first = dates$first,
-                         last = dates$last,
-                         ndays = ndays + 1, # start = end -> 1 day
-                         station = dates$station)
+    dates <- data.frame (
+        first = dates$first,
+        last = dates$last,
+        ndays = ndays + 1, # start = end -> 1 day
+        station = dates$station
+    )
     rownames (dates) <- NULL
 
     dates$first <- as.Date (dates$first)
@@ -129,7 +133,7 @@ bike_station_dates <- function (bikedb, city) {
 #' \dontrun{
 #' data_dir <- tempdir ()
 #' bike_write_test_data (data_dir = data_dir)
-#' bikedb <- file.path (data_dir, 'testdb')
+#' bikedb <- file.path (data_dir, "testdb")
 #' store_bikedata (data_dir = data_dir, bikedb = bikedb)
 #' files <- bike_stored_files (bikedb = bikedb)
 #' # returns a tibble with names of all stored files
@@ -141,15 +145,17 @@ bike_station_dates <- function (bikedb, city) {
 #' }
 bike_stored_files <- function (bikedb, city) {
 
-    if (missing (bikedb))
+    if (missing (bikedb)) {
         stop ("Can't get daily trips if bikedb isn't provided")
+    }
 
     bikedb <- check_db_arg (bikedb)
 
-    db <- DBI::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
+    db <- DBI::dbConnect (RSQLite::SQLite (), bikedb, create = FALSE)
     qry <- "SELECT * FROM datafiles"
-    if (!missing (city))
+    if (!missing (city)) {
         qry <- paste0 (qry, " WHERE city = '", city, "'")
+    }
     files <- DBI::dbGetQuery (db, qry)
     DBI::dbDisconnect (db)
     return (files)
@@ -168,7 +174,7 @@ bike_stored_files <- function (bikedb, city) {
 #' \dontrun{
 #' data_dir <- tempdir ()
 #' bike_write_test_data (data_dir = data_dir)
-#' bikedb <- file.path (data_dir, 'testdb')
+#' bikedb <- file.path (data_dir, "testdb")
 #' # latest_lo_stns is set to FALSE just to avoid download on CRAN; this should
 #' # normally remain at default value of TRUE:
 #' store_bikedata (data_dir = data_dir, bikedb = bikedb, latest_lo_stns = FALSE)
@@ -176,14 +182,14 @@ bike_stored_files <- function (bikedb, city) {
 #' index_bikedata_db (bikedb = bikedb)
 #'
 #' bike_db_totals (bikedb = bikedb, trips = TRUE) # total trips
-#' bike_db_totals (bikedb = bikedb, trips = TRUE, city = 'ch')
-#' bike_db_totals (bikedb = bikedb, trips = TRUE, city = 'ny')
+#' bike_db_totals (bikedb = bikedb, trips = TRUE, city = "ch")
+#' bike_db_totals (bikedb = bikedb, trips = TRUE, city = "ny")
 #' bike_db_totals (bikedb = bikedb, trips = FALSE) # total stations
-#' bike_db_totals (bikedb = bikedb, trips = FALSE, city = 'ch')
-#' bike_db_totals (bikedb = bikedb, trips = FALSE, city = 'ny')
+#' bike_db_totals (bikedb = bikedb, trips = FALSE, city = "ch")
+#' bike_db_totals (bikedb = bikedb, trips = FALSE, city = "ny")
 #' # numbers of stations can also be extracted with
 #' nrow (bike_stations (bikedb = bikedb))
-#' nrow (bike_stations (bikedb = bikedb, city = 'ch'))
+#' nrow (bike_stations (bikedb = bikedb, city = "ch"))
 #'
 #' bike_rm_test_data (data_dir = data_dir)
 #' bike_rm_db (bikedb)
@@ -192,18 +198,21 @@ bike_stored_files <- function (bikedb, city) {
 #' }
 bike_db_totals <- function (bikedb, trips = TRUE, city) {
 
-    if (missing (bikedb))
+    if (missing (bikedb)) {
         stop ("Can't get daily trips if bikedb isn't provided")
+    }
 
     bikedb <- check_db_arg (bikedb)
 
-    db <- DBI::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
-    if (trips)
+    db <- DBI::dbConnect (RSQLite::SQLite (), bikedb, create = FALSE)
+    if (trips) {
         qry <- "SELECT Count(*) FROM trips"
-    else
+    } else {
         qry <- "SELECT Count(*) FROM stations"
-    if (!missing (city))
+    }
+    if (!missing (city)) {
         qry <- paste0 (qry, " WHERE city = '", city, "'")
+    }
     numtrips <- DBI::dbGetQuery (db, qry)
     DBI::dbDisconnect (db)
     return (as.numeric (numtrips))
@@ -228,9 +237,11 @@ bike_db_totals <- function (bikedb, trips = TRUE, city) {
 #' # or download some real data!
 #' # dl_bikedata (city = 'la', data_dir = data_dir)
 #' # Remove one London file that triggers an API call which may fail tests:
-#' file.remove (file.path (tempdir(),
-#'              "01aJourneyDataExtract10Jan16-23Jan16.csv"))
-#' bikedb <- file.path (data_dir, 'testdb')
+#' file.remove (file.path (
+#'     tempdir (),
+#'     "01aJourneyDataExtract10Jan16-23Jan16.csv"
+#' ))
+#' bikedb <- file.path (data_dir, "testdb")
 #' store_bikedata (data_dir = data_dir, bikedb = bikedb)
 #' # bike_latest_files (bikedb)
 #' # All false because test data are not current, but would pass with real data
@@ -239,15 +250,16 @@ bike_db_totals <- function (bikedb, trips = TRUE, city) {
 #' bike_rm_db (bikedb)
 #' # don't forget to remove real data!
 #' # file.remove (list.files (data_dir, pattern = '.zip'))
-#'}
+#' }
 bike_latest_files <- function (bikedb) {
 
-    if (missing (bikedb))
+    if (missing (bikedb)) {
         stop ("Can't get latest files if bikedb isn't provided")
+    }
 
     bikedb <- check_db_arg (bikedb)
 
-    db <- DBI::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
+    db <- DBI::dbConnect (RSQLite::SQLite (), bikedb, create = FALSE)
     files <- DBI::dbGetQuery (db, "SELECT * FROM datafiles")
     cities <- unique (files$city)
     DBI::dbDisconnect (db)
@@ -262,8 +274,9 @@ bike_latest_files <- function (bikedb) {
         files_i <- files$name [which (files$city == cities [i])]
         all_files <- basename (get_bike_files (city = cities [i]))
         if (sort (all_files, decreasing = TRUE) [1] !=
-            sort (files_i, decreasing = TRUE) [1])
+            sort (files_i, decreasing = TRUE) [1]) {
             latest_files [i] <- FALSE
+        }
     }
     return (latest_files)
 }
@@ -286,16 +299,18 @@ bike_latest_files <- function (bikedb) {
 #' bike_write_test_data (data_dir = data_dir)
 #' # dl_bikedata (city = 'la', data_dir = data_dir) # or some real data!
 #' # Remove one London file that triggers an API call which may fail tests:
-#' file.remove (file.path (tempdir(),
-#'              "01aJourneyDataExtract10Jan16-23Jan16.csv"))
-#' bikedb <- file.path (data_dir, 'testdb')
+#' file.remove (file.path (
+#'     tempdir (),
+#'     "01aJourneyDataExtract10Jan16-23Jan16.csv"
+#' ))
+#' bikedb <- file.path (data_dir, "testdb")
 #' store_bikedata (data_dir = data_dir, bikedb = bikedb)
 #' # create database indexes for quicker access:
 #' index_bikedata_db (bikedb = bikedb)
 #'
-#' bike_datelimits ('testdb') # overall limits for all cities
-#' bike_datelimits ('testdb', city = 'NYC')
-#' bike_datelimits ('testdb', city = 'los angeles')
+#' bike_datelimits ("testdb") # overall limits for all cities
+#' bike_datelimits ("testdb", city = "NYC")
+#' bike_datelimits ("testdb", city = "los angeles")
 #'
 #' bike_rm_test_data (data_dir = data_dir)
 #' bike_rm_db (bikedb)
@@ -304,8 +319,9 @@ bike_latest_files <- function (bikedb) {
 #' }
 bike_datelimits <- function (bikedb, city) {
 
-    if (missing (bikedb))
+    if (missing (bikedb)) {
         stop ("Can't get date limits if bikedb isn't provided")
+    }
 
     bikedb <- check_db_arg (bikedb)
 
@@ -318,10 +334,10 @@ bike_datelimits <- function (bikedb, city) {
         qry_max <- paste0 (qry_max, " WHERE city = '", city, "'")
     }
 
-    db <- DBI::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
+    db <- DBI::dbConnect (RSQLite::SQLite (), bikedb, create = FALSE)
     first_trip <- DBI::dbGetQuery (db, qry_min) [1, 1]
     last_trip <- DBI::dbGetQuery (db, qry_max) [1, 1]
-    DBI::dbDisconnect(db)
+    DBI::dbDisconnect (db)
 
     res <- c (first_trip, last_trip)
     names (res) <- c ("first", "last")
@@ -346,8 +362,10 @@ bike_datelimits <- function (bikedb, city) {
 #' bike_write_test_data (data_dir = data_dir)
 #' # dl_bikedata (city = "la", data_dir = data_dir) # or some real data!
 #' # Remove one London file that triggers an API call which may fail tests:
-#' file.remove (file.path (tempdir(),
-#'              "01aJourneyDataExtract10Jan16-23Jan16.csv"))
+#' file.remove (file.path (
+#'     tempdir (),
+#'     "01aJourneyDataExtract10Jan16-23Jan16.csv"
+#' ))
 #' bikedb <- file.path (data_dir, "testdb")
 #' store_bikedata (data_dir = data_dir, bikedb = bikedb)
 #' # create database indexes for quicker access:
@@ -362,8 +380,9 @@ bike_datelimits <- function (bikedb, city) {
 #' }
 bike_summary_stats <- function (bikedb) {
 
-    if (missing (bikedb))
+    if (missing (bikedb)) {
         stop ("Can't get summary statistics if bikedb isn't provided")
+    }
 
     bikedb <- check_db_arg (bikedb)
 
@@ -379,18 +398,23 @@ bike_summary_stats <- function (bikedb) {
 
         num_trips <- c (num_trips, bike_db_totals (bikedb, TRUE, city = ci))
         num_stations <- c (num_stations, bike_db_totals (bikedb, FALSE,
-                                                         city = ci))
+            city = ci
+        ))
         dates <- rbind (dates, bike_datelimits (bikedb, city = ci))
-        latest <- c (latest,
-                     latest_files [which (names (latest_files) == ci)])
+        latest <- c (
+            latest,
+            latest_files [which (names (latest_files) == ci)]
+        )
     }
     latest_files <- c (NA, as.logical (latest))
 
-    res <- data.frame (city = as.character (c ("total", cities)),
-                       num_trips = num_trips, num_stations = num_stations,
-                       first_trip = dates [, 1], last_trip = dates [, 2],
-                       latest_files = latest_files,
-                       stringsAsFactors = FALSE)
+    res <- data.frame (
+        city = as.character (c ("total", cities)),
+        num_trips = num_trips, num_stations = num_stations,
+        first_trip = dates [, 1], last_trip = dates [, 2],
+        latest_files = latest_files,
+        stringsAsFactors = FALSE
+    )
     return (tibble::as_tibble (res))
 }
 
@@ -429,8 +453,10 @@ bike_summary_stats <- function (bikedb) {
 #' bike_daily_trips (bikedb = "testdb", city = "ny")
 #' bike_daily_trips (bikedb = "testdb", city = "ny", member = TRUE)
 #' bike_daily_trips (bikedb = "testdb", city = "ny", gender = "f")
-#' bike_daily_trips (bikedb = "testdb", city = "ny", station = "173",
-#'                   gender = 1)
+#' bike_daily_trips (
+#'     bikedb = "testdb", city = "ny", station = "173",
+#'     gender = 1
+#' )
 #'
 #' bike_rm_test_data ()
 #' bike_rm_db ("testdb")
@@ -440,15 +466,18 @@ bike_summary_stats <- function (bikedb) {
 bike_daily_trips <- function (bikedb, city, station, member, birth_year, gender,
                               standardise = FALSE) {
 
-    if (missing (bikedb))
+    if (missing (bikedb)) {
         stop ("Can't get daily trips if bikedb isn't provided")
+    }
 
     bikedb <- check_db_arg (bikedb)
     city <- check_city_arg (bikedb, city)
 
-    db <- DBI::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
-    qry <- paste0 ("SELECT STRFTIME('%Y-%m-%d', start_time) AS 'date', ",
-                   "COUNT() AS 'numtrips' FROM trips ")
+    db <- DBI::dbConnect (RSQLite::SQLite (), bikedb, create = FALSE)
+    qry <- paste0 (
+        "SELECT STRFTIME('%Y-%m-%d', start_time) AS 'date', ",
+        "COUNT() AS 'numtrips' FROM trips "
+    )
 
     qry_where <- "city = ?"
     qryargs <- city
@@ -471,12 +500,14 @@ bike_daily_trips <- function (bikedb, city, station, member, birth_year, gender,
 
     if (!missing (station)) {
 
-        if (substring (station, 1, 2) != city)
+        if (substring (station, 1, 2) != city) {
             station <- paste0 (city, station)
+        }
         # Then just check that station is in stations table
         stns <- DBI::dbGetQuery (db, "SELECT stn_id FROM stations")$stn_id
-        if (!station %in% stns)
+        if (!station %in% stns) {
             stop ("Station ", station, " does not exist in database")
+        }
         qry_where <- c (qry_where, "start_station_id = ?")
         qryargs <- c (qryargs, station)
     }
@@ -484,7 +515,7 @@ bike_daily_trips <- function (bikedb, city, station, member, birth_year, gender,
     qry <- paste0 (qry, " GROUP BY STRFTIME('%Y-%m-%d', date);")
 
     qryres <- DBI::dbSendQuery (db, qry)
-    DBI::dbBind(qryres, as.list (qryargs))
+    DBI::dbBind (qryres, as.list (qryargs))
     trips <- DBI::dbFetch (qryres)
     DBI::dbClearResult (qryres)
     DBI::dbDisconnect (db)
@@ -496,13 +527,15 @@ bike_daily_trips <- function (bikedb, city, station, member, birth_year, gender,
         dates <- bike_station_dates (bikedb = bikedb, city = city)
         all_days <- seq (min (dates$first), max (dates$last), by = "days")
         daily_stns <- rep (0, length (all_days))
-        for (i in seq (daily_stns))
+        for (i in seq (daily_stns)) {
             daily_stns [i] <- length (which (dates$first <= all_days [i]))
+        }
         daily_stns <- 1 / daily_stns # convert to multiplicative factor
 
         # Entire systems can also have gaps, so dates have to be matched
-        if (!all (trips$date %in% all_days))
+        if (!all (trips$date %in% all_days)) {
             stop ("sequence of dates generated dates not present in db")
+        }
         daily_stns <- daily_stns [which (trips$date %in% all_days)]
         daily_stns <- daily_stns / mean (daily_stns)
         trips$numtrips <- trips$numtrips * daily_stns
@@ -513,7 +546,6 @@ bike_daily_trips <- function (bikedb, city, station, member, birth_year, gender,
 
     return (tibble::as_tibble (trips))
 }
-
 
 
 #' Static summary of which systems provide demographic data
@@ -553,20 +585,30 @@ bike_daily_trips <- function (bikedb, city, station, member, birth_year, gender,
 #' }
 bike_demographic_data <- function () {
 
-    dat <- data.frame (city = c ("bo", "ch", "dc", "gu", "la", "lo",
-                                 "mo", "mn", "ny", "ph", "sf"),
-                       city_name = c ("Boston", "Chicago", "Washington DC",
-                                      "Guadalajara", "Los Angeles", "London",
-                                      "Montreal", "Minneapolis", "New York",
-                                      "Philadelphia", "Bay Area"),
-                       bike_system = c ("Hubway", "Divvy", "CapitalBikeShare",
-                                        "mibici", "Metro", "Santander", "Bixi",
-                                        "NiceRide", "Citibike", "Indego",
-                                        "FordGoBike"),
-                       demographic_data = c (TRUE, TRUE, FALSE, TRUE, FALSE,
-                                             FALSE, FALSE, TRUE, TRUE, FALSE,
-                                             TRUE),
-                       stringsAsFactors = FALSE)
+    dat <- data.frame (
+        city = c (
+            "bo", "ch", "dc", "gu", "la", "lo",
+            "mo", "mn", "ny", "ph", "sf"
+        ),
+        city_name = c (
+            "Boston", "Chicago", "Washington DC",
+            "Guadalajara", "Los Angeles", "London",
+            "Montreal", "Minneapolis", "New York",
+            "Philadelphia", "Bay Area"
+        ),
+        bike_system = c (
+            "Hubway", "Divvy", "CapitalBikeShare",
+            "mibici", "Metro", "Santander", "Bixi",
+            "NiceRide", "Citibike", "Indego",
+            "FordGoBike"
+        ),
+        demographic_data = c (
+            TRUE, TRUE, FALSE, TRUE, FALSE,
+            FALSE, FALSE, TRUE, TRUE, FALSE,
+            TRUE
+        ),
+        stringsAsFactors = FALSE
+    )
 
     return (dat)
 }
