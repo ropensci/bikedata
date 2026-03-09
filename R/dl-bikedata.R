@@ -40,19 +40,23 @@
 #'
 #' @examples
 #' \dontrun{
-#' dl_bikedata (city = 'New York City USA', dates = 201601:201613)
+#' dl_bikedata (city = "New York City USA", dates = 201601:201613)
 #' }
-dl_bikedata <- function (city, data_dir = tempdir(), dates = NULL,
+dl_bikedata <- function (city, data_dir = tempdir (), dates = NULL,
                          quiet = FALSE) {
 
-    if (missing (city))
+    if (missing (city)) {
         stop ("city must be specified for dl_bikedata()")
+    }
 
     city <- convert_city_names (city)
-    if (city == "mn")
-        warning ("Data for the Nice Ride MN system must be downloaded ",
-                 "manually from\nhttps://www.niceridemn.com/system-data/, and ",
-                 "loaded using store_bikedata")
+    if (city == "mn") {
+        warning (
+            "Data for the Nice Ride MN system must be downloaded ",
+            "manually from\nhttps://www.niceridemn.com/system-data/, and ",
+            "loaded using store_bikedata"
+        )
+    }
 
     dl_files <- get_bike_files (city)
     data_dir <- expand_home (data_dir) %>%
@@ -60,9 +64,9 @@ dl_bikedata <- function (city, data_dir = tempdir(), dates = NULL,
     files <- file.path (data_dir, basename (dl_files))
 
     dates_exist <- TRUE # set to F if requested dates do not exist
-    if (is.null (dates))
+    if (is.null (dates)) {
         index <- which (!file.exists (files))
-    else {
+    } else {
 
         dates <- bike_convert_dates (dates) %>%
             expand_dates_to_range () %>%
@@ -70,13 +74,16 @@ dl_bikedata <- function (city, data_dir = tempdir(), dates = NULL,
             sort ()
         dates <- unique (c (dates, tolower (dates)))
         index <- which (grepl (paste (dates, collapse = "|"), files,
-                               ignore.case = TRUE))
-        if (length (index) == 0)
+            ignore.case = TRUE
+        ))
+        if (length (index) == 0) {
             dates_exist <- FALSE
-        else
+        } else {
             index <- which (!file.exists (files) &
-                           grepl (paste (dates, collapse = "|"), files,
-                                  ignore.case = TRUE))
+                grepl (paste (dates, collapse = "|"), files,
+                    ignore.case = TRUE
+                ))
+        }
     }
 
     if (length (index) > 0) {
@@ -86,34 +93,43 @@ dl_bikedata <- function (city, data_dir = tempdir(), dates = NULL,
             # replace whitespace in URLs (see issue#53)
             furl <- gsub (" ", "%20", f)
             f <- gsub (" ", "", f)
-            destfile <- file.path (data_dir, basename(f))
-            if (!quiet)
+            destfile <- file.path (data_dir, basename (f))
+            if (!quiet) {
                 message ("Downloading ", basename (f))
-            resp <- httr::GET (furl,
-                               httr::write_disk (destfile, overwrite = TRUE))
+            }
+            resp <- httr::GET (
+                furl,
+                httr::write_disk (destfile, overwrite = TRUE)
+            )
             if (resp$status_code != 200) {
 
                 count <- 0
                 while (!file.exists (destfile) & count < 5) {
 
-                    resp <- httr::GET (furl,
-                                       httr::write_disk (destfile,
-                                                         overwrite = TRUE))
+                    resp <- httr::GET (
+                        furl,
+                        httr::write_disk (destfile,
+                            overwrite = TRUE
+                        )
+                    )
                     count <- count + 1
                 }
-                if (!file.exists (destfile))
+                if (!file.exists (destfile)) {
                     stop ("Download request failed")
+                }
                 # some junk files are also listed on AWS but not downloadable
-                if (resp$status_code != 200 & file.exists (destfile))
+                if (resp$status_code != 200 & file.exists (destfile)) {
                     chk <- file.remove (destfile)
+                }
             }
         }
     } else {
 
-        if (!dates_exist)
+        if (!dates_exist) {
             message ("There are no ", city, " files for those dates")
-        else
+        } else {
             message ("All data files already exist")
+        }
     }
 
     ptn <- ".zip"
@@ -125,8 +141,9 @@ dl_bikedata <- function (city, data_dir = tempdir(), dates = NULL,
         csvs <- file.path (data_dir, list.files (data_dir, pattern = ".csv"))
         indx <- which (file.info (csvs)$size < 1000)
         invisible (tryCatch (file.remove (csvs [indx]),
-                             warning = function (w) NULL,
-                             error = function (e) NULL))
+            warning = function (w) NULL,
+            error = function (e) NULL
+        ))
         # There is also now one .xlxs file (#49, March 2017), which is converted
         # to .csv here
         xls <- file.path (data_dir, list.files (data_dir, pattern = ".xlsx"))
@@ -142,9 +159,9 @@ dl_bikedata <- function (city, data_dir = tempdir(), dates = NULL,
 
         # ny also has some junk .zip files, but temporarily disabled because all
         # seems okay again now? (Oct 17)
-        #zips <- file.path (data_dir, list.files (data_dir, pattern = '.zip'))
-        #indx <- which (file.info (zips)$size < 1000)
-        #invisible (tryCatch (file.remove (zips [indx]),
+        # zips <- file.path (data_dir, list.files (data_dir, pattern = '.zip'))
+        # indx <- which (file.info (zips)$size < 1000)
+        # invisible (tryCatch (file.remove (zips [indx]),
         #                     warning = function (w) NULL,
         #                     error = function (e) NULL))
     } else if (city == "gu" & length (index) > 0L) {
@@ -174,7 +191,7 @@ dl_bikedata <- function (city, data_dir = tempdir(), dates = NULL,
 
 #' @rdname dl_bikedata
 #' @export
-download_bikedata <- function (city, data_dir = tempdir(), dates = NULL,
+download_bikedata <- function (city, data_dir = tempdir (), dates = NULL,
                                quiet = FALSE) {
 
     dl_bikedata (city = city, data_dir = data_dir, dates = dates, quiet = quiet)
