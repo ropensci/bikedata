@@ -8,13 +8,13 @@
   "codeRepository": "https://github.com/ropensci/bikedata",
   "issueTracker": "https://github.com/ropensci/bikedata/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.2.5.047",
+  "version": "0.2.5.48",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.1.2 (2021-11-01)",
+  "runtimePlatform": "R version 4.5.2 (2025-10-31)",
   "author": [
     {
       "@type": "Person",
@@ -265,19 +265,8 @@
   },
   "applicationCategory": "DataAccess",
   "isPartOf": "https://ropensci.org",
-  "keywords": [
-    "bicycle-hire-systems",
-    "bike-hire-systems",
-    "bike-hire",
-    "bicycle-hire",
-    "database",
-    "bike-data",
-    "r",
-    "rstats",
-    "r-package",
-    "peer-reviewed"
-  ],
-  "fileSize": "12713.754KB",
+  "keywords": ["bicycle-hire-systems", "bike-hire-systems", "bike-hire", "bicycle-hire", "database", "bike-data", "r", "rstats", "r-package", "peer-reviewed"],
+  "fileSize": "12449.107KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
@@ -304,22 +293,16 @@
         "issueNumber": "20",
         "datePublished": "2017",
         "isPartOf": {
-          "@type": [
-            "PublicationVolume",
-            "Periodical"
-          ],
+          "@type": ["PublicationVolume", "Periodical"],
           "volumeNumber": "2",
           "name": "The Journal of Open Source Software"
         }
       }
     }
   ],
-  "releaseNotes": "https://github.com/ropensci/bikedata/blob/master/NEWS.md",
+  "releaseNotes": "https://github.com/ropensci/bikedata/blob/main/NEWS.md",
   "readme": "https://github.com/ropensci/bikedata/blob/main/README.md",
-  "contIntegration": [
-    "https://github.com/ropensci/bikedata/actions?query=workflow%3AR-CMD-check",
-    "https://codecov.io/gh/ropensci/bikedata"
-  ],
+  "contIntegration": ["https://github.com/ropensci/bikedata/actions?query=workflow%3AR-CMD-check", "https://codecov.io/gh/ropensci/bikedata"],
   "developmentStatus": "https://www.repostatus.org/",
   "review": {
     "@type": "Review",
