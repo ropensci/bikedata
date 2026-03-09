@@ -85,7 +85,7 @@ std::map <std::string, std::string> stns::get_bo_stn_table (sqlite3 * dbcon)
     std::map <std::string, std::string> stn_map;
 
     char qry_stns [BUFFER_SIZE] = "\0";
-    sprintf (qry_stns, 
+    snprintf (qry_stns, BUFFER_SIZE,
             "SELECT stn_id, name FROM stations WHERE city = 'bo'");
 
     int rc = sqlite3_prepare_v2 (dbcon, qry_stns, BUFFER_SIZE, &stmt, nullptr);
@@ -128,7 +128,7 @@ std::map <std::string, std::string> stns::get_dc_stn_table (sqlite3 * dbcon)
     std::map <std::string, std::string> stn_map;
 
     char qry_stns [BUFFER_SIZE] = "\0";
-    sprintf (qry_stns, 
+    snprintf (qry_stns, BUFFER_SIZE,
             "SELECT stn_id, name FROM stations WHERE city = 'dc'");
 
     int rc = sqlite3_prepare_v2 (dbcon, qry_stns, BUFFER_SIZE, &stmt, nullptr);
@@ -235,10 +235,10 @@ std::unordered_set <std::string> stns::get_stn_ids (sqlite3 * dbcon, std::string
 
     char qry_stns [BUFFER_SIZE] = "\0";
     if (ci == "dc")
-        sprintf (qry_stns, 
+        snprintf (qry_stns, BUFFER_SIZE,
                 "SELECT stn_id FROM stations WHERE city = 'dc'");
     else if (ci == "bo")
-        sprintf (qry_stns, 
+        snprintf (qry_stns, BUFFER_SIZE,
                 "SELECT stn_id FROM stations WHERE city = 'bo'");
 
     int rc = sqlite3_prepare_v2 (dbcon, qry_stns, BUFFER_SIZE, &stmt, nullptr);

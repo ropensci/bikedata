@@ -8,13 +8,13 @@
   "codeRepository": "https://github.com/ropensci/bikedata",
   "issueTracker": "https://github.com/ropensci/bikedata/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.2.5.046",
+  "version": "0.2.5.068",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.1.2 (2021-11-01)",
+  "runtimePlatform": "R version 4.5.2 (2025-10-31)",
   "author": [
     {
       "@type": "Person",
@@ -261,7 +261,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=xml2"
     },
-    "SystemRequirements": "C++11"
+    "SystemRequirements": {}
   },
   "applicationCategory": "DataAccess",
   "isPartOf": "https://ropensci.org",
@@ -277,7 +277,7 @@
     "r-package",
     "peer-reviewed"
   ],
-  "fileSize": "12713.754KB",
+  "fileSize": "12449.932KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
@@ -314,7 +314,7 @@
       }
     }
   ],
-  "releaseNotes": "https://github.com/ropensci/bikedata/blob/master/NEWS.md",
+  "releaseNotes": "https://github.com/ropensci/bikedata/blob/main/NEWS.md",
   "readme": "https://github.com/ropensci/bikedata/blob/main/README.md",
   "contIntegration": [
     "https://github.com/ropensci/bikedata/actions?query=workflow%3AR-CMD-check",

@@ -206,3 +206,167 @@ Conduct](https://ropensci.org/code-of-conduct/). By contributing to this
 project you agree to abide by its terms.
 
 [![ropensci_footer](https://ropensci.org//public_images/github_footer.png)](https://ropensci.org/)
+
+## Contributors
+
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+All contributions to this project are gratefully acknowledged using the [`allcontributors` package](https://github.com/ropensci/allcontributors) following the [allcontributors](https://allcontributors.org) specification. Contributions of any kind are welcome!
+
+### Code
+
+<table>
+
+<tr>
+<td align="center">
+<a href="https://github.com/mpadge">
+<img src="https://avatars.githubusercontent.com/u/6697851?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci/bikedata/commits?author=mpadge">mpadge</a>
+</td>
+<td align="center">
+<a href="https://github.com/richardellison">
+<img src="https://avatars.githubusercontent.com/u/10625733?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci/bikedata/commits?author=richardellison">richardellison</a>
+</td>
+<td align="center">
+<a href="https://github.com/tbuckl">
+<img src="https://avatars.githubusercontent.com/u/98956?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci/bikedata/commits?author=tbuckl">tbuckl</a>
+</td>
+<td align="center">
+<a href="https://github.com/szymanskir">
+<img src="https://avatars.githubusercontent.com/u/29870975?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci/bikedata/commits?author=szymanskir">szymanskir</a>
+</td>
+<td align="center">
+<a href="https://github.com/arfon">
+<img src="https://avatars.githubusercontent.com/u/4483?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci/bikedata/commits?author=arfon">arfon</a>
+</td>
+<td align="center">
+<a href="https://github.com/graceli8">
+<img src="https://avatars.githubusercontent.com/u/23415421?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci/bikedata/commits?author=graceli8">graceli8</a>
+</td>
+<td align="center">
+<a href="https://github.com/jimhester">
+<img src="https://avatars.githubusercontent.com/u/205275?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci/bikedata/commits?author=jimhester">jimhester</a>
+</td>
+</tr>
+
+
+<tr>
+<td align="center">
+<a href="https://github.com/maelle">
+<img src="https://avatars.githubusercontent.com/u/8360597?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci/bikedata/commits?author=maelle">maelle</a>
+</td>
+<td align="center">
+<a href="https://github.com/sckott">
+<img src="https://avatars.githubusercontent.com/u/577668?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci/bikedata/commits?author=sckott">sckott</a>
+</td>
+</tr>
+
+</table>
+
+
+### Issue Authors
+
+<table>
+
+<tr>
+<td align="center">
+<a href="https://github.com/krlmlr">
+<img src="https://avatars.githubusercontent.com/u/1741643?u=caaf26641c159b84fe1b6d506f57fcea302a556c&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci/bikedata/issues?q=is%3Aissue+author%3Akrlmlr">krlmlr</a>
+</td>
+<td align="center">
+<a href="https://github.com/dpprdan">
+<img src="https://avatars.githubusercontent.com/u/1423562?u=641a09e8d193d9a34951e623a97a8ab67e8bf3e4&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci/bikedata/issues?q=is%3Aissue+author%3Adpprdan">dpprdan</a>
+</td>
+<td align="center">
+<a href="https://github.com/MathieuMarauri">
+<img src="https://avatars.githubusercontent.com/u/11965307?u=0b7cdf502b243cd3ecd9a0e186d036f618c0db1f&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci/bikedata/issues?q=is%3Aissue+author%3AMathieuMarauri">MathieuMarauri</a>
+</td>
+<td align="center">
+<a href="https://github.com/JorisKlingen">
+<img src="https://avatars.githubusercontent.com/u/34268395?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci/bikedata/issues?q=is%3Aissue+author%3AJorisKlingen">JorisKlingen</a>
+</td>
+<td align="center">
+<a href="https://github.com/Robinlovelace">
+<img src="https://avatars.githubusercontent.com/u/1825120?u=4b78d134ed1814b0677455f45d932b3b4a6ba3a5&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci/bikedata/issues?q=is%3Aissue+author%3ARobinlovelace">Robinlovelace</a>
+</td>
+<td align="center">
+<a href="https://github.com/tbdv">
+<img src="https://avatars.githubusercontent.com/u/32847647?u=c794e81a62951dea29f88c223db578daff92f103&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci/bikedata/issues?q=is%3Aissue+author%3Atbdv">tbdv</a>
+</td>
+<td align="center">
+<a href="https://github.com/geospatialmik">
+<img src="https://avatars.githubusercontent.com/u/75185080?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci/bikedata/issues?q=is%3Aissue+author%3Ageospatialmik">geospatialmik</a>
+</td>
+</tr>
+
+
+<tr>
+<td align="center">
+<a href="https://github.com/RichardBean">
+<img src="https://avatars.githubusercontent.com/u/30681244?u=d98b23ecdb5fe6101b37c62262a03bc114f1fe2b&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci/bikedata/issues?q=is%3Aissue+author%3ARichardBean">RichardBean</a>
+</td>
+</tr>
+
+</table>
+
+
+### Issue Contributors
+
+<table>
+
+<tr>
+<td align="center">
+<a href="https://github.com/pstraforelli">
+<img src="https://avatars.githubusercontent.com/u/55718352?u=e1ad6ba0b0973d44108683c8b4f0ad8830a79036&v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci/bikedata/issues?q=is%3Aissue+commenter%3Apstraforelli">pstraforelli</a>
+</td>
+<td align="center">
+<a href="https://github.com/complexgenome">
+<img src="https://avatars.githubusercontent.com/u/5683969?v=4" width="100px;" alt=""/>
+</a><br>
+<a href="https://github.com/ropensci/bikedata/issues?q=is%3Aissue+commenter%3Acomplexgenome">complexgenome</a>
+</td>
+</tr>
+
+</table>
+
+<!-- markdownlint-enable -->
+<!-- prettier-ignore-end -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->

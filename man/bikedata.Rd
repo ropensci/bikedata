@@ -2,6 +2,7 @@
 % Please edit documentation in R/bikedata-package.R
 \docType{package}
 \name{bikedata}
+\alias{bikedata-package}
 \alias{bikedata}
 \title{Download and aggregate data from public bicycle hire systems}
 \description{
@@ -63,6 +64,15 @@ latest published versions
 }
 }
 
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://docs.ropensci.org/bikedata/}
+  \item \url{https://github.com/ropensci/bikedata}
+  \item Report bugs at \url{https://github.com/ropensci/bikedata/issues}
+}
+
+}
 \author{
 Mark Padgham
 }

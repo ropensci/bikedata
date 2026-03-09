@@ -3,7 +3,7 @@ context ("write and store data in db")
 require (testthat)
 
 test_all <- (identical (Sys.getenv ("MPADGE_LOCAL"), "true") |
-             identical (Sys.getenv ("GITHUB_WORKFLOW"), "test-coverage"))
+    identical (Sys.getenv ("GITHUB_WORKFLOW"), "test-coverage"))
 
 # NOTE: The direct routines used to create the database are not guaranteed to
 # give identical results each time, particularly because stations for some
@@ -39,38 +39,43 @@ if (test_all) {
 
 
     test_that ("write and store data", {
-                   bikedb <- file.path (tempdir (), "testdb")
-                   expect_silent (bike_write_test_data (data_dir = tempdir ()))
-                   expect_silent (n <- store_bikedata (data_dir = tempdir (),
-                                                       bikedb = bikedb,
-                                                       quiet = TRUE))
-                   expect_silent (bike_rm_db (bikedb))
-                   expect_message (n <- store_bikedata (data_dir = tempdir (),
-                                                        bikedb = bikedb,
-                                                        quiet = FALSE))
-                   expect_true (file.exists (bikedb))
-                   expect_silent (index_bikedata_db (bikedb = bikedb))
-                   # some windows test machines do not allow file deletion, so
-                   # numbers of lines are incremented with each CRAN matrix
-                   # test. The following is therefore >= rather than just ==
-                   #expect_equal (n, 1568)
-                   expect_true (n >= 1568)
-             })
+        bikedb <- file.path (tempdir (), "testdb")
+        expect_silent (bike_write_test_data (data_dir = tempdir ()))
+        expect_silent (n <- store_bikedata (
+            data_dir = tempdir (),
+            bikedb = bikedb,
+            quiet = TRUE
+        ))
+        expect_silent (bike_rm_db (bikedb))
+        expect_message (n <- store_bikedata (
+            data_dir = tempdir (),
+            bikedb = bikedb,
+            quiet = FALSE
+        ))
+        expect_true (file.exists (bikedb))
+        expect_silent (index_bikedata_db (bikedb = bikedb))
+        # some windows test machines do not allow file deletion, so
+        # numbers of lines are incremented with each CRAN matrix
+        # test. The following is therefore >= rather than just ==
+        # expect_equal (n, 1568)
+        expect_true (n >= 1568)
+    })
 
     test_that ("stations from downloaded data", {
-                   bikedb <- file.path (tempdir (), "testdb")
-                   st <- bike_stations (bikedb)
-                   expect_true (nrow (st) >= 2000)
-             })
+        bikedb <- file.path (tempdir (), "testdb")
+        st <- bike_stations (bikedb)
+        expect_true (nrow (st) >= 2000)
+    })
 
     # some windows machines also don"t clean all 13 files up, so this is
     # necessary:
     test_that ("remove data", {
-                   expect_true (bike_rm_test_data (data_dir = tempdir ()) >= 10)
-             })
+        expect_true (bike_rm_test_data (data_dir = tempdir ()) >= 10)
+    })
 
     bikedb <- file.path (tempdir (), "testdb")
     chk <- tryCatch (file.remove (bikedb),
-                     warning = function (w) NULL,
-                     error = function (e) NULL)
+        warning = function (w) NULL,
+        error = function (e) NULL
+    )
 }

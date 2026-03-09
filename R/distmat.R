@@ -26,8 +26,9 @@
 bike_distmat <- function (bikedb, city, expand = 0.5,
                           long = FALSE, quiet = TRUE) {
 
-    if (missing (bikedb))
+    if (missing (bikedb)) {
         stop ("Can't get trip matrix if bikedb isn't provided")
+    }
 
     requireNamespace ("dodgr")
 
@@ -45,7 +46,8 @@ bike_distmat <- function (bikedb, city, expand = 0.5,
     if (long) {
 
         dmat <- reshape2::melt (dmat,
-                                id.vars = c (rownames (dmat), colnames (dmat)))
+            id.vars = c (rownames (dmat), colnames (dmat))
+        )
         colnames (dmat) <- c ("start_station_id", "end_station_id", "distance")
         dmat <- tibble::as_tibble (dmat)
     } else {
@@ -64,7 +66,7 @@ remove_xy_outliers <- function (xy) {
 
     xmn <- mean (xy$longitude)
     ymn <- mean (xy$latitude)
-    d <- sqrt ((xy$longitude - xmn) ^ 2 + (xy$latitude - ymn) ^ 2)
+    d <- sqrt ((xy$longitude - xmn)^2 + (xy$latitude - ymn)^2)
     dsd <- stats::sd (c (-d, d))
     if (any (d > (10 * dsd))) {
 
@@ -102,14 +104,18 @@ bike_match_matrices <- function (mat1, mat2) {
     if (!nrow (mat1) == ncol (mat1)) {
 
         mat1 <- long2wide (mat1)
-        if (nrow (mat2) == ncol (mat2))
-            message ("One matrix is long-form, the other is wide; ",
-                     "will return both matrices in wide form")
-        else
+        if (nrow (mat2) == ncol (mat2)) {
+            message (
+                "One matrix is long-form, the other is wide; ",
+                "will return both matrices in wide form"
+            )
+        } else {
             long <- TRUE
+        }
     }
-    if (!nrow (mat2) == ncol (mat2))
+    if (!nrow (mat2) == ncol (mat2)) {
         mat2 <- long2wide (mat2)
+    }
 
     nms <- intersect (rownames (mat1), rownames (mat2))
     mat1 <- match_one_mat (mat1, nms, long = long)
@@ -128,11 +134,13 @@ match_one_mat <- function (mat, nms, long = FALSE) {
     variable <- attr (mat, "variable")
     indx <- match (nms, rownames (mat))
     mat <- mat [indx, indx]
-    if (!is.null (variable))
+    if (!is.null (variable)) {
         attr (mat, "variable") <- variable
+    }
 
-    if (long)
+    if (long) {
         mat <- bike_wide2long (mat) %>% tibble::as_tibble ()
+    }
 
     return (mat)
 }
@@ -147,13 +155,15 @@ is_trip_or_dist <- function (mat) {
         variable <- attr (mat, "variable")
     } else {
 
-        if ("distance" %in% names (mat))
+        if ("distance" %in% names (mat)) {
             variable <- "distance"
+        }
     }
-    if (variable == "distance")
+    if (variable == "distance") {
         variable <- "dist"
-    else
+    } else {
         variable <- "trip"
+    }
 
     return (variable)
 }

@@ -56,4 +56,4 @@
 #' @importFrom magrittr %>%
 #' @importFrom Rcpp evalCpp
 #' @useDynLib bikedata, .registration = TRUE
-NULL
+"_PACKAGE"
