@@ -1,4 +1,4 @@
-library(testthat)
-library(bikedata)
+library (testthat)
+library (bikedata)
 
-test_check("bikedata")
+test_check ("bikedata")
