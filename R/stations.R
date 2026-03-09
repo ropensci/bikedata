@@ -15,7 +15,7 @@
 #' bike_write_test_data (data_dir = data_dir)
 #' # or download some real data!
 #' # dl_bikedata (city = 'la', data_dir = data_dir)
-#' bikedb <- file.path (data_dir, 'testdb')
+#' bikedb <- file.path (data_dir, "testdb")
 #' store_bikedata (data_dir = data_dir, bikedb = bikedb)
 #' # create database indexes for quicker access:
 #' index_bikedata_db (bikedb = bikedb)
@@ -30,17 +30,19 @@
 #' }
 bike_stations <- function (bikedb, city) {
 
-    if (missing (bikedb))
+    if (missing (bikedb)) {
         stop ("Can't get station data if bikedb isn't provided")
+    }
 
     bikedb <- check_db_arg (bikedb)
 
-    db <- DBI::dbConnect (RSQLite::SQLite(), bikedb, create = FALSE)
+    db <- DBI::dbConnect (RSQLite::SQLite (), bikedb, create = FALSE)
     st <- tibble::as_tibble (DBI::dbReadTable (db, "stations"))
     DBI::dbDisconnect (db)
 
-    if (!missing (city))
+    if (!missing (city)) {
         st <- st [which (st$city %in% convert_city_names (city)), ]
+    }
 
     st$longitude <- as.numeric (st$longitude)
     st$latitude <- as.numeric (st$latitude)
@@ -49,7 +51,7 @@ bike_stations <- function (bikedb, city) {
     st <- st [indx, ]
     # and some have lat-lons of zero, so remove these too
     indx <- which (abs (st$longitude) > 1e-6 &
-                   abs (st$latitude) > 1e-6)
+        abs (st$latitude) > 1e-6)
     st <- st [indx, ]
 
     return (st)
@@ -67,10 +69,11 @@ bike_stations <- function (bikedb, city) {
 #' @noRd
 bike_get_london_stations <- function (external = TRUE, quiet = TRUE) {
 
-    if (external)
+    if (external) {
         res <- get_london_stns_external (quiet = quiet)
-    else
+    } else {
         res <- get_london_stns_internal ()
+    }
 
     return (res)
 }
@@ -82,25 +85,31 @@ get_london_stns_internal <- function () {
 }
 
 get_london_stns_external <- function (quiet = TRUE) {
-    if (!quiet)
+    if (!quiet) {
         message ("getting london stations ...", appendLF = FALSE)
+    }
     tfl_url <- "https://api.tfl.gov.uk/BikePoint"
     resp <- httr::GET (tfl_url)
     res <- NULL
     if (resp$status_code == 200) {
 
-        doc <- httr::content (resp, encoding  =  "UTF-8")
-        id <- unlist (lapply (doc, function (i)
-                              strsplit (i$id, "BikePoints_") [[1]] [2]))
-        name <- unlist (lapply (doc, function (i)
-                                gsub ("'", "", i$commonName))) #nolint
+        doc <- httr::content (resp, encoding = "UTF-8")
+        id <- unlist (lapply (doc, function (i) {
+            strsplit (i$id, "BikePoints_") [[1]] [2]
+        }))
+        name <- unlist (lapply (doc, function (i) {
+            gsub ("'", "", i$commonName)
+        })) # nolint
         lon <- unlist (lapply (doc, function (i) i$lon))
         lat <- unlist (lapply (doc, function (i) i$lat))
-        res <- data.frame (id = id, name = name, lon = lon, lat = lat,
-                           stringsAsFactors = FALSE)
+        res <- data.frame (
+            id = id, name = name, lon = lon, lat = lat,
+            stringsAsFactors = FALSE
+        )
     }
-    if (!quiet)
+    if (!quiet) {
         message (" done")
+    }
 
     return (res)
 }
@@ -125,8 +134,10 @@ bike_get_chicago_stations <- function (flists) {
         lon <- c (lon, paste0 (fi$longitude))
         lat <- c (lat, paste0 (fi$latitude))
     }
-    res <- data.frame (id = id, name = name, lon = lon, lat = lat,
-                       stringsAsFactors = FALSE)
+    res <- data.frame (
+        id = id, name = name, lon = lon, lat = lat,
+        stringsAsFactors = FALSE
+    )
     res <- res [which (!duplicated (res)), ]
 
     return (res)
@@ -152,21 +163,27 @@ bike_get_bo_stations <- function (flists, data_dir) {
 
             furl <- gsub (" ", "%20", f)
             f <- gsub (" ", "", f)
-            destfile <- file.path (data_dir, basename(f))
-            resp <- httr::GET (furl,
-                               httr::write_disk (destfile, overwrite = TRUE))
+            destfile <- file.path (data_dir, basename (f))
+            resp <- httr::GET (
+                furl,
+                httr::write_disk (destfile, overwrite = TRUE)
+            )
             if (resp$status_code != 200) {
 
                 count <- 0
                 while (!file.exists (destfile) & count < 5) {
 
-                    resp <- httr::GET (furl,
-                                       httr::write_disk (destfile,
-                                                         overwrite = TRUE))
+                    resp <- httr::GET (
+                        furl,
+                        httr::write_disk (destfile,
+                            overwrite = TRUE
+                        )
+                    )
                     count <- count + 1
                 }
-                if (!file.exists (destfile))
+                if (!file.exists (destfile)) {
                     stop ("Download request failed")
+                }
             }
         }
         flists$flist_csv_stns <- file.path (data_dir, basename (dl_files))
@@ -189,8 +206,10 @@ bike_get_bo_stations <- function (flists, data_dir) {
     }
     # Remove apostrophes from names coz they muck up sqlite fields:
     name <- gsub ("\'", "", name)
-    res <- data.frame (id = id, name = name, lon = lon, lat = lat,
-                       stringsAsFactors = FALSE)
+    res <- data.frame (
+        id = id, name = name, lon = lon, lat = lat,
+        stringsAsFactors = FALSE
+    )
     res <- res [which (!duplicated (res)), ]
 
     return (res)
@@ -204,8 +223,9 @@ bike_get_bo_stations <- function (flists, data_dir) {
 #' @noRd
 bike_get_mn_stations <- function (flists) {
 
-    if (is.null (flists$flist_csv_stns))
+    if (is.null (flists$flist_csv_stns)) {
         stop ("Station files must be in nominated data_dir")
+    }
 
     id <- name <- lon <- lat <- NULL
     for (f in flists$flist_csv_stns) {
@@ -222,12 +242,14 @@ bike_get_mn_stations <- function (flists) {
     }
     # Remove apostrophes from names coz they muck up sqlite fields:
     name <- gsub ("\'", "", name)
-    res <- data.frame (id = id, name = name, lon = lon, lat = lat,
-                       stringsAsFactors = FALSE)
+    res <- data.frame (
+        id = id, name = name, lon = lon, lat = lat,
+        stringsAsFactors = FALSE
+    )
     res <- res [which (!duplicated (res)), ]
 
     indx <- which (res$lon != "N/A" & res$lon != "NA" &
-                   res$lat != "N/A" & res$lat != "NA")
+        res$lat != "N/A" & res$lat != "NA")
     return (res [indx, ])
 }
 
@@ -239,8 +261,9 @@ bike_get_mn_stations <- function (flists) {
 #' @noRd
 bike_get_mo_stations <- function (flists) {
 
-    if (is.null (flists$flist_csv_stns))
+    if (is.null (flists$flist_csv_stns)) {
         stop ("Station files must be in nominated data_dir")
+    }
 
     id <- name <- lon <- lat <- NULL
     for (f in flists$flist_csv_stns) {
@@ -257,12 +280,14 @@ bike_get_mo_stations <- function (flists) {
     }
     # Remove apostrophes from names coz they muck up sqlite fields:
     name <- gsub ("\'", "", name)
-    res <- data.frame (id = id, name = name, lon = lon, lat = lat,
-                       stringsAsFactors = FALSE)
+    res <- data.frame (
+        id = id, name = name, lon = lon, lat = lat,
+        stringsAsFactors = FALSE
+    )
     res <- res [which (!duplicated (res)), ]
 
     indx <- which (res$lon != "N/A" & res$lon != "NA" &
-                   res$lat != "N/A" & res$lat != "NA")
+        res$lat != "N/A" & res$lat != "NA")
     return (res [indx, ])
 }
 
@@ -284,13 +309,15 @@ bike_get_dc_stations <- function () {
 
     # rm apostrophes from names (only "L'Enfant Plaza"):
     # stations_dc is lazy loaded from R/sysdata.rda
-    name <- noquote (gsub ("'", "", sysdata$stations_dc$name)) #nolint
+    name <- noquote (gsub ("'", "", sysdata$stations_dc$name)) # nolint
     name <- trimws (name, which = "right") # trim terminal white space
-    res <- data.frame (id = sysdata$stations_dc$id,
-                       name = name,
-                       lon = sysdata$stations_dc$lon,
-                       lat = sysdata$stations_dc$lat,
-                       stringsAsFactors = FALSE)
+    res <- data.frame (
+        id = sysdata$stations_dc$id,
+        name = name,
+        lon = sysdata$stations_dc$lon,
+        lat = sysdata$stations_dc$lat,
+        stringsAsFactors = FALSE
+    )
 
     return (res)
 }
@@ -310,22 +337,27 @@ bike_get_gu_stations <- function () {
         xml2::xml_children () %>%
         xml2::xml_find_all (".//a") %>%
         xml2::xml_attr ("href")
-    link <- paste0 ("https://www.mibici.net",
-                    hrefs [grep ("nomenclatura", hrefs, ignore.case = TRUE)])
-    if (length (link) > 1)
-        link <- link [length (link)] # latest version
+    link <- paste0 (
+        "https://www.mibici.net",
+        hrefs [grep ("nomenclatura", hrefs, ignore.case = TRUE)]
+    )
+    if (length (link) > 1) {
+        link <- link [length (link)]
+    } # latest version
 
     suppressMessages (
-                      dat <- httr::GET (link) %>%
-                          httr::content (encoding = "UTF-8", as = "parsed")
-                      )
+        dat <- httr::GET (link) %>%
+            httr::content (encoding = "UTF-8", as = "parsed")
+    )
 
     # Remove apostrophes from names coz they muck up sqlite fields:
     nm <- gsub ("\"", "", dat$name)
     nm <- gsub ("\'", "", nm)
-    res <- data.frame (id = dat$obcn, name = nm,
-                       lon = dat$longitude, lat = dat$latitude,
-                       stringsAsFactors = FALSE)
+    res <- data.frame (
+        id = dat$obcn, name = nm,
+        lon = dat$longitude, lat = dat$latitude,
+        stringsAsFactors = FALSE
+    )
     res <- res [which (!duplicated (res)), ]
     res <- res [which (!res$id == "NULL"), ]
 
