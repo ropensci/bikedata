@@ -109,7 +109,8 @@ int rcpp_import_to_trip_table (const char* bikedb,
 
     int ntrips = 0; // ntrips is added in this call
 
-    sprintf(sqlqry, "INSERT INTO trips VALUES (NOT NULL, @CI, @TD, @ST, @ET, @SSID, @ESID, @BID, @UT, @BY, @GE)");
+    snprintf(sqlqry, BUFFER_SIZE,
+             "INSERT INTO trips VALUES (NOT NULL, @CI, @TD, @ST, @ET, @SSID, @ESID, @BID, @UT, @BY, @GE)");
 
     sqlite3_prepare_v2(dbcon, sqlqry, BUFFER_SIZE, &stmt, nullptr);
 
