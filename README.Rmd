@@ -19,7 +19,7 @@ knitr::opts_chunk$set (
 )
 ```
 
-[![R build status](https://github.com/ropensci/bikedata/workflows/R-CMD-check/badge.svg)](https://github.com/ropensci/bikedata/actions?query=workflow%3AR-CMD-check)
+[![R build status](https://github.com/ropensci/bikedata/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ropensci/bikedata/actions?query=workflow%3AR-CMD-check.yaml)
 [![codecov](https://codecov.io/gh/ropensci/bikedata/branch/master/graph/badge.svg)](https://codecov.io/gh/ropensci/bikedata)
 [![Project Status: Active](http://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/bikedata)](https://cran.r-project.org/package=bikedata) 
