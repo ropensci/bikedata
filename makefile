@@ -1,4 +1,4 @@
-LFILE = README
+RFILE = README
 VIGNETTE = bikedata
 
 all: help
@@ -16,11 +16,11 @@ vignette: ## Render vignette defined at top of `makefile`
 site: ## Build entire `pkgdown` site
 	echo "pkgdown::build_site()" | R --no-save -q
 
-knith: $(LFILE).Rmd ## Render readme to HTML
-	echo "rmarkdown::render('$(LFILE).Rmd',output_file='$(LFILE).html')" | R --no-save -q
+knith: $(RFILE)-src.Rmd ## Render readme to HTML
+	echo "rmarkdown::render('$(RFILE)-src.Rmd',output_file='$(RFILE).html')" | R --no-save -q
 
-knitr: $(LFILE).Rmd ## Render `REAMDE.Rds` to `README.md`.
-	echo "rmarkdown::render('$(LFILE).Rmd',output_format=rmarkdown::md_document(variant='gfm'))" | R --no-save -q
+knitr: $(RFILE)-src.Rmd ## Render `REAMDE.Rds` to `README.md`.
+	echo "rmarkdown::render('$(RFILE)-src.Rmd',output_format=rmarkdown::md_document(variant='gfm'))" | R --no-save -q
 
 open: ## Open HTML-rendered vignette
 	xdg-open docs/index.html &
